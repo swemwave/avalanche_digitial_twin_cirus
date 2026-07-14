@@ -1,0 +1,24 @@
+# Experimental avalanche susceptibility prototype weights.
+# These values are placeholders for Milestone 5 and must not be interpreted as
+# a validated operational avalanche forecast.
+terrain:
+  slope_weight: 0.45
+  curvature_weight: 0.10
+  ruggedness_weight: 0.10
+  landcover_weight: 0.10
+  elevation_weight: 0.10
+  aspect_weight: 0.10
+  ridge_gully_weight: 0.05
+combined:
+  terrain_weight: 0.65
+  dynamic_weight: 0.35
+dynamic:
+  minimum_available_weight: 0.25
+  recent_snowfall_weight: 0.18
+  recent_precipitation_weight: 0.12
+  swe_change_weight: 0.14
+  snow_depth_change_weight: 0.10
+  rapid_warming_weight: 0.14
+  strong_wind_weight: 0.14
+  satellite_snow_cover_weight: 0.12
+  surface_temperature_weight: 0.06

@@ -1,0 +1,16 @@
+# Build context for the frontend image (context = ./frontend).
+
+node_modules/
+.next/
+out/
+test-results/
+playwright-report/
+tsconfig.tsbuildinfo
+
+.env
+.env.*
+!.env.example
+
+.git/
+.idea/
+.vscode/

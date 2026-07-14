@@ -1,0 +1,47 @@
+# Build context for the backend image. The context is the project root because the
+# backend needs BOTH backend/ and the app/ package shim that sits beside it.
+
+# Generated output. runtime/ is 412 MB of COGs plus previews, the tile cache and
+# avalanche.db. It is a named volume at run time and must never be baked into a
+# layer -- a stale terrain raster inside the image would be served as if it were
+# current.
+runtime/
+
+# Source data is mounted read-only at run time (invariant I1). It is a sibling of
+# this folder so it is already outside the context, but if anyone ever moves it in,
+# 46 GB should not silently become a build context.
+DATA/
+data/
+
+# The compiled Windows launcher. Not runnable on Linux and not wanted in the image.
+*.exe
+launcher/bin/
+launcher/obj/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+*.egg-info/
+
+# Node -- the frontend has its own image and its own context.
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/test-results/
+frontend/playwright-report/
+frontend/tsconfig.tsbuildinfo
+
+# Local config. Secrets and machine-specific absolute paths (D:\school\...) must
+# not leak into an image; the container is configured by environment instead.
+.env
+.env.*
+!.env.example
+
+# VCS and editor
+.git/
+.gitignore
+.idea/
+.vscode/

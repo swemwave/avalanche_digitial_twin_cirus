@@ -1,0 +1,36 @@
+@import "tailwindcss";
+@import "maplibre-gl/dist/maplibre-gl.css";
+
+:root {
+  --background: #101415;
+  --foreground: #eef3ee;
+  --muted: #aab7af;
+  --panel: #171d1e;
+  --panel-strong: #202829;
+  --border: #334044;
+  --accent: #8fbc8f;
+  --accent-2: #d6a75b;
+  --danger: #e16d5a;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+.maplibregl-map {
+  font-family: Arial, Helvetica, sans-serif;
+}

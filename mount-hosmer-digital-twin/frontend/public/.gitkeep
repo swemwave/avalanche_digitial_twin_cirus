@@ -1,0 +1,6 @@
+# Next.js static asset directory.
+#
+# Kept (empty) on purpose: the Docker build copies public/ into the standalone
+# runtime image. If this directory did not exist the image build would fail, and if
+# the Dockerfile simply skipped it, the first asset anyone added here would silently
+# not ship. Neither is a good failure.

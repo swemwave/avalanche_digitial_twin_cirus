@@ -1,0 +1,116 @@
+# Backend image: FastAPI + the terrain/model/simulation engine.
+#
+# Base choice, verified rather than assumed:
+#
+#   Every dependency (rasterio, geopandas, pyproj, scipy, shapely, laspy[lazrs],
+#   matplotlib, pillow) ships a cp313 manylinux wheel with GDAL/PROJ bundled
+#   inside it. `pip install --only-binary=:all:` succeeds on a plain
+#   python:3.13-slim, so this image needs NO system GDAL and NO compiler.
+#
+#   But the wheels alone are not enough, and the way they fail is nasty: the
+#   install completes cleanly and then `import rasterio` dies with
+#   `ImportError: libexpat.so.1`. rasterio's bundled GDAL links against libexpat,
+#   which python:3.13-slim does not ship. A "successful" build producing an image
+#   that cannot import its own dependencies is exactly the sort of silent failure
+#   this codebase is built to avoid, so libexpat1 is installed explicitly below and
+#   the build asserts that the imports actually work.
+#
+#   `--only-binary=:all:` is deliberate. If a future dependency has no wheel, this
+#   build FAILS rather than quietly compiling from source and adding ten minutes
+#   and a toolchain to the image.
+
+# ---------------------------------------------------------------------------
+# Stage 1 -- build the virtualenv.
+# ---------------------------------------------------------------------------
+FROM python:3.13-slim AS builder
+
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1
+
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# requirements-docker.txt is requirements.txt plus the PostgreSQL driver, which the
+# offline Windows install does not need but the documented `postgres` compose profile
+# does. Both files are copied because the first `-r`-includes the second.
+COPY backend/requirements.txt backend/requirements-docker.txt /tmp/
+RUN pip install --only-binary=:all: -r /tmp/requirements-docker.txt
+
+# ---------------------------------------------------------------------------
+# Stage 2 -- runtime.
+# ---------------------------------------------------------------------------
+FROM python:3.13-slim AS runtime
+
+# libexpat1: required by the GDAL bundled inside the rasterio wheel. Without it
+# every geospatial import fails at run time. See the note at the top.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libexpat1 \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV PATH="/opt/venv/bin:$PATH" \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    MPLBACKEND=Agg
+
+COPY --from=builder /opt/venv /opt/venv
+
+# WORKDIR is the PROJECT ROOT, not backend/. That is not arbitrary: `app/__init__.py`
+# at the project root is a pkgutil shim that extends its __path__ onto backend/app,
+# which is why `python -m app.cli` and `uvicorn app.main:app` resolve at all. It looks
+# like dead code and it is load-bearing. Copy it, keep the project root on sys.path,
+# and both the CLI and the ASGI entrypoint work exactly as they do on Windows.
+#
+# It also fixes the roots: settings._project_root() is parents[3] of
+# backend/app/core/settings.py, i.e. /app. So backend_root=/app/backend and the model
+# config resolves to /app/backend/config without any env var.
+WORKDIR /app
+ENV PYTHONPATH=/app
+
+COPY app/ /app/app/
+COPY backend/ /app/backend/
+COPY tests/ /app/tests/
+COPY pyproject.toml /app/pyproject.toml
+
+# Prove the shim resolves and the geospatial stack imports, at BUILD time. A broken
+# image should not be discoverable only when someone runs an analysis.
+RUN python -c "\
+import app.main, app.cli;\
+from app.core.settings import get_settings;\
+import rasterio, pyproj, geopandas, scipy, shapely, laspy, matplotlib;\
+print('shim ok: app.main and app.cli import from backend/app');\
+print('rasterio', rasterio.__version__, 'GDAL', rasterio.__gdal_version__);\
+"
+
+# Data and runtime both live OUTSIDE /app so a volume mount can never shadow the
+# source. Source data is mounted read-only (invariant I1); runtime is the only
+# writable location and holds the COGs, previews, tile cache, health report and
+# avalanche.db.
+ENV AVALANCHE_DATA_ROOT=/data/mount_hosmer_data \
+    AVALANCHE_RUNTIME_ROOT=/runtime \
+    APP_ENV=production
+
+# Create /runtime owned by the app user *in the image*, so a fresh named volume
+# mounted here inherits that ownership instead of arriving as root-owned and
+# unwritable.
+RUN useradd --create-home --uid 10001 avalanche \
+    && mkdir -p /runtime /data \
+    && chown -R avalanche:avalanche /runtime
+
+USER avalanche
+
+EXPOSE 8000
+
+# Liveness, not readiness. This probe answers "is the process alive", which is what
+# Docker's restart logic should key off. It deliberately does NOT check /api/v1/ready:
+# a container whose terrain has not been built is not broken, it is unbuilt, and it
+# already says so precisely (503 + the exact command that fixes it). Killing it in a
+# restart loop would destroy the one thing telling you what is wrong.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+    CMD python -c "import urllib.request,sys; sys.exit(0) if urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health', timeout=4).status == 200 else sys.exit(1)"
+
+# Exec form: uvicorn is PID 1 and receives SIGTERM directly. That matters -- the
+# FastAPI lifespan shutdown calls jobs.shutdown_runner() to let in-flight work
+# drain. A simulation killed midway leaves a half-written raster on disk, and a
+# half-written raster is indistinguishable from a real one. Pair with a
+# stop_grace_period long enough to actually finish (see docker-compose.yml).
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -1,0 +1,47 @@
+# =============================================================================
+# Mount Hosmer Avalanche Digital Twin — repository ignores
+#
+# Guiding rule: track SOURCE, ignore DATA and GENERATED output.
+# Everything ignored here is either re-downloadable, rebuildable, or huge.
+# =============================================================================
+
+# --- Source data: ~46 GB, read-only, never edited. Not version control's job. --
+DATA/
+
+# --- Vendored third-party QGIS/OSGeo4W install. Not our source. ---------------
+Tools/
+
+# --- Superseded work. web-app-demo has its own git repo and its own remote;
+#     qgis-project holds ~4.8 GB of rasters. Kept on disk, out of git. ---------
+archive/
+
+# --- Generated output: fully rebuildable from DATA/ via the process-* CLI -----
+mount-hosmer-digital-twin/runtime/
+
+# --- Secrets / local config (.env.example IS tracked) -------------------------
+.env
+
+# --- Python -------------------------------------------------------------------
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+
+# --- Node / Next.js -----------------------------------------------------------
+node_modules/
+.next/
+out/
+npm-debug.log*
+
+# --- .NET launcher build output (the prebuilt .exe at the app root IS tracked) -
+mount-hosmer-digital-twin/launcher/bin/
+mount-hosmer-digital-twin/launcher/obj/
+
+# --- OS / editor cruft --------------------------------------------------------
+Thumbs.db
+desktop.ini
+.DS_Store
+.vscode/
+.idea/
