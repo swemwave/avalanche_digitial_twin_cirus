@@ -64,22 +64,26 @@ try
     var npm = ResolveOnPath("npm.cmd") ?? ResolveOnPath("npm") ?? "npm.cmd";
     var node = ResolveOnPath("node.exe") ?? ResolveOnPath("node") ?? "node";
 
-    var catalogPath = Path.Combine(runtimeRoot, "catalog", "data_catalog.json");
-    if (!File.Exists(catalogPath))
+    // Stage 3 serves entirely from the one-time bake under runtime\baked\. If it is
+    // missing, build it once (this reads the ~6.5 GB LiDAR allow-list from DATA\ and
+    // needs the bake-time geospatial deps -- see requirements-bake.txt). Once baked,
+    // the running service never touches DATA\ again.
+    var bakedMeta = Path.Combine(runtimeRoot, "baked", "meta.json");
+    if (!File.Exists(bakedMeta))
     {
-        Console.WriteLine("Catalog is missing. Running a quick metadata scan...");
+        Console.WriteLine("Baked terrain is missing. Running the one-time bake (this can take several minutes)...");
         var exitCode = RunAndLog(
             python,
-            "-m app.cli scan-data --skip-checksum",
+            "-m app.bake",
             backendRoot,
             env,
-            Path.Combine(logsRoot, "launcher-scan.out.log"),
-            Path.Combine(logsRoot, "launcher-scan.err.log"),
-            TimeSpan.FromMinutes(15)
+            Path.Combine(logsRoot, "launcher-bake.out.log"),
+            Path.Combine(logsRoot, "launcher-bake.err.log"),
+            TimeSpan.FromMinutes(45)
         );
         if (exitCode != 0)
         {
-            return Fail($"Catalog scan failed with exit code {exitCode}. See runtime\\logs\\launcher-scan.err.log.");
+            return Fail($"Bake failed with exit code {exitCode}. See runtime\\logs\\launcher-bake.err.log.");
         }
     }
 

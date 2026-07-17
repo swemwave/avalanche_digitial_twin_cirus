@@ -1,5 +1,9 @@
 # Windows Setup
 
+> **Stage 3 note.** The geospatial stack (rasterio/GeoPandas/laspy) is now needed only to **build the bake**
+> (`pip install -r backend\requirements-bake.txt`; run `python -m app.bake`). The running service needs only
+> `backend\requirements.txt`. The setup notes below still apply to the bake environment.
+
 ## PowerShell Environment
 
 ```powershell

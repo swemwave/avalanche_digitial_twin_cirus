@@ -1,5 +1,8 @@
 # Production Upgrade — Implementation Audit and Plan
 
+> ⚠️ **Superseded (pre-Stage-3).** This plan targets the old jobs/DB/provenance platform, most of which
+> Stage 3 deleted. Kept for history only.
+
 Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 
 ---

@@ -1,160 +1,67 @@
-# Mount Hosmer Avalanche Digital Twin Prototype
+# Mount Hosmer Avalanche Digital Twin — Stage 3 ("Ultra")
 
-Local web prototype for cataloging and viewing Mount Hosmer avalanche-relevant datasets. The current implementation completes Milestones 1-6: discovery, terrain digital twin, satellite event viewer, weather/snowpack/forecast dashboard, experimental susceptibility, and polish/verification.
+A local, offline, single-screen avalanche digital twin for **Mount Hosmer** near Fernie, BC. Stage 3
+keeps four features and nothing else:
 
-This is a research and decision-support prototype. It is not an operational avalanche forecast and must not replace Avalanche Canada forecasts or field assessment.
+1. **3D terrain mesh** — a real 5 m BC-LiDAR mesh (~99.9 % AOI coverage) draped with terrain-RGB tiles.
+2. **Runout simulation** — fast (alpha-angle) and advanced (particle-ensemble) engines.
+3. **A simplified risk model** — one transparent release estimate driven by UI sliders (new snow, wind
+   speed, wind direction, release size), not weather ingestion.
+4. **A local AI assistant** — Ollama (`llama3.1:8b`), fully offline; explains an assessment and runs
+   what-if scenarios.
 
-Build progress is tracked in `MILESTONE_PROCESS.md`; completed items are checked off as milestones are verified.
+> This is a research and decision-support prototype. **It is not an operational avalanche forecast** and
+> must never replace Avalanche Canada forecasts or field assessment. Every hazard number carries a
+> non-operational disclaimer, attached in code.
+
+**AI agents: read [`../CLAUDE.md`](../CLAUDE.md) first.**
+
+## How it works: bake → baked → serve
+
+Stage 3 has one, strictly one-directional pipeline. A **one-time offline bake** reads ~6.5 GB of LiDAR
+(and land cover / terrain fallback / metadata) from `DATA\` and writes `runtime\baked\`
+(terrain-RGB tiles + 7 `.npy` terrain layers + `meta.json`). **After that, the running service reads no
+source data at all** — it loads the `.npy` layers with plain numpy and serves the static tiles, so
+`rasterio`/`pyproj` and the rest of the geospatial stack are **bake-time-only** dependencies.
+
+Authoritative input contract: [`../docs/data-footprint.md`](../docs/data-footprint.md).
 
 ## Documentation
 
-Start here if you are new to the codebase (**AI agents: read [`../CLAUDE.md`](../CLAUDE.md) first**):
-
 | Doc | Covers |
 |---|---|
-| [`docs/architecture.md`](docs/architecture.md) | System design, data flow, and the five invariants you must not break |
-| [`docs/backend-reference.md`](docs/backend-reference.md) | Module-by-module backend map — *"where do I make this change?"* |
-| [`docs/frontend-reference.md`](docs/frontend-reference.md) | Component and API-client map |
-| [`docs/data-pipeline.md`](docs/data-pipeline.md) | What each processing stage reads and writes |
-| [`docs/data-dictionary.md`](docs/data-dictionary.md) | Field-level definitions |
-| [`docs/susceptibility-model.md`](docs/susceptibility-model.md) | The scoring model and its weights |
+| [`docs/architecture.md`](docs/architecture.md) | Stage 3 system design, the bake→baked→serve pipeline, invariants |
 | [`docs/limitations.md`](docs/limitations.md) | **What this cannot do — read before making any claim about the model** |
-| [`docs/windows-setup.md`](docs/windows-setup.md) | Windows / Rasterio / GeoPandas setup notes |
+| [`../docs/data-footprint.md`](../docs/data-footprint.md) | The bake input allow-list; what is archived, not deleted |
+| [`../docs/repository-map.md`](../docs/repository-map.md) | Annotated tree |
 | [`../docs/glossary.md`](../docs/glossary.md) | Domain terms (SWE, NDSI, DEM vs DSM, AOI…) |
-| [`../docs/data-inventory.md`](../docs/data-inventory.md) | What the 271 source files are, and which are actually used |
 
-## Observed Local Data
+Docs under `docs/` marked *(superseded)* describe the pre-Stage-3 build and are kept only for history.
 
-The active source data root for this workstation is:
-
-```powershell
-D:\school\capstone\Avalanche\DATA\mount_hosmer_data
-```
-
-Initial inspection found 271 files, about 48.8 GB total:
-
-- 171 `.laz` point-cloud files
-- 62 `.tif` rasters
-- 20 `.json` files
-- 10 `.csv` tables
-- 5 `.geojson` files
-- 2 satellite event folders: `MH_20260116T183016Z`, `MH_20260430T182949Z`
-- Copernicus fallback DEM, slope, and aspect
-- BC LiDAR DEM/DSM raster tiles and point-cloud tiles
-- ESA WorldCover, OpenStreetMap, ECCC weather, BC snow station, and Avalanche Canada files
-- One known download error: `bc_snow:2C21P:archive` returned HTTP 404
-
-## Windows Setup
-
-From PowerShell:
+## Setup (Windows / PowerShell)
 
 ```powershell
 cd D:\school\capstone\Avalanche\mount-hosmer-digital-twin
 Copy-Item .env.example .env
-```
 
-Create and activate a Python environment:
-
-```powershell
 py -3.13 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
+
+# To RUN the app (rasterio-free runtime):
 python -m pip install -r backend\requirements.txt
-```
+# To BUILD the bake as well (adds rasterio/pyproj/pillow/pyyaml):
+python -m pip install -r backend\requirements-bake.txt
 
-If you prefer the system Python that already has Rasterio installed, install only missing test/runtime tools:
-
-```powershell
-python -m pip install pytest laspy[lazrs] geopandas
-```
-
-Install the frontend:
-
-```powershell
-cd D:\school\capstone\Avalanche\mount-hosmer-digital-twin\frontend
+# Frontend:
+cd frontend
 npm install
 npx playwright install chromium
 ```
 
-## Data Scan
+## Run
 
-Run the catalog scan from the project root:
-
-```powershell
-cd D:\school\capstone\Avalanche\mount-hosmer-digital-twin
-$env:MOUNT_HOSMER_DATA_ROOT="D:\school\capstone\Avalanche\DATA\mount_hosmer_data"
-python -m app.cli scan-data
-```
-
-For a faster development scan that skips SHA-256 verification:
-
-```powershell
-python -m app.cli scan-data --skip-checksum
-```
-
-Catalog outputs are written to:
-
-```text
-runtime\catalog\data_catalog.json
-runtime\catalog\data_catalog.csv
-runtime\catalog\catalog_warnings.json
-```
-
-Optional point-cloud header inspection:
-
-```powershell
-python -m app.cli inspect-point-clouds
-```
-
-If `laspy` or LAZ support is missing, point-cloud files are still cataloged by file name and size.
-
-## Processing Commands
-
-Regenerate terrain products:
-
-```powershell
-cd D:\school\capstone\Avalanche\mount-hosmer-digital-twin
-$env:MOUNT_HOSMER_DATA_ROOT="D:\school\capstone\Avalanche\DATA\mount_hosmer_data"
-python -m app.cli process-terrain --force
-```
-
-Regenerate all satellite event products:
-
-```powershell
-cd D:\school\capstone\Avalanche\mount-hosmer-digital-twin
-$env:MOUNT_HOSMER_DATA_ROOT="D:\school\capstone\Avalanche\DATA\mount_hosmer_data"
-python -m app.cli process-events --all --force
-```
-
-Process one event:
-
-```powershell
-python -m app.cli process-events --event-id MH_20260430T182949Z --force
-```
-
-Regenerate weather, snow, and forecast products:
-
-```powershell
-cd D:\school\capstone\Avalanche\mount-hosmer-digital-twin
-$env:MOUNT_HOSMER_DATA_ROOT="D:\school\capstone\Avalanche\DATA\mount_hosmer_data"
-python -m app.cli process-dynamic --force
-```
-
-Regenerate dynamic and combined susceptibility products:
-
-```powershell
-cd D:\school\capstone\Avalanche\mount-hosmer-digital-twin
-$env:MOUNT_HOSMER_DATA_ROOT="D:\school\capstone\Avalanche\DATA\mount_hosmer_data"
-python -m app.cli process-susceptibility --all --force
-```
-
-Processing is cache-aware. Each processor records SHA-256 source/config fingerprints under `runtime\cache`; running without `--force` reuses outputs only when the input signature still matches.
-
-## Run Locally
-
-### One-Click Launcher
-
-Use the executable in the project root:
+### One-click launcher (easiest)
 
 ```text
 D:\school\capstone\Avalanche\mount-hosmer-digital-twin\MountHosmerDigitalTwin.exe
@@ -162,205 +69,61 @@ D:\school\capstone\Avalanche\mount-hosmer-digital-twin\MountHosmerDigitalTwin.ex
 
 Double-clicking it will:
 
-- use `D:\school\capstone\Avalanche\DATA\mount_hosmer_data` as the source data root unless `.env` overrides it
-- run a quick catalog scan if `runtime\catalog\data_catalog.json` is missing
-- start the FastAPI backend on `http://127.0.0.1:8000`
-- start the Next.js frontend on `http://127.0.0.1:3000`
-- open the app in your default browser
-- keep a small launcher window open so you can stop the app when you are done
+- use `..\DATA\mount_hosmer_data` as the source data root unless `.env` overrides it,
+- **run the one-time bake if `runtime\baked\meta.json` is missing** (reads the LiDAR allow-list; needs
+  the bake-time deps),
+- start the FastAPI backend on `http://127.0.0.1:8000` and the Next.js frontend on `http://127.0.0.1:3000`,
+- open the app in your browser, and keep a small window open so you can stop it.
 
-Startup logs are written to:
+Startup logs: `runtime\logs\{launcher-bake,backend,frontend}.{out,err}.log`.
 
-```text
-runtime\logs\backend.out.log
-runtime\logs\backend.err.log
-runtime\logs\frontend.out.log
-runtime\logs\frontend.err.log
-```
+> The committed `MountHosmerDigitalTwin.exe` is a compiled binary. Editing `launcher\Program.cs` changes
+> nothing until you rebuild with the .NET 9 SDK (`dotnet publish -c Release -r win-x64 --self-contained
+> false -p:PublishSingleFile=true` → copy the exe to the app root).
 
-Leave the launcher window open while using the app. Press Enter in that window, press Ctrl+C, or close the window to stop the backend and frontend servers.
-
-Backend:
+### By hand
 
 ```powershell
 cd D:\school\capstone\Avalanche\mount-hosmer-digital-twin
-$env:MOUNT_HOSMER_DATA_ROOT="D:\school\capstone\Avalanche\DATA\mount_hosmer_data"
+
+# ONE-TIME bake (add --force to rebuild). Needs backend\requirements-bake.txt installed.
+python -m app.bake
+
+# Backend (needs runtime\baked\; rasterio-free):
 python -m uvicorn app.main:app --reload --port 8000
-```
 
-Frontend:
-
-```powershell
-cd D:\school\capstone\Avalanche\mount-hosmer-digital-twin\frontend
+# Frontend (use localhost, not 127.0.0.1 — Next 16 blocks dev resources cross-origin):
+cd frontend
 $env:NEXT_PUBLIC_API_BASE_URL="http://localhost:8000"
 npm run dev
 ```
 
-Open:
+Open `http://localhost:3000`.
 
-```text
-http://localhost:3000
+### Local AI assistant (optional, fully offline)
+
+Install [Ollama](https://ollama.com), then:
+
+```powershell
+ollama serve
+ollama pull llama3.1:8b
 ```
 
-## API Endpoints Implemented
+Without Ollama, the `/api/assistant/*` routes return a clean 503 and the rest of the app is unaffected.
+Override with `AVALANCHE_OLLAMA_URL` / `AVALANCHE_OLLAMA_MODEL`.
 
-- `GET /api/health`
-- `GET /api/catalog`
-- `GET /api/catalog?compact=true`
-- `POST /api/catalog/rescan`
-- `GET /api/aoi`
-- `GET /api/terrain/layers`
-- `GET /api/terrain/metadata`
-- `POST /api/terrain/process`
-- `GET /api/terrain/osm`
-- `GET /api/terrain/contours`
-- `GET /api/events`
-- `GET /api/events/{event_id}`
-- `POST /api/events/{event_id}/process`
-- `POST /api/events/process`
-- `GET /api/events/{event_id}/layers/{layer_id}/metadata`
-- `GET /api/events/{event_id}/layers/{layer_id}/preview`
-- `GET /api/weather`
-- `GET /api/weather/summary`
-- `POST /api/weather/process`
-- `GET /api/snow`
-- `GET /api/snow/summary`
-- `POST /api/snow/process`
-- `GET /api/avalanche-forecast`
-- `POST /api/avalanche-forecast/process`
-- `POST /api/dynamic/process`
-- `GET /api/susceptibility/terrain`
-- `GET /api/susceptibility/events/{event_id}`
-- `POST /api/susceptibility/events/{event_id}/process`
-- `POST /api/susceptibility/events/process`
-- `GET /api/susceptibility/events/{event_id}/metadata`
-- `GET /api/susceptibility/events/{event_id}/preview`
-- `GET /api/susceptibility/events/{event_id}/download`
-- `GET /api/layers/{layer_id}/metadata`
-- `GET /api/layers/{layer_id}/preview`
-- `GET /api/download/{asset_id}`
+## API
 
-## Terrain Viewer
+The entire running surface (see `backend/app/api/stage3.py`):
 
-The app now opens on the `Terrain & Risk` view. It displays:
+- `GET  /api/health`
+- `GET  /api/twin/meta` — grid/AOI/tile metadata for the map
+- `GET  /api/twin/tiles/{z}/{x}/{y}.png` — static baked terrain-RGB tiles
+- `POST /api/assess` — sliders → release zones + runout + hazard, in one synchronous call
+- `POST /api/assistant/explain` — plain-language read of an assessment (Ollama)
+- `POST /api/assistant/chat` — scenario chat: parse to sliders → re-run `/assess` → narrate (Ollama)
 
-- terrain hillshade as a fixed map backdrop
-- prototype risk areas
-- slope steepness
-- open vs forested land-cover context
-- OpenStreetMap infrastructure
-- risk-focused toggles
-- layer strength sliders
-- legends
-- factor explanations
-- downloadable experimental susceptibility GeoTIFF
-
-Elevation and aspect are still used by the experimental model, but they are not shown as separate map controls because they are secondary inputs for understanding risk areas.
-
-Terrain previews are generated under:
-
-```text
-runtime\previews\layers
-```
-
-The experimental susceptibility raster is written to:
-
-```text
-runtime\processed\static\terrain_susceptibility.tif
-```
-
-Terrain processing attempts BC LiDAR DEM first. For the available local data, LiDAR DEM and DSM mosaic coverage over the AOI grid is about 61.9%, so the processor falls back to Copernicus DEM and documents that surface height was skipped.
-
-## Satellite Event Viewer
-
-The `Satellite Events` view discovers event folders dynamically and currently finds:
-
-- `MH_20260116T183016Z`
-- `MH_20260430T182949Z`
-
-Each processed event writes:
-
-```text
-runtime\processed\events\<event_id>\event_summary.json
-runtime\previews\events\<event_id>\*.png
-```
-
-The event viewer exposes only the layers needed for avalanche-condition context:
-
-- Sentinel-2 scene context
-- Sentinel-2 snow-cover signal
-- Sentinel-2 moisture signal
-- Sentinel-2 classified snow
-- Landsat surface temperature
-- Sentinel and Landsat cloud/valid-data quality masks
-
-Landsat NDVI, NDSI, and NDMI previews are recomputed from scaled reflectance bands when the source index rasters contain out-of-range values. This is documented in event warnings.
-
-## Conditions Dashboard
-
-The `Conditions` view displays:
-
-- ECCC weather station selector
-- BC snow station selector
-- event-date marker selector
-- temperature chart
-- precipitation and snowfall chart
-- wind speed and direction chart
-- snow depth, SWE, and air-temperature chart
-- station comparison table
-- current Avalanche Canada forecast context
-- danger ratings by elevation band
-- avalanche problems when listed
-- data coverage warnings
-
-Generated dynamic outputs:
-
-```text
-runtime\processed\dynamic\weather_normalized.parquet
-runtime\processed\dynamic\snow_stations_normalized.parquet
-runtime\processed\dynamic\weather_summary.json
-runtime\processed\dynamic\snow_summary.json
-runtime\processed\dynamic\avalanche_forecast.json
-```
-
-Current local processing generated 27,527 weather records and 10,586 snow-station records. The known Fernie `2C21P` historical archive HTTP 404 is preserved as a dashboard warning. Avalanche Canada currently reports summer/off-season conditions; the app displays this as forecast context, not an avalanche observation label.
-
-## Prototype Susceptibility
-
-The `Susceptibility` view displays:
-
-- event selector
-- terrain, dynamic, and combined score cards
-- combined susceptibility map
-- dynamic component table
-- available-input explanations
-- static terrain factor explanations
-- missing-data and warning panel
-- configuration version and weights-file hash
-- non-operational disclaimer
-
-Dynamic components currently include:
-
-- recent snowfall
-- recent precipitation
-- SWE change
-- snow-depth change
-- rapid warming
-- strong wind
-- satellite snow cover
-- Landsat surface-temperature signal
-- Avalanche Canada current forecast context as a non-scored contextual component
-
-Missing dynamic inputs are reported and excluded from the weighted score denominator. They are not treated as safe zero values. Avalanche Canada current forecast context is not used as a historical avalanche observation label for event dates.
-
-Generated susceptibility outputs:
-
-```text
-runtime\processed\events\<event_id>\susceptibility_summary.json
-runtime\processed\events\<event_id>\combined_susceptibility.tif
-runtime\processed\events\<event_id>\combined_susceptibility.metadata.json
-runtime\previews\events\<event_id>\combined_susceptibility.png
-```
+Types + fetch helpers live in `frontend/src/lib/twin.ts` — keep them in sync with the routes.
 
 ## Tests
 
@@ -369,47 +132,14 @@ cd D:\school\capstone\Avalanche\mount-hosmer-digital-twin
 python -m pytest
 ```
 
-The tests use generated temporary data and a tiny generated GeoTIFF. They do not copy or modify the downloaded source data. The current suite has 20 tests covering catalog, AOI, raster metadata, path security, OSM categorization, event discovery, quality-mask interpretation, weather normalization, snow normalization, missing snow-archive behavior, SHA-256 cache invalidation, API path security, and dynamic susceptibility scoring.
+The suite uses a hermetic **synthetic bake** (`tests/synthetic_baked.py`) — no rasterio, no real `DATA\`.
+It covers the risk model + assessment (`test_risk_assess.py`), the HTTP surface
+(`test_stage3_api.py`), the rasterio-free geometry (`test_geo.py`), and path safety (`test_paths.py`).
 
-Frontend build and browser smoke check:
-
-```powershell
-cd D:\school\capstone\Avalanche\mount-hosmer-digital-twin\frontend
-npm run build
-$env:SMOKE_URL="http://127.0.0.1:3000"
-npm run smoke
-```
-
-The smoke check expects the backend and frontend dev servers to already be running.
-
-Visual QA screenshots:
+Frontend type-check + browser smoke (needs backend on :8000 and frontend on :3000):
 
 ```powershell
-cd D:\school\capstone\Avalanche\mount-hosmer-digital-twin\frontend
-npm run visual-qa
+cd frontend
+npx tsc --noEmit
+npx playwright test        # e2e/twin.spec.ts: mesh renders, /api/assess runs, disclaimer visible
 ```
-
-This writes screenshots and a summary to `runtime\logs\visual-qa-*.png` and `runtime\logs\visual-qa-summary.json`.
-
-## Troubleshooting
-
-Rasterio and GeoPandas on Windows should usually install from wheels. If installation tries to build GDAL from source, update `pip` first and install into a fresh virtual environment.
-
-```powershell
-python -m pip install --upgrade pip setuptools wheel
-python -m pip install rasterio geopandas
-```
-
-For LAZ support:
-
-```powershell
-python -m pip install "laspy[lazrs]"
-```
-
-For Parquet support:
-
-```powershell
-python -m pip install pyarrow
-```
-
-If the frontend cannot load data, confirm the backend is running and that `runtime\catalog\data_catalog.json` exists.

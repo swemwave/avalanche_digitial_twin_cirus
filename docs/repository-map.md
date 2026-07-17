@@ -31,93 +31,101 @@ D:\school\capstone\Avalanche\
 
 **This is where essentially all work happens.**
 
+> **Stage 3 ("Ultra").** The app was radically simplified to a single-screen twin with four features (3D
+> LiDAR mesh, runout simulation, a slider-driven risk model, a local Ollama AI). The runtime is
+> rasterio-free and reads no source data — it serves a one-time **bake** under `runtime\baked\`. The tree
+> below reflects Stage 3; anything describing five research tabs / jobs / a database is superseded.
+
 ```
 mount-hosmer-digital-twin\
-├── MountHosmerDigitalTwin.exe   Compiled one-click launcher (what users double-click)
-├── README.md                    App usage: setup, commands, endpoints
-├── PROGRESS.md                  Milestone status log
+├── MountHosmerDigitalTwin.exe   Compiled one-click launcher (bakes if needed, then starts both servers)
+├── README.md                    App usage: setup, bake, run, endpoints
+├── PROGRESS.md                  Stage 3 status + pre-Stage-3 history
 ├── MILESTONE_PROCESS.md         Milestone checklist / process
-├── .env.example                 Copy to .env to override data/runtime roots
-├── pyproject.toml               Root shim config
-├── docker-compose.yml           Container option (not the primary path)
+├── .env.example                 Copy to .env to override data/runtime roots, Ollama, CORS
+├── pyproject.toml               Root shim config + pytest config
+├── docker-compose.yml           Container option (bake one-shot + slim runtime; not the primary path)
 │
 ├── app\
 │   └── __init__.py              ⚠️ NOT DEAD CODE. A pkgutil shim that extends the `app`
-│                                package onto backend\app so `python -m app.cli` and
+│                                package onto backend\app so `python -m app.bake` and
 │                                `uvicorn app.main:app` work from the project root.
 │
 ├── backend\
-│   ├── requirements.txt         Python deps (FastAPI, rasterio, geopandas, pandas…)
+│   ├── requirements.txt         RUNTIME deps ONLY (fastapi, uvicorn, pydantic, numpy, scipy, shapely, httpx)
+│   ├── requirements-bake.txt    Adds the bake-time geospatial stack (rasterio, pyproj, pillow, pyyaml)
 │   ├── config\
-│   │   └── susceptibility_weights.yaml   Model weights (hashed into the cache signature)
+│   │   └── avalanche_model.yaml   Terrain/runout parameters, read at BAKE time
 │   └── app\
-│       ├── main.py              ✅ ALL ~35 HTTP routes
-│       ├── cli.py               ✅ ALL CLI subcommands
+│       ├── main.py              ✅ FastAPI app (health + the stage3 router)
+│       ├── bake.py              ✅ The one-time offline bake (`python -m app.bake`)
+│       ├── baked.py             ✅ numpy loader for baked .npy + grid→WGS84 Reprojector
+│       ├── risk.py              ✅ Simplified release model + release-zone extraction
+│       ├── assess.py            ✅ sliders → release → zones → runout → one JSON
+│       ├── geo.py               ✅ rasterio-free mask→GeoJSON / path→LineString (shapely)
+│       ├── assistant.py         ✅ Local Ollama: explain + scenario chat
+│       ├── cli.py               ✅ One CLI command: bake
 │       ├── __main__.py          Entry point for `python -m app`
+│       ├── api\
+│       │   ├── stage3.py        ✅ ALL HTTP routes (health/meta/tiles/assess/assistant)
+│       │   ├── errors.py        One error envelope + exception→HTTP mapping
+│       │   └── middleware.py    Correlation ids, body-size limit, logging
 │       ├── core\
 │       │   ├── settings.py      Env-driven paths (data root, runtime root)
-│       │   └── paths.py         Path-escape guards (safe_source_path)
-│       └── services\            ✅ ALL PROCESSING + BUSINESS LOGIC
-│           ├── catalog.py       (565) Scan/inspect/checksum the 271 source files
-│           ├── terrain.py       (1097) DEM → slope/aspect/hillshade/susceptibility
-│           ├── events.py        (855) Sentinel-2 + Landsat event processing
-│           ├── conditions.py    (870) Weather, snow, Avalanche Canada forecast
-│           ├── susceptibility.py (551) Dynamic scoring + combined raster
-│           ├── cache.py         (108) SHA-256 fingerprints, cache sidecars
-│           ├── aoi.py           (27) Load AOI + grid metadata
-│           └── json_utils.py    (26) JSON structure summaries
+│       │   ├── paths.py         Path-escape guards (safe_source_path; bake-time)
+│       │   └── model_config.py  The DISCLAIMER + bake-time YAML loader
+│       ├── simulation\
+│       │   ├── runout.py        Fast (alpha) + advanced (particle) runout engines
+│       │   └── zone.py          The neutral ReleaseZone value type
+│       ├── processing\          ⚠️ BAKE-TIME ONLY (rasterio/pyproj live here)
+│       └── services\
+│           ├── tiles.py         ⚠️ BAKE-TIME ONLY — terrain-RGB tiling
+│           └── cache.py         ⚠️ BAKE-TIME ONLY — SHA-256 input signatures
 │
 ├── frontend\
-│   ├── package.json             Next 16, React 19, MapLibre 5, Recharts 3, Tailwind 4
-│   ├── scripts\                 browser-smoke.mjs, visual-qa.mjs (Playwright)
+│   ├── package.json             Next 16, React, MapLibre, Tailwind
+│   ├── e2e\twin.spec.ts         Playwright smoke (mesh + assess + disclaimer)
 │   └── src\
-│       ├── app\                 App Router shell (layout.tsx, page.tsx)
-│       ├── lib\api.ts           ✅ Typed API client + every response type
-│       └── components\          ✅ THE 5 VIEWS
-│           ├── DigitalTwinApp.tsx      Shell + view switcher
-│           ├── TerrainViewer.tsx       "Terrain & Risk" (default view)
-│           ├── EventViewer.tsx         "Satellite Events"
-│           ├── ConditionsDashboard.tsx "Conditions"
-│           ├── SusceptibilityPage.tsx  "Susceptibility"
-│           ├── OverviewDashboard.tsx   "Data Overview"
-│           └── AoiMap.tsx              Shared AOI map component
+│       ├── app\                 App Router shell (layout.tsx, page.tsx → Stage3App)
+│       ├── lib\twin.ts          ✅ Typed API client + every response type
+│       └── components\          ✅ THE ONE SCREEN
+│           ├── Stage3App.tsx        The screen (state + layout)
+│           ├── Stage3Map.tsx        MapLibre 3D mesh + result overlays
+│           ├── ConditionPanel.tsx   Sliders + presets
+│           ├── ResultCard.tsx       Hazard index + zones + disclaimer
+│           └── AssistantPanel.tsx   The Ollama AI
 │
 ├── launcher\
 │   ├── Program.cs               ⚠️ Source of the .exe. Editing this changes NOTHING
 │   │                              until rebuilt with the .NET 9 SDK.
 │   └── MountHosmerDigitalTwin.Launcher.csproj
 │
-├── tests\                       ✅ 20 pytest tests (generated fixtures; never read real DATA\)
-│   ├── test_catalog.py  test_terrain.py   test_events.py
-│   ├── test_conditions.py  test_susceptibility.py
-│   └── test_cache.py  test_paths.py  test_api_security.py
+├── tests\                       ✅ pytest (hermetic synthetic bake; never reads real DATA\)
+│   ├── synthetic_baked.py       Writes a tiny synthetic bake (no rasterio)
+│   ├── test_risk_assess.py  test_stage3_api.py
+│   └── test_geo.py  test_paths.py
 │
 ├── docs\                        ✅ App documentation (see index below)
 │
 └── runtime\                     🤖 GENERATED — never hand-edit, safe to delete & rebuild
-    ├── catalog\                 data_catalog.json/.csv, warnings, point-cloud inventory
-    ├── cache\                   SHA-256 input-signature sidecars (cache gating)
-    ├── processed\
-    │   ├── static\              Terrain GeoTIFFs, contours, terrain_susceptibility.tif
-    │   ├── events\<id>\         event_summary.json, combined_susceptibility.tif
-    │   └── dynamic\             weather/snow Parquet + summary JSON, forecast JSON
-    ├── previews\                PNG overlays (layers\ and events\<id>\)
-    ├── exports\                 User-facing downloads
-    └── logs\                    backend/frontend logs, visual-QA output
+    ├── baked\                   THE SERVED SURFACE: tiles\{z}\{x}\{y}.png, layers\*.npy, meta.json
+    ├── cache\                   SHA-256 input-signature sidecars (bake cache gating)
+    └── logs\                    launcher-bake / backend / frontend logs
 ```
 
 ### App docs index
 
 | File | Covers |
 |---|---|
-| `docs\architecture.md` | System design, data flow, invariants, security boundary |
-| `docs\backend-reference.md` | Module-by-module backend map |
-| `docs\frontend-reference.md` | Component + API-client map |
-| `docs\data-pipeline.md` | What each processing stage reads and writes |
-| `docs\data-dictionary.md` | Field-level definitions |
-| `docs\susceptibility-model.md` | The scoring model |
+| `docs\architecture.md` | Stage 3 system design, the bake→baked→serve pipeline, invariants |
 | `docs\limitations.md` | **What this cannot do — read before making claims** |
-| `docs\windows-setup.md` | Windows/Rasterio/GeoPandas setup notes |
+| `../docs/data-footprint.md` | The bake input allow-list; what is archived (not deleted) |
+| `docs\backend-reference.md` *(superseded)* | Pre-Stage-3 module map |
+| `docs\frontend-reference.md` *(superseded)* | Pre-Stage-3 component map |
+| `docs\data-pipeline.md` *(superseded)* | Pre-Stage-3 processing stages |
+| `docs\data-dictionary.md` *(superseded)* | Pre-Stage-3 field definitions |
+| `docs\susceptibility-model.md` *(superseded)* | The removed susceptibility model |
+| `docs\windows-setup.md` | Windows/Rasterio setup notes (still useful for the bake) |
 
 ---
 
@@ -125,25 +133,26 @@ mount-hosmer-digital-twin\
 
 **Read-only. Never write here.** 271 files, ~46 GB. Expensive to re-download; parts are unrecoverable.
 
+> **Stage 3 uses only a ~6.5 GB bake-time allow-list, and nothing at runtime.** After the bake, `DATA\`
+> is no longer consumed; the LiDAR `.laz` (38.7 GB) and all of `dynamic\`/`events\` can be **archived, not
+> deleted** (invariant I1; the Fernie `2C21P` archive is un-re-downloadable). See
+> [`data-footprint.md`](data-footprint.md).
+
 ```
 DATA\mount_hosmer_data\
-├── metadata\        AOI geometry, analysis grid, download manifest, event pairs, config
+├── metadata\        AOI geometry, analysis grid, download manifest   ← bake input
 ├── static\          Terrain & land cover that does not change over time
-│   ├── lidar_bc\        BC LiDAR DEM/DSM tiles + 171 .laz point clouds (the bulk of the 46 GB)
-│   ├── terrain_fallback\ Copernicus GLO-30 DEM + slope + aspect  ← what the app ACTUALLY uses
-│   ├── landcover\       ESA WorldCover 2021 (10 m)
-│   └── openstreetmap\   OSM infrastructure features
-├── dynamic\         Time-varying conditions
-│   ├── weather_eccc\    ECCC hourly + daily station CSVs
-│   ├── snow_bc\         BC snow stations 2C09Q (Morrissey Ridge), 2C21P (Fernie)
-│   └── avalanche_canada\ Current forecast JSON (live context, NOT history)
-├── events\          Two satellite captures
-│   ├── MH_20260116T183016Z\  sentinel2\ + landsat\
-│   └── MH_20260430T182949Z\  sentinel2\ + landsat\
+│   ├── lidar_bc\        BC LiDAR DEM/DSM tiles ← bake input (the 5 m mesh source, 99.9% coverage)
+│   │                    + 171 .laz point clouds (38.7 GB, unused — archive candidate)
+│   ├── terrain_fallback\ Copernicus GLO-30 DEM  ← bake input, gap-fill ONLY now
+│   ├── landcover\       ESA WorldCover 2021 (10 m)  ← bake input (forest mask)
+│   └── openstreetmap\   OSM infrastructure features  (optional bake input)
+├── dynamic\         Time-varying conditions  ← NOT USED by Stage 3 (conditions are sliders)
+├── events\          Two satellite captures   ← NOT USED by Stage 3 (event viewer removed)
 └── logs\            Download logs
 ```
 
-Full breakdown: [`data-inventory.md`](data-inventory.md).
+Full breakdown: [`data-inventory.md`](data-inventory.md). Bake contract: [`data-footprint.md`](data-footprint.md).
 
 ---
 

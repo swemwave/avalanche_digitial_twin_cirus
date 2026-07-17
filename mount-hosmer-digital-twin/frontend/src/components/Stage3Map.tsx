@@ -1,0 +1,248 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import type { Map as MapLibreMap } from "maplibre-gl";
+import { tileUrlTemplate, type AssessResult, type TwinMeta } from "@/lib/twin";
+
+export type CameraPreset = "overview" | "north" | "south" | "top";
+
+const CAMERAS: Record<CameraPreset, { pitch: number; bearing: number; zoom: number }> = {
+  overview: { pitch: 62, bearing: -25, zoom: 11.6 },
+  north: { pitch: 70, bearing: 180, zoom: 12.2 },
+  south: { pitch: 70, bearing: 0, zoom: 12.2 },
+  top: { pitch: 0, bearing: 0, zoom: 11.4 },
+};
+
+/** Colour a zone by its release score, not by rank — rank hides how close a 90 is to a 40. */
+const ZONE_COLOR: unknown = [
+  "interpolate",
+  ["linear"],
+  ["get", "estimated_release_score"],
+  55, "#f2d16b",
+  70, "#e08a4a",
+  85, "#c23b35",
+];
+
+type Props = {
+  meta: TwinMeta | null;
+  result: AssessResult | null;
+  exaggeration: number;
+  camera: CameraPreset;
+  onZoneClick?: (zoneId: string) => void;
+};
+
+export function Stage3Map({ meta, result, exaggeration, camera, onZoneClick }: Props) {
+  const container = useRef<HTMLDivElement | null>(null);
+  const mapRef = useRef<MapLibreMap | null>(null);
+  const [ready, setReady] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const centre: [number, number] = meta?.center_wgs84 ?? [-115.0113, 49.6136];
+
+  // --- Build the map once (after meta is known) ------------------------------
+  useEffect(() => {
+    if (!meta) return;
+    let cancelled = false;
+
+    (async () => {
+      if (!container.current || mapRef.current) return;
+      try {
+        const maplibre = await import("maplibre-gl");
+        if (cancelled || !container.current) return;
+
+        const map = new maplibre.Map({
+          container: container.current,
+          center: centre,
+          zoom: CAMERAS.overview.zoom,
+          pitch: CAMERAS.overview.pitch,
+          bearing: CAMERAS.overview.bearing,
+          maxPitch: 85,
+          style: {
+            version: 8,
+            sources: {
+              // A real 3D mesh from the baked 5 m LiDAR terrain-RGB tiles. No live
+              // rasterio: these are static PNGs written once by bake.py.
+              terrain: {
+                type: "raster-dem",
+                tiles: [tileUrlTemplate()],
+                tileSize: meta.tiles.tile_size,
+                minzoom: meta.tiles.min_zoom,
+                maxzoom: meta.tiles.max_zoom,
+                encoding: "mapbox",
+              },
+            },
+            layers: [
+              { id: "sky", type: "background", paint: { "background-color": "#0b0f10" } },
+              {
+                id: "hillshade",
+                type: "hillshade",
+                source: "terrain",
+                paint: {
+                  "hillshade-shadow-color": "#0a0e0f",
+                  "hillshade-highlight-color": "#dfe8e0",
+                  "hillshade-exaggeration": 0.55,
+                },
+              },
+            ],
+          },
+        });
+
+        mapRef.current = map;
+        map.addControl(new maplibre.NavigationControl({ visualizePitch: true }), "top-right");
+        map.addControl(new maplibre.ScaleControl({ unit: "metric" }), "bottom-left");
+
+        map.on("error", (event) => {
+          const message = (event as { error?: { message?: string } }).error?.message ?? "";
+          if (message.includes("404")) return; // tiles outside the AOI legitimately 404
+          setError(message || "The map failed to load.");
+        });
+
+        map.on("load", () => {
+          map.setTerrain({ source: "terrain", exaggeration });
+
+          for (const id of ["zones", "runout", "envelope", "paths"]) {
+            map.addSource(id, { type: "geojson", data: emptyCollection() });
+          }
+
+          map.addLayer({
+            id: "envelope-fill",
+            type: "fill",
+            source: "envelope",
+            paint: { "fill-color": "#e16d5a", "fill-opacity": 0.14 },
+          });
+          map.addLayer({
+            id: "envelope-line",
+            type: "line",
+            source: "envelope",
+            paint: { "line-color": "#e16d5a", "line-width": 1, "line-dasharray": [2, 2], "line-opacity": 0.7 },
+          });
+          map.addLayer({
+            id: "runout-fill",
+            type: "fill",
+            source: "runout",
+            paint: { "fill-color": "#e16d5a", "fill-opacity": 0.42 },
+          });
+          map.addLayer({
+            id: "runout-line",
+            type: "line",
+            source: "runout",
+            paint: { "line-color": "#ffd9d2", "line-width": 1.4 },
+          });
+          map.addLayer({
+            id: "paths-line",
+            type: "line",
+            source: "paths",
+            paint: { "line-color": "#ffffff", "line-width": 1.6, "line-opacity": 0.75 },
+          });
+          map.addLayer({
+            id: "zones-fill",
+            type: "fill",
+            source: "zones",
+            paint: { "fill-color": ZONE_COLOR as never, "fill-opacity": 0.6 },
+          });
+          map.addLayer({
+            id: "zones-line",
+            type: "line",
+            source: "zones",
+            paint: { "line-color": "#fff3d6", "line-width": 1.2 },
+          });
+
+          map.on("click", "zones-fill", (event) => {
+            const zoneId = event.features?.[0]?.properties?.zone_id;
+            if (typeof zoneId === "string") onZoneClick?.(zoneId);
+          });
+          map.on("mouseenter", "zones-fill", () => {
+            map.getCanvas().style.cursor = "pointer";
+          });
+          map.on("mouseleave", "zones-fill", () => {
+            map.getCanvas().style.cursor = "";
+          });
+
+          setReady(true);
+        });
+      } catch (caught) {
+        setError(caught instanceof Error ? caught.message : String(caught));
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+      mapRef.current?.remove();
+      mapRef.current = null;
+    };
+    // Built once, when meta arrives. Everything else is driven by the effects below.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [meta]);
+
+  // --- Terrain exaggeration ---------------------------------------------------
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !ready) return;
+    map.setTerrain({ source: "terrain", exaggeration });
+  }, [exaggeration, ready]);
+
+  // --- Camera -----------------------------------------------------------------
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !ready) return;
+    map.easeTo({ center: centre, ...CAMERAS[camera], duration: 900 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [camera, ready]);
+
+  // --- Result: zones, runout, envelope, paths ---------------------------------
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !ready) return;
+
+    const zones = map.getSource("zones") as maplibregl.GeoJSONSource | undefined;
+    const runout = map.getSource("runout") as maplibregl.GeoJSONSource | undefined;
+    const envelope = map.getSource("envelope") as maplibregl.GeoJSONSource | undefined;
+    const paths = map.getSource("paths") as maplibregl.GeoJSONSource | undefined;
+
+    if (!result) {
+      zones?.setData(emptyCollection());
+      runout?.setData(emptyCollection());
+      envelope?.setData(emptyCollection());
+      paths?.setData(emptyCollection());
+      return;
+    }
+
+    zones?.setData(result.release_zones as never);
+    runout?.setData(wrap(result.runout.runout_polygons));
+    envelope?.setData(wrap(result.runout.uncertainty_polygons));
+    paths?.setData(wrap(result.runout.main_paths));
+  }, [result, ready]);
+
+  return (
+    <div className="relative h-full w-full overflow-hidden rounded-lg border border-[var(--border)]">
+      <div ref={container} className="h-full w-full" />
+      {error ? (
+        <div className="absolute inset-x-3 top-3 rounded-md border border-[var(--danger)] bg-[var(--panel)] px-3 py-2 text-xs text-[var(--danger)]">
+          {error}
+        </div>
+      ) : null}
+      {!ready && !error ? (
+        <div className="absolute inset-0 grid place-items-center bg-[var(--background)]/70 text-sm text-[var(--muted)]">
+          Building the 5 m LiDAR terrain mesh…
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function emptyCollection(): GeoJSON.FeatureCollection {
+  return { type: "FeatureCollection", features: [] };
+}
+
+function wrap(
+  geometries: (GeoJSON.Polygon | GeoJSON.MultiPolygon | GeoJSON.LineString)[] | undefined,
+): GeoJSON.FeatureCollection {
+  return {
+    type: "FeatureCollection",
+    features: (geometries ?? []).map((geometry) => ({
+      type: "Feature" as const,
+      geometry,
+      properties: {},
+    })),
+  };
+}

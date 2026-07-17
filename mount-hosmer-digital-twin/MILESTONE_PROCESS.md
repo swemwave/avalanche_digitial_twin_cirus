@@ -2,7 +2,28 @@
 
 This file tracks the requested build process. It should be updated as work is completed and verified.
 
-## Ground Rules
+## Stage 3 ("Ultra") simplification — current
+
+The build pivoted to Stage 3: a single-screen twin with four features (3D LiDAR mesh, runout simulation,
+a slider-driven risk model, a local Ollama AI), serving a one-time bake with a rasterio-free runtime.
+**Milestones 1–6 below describe the superseded pre-Stage-3 build** and are kept for history.
+
+- [x] Bake pipeline (`python -m app.bake`) → `runtime\baked\` (414 tiles z8–15, 7 `.npy` layers, meta.json).
+- [x] Rasterio-free runtime: `baked.py`, `geo.py`, `risk.py`, `assess.py`, `assistant.py`, `api/stage3.py`.
+- [x] Single-screen frontend: Stage3App / Stage3Map / ConditionPanel / ResultCard / AssistantPanel + `lib/twin.ts`.
+- [x] Deleted the legacy platform (jobs/DB/weather/models/susceptibility/5 tabs/`api/v1`) and legacy frontend.
+- [x] Trimmed deps: runtime = fastapi/uvicorn/pydantic/numpy/scipy/shapely/httpx; rasterio/pyproj/pillow/pyyaml = bake-time only.
+- [x] Rewrote tests against a synthetic bake (`test_risk_assess.py`, `test_stage3_api.py`, `test_geo.py`); full suite green.
+- [x] Verified live: backend `/api/assess` (hazard + zones + runout + disclaimer), assistant 503 without Ollama, `tsc` clean, Playwright smoke green.
+- [x] Updated the launcher to run the bake and rebuilt `MountHosmerDigitalTwin.exe` (.NET 9).
+- [x] Rewrote CLAUDE.md, README, PROGRESS, architecture, limitations, docs, `.env.example`, and Docker for Stage 3.
+
+Known follow-ups: assess latency ~10–15 s (tuning); Ollama text generation exercised only via the 503
+path when Ollama is absent.
+
+---
+
+## Ground Rules (pre-Stage-3)
 
 - [x] Use `D:\school\capstone\Avalanche\DATA\mount_hosmer_data` as the source data root.
 - [x] Do not modify, rename, move, or overwrite source data.

@@ -1,5 +1,5 @@
-import { DigitalTwinApp } from "@/components/DigitalTwinApp";
+import { Stage3App } from "@/components/Stage3App";
 
 export default function Home() {
-  return <DigitalTwinApp />;
+  return <Stage3App />;
 }

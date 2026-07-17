@@ -6,6 +6,10 @@ actually uses**.
 > ⛔ **Read-only.** Source data is never modified, renamed, moved, or overwritten. All generated output goes
 > to `mount-hosmer-digital-twin\runtime\`. Some of this data cannot be re-downloaded (see *Known gaps*).
 
+> 📉 Planning to slim the app? See [`data-footprint.md`](data-footprint.md) for what the Stage 3 "Ultra"
+> build consumes (~6.5 GB, bake-time only), what ~38.9 GB it stops using, and how to archive that bulk
+> without destroying anything.
+
 ---
 
 ## At a glance
@@ -16,11 +20,11 @@ actually uses**.
 | Size | **~46 GB** |
 | Date range | 2025-11-01 → 2026-05-31 |
 | Analysis CRS | EPSG:26911 (UTM 11N) |
-| Catalog | `runtime\catalog\data_catalog.json` (regenerate: `python -m app.cli scan-data`) |
+| Bake input | ~6.5 GB allow-list → `runtime\baked\` (build: `python -m app.bake`). The old `scan-data` catalog is gone. |
 
 | Extension | Count | Notes |
 |---|---:|---|
-| `.laz` | 171 | LiDAR point clouds — **the bulk of the 46 GB, and not used by the pipeline** |
+| `.laz` | 171 | LiDAR point clouds — **the bulk of the 46 GB, still not used** (the DEM rasters are derived from them; archive candidate) |
 | `.tif` | 62 | Rasters: LiDAR DEM/DSM tiles, Copernicus fallback, land cover |
 | `.json` | 20 | Metadata, Avalanche Canada forecast, OSM, LiDAR index metadata |
 | `.csv` | 10 | ECCC weather, BC snow stations, manifests |

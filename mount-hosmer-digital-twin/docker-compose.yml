@@ -1,196 +1,105 @@
-# Mount Hosmer Avalanche Digital Twin -- server (Linux/Docker) delivery mode.
+# Mount Hosmer Avalanche Digital Twin (Stage 3) -- server (Linux/Docker) delivery mode.
 #
 # This is the SECONDARY delivery mode. The primary one is a double-clicked, offline
-# MountHosmerDigitalTwin.exe on Windows, and that is why the database is SQLite, the
-# job runner is in-process threads rather than Celery, and migrations auto-apply at
-# startup. Nothing here changes the application's default path resolution -- the
-# container is configured entirely through environment variables, so the .exe and the
-# PowerShell route keep working untouched (invariant I2).
+# MountHosmerDigitalTwin.exe on Windows. Stage 3 has no database and no job queue, so
+# this file is small: a one-shot `bake` builds runtime/baked/, then a SLIM backend
+# serves it (no geospatial stack), and the frontend serves the one screen.
 #
-#   docker compose up --build            # first run: builds, bootstraps, serves
+#   docker compose up --build            # first run: builds, bakes, serves
 #   open http://localhost:3000
 #
 # ===========================================================================
 # THE FIRST-BOOT PROBLEM, AND HOW IT IS SOLVED
 # ===========================================================================
-# A fresh container has an empty runtime volume. /api/v1/ready therefore returns 503,
-# correctly, because the deployment genuinely cannot produce an analysis until the
-# catalog is scanned and the terrain engine has run -- 94 s of work and 412 MB of COGs.
+# A fresh container has an empty runtime volume, so /api/health reports `baked: false`.
+# The `bake` service below is a ONE-SHOT that runs `python -m app.bake` (reading the
+# ~6.5 GB LiDAR allow-list from the read-only DATA mount) and exits. The backend waits
+# for it via `service_completed_successfully`, so by the time the API serves traffic the
+# baked artifacts genuinely exist.
 #
-# The fix is the `bootstrap` service below: a ONE-SHOT container that runs the very
-# CLI commands /api/v1/ready already names in its remedy, and exits. The API waits for
-# it via `service_completed_successfully`, so by the time the API accepts traffic the
-# blockers are genuinely cleared.
+# Note the image split: `bake` uses the heavy `bake` target (rasterio/pyproj); `backend`
+# uses the slim `runtime` target with NO geospatial stack. They share the runtime volume:
+# bake writes runtime/baked/, backend reads it. That is what keeps the serving image thin.
 #
-# Rejected alternatives, and why:
-#
-#   * Auto-build inside the API on first boot. Ties a 94-second batch job to the
-#     lifespan of a web server: the API is up but useless for 94 s, every restart
-#     re-enters that path, and it would race with itself.
-#
-#   * Bake a pre-built runtime/ into the image. Ships 412 MB of derived rasters whose
-#     inputs cannot be verified against the DATA actually mounted. That directly
-#     defeats invariant I5 (cache validity is decided by a content hash of the
-#     inputs), and a stale terrain raster served as current is precisely the kind of
-#     plausible-looking wrong answer this system exists to prevent.
-#
-# Note what is NOT done: readiness is not weakened to make the container look healthy.
-# If you bring the API up without the bootstrap (`docker compose up backend`), /ready
-# still returns 503 and still names the exact command that fixes it.
-#
-# Re-running bootstrap is cheap. The content-hash cache (I5) turns the second run into
-# a cache hit, so restarts cost seconds, not 94 s.
+# Re-running is cheap: the terrain engine's content-hash cache turns a second bake into a
+# cache hit, so restarts cost seconds.
 
 name: mount-hosmer-digital-twin
 
-# ---------------------------------------------------------------------------
-# Shared backend configuration. bootstrap and backend are the SAME image running
-# different commands, so they must agree on every path and every setting.
-# ---------------------------------------------------------------------------
-x-backend-image: &backend-image
-  build:
-    context: .
-    dockerfile: Dockerfile.backend
-  image: mount-hosmer-backend:latest
-
-x-backend-env: &backend-env
-  # Source data: read-only, mounted below. Invariant I1.
-  AVALANCHE_DATA_ROOT: /data/mount_hosmer_data
-  # Everything generated. The only writable location.
-  AVALANCHE_RUNTIME_ROOT: /runtime
-  APP_ENV: ${APP_ENV:-production}
-  # Empty means "unset": settings falls back to SQLite inside the runtime volume.
-  # Set this (and use `--profile postgres`) to run against PostgreSQL instead.
-  DATABASE_URL: ${DATABASE_URL:-}
-  # The browser origin allowed to call the API. Must match where the frontend is
-  # actually served from.
-  AVALANCHE_CORS_ORIGINS: ${AVALANCHE_CORS_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000}
-  AVALANCHE_TERRAIN_RESOLUTION_M: ${AVALANCHE_TERRAIN_RESOLUTION_M:-5}
-  AVALANCHE_MAX_JOB_WORKERS: ${AVALANCHE_MAX_JOB_WORKERS:-2}
-
-x-backend-volumes: &backend-volumes
-  # ---------------------------------------------------------------------------
-  # INVARIANT I1 -- the `:ro` here is NOT optional and must never be removed.
-  # ---------------------------------------------------------------------------
-  # This is 46 GB of source data that is expensive to re-download, and part of it
-  # (the Fernie 2C21P archive) CANNOT be re-downloaded at all -- the upstream
-  # endpoint 404s. Read-only is the mechanical guarantee that a bug in a processor
-  # cannot destroy something unrecoverable.
-  - ${AVALANCHE_DATA_HOST_PATH:-../DATA/mount_hosmer_data}:/data/mount_hosmer_data:ro
-  # Everything the app generates: the 412 MB of terrain COGs, previews, the tile
-  # cache, runtime/health/data_health.json, and avalanche.db. A named volume, so it
-  # survives `docker compose down` and is shared by bootstrap and backend.
-  - avalanche-runtime:/runtime
-
 services:
   # ===========================================================================
-  # bootstrap -- one-shot. Builds what the API needs, then exits 0.
+  # bake -- one-shot. Builds runtime/baked/ from DATA\, then exits 0.
   # ===========================================================================
-  bootstrap:
-    <<: *backend-image
-    environment: *backend-env
-    volumes: *backend-volumes
-    # These are exactly the commands /api/v1/ready names in its `remedy` field.
-    #   migrate         -- create/upgrade the schema before anything can write to it.
-    #                      The API also migrates in-process at startup (the .exe user
-    #                      cannot run a migration tool), so this is explicit, not novel.
-    #   scan-data       -- catalog the source files -> clears `catalog_built`.
-    #   process-terrain -- the 5 m LiDAR terrain engine -> clears `terrain_built`.
-    #                      ~94 s cold; a cache hit on every subsequent run.
-    command:
-      - sh
-      - -c
-      - |
-        set -e
-        python -m app.cli migrate
-        python -m app.cli scan-data
-        python -m app.cli process-terrain
-        echo "bootstrap complete: catalog and terrain are built"
+  bake:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+      target: bake
+    image: mount-hosmer-bake:latest
+    environment:
+      AVALANCHE_DATA_ROOT: /data/mount_hosmer_data
+      AVALANCHE_RUNTIME_ROOT: /runtime
+    volumes:
+      # -----------------------------------------------------------------------
+      # INVARIANT I1 -- the `:ro` here is NOT optional and must never be removed.
+      # -----------------------------------------------------------------------
+      # Source data is expensive to re-download and partly irreplaceable (the Fernie
+      # 2C21P archive 404s upstream). Read-only is the mechanical guarantee the bake
+      # cannot destroy it. Only the bake mounts DATA\ at all.
+      - ${AVALANCHE_DATA_HOST_PATH:-../DATA/mount_hosmer_data}:/data/mount_hosmer_data:ro
+      - avalanche-runtime:/runtime
     restart: "no"
-    depends_on:
-      postgres:
-        condition: service_healthy
-        required: false
 
   # ===========================================================================
-  # backend -- FastAPI. Serves the API, the terrain tiles, and the job runner.
+  # backend -- FastAPI, slim (rasterio-free). Serves the baked artifacts.
   # ===========================================================================
   backend:
-    <<: *backend-image
-    environment: *backend-env
-    volumes: *backend-volumes
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+      target: runtime
+    image: mount-hosmer-backend:latest
+    environment:
+      AVALANCHE_RUNTIME_ROOT: /runtime
+      APP_ENV: ${APP_ENV:-production}
+      AVALANCHE_CORS_ORIGINS: ${AVALANCHE_CORS_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000}
+      # Optional local AI. Point at an Ollama reachable from the container; unset =
+      # assistant returns 503 and the rest of the app is unaffected.
+      AVALANCHE_OLLAMA_URL: ${AVALANCHE_OLLAMA_URL:-}
+      AVALANCHE_OLLAMA_MODEL: ${AVALANCHE_OLLAMA_MODEL:-llama3.1:8b}
+    volumes:
+      # Read-only: the serving image never writes the baked artifacts, and never needs
+      # DATA\ at all.
+      - avalanche-runtime:/runtime:ro
     ports:
       - "${BACKEND_PORT:-8000}:8000"
     depends_on:
-      bootstrap:
+      bake:
         condition: service_completed_successfully
-      postgres:
-        condition: service_healthy
-        required: false
     restart: unless-stopped
-
-    # -------------------------------------------------------------------------
-    # DO NOT RAISE THIS TO 2. Read this before you try.
-    # -------------------------------------------------------------------------
-    # The job runner is an in-process ThreadPoolExecutor and the rate limiter is an
-    # in-process per-IP counter. Both are deliberate: the primary delivery mode is an
-    # offline .exe with no broker to talk to.
-    #
-    # Two replicas would each run their own scheduler against the SAME jobs table,
-    # and each would call reset_orphans() at startup -- which marks every job
-    # currently RUNNING as orphaned, on the assumption that the only process that
-    # could have been running it has died. With a second replica that assumption is
-    # false: replica B's startup would reset the jobs replica A is actively working
-    # on. The work continues, silently, writing rasters for a job the table says was
-    # abandoned. Nothing crashes. The rate limit would also be per-replica, so the
-    # effective limit silently doubles.
-    #
-    # Compose makes `replicas: 3` look free. It is not; it would quietly corrupt the
-    # jobs table. Horizontal scaling needs the distributed runner that REDIS_URL is
-    # reserved for in core/settings.py. Until that exists, this is 1.
-    deploy:
-      replicas: 1
-      resources:
-        limits:
-          # The terrain engine holds 2400x2400 float32 arrays and the particle
-          # ensemble is memory-hungry. Below ~4 GB, process-terrain gets OOM-killed
-          # partway through -- which leaves half-written rasters behind.
-          memory: 6G
-
-    # An analysis is ~90 s and a simulation ~60 s of numerical work. The FastAPI
-    # lifespan's shutdown_runner() lets in-flight jobs drain, but only if Docker
-    # gives it time to. The default 10 s does not: it SIGKILLs the container mid-run,
-    # and a simulation killed halfway through leaves a truncated raster on disk that
-    # is indistinguishable from a complete one.
-    stop_grace_period: 150s
-
-    # Liveness. Deliberately /health and not /ready -- see the note in
-    # Dockerfile.backend. A container that has not been bootstrapped is unbuilt, not
-    # broken, and it is the one thing that can tell you so.
+    stop_grace_period: 15s
     healthcheck:
       test:
         - CMD
         - python
         - -c
-        - "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health', timeout=4).status == 200 else 1)"
+        - "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=4).status == 200 else 1)"
       interval: 30s
       timeout: 5s
-      start_period: 20s
+      start_period: 15s
       retries: 3
 
   # ===========================================================================
-  # frontend -- Next.js 16, standalone output.
+  # frontend -- Next.js, standalone output.
   # ===========================================================================
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        # Baked into the client bundle at BUILD time, not read at run time. It must
-        # be the URL the BROWSER can reach. `http://backend:8000` resolves only on
-        # this compose network, not in the user's browser -- using it produces a page
-        # that loads and a map that never appears. Change it and rebuild:
-        #   docker compose build frontend
+        # Baked into the client bundle at BUILD time. It must be the URL the BROWSER can
+        # reach -- `http://backend:8000` resolves only on this compose network, not in
+        # the user's browser. Change it and rebuild: `docker compose build frontend`.
         NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:8000}
     image: mount-hosmer-frontend:latest
     ports:
@@ -211,44 +120,5 @@ services:
       start_period: 15s
       retries: 3
 
-  # ===========================================================================
-  # postgres -- OPTIONAL. Not started unless you ask for it:
-  #
-  #   docker compose --profile postgres up
-  #
-  # and set, in .env:
-  #   DATABASE_URL=postgresql+psycopg://avalanche:avalanche@postgres:5432/avalanche
-  #
-  # Geometry is stored as GeoJSON text plus bbox columns, so the schema is byte-for-
-  # byte identical on SQLite and PostgreSQL and no PostGIS types are required. The
-  # image is postgis anyway, so spatial indexing is available if this later grows a
-  # geometry column. Migrations auto-apply at API startup; `python -m app.cli migrate`
-  # is the explicit form, and bootstrap runs it.
-  #
-  # This does NOT lift the single-replica constraint above. Postgres fixes the
-  # single-writer limit of SQLite; it does nothing about the in-process job runner.
-  # ===========================================================================
-  postgres:
-    image: postgis/postgis:17-3.5
-    profiles: ["postgres"]
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-avalanche}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-avalanche}
-      POSTGRES_DB: ${POSTGRES_DB:-avalanche}
-    volumes:
-      - avalanche-postgres:/var/lib/postgresql/data
-    ports:
-      - "${POSTGRES_PORT:-5432}:5432"
-    restart: unless-stopped
-    healthcheck:
-      # pg_isready, not a TCP probe: the port accepts connections before the database
-      # is ready to answer, and bootstrap would then fail its migration on a race.
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-avalanche} -d ${POSTGRES_DB:-avalanche}"]
-      interval: 10s
-      timeout: 5s
-      start_period: 30s
-      retries: 5
-
 volumes:
   avalanche-runtime:
-  avalanche-postgres:

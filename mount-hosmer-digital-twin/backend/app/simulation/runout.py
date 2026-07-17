@@ -19,6 +19,7 @@ regional defaults. The uncertainty envelope is wide on purpose.
 from __future__ import annotations
 
 import heapq
+import math
 from dataclasses import dataclass, field
 from typing import Any, Protocol
 
@@ -26,7 +27,7 @@ import numpy as np
 from scipy import ndimage
 
 from app.core.model_config import DISCLAIMER, ModelConfig
-from app.models.release_zones import ReleaseZone
+from app.simulation.zone import ReleaseZone
 from app.processing.harmonization.grids import AnalysisGrid
 
 try:  # pragma: no cover
@@ -39,6 +40,9 @@ except Exception:  # pragma: no cover
 GRAVITY = 9.81
 
 NEIGHBOURS = [(-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1)]
+#: Unit (cellless) distance to each neighbour -- constant, so precomputed once
+#: rather than re-evaluating ``np.hypot`` per cell in the steepest-descent trace.
+NEIGHBOUR_UNIT_DIST = tuple(float(np.hypot(dr, dc)) for dr, dc in NEIGHBOURS)
 
 RELEASE_SIZES = ("small", "medium", "large", "very_large")
 
@@ -131,7 +135,12 @@ def _friction_field(
 
 
 def _polygonize(mask: np.ndarray, grid: AnalysisGrid) -> dict[str, Any] | None:
-    if rasterio is None or not mask.any():
+    # Skip when rasterio is unavailable, when the mask is empty, or when the grid
+    # cannot supply a rasterio transform (the Stage 3 baked grid deliberately has
+    # none -- geometry there is built by app.geo from the returned masks instead,
+    # with no rasterio at all). A real AnalysisGrid has .transform, so the legacy
+    # path is unchanged.
+    if rasterio is None or getattr(grid, "transform", None) is None or not mask.any():
         return None
     # Close small holes so the runout reads as one body of snow, not lace.
     cleaned = ndimage.binary_closing(mask, structure=np.ones((3, 3), dtype=bool))
@@ -152,7 +161,7 @@ def _polygonize(mask: np.ndarray, grid: AnalysisGrid) -> dict[str, Any] | None:
 
 
 def _line_to_geojson(path: list[tuple[int, int]], grid: AnalysisGrid) -> dict[str, Any] | None:
-    if rasterio is None or len(path) < 2:
+    if rasterio is None or getattr(grid, "transform", None) is None or len(path) < 2:
         return None
     transform = grid.transform
     coordinates = []
@@ -178,12 +187,12 @@ def _steepest_path(
     for _ in range(max_steps):
         best = None
         best_drop = 0.0
-        for drow, dcol in NEIGHBOURS:
+        for i in range(8):
+            drow, dcol = NEIGHBOURS[i]
             r, c = row + drow, col + dcol
             if not (0 <= r < rows and 0 <= c < cols) or not valid[r, c] or not reached[r, c]:
                 continue
-            distance = np.hypot(drow, dcol)
-            drop = (elevation[row, col] - elevation[r, c]) / distance
+            drop = (elevation[row, col] - elevation[r, c]) / NEIGHBOUR_UNIT_DIST[i]
             if drop > best_drop:
                 best_drop = drop
                 best = (r, c)
@@ -240,6 +249,12 @@ class FastRunoutEngine:
 
         start_row, start_col, start_z = _start_point(zone, elevation)
         cell = grid.resolution_m
+        # Distance to each of the 8 neighbours is fixed; evaluate it once instead of
+        # calling np.hypot per neighbour for every one of the ~500k cells popped.
+        neighbour_dist = [float(np.hypot(drow * cell, dcol * cell)) for drow, dcol in NEIGHBOURS]
+        # Flux-spreading exponent depends only on `spreading`, so it is constant
+        # across the whole routing pass -- lift it out of the per-cell loop.
+        exponent = 1.0 + 8.0 * (1.0 - np.clip(spreading, 0.0, 1.0))
 
         # The envelope uses a *shallower* alpha, i.e. an avalanche that runs
         # further than the central estimate. That is the direction that matters
@@ -273,19 +288,17 @@ class FastRunoutEngine:
 
         finalized = np.zeros((rows, cols), dtype=bool)
 
-        def reach_angle(row: int, col: int) -> float:
-            horizontal = np.hypot((row - start_row) * cell, (col - start_col) * cell)
-            if horizontal < 1e-6:
-                return 90.0
-            return float(np.degrees(np.arctan((start_z - z[row, col]) / horizontal)))
-
         while heap:
             _, row, col = heapq.heappop(heap)
             if finalized[row, col]:
                 continue
             finalized[row, col] = True
 
-            horizontal = np.hypot((row - start_row) * cell, (col - start_col) * cell)
+            # Horizontal distance from the start point. Used both to cap the path
+            # length and (with the drop) to measure the angle of reach, so it is
+            # computed once with the scalar math module -- numpy scalar ufuncs cost
+            # ~10x more, and this runs for every one of ~500k popped cells.
+            horizontal = math.hypot((row - start_row) * cell, (col - start_col) * cell)
             if horizontal > max_length:
                 continue
 
@@ -300,7 +313,11 @@ class FastRunoutEngine:
                     depleted += 1
                 continue
 
-            angle = reach_angle(row, col)
+            # The angle of reach from the top of the start zone to this cell.
+            if horizontal < 1e-6:
+                angle = 90.0
+            else:
+                angle = math.degrees(math.atan((start_z - z[row, col]) / horizontal))
             in_core = angle >= alpha
             in_envelope = angle >= alpha_far
 
@@ -318,13 +335,14 @@ class FastRunoutEngine:
             # slope. `spreading` controls how readily flow leaves the fall line:
             # 0 gives a single-thread path, 1 spreads it evenly across every
             # downhill neighbour.
+            zrc = z[row, col]
             drops: list[tuple[int, int, float]] = []
-            for drow, dcol in NEIGHBOURS:
+            for i in range(8):
+                drow, dcol = NEIGHBOURS[i]
                 r, c = row + drow, col + dcol
                 if not (0 <= r < rows and 0 <= c < cols) or not valid[r, c]:
                     continue
-                distance = np.hypot(drow * cell, dcol * cell)
-                drop = (z[row, col] - z[r, c]) / distance
+                drop = (zrc - z[r, c]) / neighbour_dist[i]
                 if drop > 0:
                     drops.append((r, c, drop))
 
@@ -334,12 +352,15 @@ class FastRunoutEngine:
                     stopped.append((row, col, current_flux))
                 continue
 
-            exponent = 1.0 + 8.0 * (1.0 - np.clip(spreading, 0.0, 1.0))
-            weights = np.array([drop**exponent for _, _, drop in drops], dtype="float64")
-            weights /= weights.sum()
-
+            # Slope-weighted split of this cell's flux to its lower neighbours. Kept
+            # in pure Python (the arrays are <=8 long, so numpy's per-call overhead
+            # dominated); the arithmetic order matches the old vectorized form.
+            weights = [drop**exponent for _, _, drop in drops]
+            total_weight = 0.0
+            for weight in weights:
+                total_weight += weight
             for (r, c, _), weight in zip(drops, weights):
-                flux[r, c] += current_flux * float(weight)
+                flux[r, c] += current_flux * float(weight / total_weight)
                 if not finalized[r, c]:
                     heapq.heappush(heap, (-z[r, c], r, c))
 

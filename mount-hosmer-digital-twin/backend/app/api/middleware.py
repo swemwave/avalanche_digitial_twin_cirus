@@ -31,8 +31,17 @@ logger = logging.getLogger("avalanche.api")
 CORRELATION_HEADER = "X-Correlation-ID"
 
 #: A request body larger than this is refused before it is read. Every endpoint
-#: here takes a small JSON object; nothing legitimately uploads.
+#: takes a small JSON object -- EXCEPT the assistant endpoints below.
 MAX_BODY_BYTES = 256 * 1024
+
+#: The one legitimate exception. ``/api/assistant/explain`` and ``/api/assistant/chat``
+#: receive a whole assessment result (the release-zone and runout GeoJSON the client
+#: already holds) so the model can summarize it -- ~1 MB for a big storm, ~1.4 MB in
+#: advanced mode. The 256 KB cap would 413 every non-trivial assessment, so these
+#: paths get a larger ceiling. The geometry is never forwarded to the model; it is
+#: digested server-side in app.assistant._summarize.
+MAX_ASSISTANT_BODY_BYTES = 4 * 1024 * 1024
+_ASSISTANT_PREFIX = "/api/assistant/"
 
 #: Expensive routes, and how many calls per window. A simulation is a minute of
 #: numerical work, so this is deliberately tight.
@@ -77,16 +86,21 @@ class BodySizeLimitMiddleware(BaseHTTPMiddleware):
         declared = request.headers.get("content-length")
         if declared is not None:
             try:
-                if int(declared) > MAX_BODY_BYTES:
-                    return envelope(
-                        request,
-                        413,
-                        "request_too_large",
-                        f"The request body exceeds {MAX_BODY_BYTES // 1024} KB. Every endpoint here "
-                        f"takes a small JSON object.",
-                    )
+                declared_bytes = int(declared)
             except ValueError:
                 return envelope(request, 400, "invalid_request", "Content-Length is not a number.")
+            limit = (
+                MAX_ASSISTANT_BODY_BYTES
+                if request.url.path.startswith(_ASSISTANT_PREFIX)
+                else MAX_BODY_BYTES
+            )
+            if declared_bytes > limit:
+                return envelope(
+                    request,
+                    413,
+                    "request_too_large",
+                    f"The request body exceeds {limit // 1024} KB.",
+                )
         return await call_next(request)
 
 

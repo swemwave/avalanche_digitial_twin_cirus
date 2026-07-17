@@ -316,7 +316,8 @@ def elevation_bands(
     """Avalanche Canada elevation bands: 1 below treeline, 2 treeline, 3 alpine.
 
     The thresholds are configuration, not physics -- treeline varies by aspect and
-    by range -- so they live in susceptibility_weights.yaml.
+    by range -- so they live in avalanche_model.yaml (terrain.below_treeline_max_m,
+    terrain.treeline_max_m) and are passed in.
     """
     elevation = np.asarray(dem.filled(0.0))
     band = np.ones(elevation.shape, dtype="float32")

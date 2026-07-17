@@ -1,18 +1,13 @@
+# Stage 3 RUNTIME dependencies.
+#
+# The running service reads only the baked artifacts under runtime/baked/ (numpy
+# .npy layers + static PNG tiles). It touches no source data and no geospatial
+# library. Everything geospatial is bake-time only -- see requirements-bake.txt.
 fastapi>=0.121
 uvicorn[standard]>=0.38
-rasterio>=1.5
-numpy>=2.2
-pandas>=2.2
-pyarrow>=18.0
-shapely>=2.1
-pyproj>=3.7
-geopandas>=1.0
-scipy>=1.14
-pillow>=12.0
-matplotlib>=3.9
-laspy[lazrs]>=2.5
 pydantic>=2.10
-pyyaml>=6.0
-sqlalchemy>=2.0,<3.0
-pytest>=8.3
+numpy>=2.2
+scipy>=1.14
+shapely>=2.1
 httpx>=0.28
+pytest>=8.3

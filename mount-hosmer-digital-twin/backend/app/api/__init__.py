@@ -1,5 +1,5 @@
-"""The versioned HTTP API. The legacy ``/api/*`` routes live in ``app.main``."""
+"""The Stage 3 HTTP API: errors, middleware, and the one router in ``stage3``."""
 
-from app.api import errors, middleware, schemas, v1
+from app.api import errors, middleware, stage3
 
-__all__ = ["errors", "middleware", "schemas", "v1"]
+__all__ = ["errors", "middleware", "stage3"]

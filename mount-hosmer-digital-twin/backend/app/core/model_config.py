@@ -12,8 +12,6 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
-import yaml
-
 from app.core.settings import Settings
 
 CONFIG_FILENAME = "avalanche_model.yaml"
@@ -99,6 +97,11 @@ def config_path(settings: Settings) -> Path:
 
 @lru_cache(maxsize=4)
 def _load(path_str: str, mtime: float) -> ModelConfig:
+    # yaml is a bake-time dependency only: the Stage 3 runtime builds ModelConfig
+    # from an embedded dict (see app.assess), never from a YAML file. Importing it
+    # lazily keeps pyyaml out of the runtime dependency set.
+    import yaml
+
     path = Path(path_str)
     raw = path.read_bytes()
     data = yaml.safe_load(raw.decode("utf-8"))

@@ -1,5 +1,10 @@
 # Data Pipeline
 
+> ⚠️ **Superseded (pre-Stage-3).** Stage 3 replaced this multi-stage processing pipeline
+> (scan-data → terrain/events/dynamic → susceptibility) with a single one-time bake
+> (`python -m app.bake`). See [`architecture.md`](architecture.md) §4 and
+> [`../../docs/data-footprint.md`](../../docs/data-footprint.md). Kept for history only.
+
 ## Milestone 1 Discovery
 
 1. Read configured `MOUNT_HOSMER_DATA_ROOT`.

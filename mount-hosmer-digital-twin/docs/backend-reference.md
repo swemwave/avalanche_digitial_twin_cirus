@@ -1,5 +1,9 @@
 # Backend Reference
 
+> ⚠️ **Superseded (pre-Stage-3).** This describes the old services/jobs/models backend that Stage 3
+> deleted. For the current backend see [`architecture.md`](architecture.md) §3 and
+> [`../../CLAUDE.md`](../../CLAUDE.md). Kept for history only.
+
 A module-by-module map of `backend\app\`. Use this to answer **"where do I make this change?"**
 
 Architecture and rationale: [`architecture.md`](architecture.md).

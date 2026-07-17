@@ -1,0 +1,10 @@
+# Stage 3 BAKE-TIME dependencies (`python -m app.bake`), on top of requirements.txt.
+#
+# These read the ~6.5 GB LiDAR/landcover allow-list once and write runtime/baked/.
+# The running service never imports them, so they are not installed in the runtime
+# image -- that is what takes the service's rasterio/pyproj/GDAL dependency to zero.
+-r requirements.txt
+rasterio>=1.5
+pyproj>=3.7
+pillow>=12.0
+pyyaml>=6.0

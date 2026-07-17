@@ -1,5 +1,10 @@
 # Susceptibility Model
 
+> ⚠️ **Superseded (pre-Stage-3).** The dynamic/combined susceptibility model this describes was **removed**
+> in Stage 3 (it depended on weather/snow/satellite ingestion, all cut). The current risk model is the
+> simplified, slider-driven release estimate in `backend/app/risk.py`; see [`limitations.md`](limitations.md).
+> Kept for history only.
+
 The susceptibility module is an explainable rules-based research prototype. It is not a validated avalanche forecast, avalanche detector, or supervised machine-learning classifier.
 
 All outputs must display this disclaimer:

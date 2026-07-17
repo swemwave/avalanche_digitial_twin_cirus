@@ -1,5 +1,9 @@
 # Data Dictionary
 
+> ⚠️ **Superseded (pre-Stage-3).** Field definitions here (catalog records, event summaries, dynamic
+> conditions, susceptibility) describe the removed pipeline. For the current shapes see
+> `frontend/src/lib/twin.ts` and `backend/app/assess.py`. Kept for history only.
+
 ## Catalog Record
 
 - `id`: stable catalog ID derived from relative source path

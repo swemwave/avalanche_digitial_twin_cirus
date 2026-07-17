@@ -23,9 +23,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from app.core.model_config import ModelConfigError
-from app.core.provenance import ProvenanceError
 from app.core.settings import ConfigurationError
-from app.jobs.runner import JobsDisabledError
 
 logger = logging.getLogger("avalanche.api")
 
@@ -108,10 +106,6 @@ def install(app: FastAPI) -> None:
             {"errors": errors},
         )
 
-    @app.exception_handler(JobsDisabledError)
-    async def _jobs_disabled(request: Request, exc: JobsDisabledError) -> JSONResponse:
-        return envelope(request, 503, "jobs_disabled", str(exc))
-
     @app.exception_handler(FileNotFoundError)
     async def _missing(request: Request, exc: FileNotFoundError) -> JSONResponse:
         # Not a server fault: the thing has not been produced yet.
@@ -126,10 +120,6 @@ def install(app: FastAPI) -> None:
         # The services raise ValueError for "you asked for something that makes no
         # sense", e.g. an unknown release size or a scenario without inputs.
         return envelope(request, 400, "invalid_request", str(exc))
-
-    @app.exception_handler(ProvenanceError)
-    async def _provenance(request: Request, exc: ProvenanceError) -> JSONResponse:
-        return envelope(request, 500, "provenance_error", str(exc))
 
     @app.exception_handler(ModelConfigError)
     async def _model_config(request: Request, exc: ModelConfigError) -> JSONResponse:

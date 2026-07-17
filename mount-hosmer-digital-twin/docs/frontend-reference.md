@@ -1,5 +1,9 @@
 # Frontend Reference
 
+> ⚠️ **Superseded (pre-Stage-3).** This describes the old 5-tab frontend. Stage 3 is one screen:
+> `Stage3App` / `Stage3Map` / `ConditionPanel` / `ResultCard` / `AssistantPanel` + `lib/twin.ts`. See
+> [`architecture.md`](architecture.md) §7. Kept for history only.
+
 A map of `frontend\src\`. Use this to answer **"which component do I change?"**
 
 ---
