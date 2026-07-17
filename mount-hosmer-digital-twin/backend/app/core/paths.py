@@ -95,5 +95,4 @@ def analyses_dir(settings: Settings) -> Path:
 
 
 def simulations_dir(settings: Settings) -> Path:
-    root = settings.simulation_root or (settings.runtime_root / "simulations")
-    return Path(root)
+    return settings.runtime_root / "simulations"

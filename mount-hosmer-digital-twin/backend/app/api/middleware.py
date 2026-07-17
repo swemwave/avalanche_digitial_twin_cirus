@@ -1,15 +1,16 @@
-"""Correlation ids, structured logging, request-size limits, and rate limiting.
+"""Correlation ids, structured logging, and a request-size limit.
 
-The rate limiter is in-process and per-IP, which is exactly right for what this is:
-a single-process research prototype that ships as a double-clicked `.exe`. It is not
-protecting against a distributed attacker; it is protecting the machine from itself.
-One simulation is a 60-second, 2400x2400-cell numerical run, so a handful of
-impatient clicks on "Simulate" can queue enough work to bury the box. The limiter
-makes that fail fast and legibly instead of slowly and mysteriously.
+Two small pieces of plumbing wrap every request:
 
-If this ever runs behind more than one process, the limiter must move to Redis --
-`REDIS_URL` is reserved in settings for exactly that. Until then, saying "per-IP,
-in-process" out loud is more honest than implying a guarantee we do not have.
+* a correlation id, logged with the method/path/status/duration, and handed back
+  on the response so a user reporting "it broke" gives one string that finds the
+  exact request in the log; and
+* a body-size ceiling, so a runaway upload is refused before it is read.
+
+That is the whole middleware stack. Stage 3 is a single-process, single-user tool
+that ships as a double-clicked `.exe`; there is no rate limiter because there is no
+multi-tenant surface to protect, and the one expensive route (`POST /api/assess`)
+does its work synchronously inside the request.
 """
 
 from __future__ import annotations
@@ -17,11 +18,9 @@ from __future__ import annotations
 import logging
 import time
 import uuid
-from collections import defaultdict, deque
 from typing import Callable
 
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.api.errors import envelope
@@ -42,14 +41,6 @@ MAX_BODY_BYTES = 256 * 1024
 #: digested server-side in app.assistant._summarize.
 MAX_ASSISTANT_BODY_BYTES = 4 * 1024 * 1024
 _ASSISTANT_PREFIX = "/api/assistant/"
-
-#: Expensive routes, and how many calls per window. A simulation is a minute of
-#: numerical work, so this is deliberately tight.
-RATE_LIMITS: dict[str, tuple[int, float]] = {
-    "POST /api/v1/simulations": (5, 60.0),
-    "POST /api/v1/analysis": (10, 60.0),
-    "POST /api/v1/data/catalog/rescan": (2, 300.0),
-}
 
 
 class CorrelationMiddleware(BaseHTTPMiddleware):
@@ -104,62 +95,9 @@ class BodySizeLimitMiddleware(BaseHTTPMiddleware):
         return await call_next(request)
 
 
-#: The live limiter, so tests can clear its window. The app is a module-level
-#: singleton, so without this one test's POSTs would rate-limit the next one's.
-_limiter: "RateLimitMiddleware | None" = None
-
-
-def reset_rate_limits() -> None:
-    if _limiter is not None:
-        _limiter._hits.clear()
-
-
-class RateLimitMiddleware(BaseHTTPMiddleware):
-    """A sliding window per (client, route). In-process; see the module docstring."""
-
-    def __init__(self, app) -> None:
-        super().__init__(app)
-        self._hits: dict[tuple[str, str], deque[float]] = defaultdict(deque)
-        global _limiter
-        _limiter = self
-
-    async def dispatch(self, request: Request, call_next: Callable):
-        route = f"{request.method} {request.url.path}"
-        limit = RATE_LIMITS.get(route)
-        if limit is None:
-            return await call_next(request)
-
-        allowed, window = limit
-        client = request.client.host if request.client else "unknown"
-        key = (client, route)
-        now = time.monotonic()
-
-        hits = self._hits[key]
-        while hits and now - hits[0] > window:
-            hits.popleft()
-
-        if len(hits) >= allowed:
-            retry_after = max(1, int(window - (now - hits[0])))
-            response: JSONResponse = envelope(
-                request,
-                429,
-                "rate_limited",
-                f"Too many calls to {route}. This route runs a numerical simulation and is "
-                f"limited to {allowed} per {window:.0f} s. Poll the job you already started "
-                f"instead of starting another.",
-                {"retry_after_seconds": retry_after, "limit": allowed, "window_seconds": window},
-            )
-            response.headers["Retry-After"] = str(retry_after)
-            return response
-
-        hits.append(now)
-        return await call_next(request)
-
-
 def install(app: FastAPI) -> None:
     # Starlette runs middleware in reverse registration order, so the correlation
-    # id must be added last to be outermost -- otherwise a rate-limited or
-    # oversized request is rejected before it has an id to report.
-    app.add_middleware(RateLimitMiddleware)
+    # id must be added last to be outermost -- otherwise an oversized request is
+    # rejected before it has an id to report.
     app.add_middleware(BodySizeLimitMiddleware)
     app.add_middleware(CorrelationMiddleware)

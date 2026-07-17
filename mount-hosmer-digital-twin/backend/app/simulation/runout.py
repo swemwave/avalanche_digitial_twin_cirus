@@ -28,14 +28,6 @@ from scipy import ndimage
 
 from app.core.model_config import DISCLAIMER, ModelConfig
 from app.simulation.zone import ReleaseZone
-from app.processing.harmonization.grids import AnalysisGrid
-
-try:  # pragma: no cover
-    import rasterio
-    from rasterio import features
-    from rasterio.warp import transform_geom
-except Exception:  # pragma: no cover
-    rasterio = None  # type: ignore[assignment]
 
 GRAVITY = 9.81
 
@@ -45,6 +37,19 @@ NEIGHBOURS = [(-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -
 NEIGHBOUR_UNIT_DIST = tuple(float(np.hypot(dr, dc)) for dr, dc in NEIGHBOURS)
 
 RELEASE_SIZES = ("small", "medium", "large", "very_large")
+
+
+class Grid(Protocol):
+    """The minimal grid the runout engines read: cell size and shape.
+
+    Stage 3 passes the baked grid here. All GeoJSON is built downstream by
+    ``app.geo`` (shapely) from the numpy masks the engines return, so the engines
+    themselves never touch a CRS or an affine transform -- and this module needs no
+    rasterio/pyproj at all.
+    """
+
+    resolution_m: float
+    shape: tuple[int, int]
 
 
 @dataclass
@@ -79,7 +84,7 @@ class RunoutEngine(Protocol):
         self,
         *,
         zone: ReleaseZone,
-        grid: AnalysisGrid,
+        grid: Grid,
         elevation: np.ma.MaskedArray,
         slope: np.ma.MaskedArray,
         forest_mask: np.ma.MaskedArray,
@@ -134,45 +139,6 @@ def _friction_field(
     return mu, xi
 
 
-def _polygonize(mask: np.ndarray, grid: AnalysisGrid) -> dict[str, Any] | None:
-    # Skip when rasterio is unavailable, when the mask is empty, or when the grid
-    # cannot supply a rasterio transform (the Stage 3 baked grid deliberately has
-    # none -- geometry there is built by app.geo from the returned masks instead,
-    # with no rasterio at all). A real AnalysisGrid has .transform, so the legacy
-    # path is unchanged.
-    if rasterio is None or getattr(grid, "transform", None) is None or not mask.any():
-        return None
-    # Close small holes so the runout reads as one body of snow, not lace.
-    cleaned = ndimage.binary_closing(mask, structure=np.ones((3, 3), dtype=bool))
-    shapes = [
-        shape
-        for shape, value in features.shapes(
-            cleaned.astype("uint8"), mask=cleaned, transform=grid.transform, connectivity=8
-        )
-        if value == 1
-    ]
-    if not shapes:
-        return None
-    if len(shapes) == 1:
-        geometry = shapes[0]
-    else:
-        geometry = {"type": "MultiPolygon", "coordinates": [shape["coordinates"] for shape in shapes]}
-    return transform_geom(grid.crs, "EPSG:4326", geometry, precision=6)
-
-
-def _line_to_geojson(path: list[tuple[int, int]], grid: AnalysisGrid) -> dict[str, Any] | None:
-    if rasterio is None or getattr(grid, "transform", None) is None or len(path) < 2:
-        return None
-    transform = grid.transform
-    coordinates = []
-    for row, col in path:
-        x, y = transform * (col + 0.5, row + 0.5)
-        coordinates.append([x, y])
-    return transform_geom(
-        grid.crs, "EPSG:4326", {"type": "LineString", "coordinates": coordinates}, precision=6
-    )
-
-
 def _steepest_path(
     start: tuple[int, int],
     elevation: np.ndarray,
@@ -222,7 +188,7 @@ class FastRunoutEngine:
         self,
         *,
         zone: ReleaseZone,
-        grid: AnalysisGrid,
+        grid: Grid,
         elevation: np.ma.MaskedArray,
         slope: np.ma.MaskedArray,
         forest_mask: np.ma.MaskedArray,
@@ -374,7 +340,6 @@ class FastRunoutEngine:
         area = float(reached.sum()) * cell**2
         envelope_area = float(envelope.sum()) * cell**2
 
-        main_path = _steepest_path((start_row, start_col), z, valid, reached)
         stopped.sort(key=lambda item: item[2], reverse=True)
 
         metadata = {
@@ -431,9 +396,6 @@ class FastRunoutEngine:
             intensity=intensity.astype("float32"),
             velocity=np.zeros((rows, cols), dtype="float32"),
             uncertainty=envelope,
-            runout_polygon=_polygonize(reached, grid),
-            uncertainty_polygon=_polygonize(envelope, grid),
-            main_path=_line_to_geojson(main_path, grid),
             stopping_points=[
                 {
                     "row": int(row),
@@ -474,7 +436,7 @@ class ParticleRunoutEngine:
         self,
         *,
         zone: ReleaseZone,
-        grid: AnalysisGrid,
+        grid: Grid,
         elevation: np.ma.MaskedArray,
         slope: np.ma.MaskedArray,
         forest_mask: np.ma.MaskedArray,
@@ -578,7 +540,6 @@ class ParticleRunoutEngine:
         visits = np.zeros((rows, cols), dtype="float32")
         max_velocity = np.zeros((rows, cols), dtype="float32")
         stopping: list[tuple[int, int, float]] = []
-        tracks: list[list[tuple[int, int]]] = [[] for _ in range(min(count, 12))]
         spent_on_energy_line = 0
         left_the_aoi = 0
         # The angle of reach each particle finally achieved, measured from its own
@@ -614,10 +575,6 @@ class ParticleRunoutEngine:
             visits[r, c] += 1.0
             current = np.hypot(velocity[active, 0], velocity[active, 1])
             np.maximum.at(max_velocity, (r, c), current.astype("float32"))
-
-            for index, track_index in enumerate(active[: len(tracks)]):
-                if index < len(tracks):
-                    tracks[index].append((int(rows_i[track_index]), int(cols_i[track_index])))
 
             gx = dz_dx[r, c]
             gy = dz_dy[r, c]
@@ -899,12 +856,6 @@ class ParticleRunoutEngine:
                 f"zone is a lower bound."
             )
 
-        alternates = [
-            path
-            for path in (_line_to_geojson(track, grid) for track in tracks[1:6] if len(track) > 5)
-            if path is not None
-        ]
-
         return RunoutResult(
             zone_id=zone.zone_id,
             mode=self.name,
@@ -912,10 +863,6 @@ class ParticleRunoutEngine:
             intensity=intensity.astype("float32"),
             velocity=max_velocity,
             uncertainty=reached,
-            runout_polygon=_polygonize(core, grid),
-            uncertainty_polygon=_polygonize(reached, grid),
-            main_path=_line_to_geojson(tracks[0], grid) if tracks and tracks[0] else None,
-            alternate_paths=alternates,
             stopping_points=[
                 {
                     "row": int(row),
