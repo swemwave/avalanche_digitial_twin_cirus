@@ -51,6 +51,8 @@ def test_twin_meta_omits_reproject_and_carries_disclaimer(client: TestClient):
     assert "reproject" not in meta
     assert meta["disclaimer"]
     assert meta["tiles"]["url_template"] == "/api/twin/tiles/{z}/{x}/{y}.png"
+    assert meta["imagery"]["url_template"] == "/api/twin/imagery/{z}/{x}/{y}.png"
+    assert meta["imagery"]["visual_context_only"] is True
 
 
 def test_assess_returns_hazard_and_is_not_operational(client: TestClient):
@@ -75,6 +77,7 @@ def test_tile_outside_aoi_is_404(client: TestClient):
     # The synthetic bake writes no tiles; MapLibre treats a 404 as an empty tile.
     response = client.get("/api/twin/tiles/13/0/0.png")
     assert response.status_code == 404
+    assert client.get("/api/twin/imagery/13/0/0.png").status_code == 404
 
 
 def test_chat_scenario_runs_the_real_model(client: TestClient, monkeypatch: pytest.MonkeyPatch):

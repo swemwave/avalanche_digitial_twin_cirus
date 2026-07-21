@@ -19,14 +19,14 @@ once, offline, in the bake** — so the running service is a thin, dependency-li
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
 │  DATA\mount_hosmer_data\     ⛔ READ-ONLY. Bake-time input ONLY.       │
-│  ~6.5 GB LiDAR DEM/DSM · land cover · terrain fallback · metadata      │
+│  ~6.5 GB LiDAR · land cover · fallback · fixed Sentinel-2 RGB scene   │
 └───────────────────────────────┬──────────────────────────────────────┘
                                 │  python -m app.bake  (ONCE, offline)
                                 │  rasterio + pyproj live HERE and nowhere else
                                 ▼
 ┌──────────────────────────────────────────────────────────────────────┐
 │  runtime\baked\              🤖 GENERATED — the entire served surface  │
-│  tiles\{z}\{x}\{y}.png  ·  layers\*.npy (7)  ·  meta.json (+ lattice)  │
+│  tiles\... terrain RGB · imagery\... natural colour · layers · meta   │
 └───────────────────────────────┬──────────────────────────────────────┘
                                 │  loaded with plain numpy — NO rasterio, NO DATA\
                                 ▼
@@ -61,7 +61,8 @@ Fernie `2C21P` archive returns HTTP 404 and cannot be re-downloaded. Only `bake.
 allow-list in [`../../docs/data-footprint.md`](../../docs/data-footprint.md). Everything generated goes
 under `runtime\`, which is always safe to delete and rebuild.
 
-**Conditions are sliders, not feeds.** Stage 3 does no weather/snow/satellite ingestion. The user supplies
+**Conditions are sliders, not feeds.** Stage 3 does no weather/snow or dynamic satellite ingestion. One
+fixed Sentinel-2 capture is baked as visual context only and never enters the model. The user supplies
 new snow, wind speed, wind direction, and release size; the model turns terrain capability × that loading
 into a release estimate. This is what let the old `models/`/`jobs/`/`storage/`/`processing/weather/` stack
 (and ~35 endpoints across five tabs) collapse to a few hundred lines.
@@ -111,9 +112,10 @@ DATA\ (allow-list)  ──►  python -m app.bake  ──►  runtime\baked\  �
 2. runs the tested 5 m terrain engine, which **mosaics the LiDAR DEM/DSM to ~99.9 % AOI coverage**
    (Copernicus GLO-30 as gap-fill only), derives slope/aspect/curvature/forest, and renders terrain-RGB
    tiles,
-3. writes 7 `.npy` layers (elevation, slope, aspect, plan_curvature, general_curvature, forest_mask,
+3. renders a fixed winter Sentinel-2 capture into natural-colour tiles for visual context only,
+4. writes 7 `.npy` layers (elevation, slope, aspect, plan_curvature, general_curvature, forest_mask,
    distance_to_ridge) as float32 with NaN in masked cells,
-4. writes `meta.json` including a **21×21 grid→WGS84 control lattice** computed with pyproj — the runtime
+5. writes `meta.json` including a **21×21 grid→WGS84 control lattice** computed with pyproj — the runtime
    interpolates that lattice (scipy) instead of importing pyproj, accurate to <1 cm over the AOI.
 
 At runtime, `/assess` does the whole thing synchronously: `risk.compute_release` → `risk.extract_release_zones`
@@ -159,7 +161,7 @@ the bake's reads of `DATA\`.
 ## 7. Frontend
 
 Next.js (App Router) + React + MapLibre GL. One screen: `Stage3App` holds the state and composes
-`Stage3Map` (the 3D LiDAR mesh draped with baked tiles, plus release-zone / runout overlays),
+`Stage3Map` (the 3D LiDAR mesh with hillshade/natural-surface views, plus release-zone / runout overlays),
 `ConditionPanel` (sliders + presets), `ResultCard` (hazard index + zones + disclaimer), and
 `AssistantPanel` (the Ollama AI). There is no router, no global state library, no server-side fetching.
 
@@ -175,6 +177,7 @@ UI breaks silently at runtime (types are compile-time only).
 runtime\
 ├── baked\            THE SERVED SURFACE (built by python -m app.bake)
 │   ├── tiles\{z}\{x}\{y}.png   terrain-RGB tiles, z8–15
+│   ├── imagery\{z}\{x}\{y}.png winter Sentinel-2 natural-colour tiles, z8–15
 │   ├── layers\*.npy            7 terrain layers (float32, NaN = masked)
 │   └── meta.json               grid/AOI/tiles + the grid→WGS84 lattice
 ├── cache\            SHA-256 input signatures written by the bake's terrain engine

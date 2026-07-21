@@ -84,6 +84,18 @@ def write_synthetic_baked(runtime_root: Path, *, n: int = 120, res: float = 5.0)
         "aoi_corners_wgs84": [[LON0, LAT_TOP], [LON1, LAT_TOP], [LON1, LAT_BOTTOM], [LON0, LAT_BOTTOM]],
         "center_wgs84": [(LON0 + LON1) / 2, (LAT_BOTTOM + LAT_TOP) / 2],
         "tiles": {"path": "tiles/{z}/{x}/{y}.png", "tile_size": 256, "min_zoom": 8, "max_zoom": 15, "encoding": "mapbox", "count": 0},
+        "imagery": {
+            "path": "imagery/{z}/{x}/{y}.png",
+            "tile_size": 256,
+            "min_zoom": 8,
+            "max_zoom": 15,
+            "count": 0,
+            "kind": "Sentinel-2 L2A natural colour",
+            "captured_at_utc": "2026-01-15T18:46:29+00:00",
+            "cloud_percent": 6.5,
+            "source_resolution_m": 10,
+            "visual_context_only": True,
+        },
         "layers": [{"name": name, "file": f"layers/{name}.npy"} for name in layers],
         "terrain": {"lidar_fraction": 1.0, "valid_fraction": 1.0, "effective_source_resolution_m": 1.0},
         "reproject": {

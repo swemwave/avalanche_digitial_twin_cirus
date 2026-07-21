@@ -2,9 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { Map as MapLibreMap } from "maplibre-gl";
-import { tileUrlTemplate, type AssessResult, type TwinMeta } from "@/lib/twin";
+import { imageryTileUrlTemplate, tileUrlTemplate, type AssessResult, type TwinMeta } from "@/lib/twin";
 
 export type CameraPreset = "overview" | "north" | "south" | "top";
+export type SurfaceView = "natural" | "hillshade";
 
 const CAMERAS: Record<CameraPreset, { pitch: number; bearing: number; zoom: number }> = {
   overview: { pitch: 62, bearing: -25, zoom: 11.6 },
@@ -28,10 +29,11 @@ type Props = {
   result: AssessResult | null;
   exaggeration: number;
   camera: CameraPreset;
+  surface: SurfaceView;
   onZoneClick?: (zoneId: string) => void;
 };
 
-export function Stage3Map({ meta, result, exaggeration, camera, onZoneClick }: Props) {
+export function Stage3Map({ meta, result, exaggeration, camera, surface, onZoneClick }: Props) {
   const container = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const [ready, setReady] = useState(false);
@@ -70,13 +72,41 @@ export function Stage3Map({ meta, result, exaggeration, camera, onZoneClick }: P
                 maxzoom: meta.tiles.max_zoom,
                 encoding: "mapbox",
               },
+              ...(meta.imagery
+                ? {
+                    imagery: {
+                      type: "raster" as const,
+                      tiles: [imageryTileUrlTemplate()],
+                      tileSize: meta.imagery.tile_size,
+                      minzoom: meta.imagery.min_zoom,
+                      maxzoom: meta.imagery.max_zoom,
+                      bounds: meta.aoi_bbox_wgs84,
+                    },
+                  }
+                : {}),
             },
             layers: [
               { id: "sky", type: "background", paint: { "background-color": "#0b0f10" } },
+              ...(meta.imagery
+                ? [
+                    {
+                      id: "natural-surface" as const,
+                      type: "raster" as const,
+                      source: "imagery",
+                      layout: {
+                        visibility: (surface === "natural" ? "visible" : "none") as
+                          | "visible"
+                          | "none",
+                      },
+                      paint: { "raster-opacity": 1, "raster-fade-duration": 0 },
+                    },
+                  ]
+                : []),
               {
                 id: "hillshade",
                 type: "hillshade",
                 source: "terrain",
+                layout: { visibility: surface === "hillshade" ? "visible" : "none" },
                 paint: {
                   "hillshade-shadow-color": "#0a0e0f",
                   "hillshade-highlight-color": "#dfe8e0",
@@ -180,6 +210,16 @@ export function Stage3Map({ meta, result, exaggeration, camera, onZoneClick }: P
     if (!map || !ready) return;
     map.setTerrain({ source: "terrain", exaggeration });
   }, [exaggeration, ready]);
+
+  // --- Visible surface -------------------------------------------------------
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !ready) return;
+    if (map.getLayer("natural-surface")) {
+      map.setLayoutProperty("natural-surface", "visibility", surface === "natural" ? "visible" : "none");
+    }
+    map.setLayoutProperty("hillshade", "visibility", surface === "hillshade" ? "visible" : "none");
+  }, [surface, ready]);
 
   // --- Camera -----------------------------------------------------------------
   useEffect(() => {

@@ -16,7 +16,7 @@ from pydantic import BaseModel, Field
 from app import assess as assess_mod
 from app import risk
 from app.assistant import AssistantError, chat as assistant_chat, explain as assistant_explain
-from app.baked import BakeNotFoundError, load_baked, tile_path
+from app.baked import BakeNotFoundError, imagery_tile_path, load_baked, tile_path
 from app.core.settings import get_settings
 
 router = APIRouter(prefix="/api", tags=["stage3"])
@@ -43,6 +43,9 @@ def twin_meta() -> dict[str, Any]:
     meta = {key: value for key, value in bt.meta.items() if key != "reproject"}
     meta["tiles"] = dict(meta.get("tiles", {}))
     meta["tiles"]["url_template"] = "/api/twin/tiles/{z}/{x}/{y}.png"
+    if "imagery" in meta:
+        meta["imagery"] = dict(meta["imagery"])
+        meta["imagery"]["url_template"] = "/api/twin/imagery/{z}/{x}/{y}.png"
     return meta
 
 
@@ -54,6 +57,17 @@ def twin_tile(z: int, x: int, y: int) -> FileResponse:
         # Tiles outside the 12x12 km AOI legitimately do not exist. MapLibre treats
         # a 404 as an empty tile, which is exactly right.
         raise HTTPException(status_code=404, detail="No tile here.")
+    return FileResponse(
+        path, media_type="image/png", headers={"Cache-Control": "public, max-age=86400"}
+    )
+
+
+@router.get("/twin/imagery/{z}/{x}/{y}.png")
+def twin_imagery_tile(z: int, x: int, y: int) -> FileResponse:
+    """A static baked Sentinel-2 natural-colour tile. No source-data access."""
+    path = imagery_tile_path(get_settings(), z, x, y)
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="No imagery tile here.")
     return FileResponse(
         path, media_type="image/png", headers={"Cache-Control": "public, max-age=86400"}
     )

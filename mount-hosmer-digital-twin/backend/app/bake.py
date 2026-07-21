@@ -14,16 +14,17 @@ Inputs -- the allow-list from ``docs/data-footprint.md`` and *nothing else*:
     static/lidar_bc/.../*.tif             1 m BC LiDAR DEM + DSM tiles
     static/terrain_fallback/*.tif         Copernicus GLO-30 gap-fill
     static/landcover/*.tif                ESA WorldCover forest mask
+    events/MH_20260116T183016Z/sentinel2/*_{B02,B03,B04}_*.tif
+                                            fixed winter true-colour context
 
-Every ``.laz`` point cloud, every ``events/`` scene and every ``dynamic/`` file is
-off-limits and is never opened. The bulk of that reading is done by the existing,
-tested terrain engine (``app.processing.terrain.engine.compute``), whose source
-list -- see ``engine.source_paths`` and ``terrain.mosaic`` -- is exactly the
-allow-list above.
+Every ``.laz`` point cloud, every dynamic file, and every event except the one
+fixed Sentinel-2 scene named below is off-limits. The optical scene is used only
+to bake a visual true-colour surface; no satellite value enters the risk model.
 
 Outputs -- all under ``runtime/baked/`` (invariant I1: never ``DATA\``):
 
     runtime/baked/tiles/{z}/{x}/{y}.png   terrain-RGB tiles for the 3D MapLibre mesh
+    runtime/baked/imagery/{z}/{x}/{y}.png true-colour Sentinel-2 surface tiles
     runtime/baked/layers/*.npy            slope, aspect, curvature, elevation, forest_mask, ...
     runtime/baked/meta.json               grid/AOI/tile metadata + a grid->WGS84 lattice
     runtime/baked/elevation.tif           bake-only COG the tiles are rendered from
@@ -90,6 +91,13 @@ MAX_ZOOM = 15
 #: over a 12 km AOI a 21x21 lattice (600 m node spacing) is accurate to well under
 #: a centimetre -- far below anything that matters for a research visualisation.
 LATTICE_NODES = 21
+
+# A fixed winter capture gives the natural surface a useful snow/forest view while
+# keeping the runtime deterministic and completely offline. These are Sentinel-2
+# L2A surface-reflectance bands at 10 m: blue, green, red become RGB in that order.
+SATELLITE_EVENT_ID = "MH_20260116T183016Z"
+SATELLITE_CAPTURED_AT = "2026-01-15T18:46:29.024000+00:00"
+SATELLITE_CLOUD_PERCENT = 6.523087
 
 
 def baked_root(settings: Settings) -> Path:
@@ -187,6 +195,104 @@ def _bake_tiles(elevation_cog: Path, out_dir: Path, grid: AnalysisGrid) -> int:
     return written
 
 
+def _sentinel_rgb_sources(settings: Settings) -> tuple[Path, Path, Path]:
+    """Return red, green and blue rasters for the fixed baked winter scene."""
+    scene = settings.data_root / "events" / SATELLITE_EVENT_ID / "sentinel2"
+    paths: list[Path] = []
+    for band in ("B04", "B03", "B02"):
+        matches = sorted(scene.glob(f"*_{band}_EPSG26911_10m.tif"))
+        if len(matches) != 1:
+            raise FileNotFoundError(
+                f"Expected one Sentinel-2 {band} raster in {scene}, found {len(matches)}."
+            )
+        paths.append(matches[0])
+    return paths[0], paths[1], paths[2]
+
+
+def _imagery_stretch(sources: tuple[Path, Path, Path]) -> list[tuple[float, float]]:
+    """Find robust per-band display limits without letting a few bright pixels dominate."""
+    import rasterio
+
+    limits: list[tuple[float, float]] = []
+    for source in sources:
+        with rasterio.open(source) as dataset:
+            sample = dataset.read(
+                1,
+                out_shape=(max(1, dataset.height // 8), max(1, dataset.width // 8)),
+                masked=True,
+            )
+        values = sample.compressed()
+        if not values.size:
+            raise ValueError(f"Sentinel-2 band has no valid pixels: {source}")
+        low, high = np.percentile(values, (2.0, 98.0))
+        limits.append((float(low), float(high)))
+    return limits
+
+
+def _bake_imagery_tiles(
+    sources: tuple[Path, Path, Path], out_dir: Path, grid: AnalysisGrid
+) -> tuple[int, list[tuple[float, float]]]:
+    """Bake a natural-colour RGBA tile pyramid for draping over the 3D mesh."""
+    import io
+
+    import rasterio
+    from PIL import Image
+    from rasterio.enums import Resampling
+    from rasterio.transform import from_bounds as transform_from_bounds
+    from rasterio.warp import reproject
+
+    from app.services.tiles import TILE_SIZE, WEB_MERCATOR, tile_bounds
+
+    stretch = _imagery_stretch(sources)
+    merc = _mercator_bounds(grid)
+    written = 0
+
+    with rasterio.open(sources[0]) as red, rasterio.open(sources[1]) as green, rasterio.open(
+        sources[2]
+    ) as blue:
+        datasets = (red, green, blue)
+        for z in range(MIN_ZOOM, MAX_ZOOM + 1):
+            xs, ys = _tile_range(z, merc)
+            for x in xs:
+                for y in ys:
+                    left, bottom, right, top = tile_bounds(z, x, y)
+                    warped = np.full((3, TILE_SIZE, TILE_SIZE), np.nan, dtype="float32")
+                    for index, dataset in enumerate(datasets):
+                        reproject(
+                            source=rasterio.band(dataset, 1),
+                            destination=warped[index],
+                            src_transform=dataset.transform,
+                            src_crs=dataset.crs,
+                            src_nodata=dataset.nodata,
+                            dst_transform=transform_from_bounds(
+                                left, bottom, right, top, TILE_SIZE, TILE_SIZE
+                            ),
+                            dst_crs=WEB_MERCATOR,
+                            dst_nodata=np.nan,
+                            resampling=Resampling.bilinear,
+                        )
+
+                    valid = np.all(np.isfinite(warped), axis=0)
+                    if not np.any(valid):
+                        continue
+                    rgba = np.zeros((TILE_SIZE, TILE_SIZE, 4), dtype="uint8")
+                    for index, (low, high) in enumerate(stretch):
+                        normalized = np.clip((warped[index] - low) / (high - low), 0.0, 1.0)
+                        # A light display gamma opens dark forest detail while snow stays white.
+                        rgba[..., index] = np.nan_to_num(normalized ** (1.0 / 1.15) * 255).astype(
+                            "uint8"
+                        )
+                    rgba[..., 3] = valid.astype("uint8") * 255
+
+                    buffer = io.BytesIO()
+                    Image.fromarray(rgba, mode="RGBA").save(buffer, format="PNG", optimize=True)
+                    path = out_dir / str(z) / str(x) / f"{y}.png"
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                    path.write_bytes(buffer.getvalue())
+                    written += 1
+    return written, stretch
+
+
 # --- Grid -> WGS84 reprojection lattice ---------------------------------------
 
 
@@ -276,11 +382,20 @@ def bake(settings: Settings | None = None, *, force: bool = False) -> dict[str, 
     tile_count = _bake_tiles(elevation_cog, tiles_dir, grid)
     print(f"[bake] wrote {tile_count} tiles")
 
-    # 3. The .npy terrain layers the runtime loads with plain numpy.
+    # 3. Fixed true-colour surface imagery. It is visual context only and never
+    #    enters the risk model.
+    print(f"[bake] rendering winter Sentinel-2 RGB tiles z{MIN_ZOOM}-z{MAX_ZOOM}...")
+    imagery_sources = _sentinel_rgb_sources(settings)
+    imagery_count, imagery_stretch = _bake_imagery_tiles(
+        imagery_sources, out / "imagery", grid
+    )
+    print(f"[bake] wrote {imagery_count} imagery tiles")
+
+    # 4. The .npy terrain layers the runtime loads with plain numpy.
     print(f"[bake] saving {len(BAKED_LAYERS)} layers to layers/*.npy...")
     layer_records = _save_layers(products, out / "layers")
 
-    # 4. Metadata: everything the runtime and the map need, plus the reprojection
+    # 5. Metadata: everything the runtime and the map need, plus the reprojection
     #    lattice that replaces pyproj at runtime.
     print("[bake] building grid->WGS84 lattice and writing meta.json...")
     bbox = _bounds_wgs84(grid)
@@ -316,6 +431,23 @@ def bake(settings: Settings | None = None, *, force: bool = False) -> dict[str, 
             "max_zoom": MAX_ZOOM,
             "encoding": "mapbox",
             "count": tile_count,
+        },
+        "imagery": {
+            "path": "imagery/{z}/{x}/{y}.png",
+            "tile_size": 256,
+            "min_zoom": MIN_ZOOM,
+            "max_zoom": MAX_ZOOM,
+            "count": imagery_count,
+            "kind": "Sentinel-2 L2A natural colour",
+            "event_id": SATELLITE_EVENT_ID,
+            "captured_at_utc": SATELLITE_CAPTURED_AT,
+            "cloud_percent": SATELLITE_CLOUD_PERCENT,
+            "source_resolution_m": 10,
+            "display_stretch_2_98": [
+                {"band": band, "low": round(low, 3), "high": round(high, 3)}
+                for band, (low, high) in zip(("red", "green", "blue"), imagery_stretch)
+            ],
+            "visual_context_only": True,
         },
         "layers": layer_records,
         "terrain": {

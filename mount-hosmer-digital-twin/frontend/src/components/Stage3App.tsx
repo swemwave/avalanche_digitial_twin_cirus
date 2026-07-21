@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { AssistantPanel } from "@/components/AssistantPanel";
 import { ConditionPanel } from "@/components/ConditionPanel";
 import { ResultCard } from "@/components/ResultCard";
-import { Stage3Map, type CameraPreset } from "@/components/Stage3Map";
+import { Stage3Map, type CameraPreset, type SurfaceView } from "@/components/Stage3Map";
 import { getTwinMeta, postAssess, type AssessRequest, type AssessResult, type TwinMeta } from "@/lib/twin";
 
 const CAMERAS: [CameraPreset, string][] = [
@@ -12,6 +12,11 @@ const CAMERAS: [CameraPreset, string][] = [
   ["north", "North"],
   ["south", "South"],
   ["top", "Top-down"],
+];
+
+const SURFACES: [SurfaceView, string][] = [
+  ["natural", "Satellite / snow"],
+  ["hillshade", "Hillshade"],
 ];
 
 export function Stage3App() {
@@ -22,6 +27,7 @@ export function Stage3App() {
   const [selectedZone, setSelectedZone] = useState<string | null>(null);
   const [camera, setCamera] = useState<CameraPreset>("overview");
   const [exaggeration, setExaggeration] = useState(1.5);
+  const [surface, setSurface] = useState<SurfaceView>("natural");
 
   useEffect(() => {
     getTwinMeta()
@@ -43,6 +49,7 @@ export function Stage3App() {
   }, []);
 
   const lidar = meta?.terrain.lidar_fraction != null ? `${(meta.terrain.lidar_fraction * 100).toFixed(2)}%` : "—";
+  const visibleSurface: SurfaceView = meta && !meta.imagery ? "hillshade" : surface;
 
   return (
     <main className="min-h-screen bg-[var(--background)] px-5 py-6 text-[var(--foreground)] md:px-8">
@@ -75,6 +82,23 @@ export function Stage3App() {
                 Terrain view
               </h3>
               <div className="flex flex-col gap-3 text-sm">
+                <div className="grid grid-cols-2 gap-1">
+                  {SURFACES.map(([id, label]) => (
+                    <button
+                      key={id}
+                      type="button"
+                      onClick={() => setSurface(id)}
+                      disabled={id === "natural" && !meta?.imagery}
+                      className={`rounded-md px-2.5 py-1 text-xs ${
+                        visibleSurface === id
+                          ? "bg-[var(--accent)] text-[#101415]"
+                          : "border border-[var(--border)] bg-[var(--panel-strong)] text-[var(--muted)]"
+                      } disabled:cursor-not-allowed disabled:opacity-40`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
                 <div className="flex flex-wrap gap-1">
                   {CAMERAS.map(([id, label]) => (
                     <button
@@ -120,6 +144,7 @@ export function Stage3App() {
               result={result}
               exaggeration={exaggeration}
               camera={camera}
+              surface={visibleSurface}
               onZoneClick={setSelectedZone}
             />
           </div>

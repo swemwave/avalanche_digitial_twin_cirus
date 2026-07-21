@@ -3,7 +3,8 @@
 A local, offline, single-screen avalanche digital twin for **Mount Hosmer** near Fernie, BC. Stage 3
 keeps four features and nothing else:
 
-1. **3D terrain mesh** — a real 5 m BC-LiDAR mesh (~99.9 % AOI coverage) draped with terrain-RGB tiles.
+1. **3D terrain mesh** — a real 5 m BC-LiDAR mesh (~99.9 % AOI coverage), switchable between
+   analytical hillshade and a baked winter Sentinel-2 natural-colour surface.
 2. **Runout simulation** — fast (alpha-angle) and advanced (particle-ensemble) engines.
 3. **A simplified risk model** — one transparent release estimate driven by UI sliders (new snow, wind
    speed, wind direction, release size), not weather ingestion.
@@ -19,8 +20,9 @@ keeps four features and nothing else:
 ## How it works: bake → baked → serve
 
 Stage 3 has one, strictly one-directional pipeline. A **one-time offline bake** reads ~6.5 GB of LiDAR
-(and land cover / terrain fallback / metadata) from `DATA\` and writes `runtime\baked\`
-(terrain-RGB tiles + 7 `.npy` terrain layers + `meta.json`). **After that, the running service reads no
+(plus land cover, terrain fallback, metadata, and one fixed Sentinel-2 RGB capture) from `DATA\` and writes
+`runtime\baked\` (terrain-RGB mesh tiles + natural-colour surface tiles + 7 `.npy` terrain layers +
+`meta.json`). **After that, the running service reads no
 source data at all** — it loads the `.npy` layers with plain numpy and serves the static tiles, so
 `rasterio`/`pyproj` and the rest of the geospatial stack are **bake-time-only** dependencies.
 
@@ -119,6 +121,7 @@ The entire running surface (see `backend/app/api/stage3.py`):
 - `GET  /api/health`
 - `GET  /api/twin/meta` — grid/AOI/tile metadata for the map
 - `GET  /api/twin/tiles/{z}/{x}/{y}.png` — static baked terrain-RGB tiles
+- `GET  /api/twin/imagery/{z}/{x}/{y}.png` — static baked Sentinel-2 natural-colour tiles
 - `POST /api/assess` — sliders → release zones + runout + hazard, in one synchronous call
 - `POST /api/assistant/explain` — plain-language read of an assessment (Ollama)
 - `POST /api/assistant/chat` — scenario chat: parse to sliders → re-run `/assess` → narrate (Ollama)

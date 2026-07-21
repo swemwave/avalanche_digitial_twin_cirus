@@ -18,14 +18,16 @@ study, not a general-purpose GIS platform.
 
 Stage 3 keeps exactly **four things**:
 
-1. **3D terrain mesh** — a real 5 m LiDAR mesh (99.9 % AOI coverage) draped with terrain-RGB tiles.
+1. **3D terrain mesh** — a real 5 m LiDAR mesh (99.9 % AOI coverage), with hillshade and a baked
+   winter Sentinel-2 natural-colour surface.
 2. **Runout simulation** — fast (alpha-angle) and advanced (particle-ensemble) engines.
 3. **A simplified risk model** — one transparent release estimate driven by UI sliders, not weather feeds.
 4. **A local AI assistant** — Ollama (`llama3.1:8b`), fully offline; explains an assessment and runs
    what-if scenarios.
 
 Conditions (new snow, wind speed, wind direction, release size) come from **UI sliders / presets**.
-There is no weather, snow, or satellite ingestion.
+There is no weather, snow, or dynamic satellite ingestion. One fixed Sentinel-2 RGB capture is read at
+bake time as visual context only; it never enters the risk model and is never read from `DATA\` at runtime.
 
 > **Safety rule, non-negotiable.** This is **not an operational avalanche forecast**. It must never be
 > presented as one, and never described as replacing Avalanche Canada forecasts or field assessment.
@@ -84,10 +86,10 @@ Deep architecture: [`mount-hosmer-digital-twin/docs/architecture.md`](mount-hosm
 Stage 3 has exactly one, strictly one-directional pipeline:
 
 ```
-DATA\mount_hosmer_data\        (read-only: ~6.5 GB LiDAR DEM/DSM + landcover + terrain fallback + metadata)
+DATA\mount_hosmer_data\        (read-only: terrain sources + one fixed Sentinel-2 RGB capture)
         │   python -m app.bake   (ONCE, offline — the only step that touches DATA\ or rasterio/pyproj)
         ▼
-  runtime\baked\               tiles\{z}\{x}\{y}.png  +  layers\*.npy (7 layers)  +  meta.json
+  runtime\baked\               tiles\... + imagery\... + layers\*.npy (7 layers) + meta.json
         │
         ▼
   backend\app\main.py          FastAPI, a handful of routes, localhost:8000

@@ -10,7 +10,8 @@ using, and — importantly — **what may be moved off the working disk without 
 Companion to [`data-inventory.md`](data-inventory.md), which describes the full tree and the *current* app.
 This doc describes the **target** footprint once Stage 3 lands. Stage 3 keeps only: the 3D terrain model, the
 runout simulation, a simplified risk analysis, and a local (Ollama) AI. Everything that fed the five research
-tabs — satellite events, weather/snow ingestion, the Avalanche Canada panel, susceptibility — is removed.
+tabs — dynamic satellite events, weather/snow ingestion, the Avalanche Canada panel, susceptibility — is
+removed. One fixed winter Sentinel-2 RGB capture remains as bake-time-only visual context.
 
 ---
 
@@ -33,7 +34,7 @@ The 6.5 GB below is an input to `bake.py` only.
 |---|---:|---:|---|
 | `static\lidar_bc\*.laz` (point clouds) | **38.74 GB** | 171 | ❌ **Not used** — already unused today; the DEM rasters were derived from these, so the app never reads them |
 | `static\lidar_bc\*.tif` (LiDAR DEM/DSM) | **6.53 GB** | 20 | ⚠️ **Bake-time only** — source for the 5 m mesh, `.npy` terrain layers, and terrain-RGB tiles |
-| `events\` (Sentinel-2 + Landsat scenes) | 92 MB | — | ❌ **Not used** — event viewer + NDSI snow observation are cut |
+| `events\` (Sentinel-2 + Landsat scenes) | 92 MB | — | ➖ **One fixed RGB capture only** — three 10 m Sentinel-2 bands are baked as visual context; no values enter risk |
 | `dynamic\` (ECCC weather, BC snow, Avalanche Canada) | 48 MB | — | ❌ **Not used** — conditions now come from UI sliders/presets |
 | `static\terrain_fallback\` (Copernicus GLO-30) | 1.7 MB | 3 | ⚠️ **Bake-time only** — gap-fill where LiDAR has holes |
 | `static\landcover\` (ESA WorldCover 10 m) | 104 KB | 1 | ⚠️ **Bake-time only** — forest mask for risk damping |
@@ -51,8 +52,8 @@ The 6.5 GB below is an input to `bake.py` only.
 ## `bake.py` input contract
 
 `bake.py` runs **once, offline**, and reads from this **explicit allow-list and nothing else.** Every other
-path in `DATA\` (all `.laz`, all of `events\`, all of `dynamic\`) is off-limits and must never be opened by
-the bake.
+path in `DATA\` (all `.laz`, all other event rasters, all of `dynamic\`) is off-limits and must never be
+opened by the bake.
 
 **Reads (inputs):**
 
@@ -62,6 +63,9 @@ DATA\mount_hosmer_data\metadata\mount_hosmer_aoi.geojson   # AOI polygon
 DATA\mount_hosmer_data\static\lidar_bc\*.tif               # LiDAR DEM/DSM  (~6.5 GB, the bulk of bake input)
 DATA\mount_hosmer_data\static\terrain_fallback\*.tif       # Copernicus GLO-30 gap-fill
 DATA\mount_hosmer_data\static\landcover\ESA_WorldCover_2021_EPSG26911_10m.tif
+DATA\mount_hosmer_data\events\MH_20260116T183016Z\sentinel2\*_B02_EPSG26911_10m.tif  # blue
+DATA\mount_hosmer_data\events\MH_20260116T183016Z\sentinel2\*_B03_EPSG26911_10m.tif  # green
+DATA\mount_hosmer_data\events\MH_20260116T183016Z\sentinel2\*_B04_EPSG26911_10m.tif  # red
 DATA\mount_hosmer_data\static\openstreetmap\mount_hosmer_osm_features.geojson   # only if exposure is kept
 ```
 
@@ -69,6 +73,7 @@ DATA\mount_hosmer_data\static\openstreetmap\mount_hosmer_osm_features.geojson   
 
 ```
 runtime\baked\tiles\{z}\{x}\{y}.png        # terrain-RGB tiles for the 3D MapLibre mesh
+runtime\baked\imagery\{z}\{x}\{y}.png      # winter Sentinel-2 natural-colour surface
 runtime\baked\layers\*.npy                 # slope, aspect, curvature, elevation, forest_mask
 runtime\baked\meta.json                    # grid/AOI/tile metadata the app serves
 ```
@@ -84,7 +89,8 @@ running service. This is the mechanism that takes runtime's `DATA\` dependency t
 - **`static\lidar_bc\*.laz` — 38.74 GB.** The heavyweight. Not read today, not read by Stage 3. The DEM/DSM
   rasters are already derived from these; the point clouds are only needed if someone ever wants to
   re-derive a *finer-than-1 m* surface, which is out of scope.
-- **`events\` — 92 MB.** No satellite viewer, no NDSI-based snow presence.
+- **Most of `events\` — ~78 MB.** No satellite viewer or NDSI-based snow presence; only the fixed winter
+  B02/B03/B04 rasters are read to build the optional natural-colour surface.
 - **`dynamic\` — 48 MB.** No weather/snow ingestion; conditions are user-supplied.
 
 ---

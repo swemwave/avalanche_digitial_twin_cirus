@@ -63,6 +63,18 @@ export type TwinMeta = {
     encoding: string;
     count: number;
   };
+  imagery?: {
+    url_template: string;
+    tile_size: number;
+    min_zoom: number;
+    max_zoom: number;
+    count: number;
+    kind: string;
+    captured_at_utc: string;
+    cloud_percent: number;
+    source_resolution_m: number;
+    visual_context_only: true;
+  };
   terrain: {
     lidar_fraction: number | null;
     valid_fraction: number | null;
@@ -189,3 +201,4 @@ export const postChat = (
 ) => post<ChatResult>("/assistant/chat", { message, assessment, history });
 
 export const tileUrlTemplate = () => `${API_BASE_URL}/api/twin/tiles/{z}/{x}/{y}.png`;
+export const imageryTileUrlTemplate = () => `${API_BASE_URL}/api/twin/imagery/{z}/{x}/{y}.png`;

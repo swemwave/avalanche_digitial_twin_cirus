@@ -151,3 +151,8 @@ def load_baked(settings: Settings) -> BakedTerrain:
 def tile_path(settings: Settings, z: int, x: int, y: int) -> Path:
     """Filesystem path of a baked terrain-RGB tile. Static PNG; no rasterio to serve."""
     return baked_root(settings) / "tiles" / str(z) / str(x) / f"{y}.png"
+
+
+def imagery_tile_path(settings: Settings, z: int, x: int, y: int) -> Path:
+    """Filesystem path of a baked natural-colour tile. Static PNG; no source-data read."""
+    return baked_root(settings) / "imagery" / str(z) / str(x) / f"{y}.png"

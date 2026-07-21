@@ -13,11 +13,13 @@ import { test, expect } from "@playwright/test";
  */
 test("3D terrain renders and an assessment runs", async ({ page }) => {
   const tileStatuses: number[] = [];
+  const imageryStatuses: number[] = [];
   const pageErrors: string[] = [];
   const consoleErrors: string[] = [];
 
   page.on("response", (r) => {
     if (/\/api\/twin\/tiles\//.test(r.url())) tileStatuses.push(r.status());
+    if (/\/api\/twin\/imagery\//.test(r.url())) imageryStatuses.push(r.status());
   });
   page.on("pageerror", (e) => pageErrors.push(e.message));
   page.on("console", (m) => {
@@ -39,6 +41,12 @@ test("3D terrain renders and an assessment runs", async ({ page }) => {
   // The only non-200 the tile endpoint may return is a legitimate 404 (no tile there).
   expect(tileStatuses.every((s) => s === 200 || s === 404)).toBe(true);
 
+  // The default natural surface is the fixed baked Sentinel-2 winter capture.
+  await expect(page.getByRole("button", { name: "Satellite / snow" })).toBeEnabled();
+  expect(imageryStatuses.some((s) => s === 200)).toBe(true);
+  await page.getByRole("button", { name: "Hillshade" }).click();
+  await page.getByRole("button", { name: "Satellite / snow" }).click();
+
   // Run a real assessment (fast mode, default storm-slab sliders).
   const assessResponse = page.waitForResponse(
     (r) => /\/api\/assess$/.test(r.url()) && r.request().method() === "POST",
@@ -56,7 +64,7 @@ test("3D terrain renders and an assessment runs", async ({ page }) => {
   // tile that legitimately does not exist outside the AOI.
   expect(pageErrors).toEqual([]);
   const realConsoleErrors = consoleErrors.filter(
-    (t) => !/\/api\/twin\/tiles\//.test(t) && !/404/.test(t),
+    (t) => !/\/api\/twin\/(tiles|imagery)\//.test(t) && !/404/.test(t),
   );
   expect(realConsoleErrors).toEqual([]);
 });
