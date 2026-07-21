@@ -8,6 +8,7 @@ are not exercised here (they degrade to 503 by design when it is absent).
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pytest
@@ -74,6 +75,54 @@ def test_tile_outside_aoi_is_404(client: TestClient):
     # The synthetic bake writes no tiles; MapLibre treats a 404 as an empty tile.
     response = client.get("/api/twin/tiles/13/0/0.png")
     assert response.status_code == 404
+
+
+def test_chat_scenario_runs_the_real_model(client: TestClient, monkeypatch: pytest.MonkeyPatch):
+    """A scenario routes through the REAL assessment on the synthetic terrain and returns it."""
+    from app import assistant
+
+    def _fake(system, user, *, temperature=0.2, force_json=False):
+        # Router call -> scenario + sliders; narration call -> prose.
+        if force_json:
+            return json.dumps(
+                {
+                    "intent": "scenario",
+                    "new_snow_cm": 50,
+                    "wind_speed_kmh": 40,
+                    "wind_direction_deg": 225,
+                    "release_size": "medium",
+                }
+            )
+        return "The added snow raised the modelled hazard."
+
+    monkeypatch.setattr(assistant, "_ollama_chat", _fake)
+
+    response = client.post(
+        "/api/assistant/chat",
+        json={"message": "what if 50 cm of new snow and a SW wind?", "history": []},
+    )
+    assert response.status_code == 200
+    body = response.json()
+    assert body["kind"] == "scenario"
+    assert body["assessment"] is not None  # the deterministic model actually ran
+    assert body["parsed_conditions"]["new_snow_cm"] == 50
+    assert body["disclaimer"]
+
+
+def test_chat_declines_advice_via_the_route(client: TestClient, monkeypatch: pytest.MonkeyPatch):
+    """The advice refusal is reached through the HTTP route, model untouched."""
+    from app import assistant
+
+    def _no_model(*args, **kwargs):
+        raise AssertionError("the model must not be called for an advice request")
+
+    monkeypatch.setattr(assistant, "_ollama_chat", _no_model)
+
+    response = client.post("/api/assistant/chat", json={"message": "is it safe to ski RZ001?"})
+    assert response.status_code == 200
+    body = response.json()
+    assert body["kind"] == "advice"
+    assert body["assessment"] is None
 
 
 def test_body_size_limit_is_path_aware(client: TestClient, monkeypatch: pytest.MonkeyPatch):

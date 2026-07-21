@@ -27,7 +27,6 @@ from __future__ import annotations
 
 import io
 from functools import lru_cache
-import math
 from pathlib import Path
 
 import numpy as np
@@ -35,8 +34,6 @@ import rasterio
 from rasterio.enums import Resampling
 from rasterio.transform import from_bounds as transform_from_bounds
 from rasterio.warp import reproject, transform_bounds
-
-from app.core.settings import Settings
 
 TILE_SIZE = 256
 WEB_MERCATOR = "EPSG:3857"
@@ -52,20 +49,12 @@ MAX_ZOOM = 16
 MIN_ZOOM = 8
 
 
-class TileError(ValueError):
-    pass
-
-
 def tile_bounds(z: int, x: int, y: int) -> tuple[float, float, float, float]:
     """Web Mercator bounds of an XYZ tile. Y counts down from the north."""
     span = (2.0 * ORIGIN) / (2**z)
     left = -ORIGIN + x * span
     top = ORIGIN - y * span
     return left, top - span, left + span, top
-
-
-def _cache_path(settings: Settings, layer: str, z: int, x: int, y: int) -> Path:
-    return settings.runtime_root / "tiles" / layer / str(z) / str(x) / f"{y}.png"
 
 
 def _encode_terrain_rgb(elevation: np.ma.MaskedArray, floor_m: float) -> bytes:
@@ -137,43 +126,6 @@ def _read_tile(source: Path, z: int, x: int, y: int) -> np.ma.MaskedArray | None
     return np.ma.array(destination, mask=~np.isfinite(destination))
 
 
-def terrain_tile(settings: Settings, z: int, x: int, y: int) -> bytes:
-    """One Terrain-RGB tile. Cached on disk; the same tiles are re-requested on every pan."""
-    if not MIN_ZOOM <= z <= MAX_ZOOM:
-        raise TileError(
-            f"Zoom {z} is outside the range this terrain is served at ({MIN_ZOOM}-{MAX_ZOOM}). "
-            f"The AOI is 12 x 12 km; below z{MIN_ZOOM} it is a dot, and above z{MAX_ZOOM} the "
-            f"tiles ask for detail the 5 m grid does not hold."
-        )
-    limit = 2**z
-    if not (0 <= x < limit and 0 <= y < limit):
-        raise TileError(f"Tile {z}/{x}/{y} is off the world.")
-
-    cached = _cache_path(settings, "terrain-rgb", z, x, y)
-    if cached.exists():
-        return cached.read_bytes()
-
-    source = settings.runtime_root / "processed" / "terrain" / "elevation.tif"
-    if not source.exists():
-        raise FileNotFoundError(
-            "The terrain has not been built, so there is no elevation to render. "
-            "Run: python -m app.cli process-terrain"
-        )
-
-    floor = _floor_elevation(settings, source)
-
-    data = _read_tile(source, z, x, y)
-    if data is None:
-        # Outside the AOI, where we have no elevation at all. Rendered as the flat
-        # valley-level plinth, so the mountain does not appear to stand on a cliff.
-        data = np.ma.array(np.full((TILE_SIZE, TILE_SIZE), floor, dtype="float32"))
-
-    png = _encode_terrain_rgb(data, floor)
-    cached.parent.mkdir(parents=True, exist_ok=True)
-    cached.write_bytes(png)
-    return png
-
-
 @lru_cache(maxsize=4)
 def _floor_elevation_cached(source: str, mtime: float) -> float:
     with rasterio.open(source) as dataset:
@@ -183,19 +135,3 @@ def _floor_elevation_cached(source: str, mtime: float) -> float:
             1, out_shape=(dataset.height // 16, dataset.width // 16), masked=True
         )
     return float(sample.min()) if sample.count() else 0.0
-
-
-def _floor_elevation(settings: Settings, source: Path) -> float:
-    return _floor_elevation_cached(str(source), source.stat().st_mtime)
-
-
-def clear_tile_cache(settings: Settings) -> int:
-    """Drop cached tiles. The terrain COG changed, so every tile from it is stale."""
-    root = settings.runtime_root / "tiles"
-    if not root.exists():
-        return 0
-    removed = 0
-    for path in root.rglob("*.png"):
-        path.unlink()
-        removed += 1
-    return removed

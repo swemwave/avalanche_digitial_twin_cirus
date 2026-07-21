@@ -129,6 +129,7 @@ Types + fetch helpers live in `frontend/src/lib/twin.ts` — keep them in sync w
 
 ```powershell
 cd D:\school\capstone\Avalanche\mount-hosmer-digital-twin
+python -m pip install -r backend\requirements-dev.txt
 python -m pytest
 ```
 

@@ -159,10 +159,19 @@ export type AssessRequest = {
 };
 
 export type ExplainResult = { explanation: string; disclaimer: string; model: string };
+
+/** One prior turn, sent back so the assistant can follow the conversation. */
+export type ChatTurn = { role: "you" | "assistant"; text: string };
+
 export type ChatResult = {
   reply: string;
-  parsed_conditions: Conditions;
-  assessment: AssessResult;
+  /**
+   * "scenario" ran the model (and carries an assessment); "answer"/"chat" are
+   * grounded conversational replies; "advice" is a declined safety question.
+   */
+  kind: "scenario" | "answer" | "chat" | "advice";
+  parsed_conditions: Conditions | null;
+  assessment: AssessResult | null;
   disclaimer: string;
   model: string;
 };
@@ -173,7 +182,10 @@ export const getTwinMeta = () => request<TwinMeta>("/twin/meta");
 export const postAssess = (body: AssessRequest) => post<AssessResult>("/assess", body);
 export const postExplain = (assessment: AssessResult) =>
   post<ExplainResult>("/assistant/explain", { assessment });
-export const postChat = (message: string, assessment: AssessResult | null) =>
-  post<ChatResult>("/assistant/chat", { message, assessment });
+export const postChat = (
+  message: string,
+  assessment: AssessResult | null,
+  history: ChatTurn[] = [],
+) => post<ChatResult>("/assistant/chat", { message, assessment, history });
 
 export const tileUrlTemplate = () => `${API_BASE_URL}/api/twin/tiles/{z}/{x}/{y}.png`;

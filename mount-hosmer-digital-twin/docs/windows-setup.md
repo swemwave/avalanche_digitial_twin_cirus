@@ -44,6 +44,7 @@ npm run dev
 
 ```powershell
 cd D:\school\capstone\Avalanche\mount-hosmer-digital-twin
+python -m pip install -r backend\requirements-dev.txt
 python -m pytest
 ```
 

@@ -28,18 +28,16 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any
 
 from app.core.settings import Settings
 
 try:  # pragma: no cover - exercised implicitly wherever rasterio is installed
-    import rasterio
     from rasterio.coords import BoundingBox
     from rasterio.crs import CRS
     from rasterio.transform import Affine, from_origin
 except Exception:  # pragma: no cover
-    rasterio = None  # type: ignore[assignment]
+    pass
 
 #: Used only when metadata/grid_and_aoi.json is unavailable. These are the
 #: published AOI bounds for Mount Hosmer in EPSG:26911.
@@ -123,32 +121,12 @@ class AnalysisGrid:
             "bounds": [self.west, self.south, self.east, self.north],
         }
 
-    def matches(self, other: "AnalysisGrid") -> bool:
-        return (
-            self.crs_string == other.crs_string
-            and self.resolution_m == other.resolution_m
-            and self.shape == other.shape
-            and (self.west, self.north) == (other.west, other.north)
-        )
-
 
 @dataclass(frozen=True)
 class GridSet:
     terrain: AnalysisGrid
     environmental: AnalysisGrid
     fallback: AnalysisGrid
-
-    def by_name(self, name: str) -> AnalysisGrid:
-        try:
-            return {
-                "terrain": self.terrain,
-                "environmental": self.environmental,
-                "fallback": self.fallback,
-            }[name]
-        except KeyError as exc:
-            raise KeyError(
-                f"Unknown analysis grid {name!r}; expected terrain, environmental, or fallback."
-            ) from exc
 
     def describe(self) -> dict[str, Any]:
         return {
@@ -209,20 +187,3 @@ def grid_set(settings: Settings) -> GridSet:
         environmental=environmental_grid(settings),
         fallback=fallback_grid(settings),
     )
-
-
-def grid_from_path(path: Path, name: str = "source") -> AnalysisGrid:
-    """Describe an existing raster as an AnalysisGrid, for alignment checks."""
-    if rasterio is None:  # pragma: no cover
-        raise RuntimeError("rasterio is required to inspect raster grids")
-    with rasterio.open(path) as src:
-        bounds = src.bounds
-        return AnalysisGrid(
-            name=name,
-            resolution_m=float(src.res[0]),
-            west=float(bounds.left),
-            south=float(bounds.bottom),
-            east=float(bounds.right),
-            north=float(bounds.top),
-            crs_string=str(src.crs),
-        )

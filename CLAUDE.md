@@ -130,9 +130,12 @@ measurement, never default a missing value to a safe-looking number, never let a
 ### Disclaimer — non-negotiable (see §1)
 Every hazard/release number carries the `DISCLAIMER`, attached in code, on every surface.
 
-**Lineage note (bake-time cache, ex-I5).** The bake reuses the tested terrain engine, which writes
-content-hash cache sidecars under `runtime\cache\`: baked terrain is reused only when the SHA-256 of its
-sources, config, and parameters still matches. Use `python -m app.bake --force` to rebuild deliberately.
+**Lineage note (bake-time reuse, ex-I5).** `python -m app.bake` reuse is existence-only: it skips the
+rebuild if `runtime\baked\meta.json` is already there, with no hash check of sources, config, or
+parameters. Changing the DEM/config/params does **not** get auto-detected — always run
+`python -m app.bake --force` after changing anything upstream of the bake. (An earlier content-hash
+cache, keyed on a SHA-256 of sources/config, existed in `app.services.cache` but was only ever wired
+into the removed `process-terrain` CLI path; it was dead code and has been deleted rather than revived.)
 The *running service* has no processors and no cache to invalidate — it just serves the baked files.
 
 ---

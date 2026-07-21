@@ -49,10 +49,6 @@ class BakedGrid:
     def shape(self) -> tuple[int, int]:
         return (self.height, self.width)
 
-    @property
-    def pixel_count(self) -> int:
-        return self.height * self.width
-
 
 class Reprojector:
     """Maps grid pixel ``(col, row)`` -> WGS84 ``(lon, lat)`` via the baked lattice.
@@ -110,10 +106,6 @@ class BakedTerrain:
     @property
     def disclaimer(self) -> str:
         return str(self.meta.get("disclaimer", ""))
-
-    @property
-    def aoi_corners_wgs84(self) -> list[list[float]]:
-        return self.meta.get("aoi_corners_wgs84", [])
 
 
 def baked_root(settings: Settings) -> Path:

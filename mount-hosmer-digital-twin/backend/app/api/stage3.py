@@ -103,6 +103,7 @@ class ExplainRequest(BaseModel):
 class ChatRequest(BaseModel):
     message: str
     assessment: dict[str, Any] | None = None
+    history: list[dict[str, str]] | None = None
 
 
 @router.post("/assistant/explain")
@@ -119,6 +120,6 @@ def assistant_chat_route(body: ChatRequest) -> dict[str, Any]:
     """Scenario chat: parse the message to slider values, re-run /assess, narrate."""
     bt = _bt()
     try:
-        return assistant_chat(bt, body.message, body.assessment)
+        return assistant_chat(bt, body.message, body.assessment, body.history)
     except AssistantError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc

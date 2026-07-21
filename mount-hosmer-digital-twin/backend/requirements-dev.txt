@@ -1,0 +1,6 @@
+# Stage 3 DEV/TEST dependencies (`python -m pytest`), on top of requirements.txt.
+#
+# Not installed in either Docker image (bake or runtime) -- pytest never runs in
+# production, only in a developer checkout or CI.
+-r requirements.txt
+pytest>=8.3

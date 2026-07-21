@@ -3,6 +3,7 @@
 # The running service reads only the baked artifacts under runtime/baked/ (numpy
 # .npy layers + static PNG tiles). It touches no source data and no geospatial
 # library. Everything geospatial is bake-time only -- see requirements-bake.txt.
+# Test tooling is not runtime -- see requirements-dev.txt.
 fastapi>=0.121
 uvicorn[standard]>=0.38
 pydantic>=2.10
@@ -10,4 +11,3 @@ numpy>=2.2
 scipy>=1.14
 shapely>=2.1
 httpx>=0.28
-pytest>=8.3

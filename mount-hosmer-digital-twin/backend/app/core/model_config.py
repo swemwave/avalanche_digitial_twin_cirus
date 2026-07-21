@@ -58,10 +58,6 @@ class ModelConfig:
             )
         return value
 
-    def section(self, name: str) -> dict[str, Any]:
-        value = self._data.get(name, {})
-        return dict(value) if isinstance(value, dict) else {}
-
     def normalized_weights(self, dotted: str) -> dict[str, float]:
         """Weights rescaled to sum to 1, so only their ratios matter."""
         raw = self.get(dotted, {}) or {}
@@ -70,23 +66,6 @@ class ModelConfig:
         if total <= 0:
             raise ModelConfigError(f"Weights at {dotted!r} sum to {total}; they must be positive.")
         return {key: value / total for key, value in values.items()}
-
-    def to_dict(self) -> dict[str, Any]:
-        return {
-            "version": self.version,
-            "source_file": f"backend/config/{self.path.name}",
-            "sha256": self.sha256,
-            "parameters": self._data,
-        }
-
-    def provenance(self) -> dict[str, str]:
-        """Identity of this configuration, embedded in every stored analysis."""
-        return {
-            "model_version": self.version,
-            "config_sha256": self.sha256,
-            "config_file": f"backend/config/{self.path.name}",
-        }
-
 
 _MISSING = object()
 
