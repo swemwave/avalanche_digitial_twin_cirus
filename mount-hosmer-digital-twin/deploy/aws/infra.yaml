@@ -1,0 +1,493 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+# NOTE: CloudFormation caps `Description` at 1024 characters, so the explanation
+# lives here in comments (which are not part of the template body) and the
+# Description field below is kept short.
+#
+# Mount Hosmer avalanche digital twin -- three microservices on ECS Fargate behind
+# one Application Load Balancer.
+#
+# Topology
+# --------
+#     internet -> ALB (public) -> 3 Fargate tasks (public subnets)
+#                                     assistant -> Cloudflare Tunnel -> a laptop
+#                                                                       running Ollama
+#
+# Two deliberate cost decisions, both worth understanding before changing them:
+#
+# 1. PUBLIC SUBNETS, NO NAT GATEWAY. Fargate tasks need outbound internet to pull
+#    images from ECR and (for the assistant) to reach the Ollama tunnel. The usual
+#    pattern is private subnets + a NAT gateway, which costs ~$32/month on its own --
+#    more than every task here combined. Instead the tasks sit in public subnets with
+#    public IPs, and are protected by a security group that accepts inbound traffic
+#    ONLY from the load balancer. Nothing reaches a task directly from the internet.
+#
+# 2. FARGATE SPOT by default. ~70% cheaper, at the cost of occasional interruption
+#    (ECS restarts the task automatically, typically within a minute or two). Set
+#    CapacityProvider=FARGATE before a graded demo if a two-minute blip is not
+#    acceptable.
+#
+# Teardown is the whole stack:  bash deploy/aws/deploy.sh destroy
+
+Description: >
+  Mount Hosmer avalanche digital twin: assess, assistant and frontend microservices
+  on ECS Fargate behind one path-routing Application Load Balancer. The AI model
+  runs on the operator's own machine, reached through a tunnel. EXPERIMENTAL and
+  NON-OPERATIONAL research prototype -- not an avalanche forecast.
+
+# ===========================================================================
+Parameters:
+# ===========================================================================
+  AssessImage:
+    Type: String
+    Description: ECR image URI for the assess service (terrain, tiles, hazard model).
+
+  AssistantImage:
+    Type: String
+    Description: ECR image URI for the assistant service (the AI).
+
+  FrontendImage:
+    Type: String
+    Description: ECR image URI for the Next.js frontend.
+
+  OllamaUrl:
+    Type: String
+    Default: ""
+    Description: >
+      Public HTTPS URL of the Cloudflare Tunnel forwarding to Ollama on your machine.
+      Empty is valid: the assistant then returns a clean 503 and the rest of the app
+      is unaffected. Update it later without a redeploy of anything else.
+
+  CapacityProvider:
+    Type: String
+    Default: FARGATE_SPOT
+    AllowedValues: [FARGATE_SPOT, FARGATE]
+    Description: FARGATE_SPOT is ~70% cheaper but interruptible. FARGATE for demos.
+
+  DesiredCount:
+    Type: Number
+    Default: 1
+    MinValue: 0
+    MaxValue: 2
+    Description: >
+      Tasks per service. Set to 0 to park the stack: compute billing stops and only
+      the ALB (~$16/month) keeps running. This is the single biggest cost lever.
+
+# ===========================================================================
+Resources:
+# ===========================================================================
+
+  # --- Network -------------------------------------------------------------
+  Vpc:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true   # required for ECR/CloudWatch endpoint resolution
+      Tags: [{ Key: Name, Value: !Sub "${AWS::StackName}-vpc" }]
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags: [{ Key: Name, Value: !Sub "${AWS::StackName}-igw" }]
+
+  GatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref Vpc
+      InternetGatewayId: !Ref InternetGateway
+
+  # An ALB requires subnets in at least two Availability Zones.
+  SubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref Vpc
+      CidrBlock: 10.0.1.0/24
+      AvailabilityZone: !Select [0, !GetAZs ""]
+      MapPublicIpOnLaunch: true
+      Tags: [{ Key: Name, Value: !Sub "${AWS::StackName}-public-a" }]
+
+  SubnetB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref Vpc
+      CidrBlock: 10.0.2.0/24
+      AvailabilityZone: !Select [1, !GetAZs ""]
+      MapPublicIpOnLaunch: true
+      Tags: [{ Key: Name, Value: !Sub "${AWS::StackName}-public-b" }]
+
+  RouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref Vpc
+      Tags: [{ Key: Name, Value: !Sub "${AWS::StackName}-public-rt" }]
+
+  DefaultRoute:
+    Type: AWS::EC2::Route
+    DependsOn: GatewayAttachment
+    Properties:
+      RouteTableId: !Ref RouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  SubnetARouteAssoc:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties: { SubnetId: !Ref SubnetA, RouteTableId: !Ref RouteTable }
+
+  SubnetBRouteAssoc:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties: { SubnetId: !Ref SubnetB, RouteTableId: !Ref RouteTable }
+
+  # --- Security groups -----------------------------------------------------
+  AlbSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Public HTTP entry point.
+      VpcId: !Ref Vpc
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+          Description: HTTP from anywhere.
+      Tags: [{ Key: Name, Value: !Sub "${AWS::StackName}-alb-sg" }]
+
+  TaskSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      # This is what makes public subnets safe: the tasks have public IPs so they can
+      # reach ECR and the Ollama tunnel outbound, but nothing on the internet can open
+      # a connection TO them -- only the ALB's security group can.
+      GroupDescription: Fargate tasks. Inbound from the load balancer only.
+      VpcId: !Ref Vpc
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          SourceSecurityGroupId: !Ref AlbSecurityGroup
+          Description: Backend services, from the ALB only.
+        - IpProtocol: tcp
+          FromPort: 3000
+          ToPort: 3000
+          SourceSecurityGroupId: !Ref AlbSecurityGroup
+          Description: Frontend, from the ALB only.
+      Tags: [{ Key: Name, Value: !Sub "${AWS::StackName}-task-sg" }]
+
+  # --- Load balancer -------------------------------------------------------
+  LoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Type: application
+      Scheme: internet-facing
+      Subnets: [!Ref SubnetA, !Ref SubnetB]
+      SecurityGroups: [!Ref AlbSecurityGroup]
+      LoadBalancerAttributes:
+        # The ALB's default idle timeout is 60s. A `fast` assessment takes ~19s, but
+        # `advanced` (particle ensemble) is far slower and would be cut off at 60s
+        # as a 504 -- while the task keeps computing, so the logs show success and
+        # the browser shows failure. 300s matches the assistant's Ollama timeout.
+        - { Key: idle_timeout.timeout_seconds, Value: "300" }
+      Tags: [{ Key: Name, Value: !Sub "${AWS::StackName}-alb" }]
+
+  # Target group health checks hit each task directly on its own port -- they do not
+  # go through the listener rules below, so both backends can use /api/health.
+  AssessTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      VpcId: !Ref Vpc
+      Port: 8080
+      Protocol: HTTP
+      TargetType: ip                      # required for Fargate/awsvpc
+      HealthCheckPath: /api/health
+      HealthCheckIntervalSeconds: 30
+      HealthCheckTimeoutSeconds: 10
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 5
+      Matcher: { HttpCode: "200" }
+      TargetGroupAttributes:
+        # An assessment can take a while; do not cut a slow request off at the ALB.
+        - { Key: deregistration_delay.timeout_seconds, Value: "30" }
+
+  AssistantTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      VpcId: !Ref Vpc
+      Port: 8080
+      Protocol: HTTP
+      TargetType: ip
+      HealthCheckPath: /api/health
+      HealthCheckIntervalSeconds: 30
+      HealthCheckTimeoutSeconds: 10
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 5
+      Matcher: { HttpCode: "200" }
+      TargetGroupAttributes:
+        - { Key: deregistration_delay.timeout_seconds, Value: "30" }
+
+  FrontendTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      VpcId: !Ref Vpc
+      Port: 3000
+      Protocol: HTTP
+      TargetType: ip
+      HealthCheckPath: /
+      HealthCheckIntervalSeconds: 30
+      HealthCheckTimeoutSeconds: 10
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 5
+      Matcher: { HttpCode: "200" }
+
+  Listener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref LoadBalancer
+      Port: 80
+      Protocol: HTTP
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref FrontendTargetGroup
+
+  # Rule order matters and is set by Priority (lowest first). /api/assistant/* MUST
+  # be evaluated before /api/*, or every assistant call would be routed to assess.
+  AssistantRule:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      ListenerArn: !Ref Listener
+      Priority: 10
+      Conditions:
+        - Field: path-pattern
+          PathPatternConfig: { Values: ["/api/assistant/*"] }
+      Actions:
+        - Type: forward
+          TargetGroupArn: !Ref AssistantTargetGroup
+
+  AssessRule:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      ListenerArn: !Ref Listener
+      Priority: 20
+      Conditions:
+        - Field: path-pattern
+          # Covers /api/assess, /api/twin/meta, and the tile pyramid.
+          PathPatternConfig: { Values: ["/api/*"] }
+      Actions:
+        - Type: forward
+          TargetGroupArn: !Ref AssessTargetGroup
+
+  # --- ECS -----------------------------------------------------------------
+  Cluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: !Sub "${AWS::StackName}-cluster"
+      CapacityProviders: [FARGATE, FARGATE_SPOT]
+      ClusterSettings:
+        - { Name: containerInsights, Value: disabled }   # avoids CloudWatch charges
+
+  # Pulls images from ECR and writes logs. This is the only IAM role needed: the
+  # application itself calls no AWS APIs, so the tasks get no task role at all.
+  ExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: { Service: ecs-tasks.amazonaws.com }
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+
+  AssessLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/ecs/${AWS::StackName}/assess"
+      RetentionInDays: 7        # keep CloudWatch storage negligible
+
+  AssistantLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/ecs/${AWS::StackName}/assistant"
+      RetentionInDays: 7
+
+  FrontendLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/ecs/${AWS::StackName}/frontend"
+      RetentionInDays: 7
+
+  # 1 vCPU / 4 GB. MEASURED, not guessed: one assessment on the 2400x2400 (5.8M
+  # cell) grid peaks at ~1477 MB resident. At 2048 MB the container was killed
+  # mid-request with `OutOfMemoryError` (exit 137) and ECS silently restarted it,
+  # which is what an assessment "just failing" in the browser looks like.
+  #
+  # 4 GB gives ~2.5x headroom, which matters because CPython does not return freed
+  # arrays to the OS -- a container that has served one assessment stays near its
+  # peak, so the SECOND request starts high rather than from cold.
+  #
+  # 1 vCPU (up from 0.5) roughly halves the ~19 s assessment as a side effect.
+  # Together these cost about +$0.03/hour.
+  AssessTaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Sub "${AWS::StackName}-assess"
+      RequiresCompatibilities: [FARGATE]
+      NetworkMode: awsvpc
+      Cpu: "1024"
+      Memory: "4096"
+      ExecutionRoleArn: !GetAtt ExecutionRole.Arn
+      RuntimePlatform:
+        OperatingSystemFamily: LINUX
+        CpuArchitecture: X86_64          # matches the linux/amd64 images we build
+      ContainerDefinitions:
+        - Name: assess
+          Image: !Ref AssessImage
+          Essential: true
+          PortMappings: [{ ContainerPort: 8080, Protocol: tcp }]
+          Environment:
+            - { Name: PORT, Value: "8080" }
+            - { Name: AVALANCHE_RUNTIME_ROOT, Value: /runtime }
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref AssessLogGroup
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: ecs
+
+  AssistantTaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Sub "${AWS::StackName}-assistant"
+      RequiresCompatibilities: [FARGATE]
+      NetworkMode: awsvpc
+      Cpu: "256"
+      Memory: "512"
+      ExecutionRoleArn: !GetAtt ExecutionRole.Arn
+      RuntimePlatform:
+        OperatingSystemFamily: LINUX
+        CpuArchitecture: X86_64
+      ContainerDefinitions:
+        - Name: assistant
+          Image: !Ref AssistantImage
+          Essential: true
+          PortMappings: [{ ContainerPort: 8080, Protocol: tcp }]
+          Environment:
+            - { Name: PORT, Value: "8080" }
+            # Reaches assess back through the same ALB. One extra hop, but zero
+            # service-discovery configuration -- and the ALB is already paid for.
+            - { Name: AVALANCHE_ASSESS_URL, Value: !Sub "http://${LoadBalancer.DNSName}" }
+            - { Name: AVALANCHE_OLLAMA_URL, Value: !Ref OllamaUrl }
+            - { Name: AVALANCHE_OLLAMA_MODEL, Value: "llama3.1:8b" }
+            # An 8B model on a laptop, over a tunnel, is not fast.
+            - { Name: AVALANCHE_OLLAMA_TIMEOUT_S, Value: "180" }
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref AssistantLogGroup
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: ecs
+
+  FrontendTaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Sub "${AWS::StackName}-frontend"
+      RequiresCompatibilities: [FARGATE]
+      NetworkMode: awsvpc
+      Cpu: "256"
+      Memory: "512"
+      ExecutionRoleArn: !GetAtt ExecutionRole.Arn
+      RuntimePlatform:
+        OperatingSystemFamily: LINUX
+        CpuArchitecture: X86_64
+      ContainerDefinitions:
+        - Name: frontend
+          Image: !Ref FrontendImage
+          Essential: true
+          PortMappings: [{ ContainerPort: 3000, Protocol: tcp }]
+          Environment:
+            - { Name: PORT, Value: "3000" }
+            - { Name: HOSTNAME, Value: "0.0.0.0" }
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref FrontendLogGroup
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: ecs
+
+  AssessService:
+    Type: AWS::ECS::Service
+    DependsOn: [AssessRule, DefaultRoute]
+    Properties:
+      Cluster: !Ref Cluster
+      TaskDefinition: !Ref AssessTaskDefinition
+      DesiredCount: !Ref DesiredCount
+      CapacityProviderStrategy:
+        - { CapacityProvider: !Ref CapacityProvider, Weight: 1 }
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          # Public IP is what replaces the NAT gateway -- without it the task cannot
+          # reach ECR and will fail to start with an image-pull timeout.
+          AssignPublicIp: ENABLED
+          Subnets: [!Ref SubnetA, !Ref SubnetB]
+          SecurityGroups: [!Ref TaskSecurityGroup]
+      LoadBalancers:
+        - { ContainerName: assess, ContainerPort: 8080, TargetGroupArn: !Ref AssessTargetGroup }
+      # The image is ~900 MB and the layers load on boot; do not let the ALB mark it
+      # unhealthy while it is still coming up.
+      HealthCheckGracePeriodSeconds: 120
+
+  AssistantService:
+    Type: AWS::ECS::Service
+    DependsOn: [AssistantRule, DefaultRoute]
+    Properties:
+      Cluster: !Ref Cluster
+      TaskDefinition: !Ref AssistantTaskDefinition
+      DesiredCount: !Ref DesiredCount
+      CapacityProviderStrategy:
+        - { CapacityProvider: !Ref CapacityProvider, Weight: 1 }
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          Subnets: [!Ref SubnetA, !Ref SubnetB]
+          SecurityGroups: [!Ref TaskSecurityGroup]
+      LoadBalancers:
+        - { ContainerName: assistant, ContainerPort: 8080, TargetGroupArn: !Ref AssistantTargetGroup }
+      HealthCheckGracePeriodSeconds: 60
+
+  FrontendService:
+    Type: AWS::ECS::Service
+    DependsOn: [Listener, DefaultRoute]
+    Properties:
+      Cluster: !Ref Cluster
+      TaskDefinition: !Ref FrontendTaskDefinition
+      DesiredCount: !Ref DesiredCount
+      CapacityProviderStrategy:
+        - { CapacityProvider: !Ref CapacityProvider, Weight: 1 }
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          Subnets: [!Ref SubnetA, !Ref SubnetB]
+          SecurityGroups: [!Ref TaskSecurityGroup]
+      LoadBalancers:
+        - { ContainerName: frontend, ContainerPort: 3000, TargetGroupArn: !Ref FrontendTargetGroup }
+      HealthCheckGracePeriodSeconds: 60
+
+# ===========================================================================
+Outputs:
+# ===========================================================================
+  AppUrl:
+    Description: Open this. All three services are behind it, so there is no CORS.
+    Value: !Sub "http://${LoadBalancer.DNSName}"
+
+  HealthUrl:
+    Description: Assess health, including which bake the image carries.
+    Value: !Sub "http://${LoadBalancer.DNSName}/api/health"
+
+  AssistantHealthUrl:
+    Description: >
+      Assistant health -- shows whether the Ollama tunnel is configured. It lives
+      under /api/assistant/ because /api/health routes to the assess service.
+    Value: !Sub "http://${LoadBalancer.DNSName}/api/assistant/health"
+
+  ClusterName:
+    Value: !Ref Cluster

@@ -45,3 +45,6 @@ desktop.ini
 .DS_Store
 .vscode/
 .idea/
+
+# TypeScript incremental build cache
+*.tsbuildinfo

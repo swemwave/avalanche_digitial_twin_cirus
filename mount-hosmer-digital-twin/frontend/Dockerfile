@@ -36,6 +36,14 @@ WORKDIR /app
 
 ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
 ENV NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
+
+# The assistant service's public origin, when it is deployed separately. Empty
+# means "same origin as the API above", which is the single-process shape -- so a
+# local `docker compose up` needs nothing here. Same inlining caveat as above: this
+# is frozen into the bundle at build time and must be the URL the BROWSER can reach.
+ARG NEXT_PUBLIC_ASSISTANT_BASE_URL=
+ENV NEXT_PUBLIC_ASSISTANT_BASE_URL=${NEXT_PUBLIC_ASSISTANT_BASE_URL}
+
 ENV NEXT_TELEMETRY_DISABLED=1
 
 COPY --from=deps /app/node_modules ./node_modules

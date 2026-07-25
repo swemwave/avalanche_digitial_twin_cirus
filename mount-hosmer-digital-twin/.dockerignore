@@ -7,6 +7,19 @@
 # current.
 runtime/
 
+# ...with ONE scoped exception: runtime/baked/.
+#
+# Cloud Run has no named volumes, so the `assess` target copies the baked terrain
+# into the image instead. That reintroduces exactly the staleness risk the rule
+# above exists to prevent, so it is handled rather than ignored: the assess image
+# is TAGGED with the bake's `generated_at_utc`, and `/api/health` reports the same
+# value. A stale image is therefore visible in the tag and at runtime, instead of
+# being served silently as if it were current.
+#
+# Only the `assess` target copies it. `runtime` (the combined compose image) and
+# `assistant` do not, and compose still mounts the named volume as before.
+!runtime/baked/
+
 # Source data is mounted read-only at run time (invariant I1). It is a sibling of
 # this folder so it is already outside the context, but if anyone ever moves it in,
 # 46 GB should not silently become a build context.

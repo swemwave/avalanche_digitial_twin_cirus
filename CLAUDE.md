@@ -61,7 +61,14 @@ Inside the app — the Stage 3 surface is small:
 | `backend\app\assess.py` | sliders → release → zones → runout → one JSON | Changing an assessment result |
 | `backend\app\geo.py` | rasterio-free mask→GeoJSON / path→LineString (shapely) | Changing geometry output |
 | `backend\app\assistant.py` | Local Ollama: explain + scenario chat | Changing the AI |
-| `backend\app\api\stage3.py` | **Every** HTTP route (health/meta/tiles/assess/assistant) | Adding/changing an endpoint |
+| `backend\app\assess_client.py` | How the assistant reaches assess (in-process **or** HTTP) | Changing the service split |
+| `backend\app\service.py` | The shared FastAPI app factory | Changing CORS/middleware/health |
+| `backend\app\main.py` | Combined app — **all** routes in one process | Local dev, the `.exe` |
+| `backend\app\main_assess.py` / `main_assistant.py` | The two deployable services | Split deployment |
+| `backend\app\api\{terrain,assess,assistant}.py` | The routes, one module per service | Adding/changing an endpoint |
+| `backend\app\api\deps.py` | Shared route dependencies (baked terrain, assess client) | Changing wiring |
+| `backend\app\api\stage3.py` | Mounts all three routers for the combined app | Rarely |
+| `deploy\` | AWS ECS deployment (see §8) | Deploying |
 | `backend\app\cli.py` | The CLI — one command: `bake` | Adding an offline command |
 | `backend\app\core\` | Settings, path safety, model-config loader | Changing config or path resolution |
 | `backend\app\simulation\{runout,zone}.py` | Runout engines + the `ReleaseZone` value type | Changing runout |
@@ -198,6 +205,57 @@ follow-up.
 
 **Windows-only paths.** Everything is `D:\`-rooted and PowerShell-first. The correct root is
 `D:\school\capstone\Avalanche\`.
+
+---
+
+## 7b. The optional microservice split (AWS)
+
+The app runs **two ways from the same code**. Nothing below changes the single-process
+route — `python -m uvicorn app.main:app` and the `.exe` behave exactly as §5 describes.
+
+| Shape | Entrypoint(s) | Used by |
+|---|---|---|
+| **One process** | `app.main` | Local dev, the one-click `.exe`, `docker compose` |
+| **Three services** | `app.main_assess`, `app.main_assistant`, frontend | AWS ECS Fargate |
+
+```
+browser ──► ALB (one hostname, path-routed)
+              ├─ /                  ─► frontend
+              ├─ /api/assistant/*   ─► assistant ──┐
+              └─ /api/*             ─► assess   ◄──┘ (over HTTP)
+                                                 assistant ──► Cloudflare Tunnel
+                                                              ──► a laptop running Ollama
+```
+
+**The rules that keep the split honest:**
+
+- **`assess` is the only service that computes a hazard number**, so it remains the
+  only place `DISCLAIMER` is attached. The assistant never computes one — it calls
+  assess via `app.assess_client`, chosen by `AVALANCHE_ASSESS_URL` (unset =
+  in-process). Do not "optimise" this by giving the assistant its own terrain.
+- **`app\api\__init__.py` must stay import-free.** It used to import every router,
+  which silently pulled the terrain reader and runout engine into the assistant
+  image. There is a build-time assertion *and* a test pinning this.
+- **One ALB path-routing everything means one origin, so there is no CORS.** The
+  frontend builds with EMPTY `NEXT_PUBLIC_*_BASE_URL` to emit relative paths. Rule
+  order matters: `/api/assistant/*` must be evaluated before `/api/*`.
+- `/api/health` routes to assess, so the assistant also serves `/api/assistant/health`.
+- **Size the assess task for the peak, not the average.** One assessment peaks at
+  ~1477 MB on the 2400×2400 grid; at 2 GB the container was OOM-killed mid-request
+  and silently restarted, which looks like "assess just fails". It runs 1 vCPU / 4 GB.
+
+**Deploying** (needs the `avalanche` AWS profile — never the personal one):
+
+```bash
+bash deploy/session.sh up       # Ollama + tunnel + AWS, wired together (~10 min)
+bash deploy/session.sh status   # what is running, and what it costs
+bash deploy/session.sh down     # tear it all down; billing stops (~5 min)
+```
+
+`deploy\aws\infra.yaml` is the whole stack (VPC, ALB, ECS, IAM, logs) — deleting it
+deletes everything. Because `runtime\` is gitignored, the baked terrain exists only
+on the machine that ran the bake: **build the assess image locally and push it**; a
+source-based cloud build would produce an image reporting `baked: false`.
 
 ---
 

@@ -88,3 +88,56 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
 # Exec form: uvicorn is PID 1 and gets SIGTERM directly. No job queue to drain -- an
 # assessment runs and returns inside one request -- so a short grace period is fine.
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+# ===========================================================================
+# assess target -- terrain + tiles + the assessment model. The HEAVY half.
+# ===========================================================================
+# Carries the baked artifacts, and is the only service that computes a hazard
+# number (and therefore the only one that has to attach the DISCLAIMER).
+#
+# WHY THE DATA IS BAKED INTO THE IMAGE, not mounted:
+#   runtime/ is gitignored, so the baked artifacts exist only on the machine that
+#   ran the bake. Copying them in makes the image self-contained and versioned
+#   with the code that reads them -- a meta.json/reader mismatch is a whole class
+#   of bug that cannot happen if they ship together. It also means no bucket to
+#   mount, and a cold start that is just "pull the image".
+#
+# Consequence: build this where runtime/baked/ exists (i.e. locally, after
+# `python -m app.bake`) and push the image. A source-based cloud build has no
+# baked data to copy and would produce an image that reports `baked: false`.
+FROM runtime AS assess
+
+# Its own layer, and the LAST one, so editing code re-pushes a few KB rather than
+# re-pushing 188 MB of terrain.
+COPY --chown=avalanche:avalanche runtime/baked /runtime/baked
+
+# Fail the build rather than ship a hollow assess service. Without this the image
+# builds fine and only fails in production, as a 409 on every request.
+RUN python -c "import pathlib,sys; p=pathlib.Path('/runtime/baked/meta.json'); sys.exit(0) if p.exists() else sys.exit('runtime/baked/meta.json missing -- run `python -m app.bake` before building the assess target')"
+
+EXPOSE 8080
+# Cloud Run injects $PORT and ignores EXPOSE. `sh -c` with `exec` keeps uvicorn as
+# PID 1 so it still receives SIGTERM directly; the default keeps `docker run` working.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
+    CMD python -c "import os,urllib.request,sys; sys.exit(0 if urllib.request.urlopen(f\"http://127.0.0.1:{os.environ.get('PORT','8080')}/api/health\", timeout=4).status == 200 else 1)"
+CMD ["sh", "-c", "exec uvicorn app.main_assess:app --host 0.0.0.0 --port ${PORT:-8080}"]
+
+# ===========================================================================
+# assistant target -- the local AI, and nothing else. The LIGHT half.
+# ===========================================================================
+# No baked artifacts, no terrain, no hazard computation. When a scenario question
+# needs an assessment it calls the assess service (AVALANCHE_ASSESS_URL). Both
+# upstreams -- that and Ollama (AVALANCHE_OLLAMA_URL) -- degrade to a clean 503.
+#
+# This image is deliberately identical to `runtime` plus a different entrypoint:
+# the size difference between the two services is the DATA, not the code.
+FROM runtime AS assistant
+
+# Pin the split: this service must not be able to load the terrain reader or the
+# runout engine. `app/api/__init__.py` importing every router once made that false.
+RUN python -c "import sys, app.main_assistant; bad=[m for m in ('app.assess','app.simulation.runout','app.api.terrain') if m in sys.modules]; sys.exit(f'heavy modules leaked into the assistant image: {bad}') if bad else print('assistant image ok: no terrain, no runout')"
+
+EXPOSE 8080
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
+    CMD python -c "import os,urllib.request,sys; sys.exit(0 if urllib.request.urlopen(f\"http://127.0.0.1:{os.environ.get('PORT','8080')}/api/health\", timeout=4).status == 200 else 1)"
+CMD ["sh", "-c", "exec uvicorn app.main_assistant:app --host 0.0.0.0 --port ${PORT:-8080}"]

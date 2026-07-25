@@ -7,13 +7,58 @@
  * forget what it means.
  */
 
-export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "") ?? "http://localhost:8000";
+/**
+ * Resolve a configured API origin.
+ *
+ * Three shapes have to work, which is why this is a function and not a `??`:
+ *
+ * | value              | meaning                                              |
+ * |--------------------|------------------------------------------------------|
+ * | unset              | local development -- fall back to `http://localhost:8000` |
+ * | `""` or `"/"`      | **same origin** -- emit relative URLs like `/api/assess`   |
+ * | `https://host`     | that absolute origin                                 |
+ *
+ * The same-origin case is what a single load balancer path-routing to all three
+ * services gives you (the AWS/ALB shape): the browser talks to one host, so there
+ * is no cross-origin request and no CORS configuration anywhere.
+ *
+ * Empty is handled explicitly rather than leaning on `??`, because an empty
+ * `NEXT_PUBLIC_*` build arg is exactly the case bundlers disagree about -- and
+ * silently falling back to `localhost:8000` in a deployed image is a bug that only
+ * shows up in someone else's browser.
+ */
+function resolveBase(value: string | undefined, fallback: string): string {
+  if (value === undefined) return fallback;
+  const trimmed = value.trim().replace(/\/+$/, "");
+  return trimmed; // "" => relative, i.e. same origin
+}
+
+/**
+ * Terrain, tiles and `/assess` -- the assess service.
+ *
+ * Like every `NEXT_PUBLIC_*` value this is INLINED at build time, not read at run
+ * time -- changing it means rebuilding the frontend image, not restarting it.
+ */
+export const API_BASE_URL = resolveBase(
+  process.env.NEXT_PUBLIC_API_BASE_URL,
+  "http://localhost:8000",
+);
+
+/**
+ * The assistant service. Unset falls back to the assess origin, so the
+ * single-process shape (local dev, the one-click .exe, `docker compose up`) needs
+ * no configuration and behaves exactly as it did before.
+ */
+export const ASSISTANT_BASE_URL = resolveBase(
+  process.env.NEXT_PUBLIC_ASSISTANT_BASE_URL,
+  API_BASE_URL,
+);
 
 const API = `${API_BASE_URL}/api`;
+const ASSISTANT_API = `${ASSISTANT_BASE_URL}/api`;
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${API}${path}`, {
+async function request<T>(path: string, init?: RequestInit, base: string = API): Promise<T> {
+  const response = await fetch(`${base}${path}`, {
     cache: "no-store",
     headers: { "Content-Type": "application/json" },
     ...init,
@@ -40,8 +85,8 @@ export class TwinApiError extends Error {
   }
 }
 
-const post = <T>(path: string, body: unknown) =>
-  request<T>(path, { method: "POST", body: JSON.stringify(body) });
+const post = <T>(path: string, body: unknown, base: string = API) =>
+  request<T>(path, { method: "POST", body: JSON.stringify(body) }, base);
 
 // --- Types -------------------------------------------------------------------
 
@@ -192,13 +237,14 @@ export type ChatResult = {
 
 export const getTwinMeta = () => request<TwinMeta>("/twin/meta");
 export const postAssess = (body: AssessRequest) => post<AssessResult>("/assess", body);
+// The two assistant calls are the only ones that go to the assistant service.
 export const postExplain = (assessment: AssessResult) =>
-  post<ExplainResult>("/assistant/explain", { assessment });
+  post<ExplainResult>("/assistant/explain", { assessment }, ASSISTANT_API);
 export const postChat = (
   message: string,
   assessment: AssessResult | null,
   history: ChatTurn[] = [],
-) => post<ChatResult>("/assistant/chat", { message, assessment, history });
+) => post<ChatResult>("/assistant/chat", { message, assessment, history }, ASSISTANT_API);
 
 export const tileUrlTemplate = () => `${API_BASE_URL}/api/twin/tiles/{z}/{x}/{y}.png`;
 export const imageryTileUrlTemplate = () => `${API_BASE_URL}/api/twin/imagery/{z}/{x}/{y}.png`;

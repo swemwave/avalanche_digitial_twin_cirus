@@ -32,9 +32,8 @@ import os
 import re
 from typing import Any
 
-from app.baked import BakedTerrain
+from app.assess_client import AssessClient
 from app.core.model_config import DISCLAIMER
-from app import assess as assess_mod
 from app import risk
 
 OLLAMA_URL = os.environ.get("AVALANCHE_OLLAMA_URL", "http://localhost:11434").rstrip("/")
@@ -372,7 +371,7 @@ def _envelope(
 
 
 def chat(
-    bt: BakedTerrain,
+    assess: AssessClient,
     message: str,
     assessment: dict[str, Any] | None,
     history: list[dict[str, str]] | None = None,
@@ -396,8 +395,10 @@ def chat(
         return _envelope(_ADVICE_REPLY, "advice")
 
     if intent == "scenario":
-        # Run the REAL assessment on the parsed conditions. The model does not compute this.
-        result = assess_mod.assess(bt, conditions, simulation_mode="fast")
+        # Run the REAL assessment on the parsed conditions. The model does not compute
+        # this -- and `assess` may be in-process or a call to the assess service; the
+        # assistant deliberately cannot tell which, so neither path can drift.
+        result = assess(conditions, simulation_mode="fast")
         summary = _summarize(result)
         narrate_prompt = (
             f'The user asked: "{message}"\n\n'
