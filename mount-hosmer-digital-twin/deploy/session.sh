@@ -105,15 +105,28 @@ cmd_down() {
 }
 
 app_url() {
-  aws --profile "${PROFILE:-avalanche}" --region "${REGION:-ca-west-1}" \
-    cloudformation describe-stacks --stack-name "${STACK:-mount-hosmer-twin}" \
-    --query "Stacks[0].Outputs[?OutputKey=='AppUrl'].OutputValue" --output text 2>/dev/null
+  # Ask for the STATUS as well as the URL. `describe-stacks` will happily return a
+  # DELETE_COMPLETE stack along with its old outputs, so querying the URL alone
+  # reports a torn-down stack as live -- which is exactly the wrong direction for
+  # something whose job is to tell you whether you are still being billed.
+  local out status url
+  out=$(aws --profile "${PROFILE:-avalanche}" --region "${REGION:-ca-west-1}" \
+        cloudformation describe-stacks --stack-name "${STACK:-mount-hosmer-twin}" \
+        --query "Stacks[0].[StackStatus,Outputs[?OutputKey=='AppUrl']|[0].OutputValue]" \
+        --output text 2>/dev/null) || return 0
+  status=$(echo "$out" | awk '{print $1}')
+  url=$(echo "$out" | awk '{print $2}')
+  case "$status" in
+    CREATE_COMPLETE|UPDATE_COMPLETE|UPDATE_ROLLBACK_COMPLETE) echo "$url" ;;
+    *) return 0 ;;   # DELETE_*, ROLLBACK_COMPLETE, *_IN_PROGRESS: not usable
+  esac
 }
 
 cmd_status() {
   local url; url=$(app_url)
   if [[ -z "$url" ]]; then
-    echo "AWS:    not deployed  (costing $0/hour)"
+    # \$0 escaped: inside double quotes a bare $0 expands to the script name.
+    echo "AWS:    not deployed  (costing \$0/hour)"
   else
     echo "AWS:    $url"
     echo "        ~\$0.09/hour while this exists -- run 'down' when finished"
