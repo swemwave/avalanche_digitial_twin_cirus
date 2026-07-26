@@ -1,36 +1,216 @@
 @import "tailwindcss";
 @import "maplibre-gl/dist/maplibre-gl.css";
 
+/* ===========================================================================
+   Mount Hosmer — visual language
+   ---------------------------------------------------------------------------
+   The subject is a terrain instrument for a mountain in the Canadian Rockies,
+   so the palette is taken from the subject rather than from a UI kit:
+
+     field   = alpine snow in shadow, which is genuinely deep BLUE, not neutral
+               black. Every surface is a step up that blue ramp.
+     signal  = the warm amber of a backlit field instrument / beacon LED. Warm
+               against a cold field is the whole contrast idea; it is the only
+               accent, and it is spent sparingly on live and interactive things.
+     hazard  = never hardcoded here. The backend owns the hazard scale and sends
+               `risk_color`; the UI renders whatever it is told.
+   =========================================================================== */
+
 :root {
-  --background: #101415;
-  --foreground: #eef3ee;
-  --muted: #aab7af;
-  --panel: #171d1e;
-  --panel-strong: #202829;
-  --border: #334044;
-  --accent: #8fbc8f;
-  --accent-2: #d6a75b;
-  --danger: #e16d5a;
+  /* --- field: deep blue-black, five steps ------------------------------- */
+  --field: #070d15;        /* page */
+  --field-1: #0d1621;      /* panel */
+  --field-2: #15212f;      /* raised control */
+  --field-3: #1c2b3c;      /* hover / pressed */
+
+  /* --- rules ------------------------------------------------------------ */
+  --rule: #1e2c3b;         /* hairline, barely there */
+  --rule-lit: #31465c;     /* an edge that should be noticed */
+
+  /* --- text ------------------------------------------------------------- */
+  --paper: #e6edf5;        /* primary — cold white, never pure #fff */
+  --paper-dim: #8ba1b8;    /* secondary — blue-grey, never neutral grey */
+  --paper-faint: #5d7186;  /* tertiary: units, footnotes, disabled */
+
+  /* --- signal: the one accent ------------------------------------------- */
+  --signal: #ffb454;
+  --signal-deep: #c98329;
+  --signal-wash: rgba(255, 180, 84, 0.12);
+
+  --alert: #e3624b;
+
+  /* --- type roles (self-hosted via @fontsource, see layout.tsx) ---------- */
+  --font-display: "Archivo Variable", "Archivo", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, "SF Mono", monospace;
 }
 
 html,
 body {
   margin: 0;
   min-height: 100%;
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--field);
+  color: var(--paper);
 }
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body);
+  /* Slightly open tracking at small sizes keeps dense technical UI legible. */
+  letter-spacing: 0.01em;
+  -webkit-font-smoothing: antialiased;
 }
 
 button,
 input,
-select {
+select,
+textarea {
   font: inherit;
+  letter-spacing: inherit;
+}
+
+/* Every number in this app is an instrument reading, so it is set in mono and
+   given tabular figures — values stop jittering as they change. */
+.data {
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+
+/* A small structural label. Not decorative: it marks a region of the
+   instrument, so it is quiet, wide-tracked and never coloured. */
+.region-label {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--paper-faint);
+}
+
+/* --- focus: visible, on-brand, keyboard only ---------------------------- */
+:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+::selection {
+  background: var(--signal);
+  color: var(--field);
+}
+
+/* --- range inputs -------------------------------------------------------
+   Browser-default sliders are the loudest "nobody styled this" tell in the
+   whole interface, and this app is mostly sliders. Rebuilt as a thin machined
+   track with a square amber handle. */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 18px;
+  background: transparent;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 2px;
+  background: var(--rule-lit);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  margin-top: -5px;
+  background: var(--signal);
+  border: none;
+  border-radius: 1px;
+  box-shadow: 0 0 0 3px var(--field-1);
+  transition: transform 120ms ease;
+}
+
+input[type="range"]:hover::-webkit-slider-thumb,
+input[type="range"]:focus-visible::-webkit-slider-thumb {
+  transform: scale(1.15);
+}
+
+input[type="range"]::-moz-range-track {
+  height: 2px;
+  background: var(--rule-lit);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  background: var(--signal);
+  border: none;
+  border-radius: 1px;
+  box-shadow: 0 0 0 3px var(--field-1);
+}
+
+input[type="range"]:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* --- scrollbars: thin, in-palette, not OS-default ---------------------- */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--rule-lit) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--rule-lit);
+  border-radius: 3px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--paper-faint);
+}
+
+/* --- native select arrow ------------------------------------------------ */
+select {
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--paper-dim) 50%),
+    linear-gradient(135deg, var(--paper-dim) 50%, transparent 50%);
+  background-position: right 12px center, right 7px center;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
 }
 
 .maplibregl-map {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body);
+}
+
+/* MapLibre's own controls ship light-themed; pull them into the field. */
+.maplibregl-ctrl-attrib {
+  background: rgba(7, 13, 21, 0.8) !important;
+  color: var(--paper-faint) !important;
+  font-size: 10px !important;
+}
+
+.maplibregl-ctrl-attrib a {
+  color: var(--paper-dim) !important;
+}
+
+/* --- motion ------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

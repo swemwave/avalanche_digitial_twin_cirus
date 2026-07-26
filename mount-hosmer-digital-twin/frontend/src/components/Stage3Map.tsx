@@ -254,16 +254,23 @@ export function Stage3Map({ meta, result, exaggeration, camera, surface, onZoneC
   }, [result, ready]);
 
   return (
-    <div className="relative h-full w-full overflow-hidden rounded-lg border border-[var(--border)]">
+    <div className="relative h-full w-full overflow-hidden rounded-[3px] border border-[var(--rule)]">
       <div ref={container} className="h-full w-full" />
       {error ? (
-        <div className="absolute inset-x-3 top-3 rounded-md border border-[var(--danger)] bg-[var(--panel)] px-3 py-2 text-xs text-[var(--danger)]">
+        <div className="absolute inset-x-3 bottom-3 border-l-2 border-[var(--alert)] bg-[rgba(7,13,21,0.92)] px-3 py-2 text-xs leading-relaxed text-[var(--paper-dim)] backdrop-blur-sm">
           {error}
         </div>
       ) : null}
       {!ready && !error ? (
-        <div className="absolute inset-0 grid place-items-center bg-[var(--background)]/70 text-sm text-[var(--muted)]">
-          Building the 5 m LiDAR terrain mesh…
+        <div className="absolute inset-0 grid place-items-center bg-[var(--field)]">
+          <div className="flex flex-col items-center gap-3">
+            <span className="h-px w-24 overflow-hidden bg-[var(--rule-lit)]">
+              <span className="block h-full w-1/2 animate-pulse bg-[var(--signal)]" />
+            </span>
+            <p className="text-[11px] tracking-wide text-[var(--paper-faint)]">
+              Building 5 m LiDAR terrain mesh…
+            </p>
+          </div>
         </div>
       ) : null}
     </div>

@@ -71,72 +71,103 @@ export function AssistantPanel({ result, onAssessment }: Props) {
   };
 
   return (
-    <div className="flex flex-col gap-3 text-sm">
-      <div className="flex items-center justify-between">
-        <span className="text-xs text-[var(--muted)]">Local AI · runs on your machine (Ollama)</span>
+    <div className="flex flex-col gap-3">
+      <div className="flex items-center justify-between gap-2">
+        <span className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.12em] text-[var(--paper-faint)]">
+          <span className="h-1 w-1 rounded-full bg-[var(--signal)]" />
+          Local · Ollama
+        </span>
         <button
           type="button"
           onClick={explain}
           disabled={busy || !result}
-          className="rounded-md border border-[var(--border)] bg-[var(--panel-strong)] px-2.5 py-1 text-xs text-[var(--muted)] hover:text-[var(--foreground)] disabled:opacity-50"
+          className="rounded-[3px] border border-[var(--rule)] px-2.5 py-1 text-[11px] text-[var(--paper-dim)] transition-colors hover:border-[var(--rule-lit)] hover:text-[var(--paper)] disabled:cursor-not-allowed disabled:opacity-40"
         >
           Explain this result
         </button>
       </div>
 
       {turns.length > 0 ? (
-        <div className="flex max-h-64 flex-col gap-2 overflow-y-auto pr-1">
+        // A transcript, not a messaging app: each turn is labelled in the
+        // margin so a long technical answer keeps full column width.
+        <div className="flex max-h-72 flex-col gap-3 overflow-y-auto pr-1">
           {turns.map((turn, index) => (
-            <div
-              key={index}
-              className={`rounded-md px-2.5 py-1.5 text-xs leading-relaxed ${
-                turn.role === "you"
-                  ? "self-end bg-[var(--accent)] text-[#101415]"
-                  : "bg-[var(--panel-strong)] text-[var(--foreground)]"
-              }`}
-              style={{ whiteSpace: "pre-wrap" }}
-            >
-              {turn.text}
+            <div key={index} className="flex flex-col gap-1">
+              <span
+                className={`text-[9px] font-semibold uppercase tracking-[0.14em] ${
+                  turn.role === "you" ? "text-[var(--paper-faint)]" : "text-[var(--signal-deep)]"
+                }`}
+              >
+                {turn.role === "you" ? "You" : "Assistant"}
+              </span>
+              <p
+                className={`text-[11px] leading-relaxed ${
+                  turn.role === "you"
+                    ? "text-[var(--paper-dim)]"
+                    : "border-l border-[var(--rule-lit)] pl-2.5 text-[var(--paper)]"
+                }`}
+                style={{ whiteSpace: "pre-wrap" }}
+              >
+                {turn.text}
+              </p>
             </div>
           ))}
         </div>
       ) : (
-        <p className="text-[11px] leading-relaxed text-[var(--muted)]">
-          Ask a what-if — “what if 60 cm of new snow and a strong SW wind?” — or a question —
-          “why is RZ001 the hottest zone?”, “what does aspect mean?” A what-if runs the real
-          model; questions are answered from the model and terrain. It never decides the hazard
-          numbers, and never gives travel advice.
-        </p>
+        <div className="flex flex-col gap-2">
+          <p className="text-[11px] leading-relaxed text-[var(--paper-dim)]">
+            Ask a what-if to re-run the model, or a question about the result.
+          </p>
+          <div className="flex flex-col gap-1">
+            {[
+              "what if 60 cm of new snow and a strong SW wind?",
+              "why is RZ001 the hottest zone?",
+            ].map((example) => (
+              <button
+                key={example}
+                type="button"
+                onClick={() => setMessage(example)}
+                className="data rounded-[3px] border border-[var(--rule)] px-2.5 py-1.5 text-left text-[10px] text-[var(--paper-faint)] transition-colors hover:border-[var(--rule-lit)] hover:text-[var(--paper-dim)]"
+              >
+                {example}
+              </button>
+            ))}
+          </div>
+          <p className="text-[10px] leading-relaxed text-[var(--paper-faint)]">
+            It never decides the hazard numbers, and never gives travel advice.
+          </p>
+        </div>
       )}
 
       {busy && pending ? (
-        <p className="animate-pulse rounded-md bg-[var(--panel-strong)] px-2.5 py-1.5 text-[11px] text-[var(--muted)]">
+        <p className="flex items-center gap-2 text-[10px] text-[var(--paper-faint)]">
+          <span className="h-1 w-1 animate-ping rounded-full bg-[var(--signal)]" />
           {pending}
         </p>
       ) : null}
 
       {error ? (
-        <p className="rounded-md border border-[var(--danger)] bg-[var(--panel-strong)] px-2.5 py-1.5 text-[11px] text-[var(--danger)]">
+        <p className="border-l-2 border-[var(--alert)] bg-[var(--field-1)] px-2.5 py-1.5 text-[10px] leading-relaxed text-[var(--paper-dim)]">
           {error}
         </p>
       ) : null}
 
-      <div className="flex gap-2">
+      <div className="flex gap-1.5">
         <input
           value={message}
           onChange={(event) => setMessage(event.target.value)}
           onKeyDown={(event) => {
             if (event.key === "Enter" && !busy) send();
           }}
-          placeholder="ask a what-if or a question…"
+          placeholder="Ask a what-if or a question…"
           disabled={busy}
-          className="min-w-0 flex-1 rounded-md border border-[var(--border)] bg-[var(--panel-strong)] px-2.5 py-1.5 text-xs"
+          className="min-w-0 flex-1 rounded-[3px] border border-[var(--rule)] bg-[var(--field-1)] px-2.5 py-2 text-[11px] text-[var(--paper)] transition-colors placeholder:text-[var(--paper-faint)] hover:border-[var(--rule-lit)] focus:border-[var(--signal)] focus:outline-none disabled:opacity-50"
         />
         <button
           type="button"
           onClick={send}
           disabled={busy || !message.trim()}
-          className="rounded-md bg-[var(--accent)] px-3 py-1.5 text-xs font-semibold text-[#101415] disabled:opacity-50"
+          className="rounded-[3px] border border-[var(--signal)] px-3 py-2 text-[11px] font-semibold text-[var(--signal)] transition-colors hover:bg-[var(--signal)] hover:text-[var(--field)] disabled:cursor-not-allowed disabled:border-[var(--rule)] disabled:text-[var(--paper-faint)] disabled:hover:bg-transparent"
         >
           {busy ? "…" : "Ask"}
         </button>
