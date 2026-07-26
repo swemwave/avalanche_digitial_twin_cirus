@@ -37,10 +37,6 @@ class ModelConfig:
         self.path = path
         self.sha256 = sha256
 
-    @property
-    def version(self) -> str:
-        return str(self._data.get("version", "unknown"))
-
     def get(self, dotted: str, default: Any = None) -> Any:
         node: Any = self._data
         for part in dotted.split("."):

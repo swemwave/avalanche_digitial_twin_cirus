@@ -123,6 +123,8 @@ The entire running surface (see `backend/app/api/stage3.py`):
 - `GET  /api/twin/tiles/{z}/{x}/{y}.png` — static baked terrain-RGB tiles
 - `GET  /api/twin/imagery/{z}/{x}/{y}.png` — static baked Sentinel-2 natural-colour tiles
 - `POST /api/assess` — sliders → release zones + runout + hazard, in one synchronous call
+- `GET  /api/assistant/health` — assistant status; reachable behind a path-routing proxy,
+  where `/api/health` reaches the assess service instead
 - `POST /api/assistant/explain` — plain-language read of an assessment (Ollama)
 - `POST /api/assistant/chat` — scenario chat: parse to sliders → re-run `/assess` → narrate (Ollama)
 
@@ -138,7 +140,9 @@ python -m pytest
 
 The suite uses a hermetic **synthetic bake** (`tests/synthetic_baked.py`) — no rasterio, no real `DATA\`.
 It covers the risk model + assessment (`test_risk_assess.py`), the HTTP surface
-(`test_stage3_api.py`), the rasterio-free geometry (`test_geo.py`), and path safety (`test_paths.py`).
+(`test_stage3_api.py`), the rasterio-free geometry (`test_geo.py`), the assistant's intent router and
+safety rails (`test_assistant_router.py`), the one-process/split-service contract
+(`test_service_split.py`), and path safety (`test_paths.py`).
 
 Frontend type-check + browser smoke (needs backend on :8000 and frontend on :3000):
 

@@ -164,6 +164,57 @@ step_urls() {
     --query "Stacks[0].Outputs[].[OutputKey,OutputValue]" --output table
 }
 
+# --- Preflight: are the images this stack is about to reference actually pushed? ---
+#
+# `stack` deploys parameters that POINT AT images; it does not build them. Two ways
+# that goes wrong, and neither announces itself:
+#
+#   1. Nothing pushed yet (fresh account, or a new bake tag). CloudFormation accepts
+#      the parameter, then the ECS task fails its image pull and the stack sits in
+#      CREATE_IN_PROGRESS until it rolls back ~15 minutes later.
+#   2. Worse, and the likely one here: images exist but are STALE. The assess image is
+#      tagged with the bake it carries, so a new bake is caught -- but `assistant` and
+#      `frontend` are deployed as `:latest`, so changing backend or frontend CODE and
+#      running `stack` alone redeploys the OLD image and looks like it worked. If you
+#      deploy occasionally with development in between, this is the trap you hit.
+#
+# So: verify before spending 10 minutes, and say plainly what to run.
+step_check() {
+  local reg tag missing=() ; reg="$(registry)"; tag="bake-$(bake_tag)"
+
+  if [[ ! -f runtime/baked/meta.json ]]; then
+    echo "!! No runtime/baked/meta.json -- run 'python -m app.bake' first."
+    echo "   The assess image is built from the local bake; there is nothing to deploy without it."
+    return 1
+  fi
+
+  _has_image() {
+    "${AWS[@]}" ecr describe-images --repository-name "twin/$1" \
+      --image-ids "imageTag=$2" >/dev/null 2>&1
+  }
+
+  _has_image assess    "$tag"    || missing+=("assess:$tag")
+  _has_image assistant "latest"  || missing+=("assistant:latest")
+  _has_image frontend  "latest"  || missing+=("frontend:latest")
+
+  if (( ${#missing[@]} )); then
+    echo "!! Not in ECR: ${missing[*]}"
+    echo "   Build and push them first:  bash deploy/aws/deploy.sh 2"
+    return 1
+  fi
+
+  echo "  images: assess:$tag, assistant:latest, frontend:latest all present"
+  # `latest` says nothing about WHICH code is inside, so surface the push time and let
+  # the operator judge. A tag pushed before your last commit is a stale deploy waiting
+  # to happen.
+  local pushed
+  pushed=$("${AWS[@]}" ecr describe-images --repository-name twin/assistant \
+            --image-ids imageTag=latest --query 'imageDetails[0].imagePushedAt' --output text 2>/dev/null || true)
+  [[ -n "$pushed" && "$pushed" != "None" ]] && echo "  assistant/frontend :latest last pushed  $pushed"
+  echo "  (changed backend or frontend code since then? re-run step 2 before step 3.)"
+  return 0
+}
+
 # --- 4. Point the deployed assistant at the current tunnel -------------------
 # Quick-tunnel hostnames change on every restart, so this is re-run often. It only
 # touches the OllamaUrl parameter; the other images stay as they are.
@@ -217,6 +268,7 @@ case "${1:-}" in
   1|ecr)         step_1_ecr ;;
   2|push)        step_2_push ;;
   3|stack)       step_3_stack ;;
+  check)         step_check ;;
   set-tunnel)    shift; step_4_set_tunnel "$@" ;;
   urls)          step_urls ;;
   status)        step_status ;;
@@ -225,5 +277,5 @@ case "${1:-}" in
   start)         step_start ;;
   destroy)       step_destroy ;;
   *) sed -n '1,40p' "${BASH_SOURCE[0]}"
-     echo "Usage: $0 {1|2|3|set-tunnel <url>|urls|status|logs [svc]|stop|start|destroy}" ;;
+     echo "Usage: $0 {1|2|3|check|set-tunnel <url>|urls|status|logs [svc]|stop|start|destroy}" ;;
 esac

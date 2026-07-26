@@ -45,8 +45,9 @@ ORIGIN = 20037508.342789244
 BASE = -10000.0
 INTERVAL = 0.1
 
-MAX_ZOOM = 16
-MIN_ZOOM = 8
+#: The baked zoom range lives in ``app.bake`` (MIN_ZOOM/MAX_ZOOM), which is what
+#: actually drives tile generation. This module used to carry its own pair, and they
+#: had drifted -- 16 here against the bake's 15 -- so they are not duplicated.
 
 
 def tile_bounds(z: int, x: int, y: int) -> tuple[float, float, float, float]:

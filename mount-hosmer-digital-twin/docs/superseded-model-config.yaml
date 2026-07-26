@@ -1,0 +1,262 @@
+# =============================================================================
+# SUPERSEDED (pre-Stage-3) -- model configuration, kept for history only.
+# =============================================================================
+# NOTHING READS THIS FILE. It is not loaded by the bake, not loaded by the running
+# service, and not referenced by any code path. It is documentation.
+#
+# These blocks configured the pre-Stage-3 platform: weather/snow/satellite
+# ingestion, a job-queued processing pipeline, a dynamic instability model, and a
+# consequence/confidence layer. Stage 3 deleted all of it (see PROGRESS.md), so the
+# parameters had nothing left to parametrise.
+#
+# The `runout:` block is the one worth calling out, because it was NOT obviously
+# dead. Runout is still very much a live part of the model -- but its parameters are
+# embedded in `app/assess.py :: RUNOUT_PARAMS`, deliberately, so that the running
+# service needs no config file and no yaml import. The copy here was never read and
+# had drifted from the values actually in use (`particles_per_zone: 400` below
+# against 300 in the code). Anyone who "tuned runout" by editing it would have seen
+# no effect whatsoever. That is why it was moved here rather than left in place.
+#
+# The live bake-time config is `backend/config/avalanche_model.yaml`.
+# =============================================================================
+
+wind:
+  # Below this, snow is not transported. Around 15-20 km/h at ridge height is the
+  # commonly cited threshold for saltation of dry snow.
+  transport_threshold_kmh: 15.0
+  # Above this, transport is efficient and the lee slopes load fast.
+  strong_transport_kmh: 40.0
+  # Terrain exposure (Winstral Sx): how sheltered a cell is from the wind by
+  # upwind terrain, measured over this distance.
+  exposure_search_distance_m: 300.0
+  exposure_sector_width_deg: 30.0
+  # A slope is "lee" when its aspect is within this angle of directly downwind.
+  lee_tolerance_deg: 70.0
+  # Cross-loading happens on slopes roughly perpendicular to the wind.
+  cross_loading_tolerance_deg: 30.0
+  weights:
+    lee_deposition: 0.40
+    terrain_exposure: 0.25
+    cross_loading: 0.15
+    ridge_proximity: 0.10
+    curvature: 0.10
+  # Wind cannot load a slope with no snow to move. The wind-loading score is
+  # multiplied by snow availability, so a 90 km/h wind over bare rock scores zero.
+  requires_available_snow: true
+
+# -----------------------------------------------------------------------------
+# Snow condition estimation
+# -----------------------------------------------------------------------------
+# Outputs are dimensionless 0-1 indices, NOT centimetres or millimetres. The only
+# snow instruments available are two valley/ridge stations, the nearest 19 km from
+# the AOI at a different elevation. Reporting "42 cm at 2100 m on the north face"
+# from that would be a fabrication.
+snow:
+  # Precipitation falls as snow below this air temperature, as rain above the
+  # upper bound, and as mixed precipitation between.
+  snow_rain_threshold_c: 1.0
+  all_rain_threshold_c: 3.0
+  # Environmental lapse rate used to extrapolate station temperature to elevation.
+  # -6.5 K/km is the standard atmosphere; the real value varies with humidity and
+  # inversions, which we cannot observe. This is the single largest source of
+  # error in the snow model.
+  lapse_rate_c_per_km: -6.5
+  # Snow accumulates more at elevation. A crude linear enhancement, in fraction
+  # per 1000 m above the station.
+  precipitation_elevation_gradient_per_km: 0.25
+  # A pixel is treated as snow covered when NDSI exceeds this. 0.4 is the standard
+  # threshold from the MODIS snow-mapping literature.
+  ndsi_snow_threshold: 0.40
+  # Snow under forest canopy is not visible to the satellite. NDSI-based snow
+  # cover therefore *under*reports snow in trees and must not be read as absence.
+  forest_ndsi_unreliable_above_canopy_m: 3.0
+  # Wet-snow and melt indices key off surface temperature and freeze-thaw.
+  wet_snow_surface_temp_c: -1.0
+  melt_degree_day_factor: 3.5
+
+# -----------------------------------------------------------------------------
+# Dynamic instability
+# -----------------------------------------------------------------------------
+# The time-varying half of the release estimate. Every component is optional:
+# when an input is unavailable the component is dropped from the weighted mean
+# AND from its denominator. Missing data must never be scored as zero -- a missing
+# snowfall reading is "unknown", not "no snow fell".
+dynamic_instability:
+  minimum_available_weight_fraction: 0.35
+  weights:
+    new_snow_loading: 0.26
+    wind_loading: 0.22
+    rapid_warming: 0.12
+    wet_snow: 0.10
+    rain_on_snow: 0.12
+    snow_cover_evidence: 0.10
+    storm_intensity: 0.08
+
+  # Breakpoints. All are "index value -> 0-100 score".
+  new_snow_loading_breakpoints: [0.0, 0.15, 0.35, 0.60, 1.0]
+  new_snow_loading_scores:      [0,   25,   60,   85,   100]
+
+  rapid_warming_breakpoints_c: [0, 2, 5, 10, 15]
+  rapid_warming_scores:        [0, 30, 70, 95, 100]
+
+  # Rain on snow is the single most reliable instability trigger we can actually
+  # observe with the data we have, so it is scored aggressively.
+  rain_on_snow_breakpoints_mm: [0, 1, 5, 15, 30]
+  rain_on_snow_scores:         [0, 40, 75, 95, 100]
+
+# -----------------------------------------------------------------------------
+# Release zones
+# -----------------------------------------------------------------------------
+release_zones:
+  # A pixel must clear this estimated-release score to be part of a release zone.
+  minimum_release_score: 55.0
+  # And the zone must be big enough to hold a slab worth simulating.
+  minimum_area_m2: 2500.0
+  # Zones are smoothed before polygonization so a zone is a coherent piece of
+  # slope rather than a spray of single pixels.
+  smoothing_radius_m: 15.0
+  # Connected components are grown WITHIN aspect sectors of this width and are
+  # never merged across them. Without this, the steep ground encircling a peak is
+  # topologically connected the whole way round, so a single component floods
+  # across the north, east and south faces alike and produces one enormous zone
+  # that faces every direction at once and has no fall line to simulate down.
+  aspect_sector_deg: 45.0
+  # Components are also cut into elevation bands of this height. Aspect alone still
+  # permits a zone to run the whole height of a face: on the real mountain one
+  # aspect-coherent zone stretched 3.2 km along the massif and spanned 707 m of
+  # vertical. A slab is a few hundred metres of vertical at most, and a zone that
+  # tall has no meaningful crown to simulate a release from.
+  elevation_band_m: 300.0
+  # A slab bigger than this is not expected to be one coherent release zone.
+  # Exceeding it does not withhold the zone; it raises a warning, so a merge
+  # regression is visible instead of quietly looking plausible.
+  maximum_expected_area_m2: 1000000.0
+  # Combining the static and dynamic halves.
+  terrain_weight: 0.55
+  dynamic_weight: 0.45
+
+# -----------------------------------------------------------------------------
+# Runout simulation
+# -----------------------------------------------------------------------------
+runout:
+  # The alpha (angle of reach) model. The line from the top of the start zone to
+  # the end of the deposit subtends an angle to the horizontal; smaller alpha =
+  # further-running avalanche. These values are the commonly cited ranges for
+  # dry-slab avalanches in the Canadian Rockies. THEY ARE NOT CALIBRATED against
+  # observed Mount Hosmer runouts, because none are recorded.
+  alpha_angle_deg:
+    small: 32.0      # size 1-2
+    medium: 27.0     # size 2-3
+    large: 23.0      # size 3-4
+    very_large: 19.0 # size 4-5
+  # Uncertainty envelope: alpha is varied by this much to produce the "could run
+  # further" polygon. The spread is deliberately wide because the model is
+  # uncalibrated, and a runout line drawn with false precision is dangerous.
+  alpha_uncertainty_deg: 4.0
+
+  # Terrain-dependent friction, used by the advanced particle mode.
+  friction:
+    # Coulomb friction coefficient (mu) by surface.
+    open_snow: 0.20
+    forest: 0.35          # standing timber costs a moving avalanche a lot of energy
+    gully: 0.16           # channelled flow runs further
+    # Turbulent friction (xi), m/s^2. Higher = less velocity-squared drag.
+    xi_open: 1200.0
+    xi_forest: 500.0
+
+  fast_mode:
+    # How readily flow leaves the steepest-descent line. 0 = single flow path,
+    # 1 = maximal spreading.
+    spreading: 0.35
+    max_path_length_m: 4000.0
+    # Flow thinner than this is not an avalanche any more, and the cell is not
+    # counted as runout. Each release cell starts with one unit of flux, so 0.02
+    # means "at least 2% of the snow from one release cell arrived here".
+    #
+    # This is a stopping criterion, not a display threshold. Multi-directional
+    # routing sends a share of flux to EVERY downhill neighbour, so without a
+    # cutoff an infinitesimal trickle reaches every cell in the catchment and the
+    # runout fills the whole alpha cone. The alpha angle bounds how far snow can
+    # run; it does not say snow reaches everywhere inside that bound.
+    minimum_flux: 0.02
+
+  advanced_mode:
+    particles_per_zone: 400
+    max_steps: 4000
+    time_step_s: 0.2
+    # Lateral spread applied per step, as a fraction of a cell.
+    lateral_jitter: 0.35
+    # Deposition begins when velocity falls below this.
+    stopping_velocity_ms: 1.0
+    random_seed: 20260713
+    # Velocity classes for display, m/s.
+    velocity_classes_ms: [5, 15, 25, 40]
+
+# -----------------------------------------------------------------------------
+# Consequence
+# -----------------------------------------------------------------------------
+consequence:
+  # What is at stake if the modelled avalanche reaches an asset. These are
+  # relative severities for ranking, not monetary or casualty estimates.
+  asset_severity:
+    buildings: 100
+    railways: 85
+    roads: 70
+    power: 60
+    aerial_lifts: 80
+    trails: 45
+    tracks: 40
+    other: 20
+  # Intensity multiplier from the simulated flow.
+  intensity_weight: 0.45
+  exposure_weight: 0.55
+  classes:
+    - {max: 20, label: "Minimal"}
+    - {max: 40, label: "Minor"}
+    - {max: 60, label: "Moderate"}
+    - {max: 80, label: "Major"}
+    - {max: 100, label: "Severe"}
+
+# -----------------------------------------------------------------------------
+# Combined risk
+# -----------------------------------------------------------------------------
+risk:
+  hazard_weight: 0.60
+  consequence_weight: 0.40
+  classes:
+    - {max: 20, label: "Low",          color: "#2f8a4c"}
+    - {max: 40, label: "Moderate",     color: "#d6c64b"}
+    - {max: 60, label: "Considerable", color: "#dd8f35"}
+    - {max: 80, label: "High",         color: "#c23b35"}
+    - {max: 100, label: "Extreme",     color: "#4a1512"}
+
+# -----------------------------------------------------------------------------
+# Confidence
+# -----------------------------------------------------------------------------
+# Confidence is about the *inputs*, never about the answer. A confidently
+# calculated high hazard from three-day-old data measured 19 km away is still a
+# low-confidence result, and the UI must say so.
+confidence:
+  weights:
+    input_completeness: 0.22      # how many model inputs we actually had
+    input_provenance: 0.22        # measured vs interpolated vs modelled
+    observation_age: 0.14         # how stale the newest observation is
+    station_distance: 0.12        # how far the nearest instrument is
+    terrain_resolution: 0.10      # LiDAR vs 30 m fallback at this pixel
+    cloud_cover: 0.08             # could the satellite see the ground
+    infrastructure_completeness: 0.06
+    model_calibration: 0.06       # see the hard ceiling below
+
+  # An honest ceiling. No amount of good input data can make an uncalibrated
+  # model confident. Until historical Mount Hosmer avalanche observations exist
+  # to validate against, no result may report confidence above this value.
+  maximum_without_calibration: 65
+
+  observation_age_hours: [0, 6, 24, 72, 168]
+  observation_age_scores: [100, 90, 65, 35, 10]
+
+  station_distance_km: [0, 5, 15, 30, 60]
+  station_distance_scores: [100, 80, 50, 25, 5]
+
+  cloud_cover_percent: [0, 10, 30, 60, 100]
+  cloud_cover_scores: [100, 90, 60, 25, 0]

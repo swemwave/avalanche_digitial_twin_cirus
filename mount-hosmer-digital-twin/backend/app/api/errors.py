@@ -10,6 +10,16 @@ situation, not a server fault. A `ModelConfigError` is a 500 even though it is a
 configuration mistake, because the deployment is genuinely broken and must not
 quietly serve numbers from a fallback -- there is no fallback for a scientific
 parameter.
+
+**What is deliberately NOT mapped.** There used to be blanket `KeyError -> 404` and
+`ValueError -> 400` handlers, from when `/api/v1/layers/{name}` let a caller name a
+layer and an unknown one really was "not found". Stage 3 has no such route: every
+`bt.layer()` call passes a string literal, and the release size and simulation mode
+are validated by the request model before anything downstream sees them. So those
+handlers could no longer fire for a caller's mistake -- only for OUR bug, which they
+then disguised as a 404 the client "caused", with no traceback logged. An internal
+`KeyError` now falls through to the unhandled handler: a 500, a correlation id, and
+a full traceback in the log. That is the whole point of having one.
 """
 
 from __future__ import annotations
@@ -26,29 +36,6 @@ from app.core.model_config import ModelConfigError
 from app.core.settings import ConfigurationError
 
 logger = logging.getLogger("avalanche.api")
-
-
-class ApiError(Exception):
-    """A failure with an HTTP meaning already decided."""
-
-    def __init__(self, status_code: int, code: str, message: str, **detail: Any) -> None:
-        super().__init__(message)
-        self.status_code = status_code
-        self.code = code
-        self.message = message
-        self.detail = detail
-
-
-def not_found(what: str, identifier: str) -> ApiError:
-    return ApiError(
-        404,
-        "not_found",
-        f"{what} {identifier!r} was not found.",
-        hint=(
-            f"List the available ones first. A missing {what.lower()} is not an error in the "
-            f"model; it simply has not been run."
-        ),
-    )
 
 
 def envelope(
@@ -73,13 +60,6 @@ def envelope(
 
 
 def install(app: FastAPI) -> None:
-    @app.exception_handler(ApiError)
-    async def _api_error(request: Request, exc: ApiError) -> JSONResponse:
-        logger.warning(
-            "api_error", extra={"code": exc.code, "status": exc.status_code, "path": request.url.path}
-        )
-        return envelope(request, exc.status_code, exc.code, exc.message, exc.detail)
-
     @app.exception_handler(HTTPException)
     async def _http(request: Request, exc: HTTPException) -> JSONResponse:
         return envelope(request, exc.status_code, "http_error", str(exc.detail))
@@ -110,16 +90,6 @@ def install(app: FastAPI) -> None:
     async def _missing(request: Request, exc: FileNotFoundError) -> JSONResponse:
         # Not a server fault: the thing has not been produced yet.
         return envelope(request, 404, "not_found", str(exc))
-
-    @app.exception_handler(KeyError)
-    async def _key(request: Request, exc: KeyError) -> JSONResponse:
-        return envelope(request, 404, "not_found", str(exc).strip("'\""))
-
-    @app.exception_handler(ValueError)
-    async def _value(request: Request, exc: ValueError) -> JSONResponse:
-        # The services raise ValueError for "you asked for something that makes no
-        # sense", e.g. an unknown release size or a scenario without inputs.
-        return envelope(request, 400, "invalid_request", str(exc))
 
     @app.exception_handler(ModelConfigError)
     async def _model_config(request: Request, exc: ModelConfigError) -> JSONResponse:
