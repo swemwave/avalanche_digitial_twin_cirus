@@ -258,7 +258,8 @@ on the machine that ran the bake: **build the assess image locally and push it**
 source-based cloud build would produce an image reporting `baked: false`.
 
 > **Before changing anything under `deploy\`, or deploying, read
-> [`docs/deployment.md`](docs/deployment.md).** It is the full runbook: the five
+> [`mount-hosmer-digital-twin/docs/deployment.md`](mount-hosmer-digital-twin/docs/deployment.md).**
+> It is the full runbook: the five
 > invariants, how to update a service after a code change, how to add an endpoint
 > across the split, the gotchas hit during setup (OOM sizing, service-linked roles,
 > ALB idle timeout), the cost model, and how to verify a teardown.

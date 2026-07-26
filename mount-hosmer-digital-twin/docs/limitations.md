@@ -41,6 +41,41 @@ operational tool.
 - The 171 `.laz` point clouds are not used (the DEM rasters are already derived from them). Re-deriving a
   finer-than-1 m surface is out of scope.
 - Baked layers load as masked arrays, so a masked/NaN pixel stays missing, not zero.
+- **The current bake contains no satellite imagery.** `meta.json` carries no `imagery` key and there is no
+  `runtime/baked/imagery/` directory, so the winter Sentinel-2 natural-colour drape described elsewhere is
+  absent and the mesh renders with hillshade only. The code degrades gracefully (the imagery layer is
+  simply not advertised); restoring it requires re-running the bake against `DATA/`.
+
+## Performance and resource use
+
+- **One assessment peaks at ~1477 MB of resident memory** on the 2400×2400 (5.8 M cell) grid — in both
+  `fast` and `advanced` modes, since the peak comes from holding several full-grid float64 arrays at once
+  rather than from the runout engine. That is large for a 12×12 km AOI and is the single clearest
+  optimisation target in the codebase (candidates: float32 where precision allows, releasing intermediate
+  grids earlier, or tiling the release-zone extraction).
+- CPython does not return freed arrays to the OS, so a warm process sits near that peak and a *second*
+  assessment starts high rather than from cold. Anything hosting this must be sized for the peak, not the
+  average: at a 2 GB container limit the process was OOM-killed mid-request, which surfaces to a user as an
+  assessment that simply fails.
+- A `fast` assessment takes ~9 s on 1 vCPU. `advanced` (particle ensemble) is far slower — `assess.py`
+  caps it at 6 zones (`MAX_ADVANCED_ZONES`) against 12 for fast mode, for exactly this reason.
+- Assessments are **deterministic**: identical conditions produce an identical hazard score across
+  machines and architectures (verified locally and on x86 cloud hardware).
+
+## Deployment
+
+See [`deployment.md`](deployment.md) for the full runbook. Limitations specific to the deployed form:
+
+- **The deployed app is served over plain HTTP.** Adding HTTPS requires a domain and a certificate; until
+  then browsers will flag it, and it should not carry anything sensitive.
+- **The AI assistant depends on an operator's own machine being awake**, reached through a Cloudflare
+  Tunnel. The map, terrain and hazard model are unaffected by its absence; only the assistant degrades,
+  to a clean 503. A quick tunnel is also **public and unauthenticated** — the hostname is unguessable but
+  anyone who learns it can send prompts to that machine, so it should be raised for a session and taken
+  down afterwards.
+- The deployed hazard model and the local one are the same code path; the assistant calls the assess
+  service rather than computing anything itself, so the single-place-attaches-the-disclaimer property
+  (invariant I3, below) holds identically in both shapes.
 
 ## Data provenance and safety
 
