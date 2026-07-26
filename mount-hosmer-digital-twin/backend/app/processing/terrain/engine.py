@@ -19,6 +19,7 @@ import numpy as np
 from scipy import ndimage
 
 from app.core.model_config import DISCLAIMER, ModelConfig
+from app.core.numerics import piecewise
 from app.core.settings import Settings
 from app.processing.harmonization.grids import AnalysisGrid, grid_set
 from app.processing.harmonization.raster_io import Semantics, read_aligned
@@ -55,18 +56,6 @@ def source_paths(settings: Settings) -> dict[str, Path]:
 def _percentile(array: np.ma.MaskedArray, q: float) -> float:
     values = array.compressed()
     return float(np.percentile(values, q)) if values.size else 0.0
-
-
-def _piecewise(values: np.ndarray, breakpoints: list[float], scores: list[float]) -> np.ndarray:
-    """Score by explicit physical breakpoints, never by a percentile stretch."""
-    return np.interp(values, breakpoints, scores).astype("float32")
-
-
-def _normalize_signed(array: np.ma.MaskedArray, percentile: float = 95.0) -> np.ndarray:
-    """Map a signed quantity to 0-1 by its own robust scale. Display/weighting only."""
-    limit = float(np.percentile(np.abs(array.compressed()), percentile)) if array.count() else 1.0
-    limit = limit or 1.0
-    return np.clip((np.asarray(array.filled(0.0)) / limit + 1.0) / 2.0, 0.0, 1.0)
 
 
 class TerrainProducts:
@@ -288,7 +277,7 @@ def _terrain_susceptibility(
     slope = products["slope"]
     mask = np.ma.getmaskarray(slope)
 
-    slope_score = _piecewise(
+    slope_score = piecewise(
         np.asarray(slope.filled(0.0)),
         list(config.require("terrain.slope.breakpoints_deg")),
         list(config.require("terrain.slope.scores")),
@@ -321,7 +310,7 @@ def _terrain_susceptibility(
     ) * 100.0
 
     ridge_distance = np.asarray(products["distance_to_ridge"].filled(9999.0))
-    ridge_score = _piecewise(ridge_distance, [0, 50, 150, 400, 1000], [100, 85, 55, 25, 5])
+    ridge_score = piecewise(ridge_distance, [0, 50, 150, 400, 1000], [100, 85, 55, 25, 5])
 
     aspect = np.asarray(products["aspect"].filled(-1.0))
     low, high = config.require("terrain_susceptibility.aspect_favoured_degrees")

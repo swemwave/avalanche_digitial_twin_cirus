@@ -125,8 +125,3 @@ def path_to_geojson(
     if line.is_empty or len(line.coords) < 2:
         return None
     return mapping(line)
-
-
-def feature_collection(features: list[dict[str, Any]]) -> dict[str, Any]:
-    """Wrap ready-made GeoJSON features in a FeatureCollection."""
-    return {"type": "FeatureCollection", "features": features}

@@ -41,11 +41,29 @@ test("3D terrain renders and an assessment runs", async ({ page }) => {
   // The only non-200 the tile endpoint may return is a legitimate 404 (no tile there).
   expect(tileStatuses.every((s) => s === 200 || s === 404)).toBe(true);
 
-  // The default natural surface is the fixed baked Sentinel-2 winter capture.
-  await expect(page.getByRole("button", { name: "Satellite / snow" })).toBeEnabled();
-  expect(imageryStatuses.some((s) => s === 200)).toBe(true);
-  await page.getByRole("button", { name: "Hillshade" }).click();
-  await page.getByRole("button", { name: "Satellite / snow" }).click();
+  // The natural surface is optional: it exists only if the bake was run with the
+  // Sentinel-2 step, and `meta.json` says so by carrying an `imagery` key. Asserting
+  // it unconditionally made this spec fail against any imagery-free bake -- which is
+  // exactly what `docs/limitations.md` documents the current one as being. So ask the
+  // API which bake is being served, and hold it to that.
+  // Note the absolute URL: `baseURL` is the frontend (:3000), but in local dev the
+  // API is a separate origin (:8000) -- the same split `NEXT_PUBLIC_API_BASE_URL`
+  // encodes for the browser. Behind the ALB both are one origin and this still works.
+  const apiBase = process.env.PLAYWRIGHT_API_URL ?? "http://localhost:8000";
+  const meta = await (await page.request.get(`${apiBase}/api/twin/meta`)).json();
+  const hasImagery = Boolean(meta.imagery);
+
+  if (hasImagery) {
+    await expect(page.getByRole("button", { name: "Satellite / snow" })).toBeEnabled();
+    expect(imageryStatuses.some((s) => s === 200)).toBe(true);
+    await page.getByRole("button", { name: "Hillshade" }).click();
+    await page.getByRole("button", { name: "Satellite / snow" }).click();
+  } else {
+    // No imagery baked: the control must be disabled rather than offering a surface
+    // that would 404, and the mesh falls back to hillshade.
+    await expect(page.getByRole("button", { name: "Satellite / snow" })).toBeDisabled();
+    expect(imageryStatuses).toEqual([]);
+  }
 
   // Run a real assessment (fast mode, default storm-slab sliders).
   const assessResponse = page.waitForResponse(

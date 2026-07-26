@@ -7,10 +7,27 @@ Two small pieces of plumbing wrap every request:
   exact request in the log; and
 * a body-size ceiling, so a runaway upload is refused before it is read.
 
-That is the whole middleware stack. Stage 3 is a single-process, single-user tool
-that ships as a double-clicked `.exe`; there is no rate limiter because there is no
-multi-tenant surface to protect, and the one expensive route (`POST /api/assess`)
-does its work synchronously inside the request.
+That is the whole middleware stack. In particular there is **no rate limiter**, and
+that is now a considered trade rather than the tautology it used to be. The original
+reasoning was "single-user `.exe`, no multi-tenant surface to protect" -- true then,
+and no longer true: `deploy/` puts this behind a public, unauthenticated ALB, where
+`POST /api/assess` is a ~5 s, ~1.5 GB request anyone who learns the hostname can call.
+
+It stays unprotected anyway, for reasons that hold only under the actual usage:
+Fargate bills per task-hour rather than per request, so load cannot amplify cost;
+the worst case is the container hitting its 4 GB ceiling and ECS restarting it,
+which is self-healing; the hostname is a random AWS DNS name that is not indexed;
+and the stack is raised for a few hours at a time and then destroyed. Adding auth
+would also break the one property the deployment is for -- open one URL and it works.
+
+**If that changes -- a permanent deployment, a real hostname, or anything sensitive --
+this is the first thing to revisit.** See `docs/limitations.md`.
+
+Related and deliberately not fixed: the body-size limit below reads `Content-Length`,
+so a chunked request declares no length and skips the check. Closing that means
+consuming the stream inside a `BaseHTTPMiddleware`, which is fiddly enough to risk
+breaking body handling on every route -- a worse trade than the hole it closes, for a
+tool no browser sends chunked requests to.
 """
 
 from __future__ import annotations

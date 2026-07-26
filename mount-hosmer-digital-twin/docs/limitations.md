@@ -68,6 +68,16 @@ See [`deployment.md`](deployment.md) for the full runbook. Limitations specific 
 
 - **The deployed app is served over plain HTTP.** Adding HTTPS requires a domain and a certificate; until
   then browsers will flag it, and it should not carry anything sensitive.
+- **The API is unauthenticated and unthrottled, and this is an accepted risk, not an oversight.**
+  `POST /api/assess` is a ~5 s, ~1.5 GB request that anyone who learns the load-balancer hostname can
+  call. It is left open because the exposure is bounded and the failure mode is benign: the stack is
+  raised for a few hours at a time and then destroyed (~9 hours a month), Fargate bills per task-hour so
+  request volume cannot amplify cost, `DesiredCount` is capped at 2, and the worst case is the container
+  reaching its 4 GB ceiling and being restarted by ECS — which is self-healing. The hostname is a random
+  AWS DNS name that is not indexed or guessable. **Revisit this the moment the deployment becomes
+  permanent, gets a real hostname, or carries anything sensitive**; it is the first thing to change.
+  The same reasoning covers the body-size limit, which reads `Content-Length` and so does not bound a
+  chunked request.
 - **The AI assistant depends on an operator's own machine being awake**, reached through a Cloudflare
   Tunnel. The map, terrain and hazard model are unaffected by its absence; only the assistant degrades,
   to a clean 503. A quick tunnel is also **public and unauthenticated** — the hostname is unguessable but

@@ -7,8 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "smoke": "node scripts/browser-smoke.mjs",
-    "visual-qa": "node scripts/visual-qa.mjs"
+    "e2e": "playwright test"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.0",

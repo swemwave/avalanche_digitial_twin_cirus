@@ -14,6 +14,8 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
+from app import risk
+from app.simulation import runout
 from synthetic_baked import write_synthetic_baked
 
 
@@ -71,6 +73,57 @@ def test_assess_returns_hazard_and_is_not_operational(client: TestClient):
 def test_assess_rejects_unknown_release_size(client: TestClient):
     response = client.post("/api/assess", json={"release_size": "huge"})
     assert response.status_code in (400, 422)
+
+
+def test_assess_rejects_unknown_simulation_mode(client: TestClient):
+    response = client.post("/api/assess", json={"simulation_mode": "turbo"})
+    assert response.status_code in (400, 422)
+
+
+def test_openapi_advertises_the_valid_enum_values(client: TestClient):
+    """The schema must name the accepted values, not just say "string".
+
+    These were plain ``str`` fields validated by hand inside the handler, so the
+    generated schema told a client nothing about what it could send. Typed as
+    ``Literal`` they are self-documenting -- pin that so nobody widens them back.
+    """
+    schema = client.get("/openapi.json").json()
+    request_model = schema["components"]["schemas"]["AssessRequest"]["properties"]
+    assert set(request_model["release_size"]["enum"]) == set(risk.RELEASE_SIZES)
+    assert set(request_model["simulation_mode"]["enum"]) == set(runout.ENGINES)
+
+
+def test_chat_rejects_an_unbounded_message(client: TestClient):
+    """``message`` is the field that reaches the model's prompt, so it is bounded.
+
+    The 4 MB body ceiling sizes the *assessment* payload; without a limit here a
+    caller could put megabytes of prose in front of the language model.
+    """
+    assert client.post("/api/assistant/chat", json={"message": "x" * 4001}).status_code == 422
+    assert client.post("/api/assistant/chat", json={"message": ""}).status_code == 422
+
+
+def test_an_internal_keyerror_is_a_500_not_a_404(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+):
+    """Our bug must look like our bug.
+
+    A blanket ``KeyError -> 404`` handler used to turn any internal dict-key mistake
+    into a "not found" that blamed the caller and logged no traceback. Nothing
+    user-supplied can reach a KeyError any more (every ``bt.layer()`` call passes a
+    literal; release size and mode are validated by the request model), so the
+    handler only ever disguised our own faults. It is gone.
+    """
+    from app import assess as assess_mod
+
+    def _boom(*args, **kwargs):
+        raise KeyError("some_internal_layer")
+
+    monkeypatch.setattr(assess_mod, "assess", _boom)
+
+    response = client.post("/api/assess", json={"new_snow_cm": 10})
+    assert response.status_code == 500
+    assert response.json()["error"]["code"] == "internal_error"
 
 
 def test_tile_outside_aoi_is_404(client: TestClient):

@@ -3,7 +3,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Mount Hosmer Digital Twin",
-  description: "Local research prototype for Mount Hosmer avalanche data discovery.",
+  description:
+    "Experimental, non-operational avalanche terrain digital twin for Mount Hosmer, BC. Not a forecast.",
 };
 
 export default function RootLayout({

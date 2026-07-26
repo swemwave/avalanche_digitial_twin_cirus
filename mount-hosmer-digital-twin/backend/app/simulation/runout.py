@@ -24,7 +24,6 @@ from dataclasses import dataclass, field
 from typing import Any, Protocol
 
 import numpy as np
-from scipy import ndimage
 
 from app.core.model_config import DISCLAIMER, ModelConfig
 from app.simulation.zone import ReleaseZone
@@ -36,7 +35,9 @@ NEIGHBOURS = [(-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -
 #: rather than re-evaluating ``np.hypot`` per cell in the steepest-descent trace.
 NEIGHBOUR_UNIT_DIST = tuple(float(np.hypot(dr, dc)) for dr, dc in NEIGHBOURS)
 
-RELEASE_SIZES = ("small", "medium", "large", "very_large")
+#: The valid release sizes live in ``app.risk.RELEASE_SIZES`` -- one definition, and
+#: the API validates against it. This module takes whatever size it is handed and
+#: looks it up in the config, raising if it is unknown.
 
 
 class Grid(Protocol):

@@ -22,7 +22,7 @@ consumes (it reads only ``.pixels`` and ``.zone_id``); it lived in the old
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 
 import numpy as np
@@ -30,6 +30,7 @@ from scipy import ndimage
 
 from app.baked import BakedTerrain
 from app.core.model_config import DISCLAIMER
+from app.core.numerics import piecewise
 from app.simulation.zone import ReleaseZone, ReleaseZoneSet
 from app import geo
 
@@ -121,17 +122,20 @@ RELEASE_SIZES = ("small", "medium", "large", "very_large")
 
 @dataclass
 class RiskField:
-    """The release-estimate raster and the parts it was built from."""
+    """The release-estimate raster, and the prose explaining how it was built.
+
+    It used to also carry ``slope_term``, ``wind_load_term`` and ``loading`` as
+    "diagnostics". Nothing ever read them: they are locals inside
+    :func:`compute_release`, and every consumer downstream uses ``release`` and
+    ``explanation`` only. On the 2400x2400 grid that was three full float32 rasters
+    -- ~69 MB -- held alive for the lifetime of an assessment, in the one part of
+    this system where memory is the binding constraint (an assessment peaks near
+    1.5 GB and was OOM-killed at a 2 GB container limit). Recomputing any of them
+    is cheap; retaining all three was not.
+    """
 
     release: np.ma.MaskedArray            # 0-100 estimated release index
-    slope_term: np.ndarray                # 0-1 diagnostics, for explanation/zones
-    wind_load_term: np.ndarray
-    loading: np.ndarray
     explanation: dict[str, Any]
-
-
-def _piecewise(values: np.ndarray, breakpoints: list[float], scores: list[float]) -> np.ndarray:
-    return np.interp(values, breakpoints, scores).astype("float32")
 
 
 def compute_release(bt: BakedTerrain, conditions: Conditions) -> RiskField:
@@ -146,7 +150,7 @@ def compute_release(bt: BakedTerrain, conditions: Conditions) -> RiskField:
     mask = np.ma.getmaskarray(bt.layer("slope"))
 
     # --- Terrain capability (static): steep, convex, open ground ---------------
-    slope_term = _piecewise(slope, SLOPE_BREAKPOINTS_DEG, SLOPE_SCORES) / 100.0
+    slope_term = piecewise(slope, SLOPE_BREAKPOINTS_DEG, SLOPE_SCORES) / 100.0
 
     curv_scale = float(np.percentile(np.abs(general_curv), 95)) or 1.0
     convex_term = np.clip(general_curv / curv_scale, 0.0, 1.0)  # convex rolls -> tension
@@ -213,13 +217,7 @@ def compute_release(bt: BakedTerrain, conditions: Conditions) -> RiskField:
             "Mount Hosmer avalanche.",
         ],
     }
-    return RiskField(
-        release=release,
-        slope_term=slope_term,
-        wind_load_term=np.asarray(wind_load_term, dtype="float32"),
-        loading=np.asarray(loading, dtype="float32"),
-        explanation=explanation,
-    )
+    return RiskField(release=release, explanation=explanation)
 
 
 # =============================================================================

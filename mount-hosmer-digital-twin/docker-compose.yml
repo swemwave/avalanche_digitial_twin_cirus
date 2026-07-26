@@ -21,8 +21,11 @@
 # uses the slim `runtime` target with NO geospatial stack. They share the runtime volume:
 # bake writes runtime/baked/, backend reads it. That is what keeps the serving image thin.
 #
-# Re-running is cheap: the terrain engine's content-hash cache turns a second bake into a
-# cache hit, so restarts cost seconds.
+# Re-running is cheap, but only because the check is crude: `app.bake` skips the rebuild when
+# runtime/baked/meta.json already exists. That is an EXISTENCE check, not a content hash -- it
+# does not notice a changed DEM, config or parameter. After changing anything upstream of the
+# bake, run it with --force. (An earlier content-hash cache existed but was only ever wired into
+# a CLI path that Stage 3 removed; it was dead code and has been deleted.)
 
 name: mount-hosmer-digital-twin
 

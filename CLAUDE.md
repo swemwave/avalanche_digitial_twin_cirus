@@ -73,7 +73,8 @@ Inside the app — the Stage 3 surface is small:
 | `backend\app\core\` | Settings, path safety, model-config loader | Changing config or path resolution |
 | `backend\app\simulation\{runout,zone}.py` | Runout engines + the `ReleaseZone` value type | Changing runout |
 | `backend\app\processing\`, `backend\app\services\{tiles,cache}.py` | ⚠️ **BAKE-TIME ONLY.** rasterio/pyproj live here | Changing the bake |
-| `backend\config\avalanche_model.yaml` | Model parameters read at **bake time** | Tuning terrain/runout params |
+| `backend\config\avalanche_model.yaml` | Terrain parameters read at **bake time** — and *only* those | Tuning terrain params |
+| `backend\app\assess.py::RUNOUT_PARAMS` | The **runout** parameters, embedded in code | Tuning runout (**not** the YAML — see below) |
 | `frontend\src\components\` | The 5 Stage 3 UI pieces (see §3) | Changing the UI |
 | `frontend\src\lib\twin.ts` | Typed API client + all response types | Changing the API contract (**mirror backend here**) |
 | `tests\` | pytest suite (see §5) | Always — add a test with behaviour changes |
@@ -146,6 +147,23 @@ parameters. Changing the DEM/config/params does **not** get auto-detected — al
 cache, keyed on a SHA-256 of sources/config, existed in `app.services.cache` but was only ever wired
 into the removed `process-terrain` CLI path; it was dead code and has been deleted rather than revived.)
 The *running service* has no processors and no cache to invalidate — it just serves the baked files.
+
+**Where model parameters actually live.** Two homes, and the split is deliberate:
+
+| Parameters | Home | Read by |
+|---|---|---|
+| Terrain (slope band, canopy, TPI percentiles, continuity, traps, cornice, susceptibility weights) | `backend\config\avalanche_model.yaml` | **Bake only**, via `load_model_config` |
+| Runout (alpha angles, friction, fast/advanced mode) | `backend\app\assess.py::RUNOUT_PARAMS` | **Runtime**, embedded |
+| Release model + zone extraction | `backend\app\risk.py` module constants | Runtime, embedded |
+| Hazard bands + colours | `backend\app\assess.py::RISK_CLASSES` | Runtime, embedded |
+
+The runtime's parameters are embedded **because the running service must not import
+yaml** (§6). The YAML once also carried `runout:`, `release_zones:`, `risk:` and five
+other blocks that nothing read — and its `runout:` copy had drifted from the live
+values (`particles_per_zone: 400` against 300 in code), so "tuning runout" by editing
+it did nothing at all. Those blocks now live in
+`mount-hosmer-digital-twin\docs\superseded-model-config.yaml`, documentation only.
+**Do not reintroduce a runtime YAML read to fix a duplication.**
 
 ---
 
