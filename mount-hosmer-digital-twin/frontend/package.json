@@ -11,6 +11,9 @@
     "visual-qa": "node scripts/visual-qa.mjs"
   },
   "dependencies": {
+    "@fontsource-variable/archivo": "^5.3.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@fontsource/ibm-plex-sans": "^5.3.0",
     "@tailwindcss/postcss": "^4.1.0",
     "maplibre-gl": "^5.9.0",
     "next": "^16.1.5",
