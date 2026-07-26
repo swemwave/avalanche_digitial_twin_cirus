@@ -1,0 +1,357 @@
+# Deployment — the microservice split and AWS ECS
+
+**Read this before changing anything under `mount-hosmer-digital-twin/deploy/`, or
+before deploying.** It is written for someone (or some agent) arriving cold.
+
+The app runs **two ways from the same code**. Neither is a fork; which processes
+answer which requests is a deployment decision.
+
+| Shape | Entrypoint(s) | Used by |
+|---|---|---|
+| **One process** | `app.main` | Local dev, the one-click `.exe`, `docker compose` |
+| **Three services** | `app.main_assess`, `app.main_assistant`, frontend | AWS ECS Fargate |
+
+Everything in §5 of `CLAUDE.md` (running it locally) is unchanged. If you only work
+locally, you can ignore this document entirely.
+
+---
+
+## 1. The services
+
+```
+                        internet
+                            │
+              ┌─────────────▼──────────────┐
+              │  Application Load Balancer │   one hostname, path-routed
+              └──┬──────────┬──────────┬───┘
+      /          │   /api/assistant/*  │   /api/*
+   ┌─────────────▼──┐  ┌────▼────────┐ │ ┌─▼──────────────┐
+   │   frontend     │  │  assistant  │ │ │    assess      │
+   └────────────────┘  └──────┬──────┘ └─┴────────▲───────┘
+                              └───── HTTP ─────────┘
+                              │
+                    Cloudflare Tunnel
+                              │
+                  an operator's machine: Ollama
+```
+
+| Service | Entrypoint | Routes | Fargate size | Image |
+|---|---|---|---|---|
+| **assess** | `app.main_assess` | `/api/assess`, `/api/twin/meta`, `/api/twin/tiles/…`, `/api/twin/imagery/…`, `/api/health` | 1 vCPU / 4 GB | ~550 MB (carries the bake) |
+| **assistant** | `app.main_assistant` | `/api/assistant/{chat,explain,health}`, `/api/health` | 0.25 vCPU / 512 MB | ~260 MB |
+| **frontend** | Next.js standalone | everything not `/api/*` | 0.25 vCPU / 512 MB | ~200 MB |
+
+**Ollama is not deployed.** It runs on an operator's own machine and is reached
+through a Cloudflare Tunnel. That is what removes the GPU from the bill.
+
+### Load balancer routing
+
+| Priority | Path pattern | Target |
+|---|---|---|
+| 10 | `/api/assistant/*` | assistant |
+| 20 | `/api/*` | assess |
+| default | everything else | frontend |
+
+**Rule order is load-bearing.** `/api/assistant/*` must be evaluated before
+`/api/*`, or every assistant call routes to assess. Priorities are set explicitly
+in `infra.yaml`; do not renumber them casually.
+
+Because all three sit on one hostname, the browser makes **same-origin** requests
+and there is **no CORS anywhere**. The frontend is built with *empty*
+`NEXT_PUBLIC_API_BASE_URL` / `NEXT_PUBLIC_ASSISTANT_BASE_URL` so its client emits
+relative paths (`/api/assess`). This also means the frontend image does not embed
+the load balancer hostname, and so does not need rebuilding when the stack is
+recreated.
+
+---
+
+## 2. Invariants — break these and you break the design
+
+**I-A. `assess` is the only service that computes a hazard number.**
+Therefore it is the only place `DISCLAIMER` has to be attached (in `app/assess.py`).
+The assistant must never grow its own terrain or its own model. When a what-if
+question needs an assessment, the assistant *calls assess* through
+`app/assess_client.py`. This is what guarantees the language model can only narrate
+numbers the deterministic model produced.
+
+**I-B. `backend/app/api/__init__.py` must stay import-free.**
+It used to `from app.api import errors, middleware, stage3`, which meant importing
+*any* route module pulled in *all* of them — silently dragging the terrain reader
+and runout engine into the assistant image. There is a build-time assertion in
+`Dockerfile.backend` (the `assistant` target) **and** a test
+(`tests/test_service_split.py::test_assistant_service_does_not_import_the_runout_engine`).
+If either fails, something re-introduced an eager import.
+
+**I-C. Size the assess task for the peak, not the average.**
+One assessment peaks at **~1477 MB** resident on the 2400×2400 (5.8M cell) grid,
+in both `fast` and `advanced` modes. At a 2 GB task the container was OOM-killed
+mid-request (exit 137) and ECS restarted it — which presents to a user as
+"assess just fails", with no error anywhere obvious. CPython does not return freed
+arrays to the OS, so a warm container sits near its peak and the *second* request
+starts high. It runs 1 vCPU / 4 GB.
+
+**I-D. The baked terrain ships inside the assess image.**
+`runtime/` is gitignored, so the bake exists only on the machine that ran it.
+`.dockerignore` excludes `runtime/` with one scoped exception, `!runtime/baked/`.
+The staleness risk that exclusion normally guards against is handled instead by
+**tagging the assess image with the bake's `generated_at_utc`** and reporting the
+same value at `/api/health` as `bake_generated_at`. Consequence: **build the assess
+image on a machine that has run the bake**. A source-based cloud build would
+produce an image that reports `baked: false`.
+
+**I-E. Build `--platform linux/amd64`.**
+Fargate is x86_64. On Apple Silicon this cross-compiles, which also means a local
+container runs under emulation — an assessment takes ~82 s locally versus ~9 s on
+Fargate. That is emulation overhead, not a regression.
+
+---
+
+## 3. Prerequisites
+
+| Tool | Install | Notes |
+|---|---|---|
+| Docker | Docker Desktop | Must be running |
+| AWS CLI v2 | `brew install awscli` | |
+| Ollama | https://ollama.com/download | Plus `ollama pull llama3.1:8b` (~4.7 GB) |
+| cloudflared | `brew install cloudflared` | |
+
+**AWS account setup** (once):
+
+1. An AWS account with billing enabled.
+2. An IAM user with `AdministratorAccess`, and an access key of type *CLI*.
+3. Configure a **named profile** — never rely on a `[default]` profile:
+
+   ```bash
+   aws configure --profile avalanche      # region: ca-west-1, output: json
+   ```
+
+The scripts default to `PROFILE=avalanche` and `REGION=ca-west-1`, and pass
+`--profile` explicitly on every call. Override with environment variables:
+
+```bash
+PROFILE=other REGION=us-west-2 STACK=my-stack bash deploy/aws/deploy.sh status
+```
+
+> If the named profile does not exist, the AWS CLI fails with
+> *"The config profile could not be found"* rather than silently falling back to
+> another profile. That is deliberate — keep it that way, and do not add a
+> `[default]` profile.
+
+---
+
+## 4. Everyday use
+
+All commands run from `mount-hosmer-digital-twin/`.
+
+```bash
+bash deploy/session.sh up       # Ollama + tunnel + AWS, wired together (~10 min)
+bash deploy/session.sh status   # what is running, and what it costs
+bash deploy/session.sh down     # tear it all down; billing stops (~5 min)
+```
+
+`up` does four things in order: starts Ollama, opens the Cloudflare tunnel,
+captures its public URL, and deploys the AWS stack **with that URL already set** —
+so the assistant is wired on first creation. It then waits for all three services
+to answer before printing the app URL.
+
+`down` deletes the CloudFormation stack (load balancer, tasks, VPC, IAM, logs) and
+kills the tunnel. **Container images in ECR survive on purpose**, so bringing it
+back up never re-uploads ~1 GB.
+
+### The app URL changes on every `up`
+
+The load balancer's DNS name is generated per-ALB. `session.sh status` prints the
+current one. If a fixed URL is needed, park the stack instead of destroying it —
+the ALB (and its hostname) survives, and only compute stops:
+
+```bash
+bash deploy/aws/deploy.sh stop     # DesiredCount=0; Fargate billing stops, ALB stays
+bash deploy/aws/deploy.sh start    # DesiredCount=1; same URL, ~2 min to be ready
+```
+
+---
+
+## 5. Updating a deployed service
+
+### After changing backend code
+
+```bash
+bash deploy/aws/deploy.sh 2     # rebuild + push all three images
+bash deploy/aws/deploy.sh 3     # roll the services onto the new images
+```
+
+Step 2 rebuilds all three; Docker layer caching makes the unchanged ones fast. The
+assess image's 188 MB data layer is copied **last**, so a code-only change re-pushes
+a few MB rather than the whole bake.
+
+### After changing the frontend
+
+Same two steps. Remember `NEXT_PUBLIC_*` is inlined at **build** time — changing
+those values means rebuilding the image, not restarting the task.
+
+### After re-running the bake
+
+The assess image tag is derived from `meta.json`'s `generated_at_utc`, so a new
+bake automatically produces a new tag and `deploy.sh 3` rolls onto it. Verify:
+
+```bash
+curl -s "$(bash deploy/session.sh status | awk '/^AWS:/{print $2}')/api/health"
+# -> bake_generated_at should match the new bake
+```
+
+### After changing infrastructure (`infra.yaml`)
+
+```bash
+aws --profile avalanche --region ca-west-1 \
+  cloudformation validate-template --template-body file://deploy/aws/infra.yaml
+bash deploy/aws/deploy.sh 3
+```
+
+CloudFormation computes a changeset and updates only what differs. Changing a task
+definition (CPU, memory, environment) rolls the service onto a new task revision
+with no downtime.
+
+### Changing the tunnel URL only
+
+Quick-tunnel hostnames change on every restart. This updates just that parameter:
+
+```bash
+bash deploy/aws/deploy.sh set-tunnel https://<host>.trycloudflare.com
+```
+
+### Adding an API endpoint
+
+1. Add the function (`assess.py` / `risk.py` / `assistant.py`).
+2. Wire the route into the **correct** router — `api/terrain.py`, `api/assess.py`,
+   or `api/assistant.py`. It is served by whichever service mounts that router.
+3. If the path does not already fall under an existing ALB rule, add a listener
+   rule in `infra.yaml` (watch the priority ordering).
+4. Add the type + fetch helper in `frontend/src/lib/twin.ts`. Assistant calls use
+   `ASSISTANT_API`; everything else uses `API`.
+5. Add a test.
+
+> `/api/health` matches `/api/*`, so it routes to **assess**. That is why the
+> assistant additionally serves `/api/assistant/health` — otherwise its health
+> would only be visible to the load balancer's internal check.
+
+### Debugging a deployed service
+
+```bash
+bash deploy/aws/deploy.sh logs assess       # or assistant / frontend
+bash deploy/aws/deploy.sh status
+
+# why did a task die?
+aws --profile avalanche --region ca-west-1 ecs describe-tasks \
+  --cluster mount-hosmer-twin-cluster --tasks <task-arn> \
+  --query "tasks[].{stopped:stoppedReason,reason:containers[0].reason,exit:containers[0].exitCode}"
+```
+
+`exitCode: 137` with `OutOfMemoryError` means the task ran out of memory — raise
+`Memory` on that task definition in `infra.yaml` (see I-C).
+
+---
+
+## 6. Gotchas actually hit during setup
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| `Template format error: 'Description' length is greater than 1024` | CloudFormation caps `Description` at 1024 chars | Keep prose in YAML comments |
+| `Unable to assume the service linked role` on the ECS cluster | A brand-new AWS account has no ECS/ELB service-linked roles | `deploy.sh 1` now creates them idempotently |
+| Stack cannot be recreated after a failure | A `ROLLBACK_COMPLETE` stack must be deleted before its name is reused | `aws cloudformation delete-stack …`, then redeploy |
+| Assessment "just fails" in the browser | Task OOM-killed and silently restarted | See I-C |
+| `advanced` simulation returns 504 while logs show success | ALB idle timeout defaults to 60 s | Set to 300 s via `idle_timeout.timeout_seconds` |
+| Map tiles 404 | Tiles outside the 12×12 km AOI legitimately do not exist | Not a bug — MapLibre renders them empty. Centre tiles return 200 |
+| `status` reports a deleted stack as live | `describe-stacks` returns `DELETE_COMPLETE` stacks with their old outputs | Gate on `StackStatus`, not just outputs |
+| Task fails to start with an image-pull timeout | No public IP and no NAT gateway | `AssignPublicIp: ENABLED` is required (see §7) |
+
+---
+
+## 7. Cost model
+
+Two deliberate decisions in `infra.yaml`:
+
+**Public subnets, no NAT gateway.** Fargate tasks need outbound internet to pull
+from ECR and to reach the Ollama tunnel. The conventional pattern (private subnets
++ NAT gateway) costs ~$32/month on its own — more than every task combined. Instead
+the tasks sit in public subnets with public IPs, protected by a security group that
+accepts inbound traffic **only** from the load balancer. Nothing reaches a task
+directly from the internet.
+
+**`CapacityProvider` is a parameter.** `FARGATE_SPOT` is ~70% cheaper but
+interruptible; `FARGATE` is on-demand. Deploy with `CAPACITY=FARGATE` for anything
+graded — at short demo durations the saving is cents and an interruption is not
+worth it.
+
+Rough figures (ca-west-1, on-demand):
+
+| | |
+|---|---|
+| Everything running | ~$0.09/hour |
+| Parked (`deploy.sh stop`) — ALB only | ~$0.025/hour |
+| Torn down (`session.sh down`) | **~$0.10/month** (ECR images only) |
+
+Set a budget alarm. It is free and it is the real safety net:
+
+```bash
+aws --profile avalanche --region us-east-1 budgets create-budget \
+  --account-id <your-account-id> \
+  --budget file://budget.json --notifications-with-subscribers file://notifications.json
+```
+
+(Budgets is a global service and only answers on the `us-east-1` endpoint.)
+
+---
+
+## 8. Verifying a teardown
+
+`session.sh status` should report `not deployed`. To check independently:
+
+```bash
+A=(aws --profile avalanche --region ca-west-1)
+"${A[@]}" cloudformation list-stacks --query "StackSummaries[?StackName=='mount-hosmer-twin'].[StackStatus]"
+"${A[@]}" elbv2 describe-load-balancers --query "LoadBalancers[].LoadBalancerName"
+"${A[@]}" ecs list-clusters --query "clusterArns"
+"${A[@]}" ec2 describe-nat-gateways --filter Name=state,Values=available --query "NatGateways[].NatGatewayId"
+```
+
+All should be empty except a `DELETE_COMPLETE` stack entry. ECR repositories
+remaining is expected and intentional.
+
+In the AWS console, **set the region to Canada West (Calgary) `ca-west-1`** —
+everything is region-scoped and the wrong region shows nothing. Relevant consoles:
+CloudFormation (tick *View deleted stacks*), ECS, EC2 → Load Balancers, ECR, VPC,
+CloudWatch → Log groups. Billing → Budgets is global, not regional. Console cost
+data lags roughly 24 hours.
+
+---
+
+## 9. Files
+
+| Path | What it is |
+|---|---|
+| `deploy/session.sh` | `up` / `down` / `status` — the whole system, both halves |
+| `deploy/aws/deploy.sh` | ECR + build/push + stack; also `stop`, `start`, `logs`, `destroy` |
+| `deploy/aws/infra.yaml` | The entire AWS stack (VPC, ALB, ECS, IAM, logs) |
+| `deploy/ollama-tunnel.sh` | Ollama + Cloudflare Tunnel on the local machine |
+| `backend/app/assess_client.py` | How the assistant reaches assess (in-process or HTTP) |
+| `backend/app/service.py` | Shared FastAPI app factory |
+| `backend/app/main{,_assess,_assistant}.py` | The three entrypoints |
+| `backend/app/api/{terrain,assess,assistant,deps}.py` | Routes, one module per service |
+| `tests/test_service_split.py` | Pins the split: route surfaces, import isolation, the assess client |
+
+---
+
+## 10. Known limitations
+
+- **Assessment memory.** ~1477 MB peak for a 12×12 km AOI is large; the model
+  holds several full-grid float64 arrays simultaneously. Reducing it is an open
+  optimisation. See `docs/limitations.md`.
+- **HTTP only.** The ALB serves plain HTTP. HTTPS needs a domain and an ACM
+  certificate.
+- **The tunnel is public and unauthenticated.** The hostname is random and
+  unguessable, but anyone who learns it can send prompts to the operator's machine.
+  Bring it up for a session and take it down afterwards; do not leave it running
+  for days. For always-on use, a *named* tunnel with Cloudflare Access is the
+  correct mechanism.
+- **The assistant depends on an operator's machine being awake.** The map and
+  hazard model are unaffected and stay up; only the AI degrades, to a clean 503.

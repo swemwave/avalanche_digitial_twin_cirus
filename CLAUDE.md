@@ -244,7 +244,7 @@ browser ──► ALB (one hostname, path-routed)
   ~1477 MB on the 2400×2400 grid; at 2 GB the container was OOM-killed mid-request
   and silently restarted, which looks like "assess just fails". It runs 1 vCPU / 4 GB.
 
-**Deploying** (needs the `avalanche` AWS profile — never the personal one):
+**Deploying** (uses a dedicated AWS profile; never a `[default]` one):
 
 ```bash
 bash deploy/session.sh up       # Ollama + tunnel + AWS, wired together (~10 min)
@@ -256,6 +256,12 @@ bash deploy/session.sh down     # tear it all down; billing stops (~5 min)
 deletes everything. Because `runtime\` is gitignored, the baked terrain exists only
 on the machine that ran the bake: **build the assess image locally and push it**; a
 source-based cloud build would produce an image reporting `baked: false`.
+
+> **Before changing anything under `deploy\`, or deploying, read
+> [`docs/deployment.md`](docs/deployment.md).** It is the full runbook: the five
+> invariants, how to update a service after a code change, how to add an endpoint
+> across the split, the gotchas hit during setup (OOM sizing, service-linked roles,
+> ALB idle timeout), the cost model, and how to verify a teardown.
 
 ---
 

@@ -12,22 +12,24 @@
 # ---------------------------------------------------------------------------
 # ACCOUNT SAFETY -- read this first
 # ---------------------------------------------------------------------------
-# This Mac has an existing AWS profile called `talha` which belongs to a personal
-# account that must NOT be used. Every command here passes --profile explicitly and
-# defaults to a SEPARATE profile name, and `guard_account` prints the account ID and
-# makes you confirm before anything is created. Never set AWS_PROFILE=talha, and
-# never add a [default] profile.
+# A machine may have several AWS profiles configured, and deploying to the wrong
+# account is easy and annoying to undo. So: every command below passes --profile
+# EXPLICITLY, defaults to a dedicated project profile, and `guard_account` prints
+# the account ID and requires confirmation before anything is created.
+#
+# Do not add a `[default]` profile. Without one, a mistyped or unset profile fails
+# with "config profile could not be found" instead of silently using someone
+# else's account -- that failure mode is a feature, keep it.
 #
 # ---------------------------------------------------------------------------
 # BEFORE YOU RUN THIS -- the parts only you can do
 # ---------------------------------------------------------------------------
-#   1. Create a NEW AWS account at https://aws.amazon.com using
-#      groupavalanche4@gmail.com. (AWS accounts are tied to one email, so this
-#      cannot reuse the existing one.) Needs a card; $100 credits apply here.
+#   1. An AWS account with billing enabled. (AWS ties an account to one email
+#      address, so a separate project account needs a separate address.)
 #   2. In the AWS Console: IAM -> Users -> Create user -> attach
 #      AdministratorAccess -> Security credentials -> Create access key -> CLI.
 #   3. aws configure --profile avalanche
-#        (paste the key + secret, region us-west-2, output json)
+#        (paste the key + secret, region ca-west-1, output json)
 #
 # Then: bash deploy/aws/deploy.sh <step>
 # ---------------------------------------------------------------------------
@@ -67,7 +69,7 @@ guard_account() {
   "${AWS[@]}" sts get-caller-identity --output table
   echo
   echo "profile: $PROFILE   region: $REGION   stack: $STACK"
-  read -r -p "Is this the groupavalanche4@gmail.com account (NOT the personal one)? [y/N] " reply
+  read -r -p "Is that the correct project account (NOT a personal one)? [y/N] " reply
   [[ "$reply" == "y" || "$reply" == "Y" ]] || { echo "Aborted."; exit 1; }
 }
 

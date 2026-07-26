@@ -17,7 +17,8 @@
 # is about $0.36. Ollama runs on this Mac and the Cloudflare quick tunnel is free.
 #
 # Nothing here bills while it is down, so ALWAYS run `down` when you finish.
-# If you forget, the budget alarm emails groupavalanche4@gmail.com at $10.
+# If you forget, the AWS budget alarm emails its configured address at $10.
+# (Set one up if you have not -- see docs/deployment.md section 7.)
 # ---------------------------------------------------------------------------
 
 set -euo pipefail
