@@ -158,6 +158,37 @@ to answer before printing the app URL.
 kills the tunnel. **Container images in ECR survive on purpose**, so bringing it
 back up never re-uploads ~1 GB.
 
+### Controlling the two halves separately
+
+`session.sh` moves both halves at once. When you want them independent — stop
+paying for AWS but leave the AI up, restart a dead tunnel without touching the
+stack — use `twin.sh`, which delegates to the same scripts:
+
+```bash
+bash deploy/twin.sh web start | status | stop     # the AWS half (the one that costs money)
+bash deploy/twin.sh ai  start | status | stop     # Ollama + tunnel on this Mac (free)
+bash deploy/twin.sh status                        # both at once
+```
+
+Order matters on a cold start: `web start` bakes the current tunnel hostname into
+the assistant, so start `ai` first and the wiring is automatic. Start them the
+other way round — or restart the tunnel later, which always changes its random
+hostname — and re-wire without redeploying anything else:
+
+```bash
+bash deploy/ollama-tunnel.sh set-url        # infers the running tunnel's URL
+```
+
+The two halves are separated because they **fail** separately: the app can be
+perfectly healthy while the AI is unreachable. `ai status` does not just check that
+processes are alive — it calls the tunnel from outside, which is the only check
+that actually proves the deployed assistant can reach Ollama.
+
+> The argument to `set-url` is the **`https://<random>.trycloudflare.com`** hostname —
+> your Mac, exposed. It is not the app's `*.elb.amazonaws.com` URL; that is the
+> deployment, and pointing the assistant at it tells it to look for Ollama inside
+> the load balancer it already lives behind.
+
 ### The app URL changes on every `up`
 
 The load balancer's DNS name is generated per-ALB. `session.sh status` prints the
@@ -263,6 +294,7 @@ aws --profile avalanche --region ca-west-1 ecs describe-tasks \
 | Map tiles 404 | Tiles outside the 12×12 km AOI legitimately do not exist | Not a bug — MapLibre renders them empty. Centre tiles return 200 |
 | `status` reports a deleted stack as live | `describe-stacks` returns `DELETE_COMPLETE` stacks with their old outputs | Gate on `StackStatus`, not just outputs |
 | Task fails to start with an image-pull timeout | No public IP and no NAT gateway | `AssignPublicIp: ENABLED` is required (see §7) |
+| Assistant 503s, or `set-url` says "That URL is not serving Ollama" — while `localhost:11434` answers 200 | Ollama ≥0.28 rejects an unrecognised **`Host`** header with a bare 403 (DNS-rebinding protection). cloudflared forwards the original `Host` (`<random>.trycloudflare.com`). `OLLAMA_ORIGINS` does **not** cover this — that governs `Origin`, a different check | Run the tunnel with `--http-host-header localhost` (both tunnel scripts now do). Verify with `bash deploy/twin.sh ai status` |
 
 ---
 
@@ -329,10 +361,11 @@ data lags roughly 24 hours.
 
 | Path | What it is |
 |---|---|
-| `deploy/session.sh` | `up` / `down` / `status` — the whole system, both halves |
-| `deploy/aws/deploy.sh` | ECR + build/push + stack; also `stop`, `start`, `logs`, `destroy` |
+| `deploy/session.sh` | `up` / `down` / `status` — the whole system, both halves at once |
+| `deploy/twin.sh` | `web`/`ai` × `start`/`status`/`stop` — the two halves, separately |
+| `deploy/aws/deploy.sh` | ECR + build/push + stack; also `stop`, `start`, `logs`, `destroy`, `app-url` |
 | `deploy/aws/infra.yaml` | The entire AWS stack (VPC, ALB, ECS, IAM, logs) |
-| `deploy/ollama-tunnel.sh` | Ollama + Cloudflare Tunnel on the local machine |
+| `deploy/ollama-tunnel.sh` | Ollama + Cloudflare Tunnel on the local machine; `up`/`status`/`down`/`set-url` |
 | `backend/app/assess_client.py` | How the assistant reaches assess (in-process or HTTP) |
 | `backend/app/service.py` | Shared FastAPI app factory |
 | `backend/app/main{,_assess,_assistant}.py` | The three entrypoints |

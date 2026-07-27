@@ -164,6 +164,25 @@ step_urls() {
     --query "Stacks[0].Outputs[].[OutputKey,OutputValue]" --output table
 }
 
+# Print the app URL, but ONLY when the stack is actually usable -- prints nothing
+# otherwise. `describe-stacks` will happily return a DELETE_COMPLETE stack along
+# with its old outputs, so querying the URL alone reports a torn-down stack as
+# live, which is exactly the wrong direction for something used to check whether
+# you are still being billed. Every caller that wants "is it up, and where" should
+# use THIS, not `urls`.
+step_app_url() {
+  local out status url
+  out=$("${AWS[@]}" cloudformation describe-stacks --stack-name "$STACK" \
+        --query "Stacks[0].[StackStatus,Outputs[?OutputKey=='AppUrl']|[0].OutputValue]" \
+        --output text 2>/dev/null) || return 0
+  status=$(echo "$out" | awk '{print $1}')
+  url=$(echo "$out" | awk '{print $2}')
+  case "$status" in
+    CREATE_COMPLETE|UPDATE_COMPLETE|UPDATE_ROLLBACK_COMPLETE) echo "$url" ;;
+    *) return 0 ;;   # DELETE_*, ROLLBACK_COMPLETE, *_IN_PROGRESS: not usable
+  esac
+}
+
 # --- Preflight: are the images this stack is about to reference actually pushed? ---
 #
 # `stack` deploys parameters that POINT AT images; it does not build them. Two ways
@@ -271,11 +290,12 @@ case "${1:-}" in
   check)         step_check ;;
   set-tunnel)    shift; step_4_set_tunnel "$@" ;;
   urls)          step_urls ;;
+  app-url)       step_app_url ;;
   status)        step_status ;;
   logs)          shift; step_logs "$@" ;;
   stop)          step_stop ;;
   start)         step_start ;;
   destroy)       step_destroy ;;
   *) sed -n '1,40p' "${BASH_SOURCE[0]}"
-     echo "Usage: $0 {1|2|3|check|set-tunnel <url>|urls|status|logs [svc]|stop|start|destroy}" ;;
+     echo "Usage: $0 {1|2|3|check|set-tunnel <url>|urls|app-url|status|logs [svc]|stop|start|destroy}" ;;
 esac

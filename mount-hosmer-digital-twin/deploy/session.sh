@@ -51,7 +51,10 @@ tunnel_up() {
   else
     command -v cloudflared >/dev/null || { echo "cloudflared missing. Run: brew install cloudflared"; exit 1; }
     : > "$TUNNEL_LOG"
-    cloudflared tunnel --url "http://${OLLAMA_HOST}" >"$TUNNEL_LOG" 2>&1 &
+    # --http-host-header is REQUIRED. Ollama >=0.28 rejects an unrecognised Host
+    # header with a bare 403 (DNS-rebinding protection), and OLLAMA_ORIGINS does
+    # not cover it. See the longer note in ollama-tunnel.sh.
+    cloudflared tunnel --url "http://${OLLAMA_HOST}" --http-host-header localhost >"$TUNNEL_LOG" 2>&1 &
     echo $! > "$TUNNEL_PID"
     echo "  tunnel: starting..."
   fi
@@ -118,23 +121,10 @@ cmd_down() {
   echo "stop it with:  pkill ollama"
 }
 
-app_url() {
-  # Ask for the STATUS as well as the URL. `describe-stacks` will happily return a
-  # DELETE_COMPLETE stack along with its old outputs, so querying the URL alone
-  # reports a torn-down stack as live -- which is exactly the wrong direction for
-  # something whose job is to tell you whether you are still being billed.
-  local out status url
-  out=$(aws --profile "${PROFILE:-avalanche}" --region "${REGION:-ca-west-1}" \
-        cloudformation describe-stacks --stack-name "${STACK:-mount-hosmer-twin}" \
-        --query "Stacks[0].[StackStatus,Outputs[?OutputKey=='AppUrl']|[0].OutputValue]" \
-        --output text 2>/dev/null) || return 0
-  status=$(echo "$out" | awk '{print $1}')
-  url=$(echo "$out" | awk '{print $2}')
-  case "$status" in
-    CREATE_COMPLETE|UPDATE_COMPLETE|UPDATE_ROLLBACK_COMPLETE) echo "$url" ;;
-    *) return 0 ;;   # DELETE_*, ROLLBACK_COMPLETE, *_IN_PROGRESS: not usable
-  esac
-}
+# Prints the app URL only when the stack is actually usable (empty otherwise).
+# The status-guard logic lives in deploy.sh so there is ONE definition of "is the
+# stack live"; see the comment on step_app_url there for why the guard matters.
+app_url() { bash "$HERE/aws/deploy.sh" app-url; }
 
 cmd_status() {
   local url; url=$(app_url)
