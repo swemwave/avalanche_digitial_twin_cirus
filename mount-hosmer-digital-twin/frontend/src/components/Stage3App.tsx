@@ -1,3 +1,9 @@
+/*
+  This is the main page for the Mount Hosmer digital twin. It shows the terrain, the runout footprint, and the hazard index. 
+  It also has a chat interface for asking what-ifs and questions about the current result. The what-ifs run a local model that reads the result and terrain, and returns a new assessment. 
+  The questions are answered from the model and terrain, without changing the map or hazard numbers.
+*/
+
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
@@ -6,14 +12,14 @@ import { ConditionPanel } from "@/components/ConditionPanel";
 import { ResultCard } from "@/components/ResultCard";
 import { Stage3Map, type CameraPreset, type SurfaceView } from "@/components/Stage3Map";
 import { getTwinMeta, postAssess, type AssessRequest, type AssessResult, type TwinMeta } from "@/lib/twin";
-
+// The camera presets are the default views of the mountain. The surface views are the different ways to render the terrain.
 const CAMERAS: [CameraPreset, string][] = [
   ["overview", "Overview"],
   ["north", "North"],
   ["south", "South"],
   ["top", "Top-down"],
 ];
-
+// The surface views are the different ways to render the terrain. "natural" is the satellite imagery with snow cover, "hillshade" is the shaded relief of the terrain.
 const SURFACES: [SurfaceView, string][] = [
   ["natural", "Satellite / snow"],
   ["hillshade", "Hillshade"],
@@ -28,13 +34,14 @@ export function Stage3App() {
   const [camera, setCamera] = useState<CameraPreset>("overview");
   const [exaggeration, setExaggeration] = useState(1.5);
   const [surface, setSurface] = useState<SurfaceView>("natural");
-
+// The useEffect hook fetches the twin metadata when the component mounts. It sets the meta state with the fetched data, or sets an error message if the fetch fails.
   useEffect(() => {
     getTwinMeta()
       .then(setMeta)
       .catch((caught) => setError(caught instanceof Error ? caught.message : String(caught)));
   }, []);
-
+// The assess function runs the model with the given conditions. It sets the running state to true, clears any previous error or selected zone, and calls the postAssess function. 
+// It sets the result state with the returned assessment, or sets an error message if the call fails. Finally, it sets the running state to false.
   const assess = useCallback(async (request: AssessRequest) => {
     setRunning(true);
     setError(null);
@@ -47,7 +54,8 @@ export function Stage3App() {
       setRunning(false);
     }
   }, []);
-
+// The lidar fraction is the fraction of the area of interest that has LiDAR coverage. It is used to display the quality of the terrain data. 
+// If there is no metadata or no imagery, the surface view defaults to hillshade.
   const lidar = meta?.terrain.lidar_fraction != null ? `${(meta.terrain.lidar_fraction * 100).toFixed(2)}%` : "—";
   const visibleSurface: SurfaceView = meta && !meta.imagery ? "hillshade" : surface;
 
@@ -99,6 +107,7 @@ export function Stage3App() {
                     </button>
                   ))}
                 </div>
+
                 <div className="flex flex-wrap gap-1">
                   {CAMERAS.map(([id, label]) => (
                     <button

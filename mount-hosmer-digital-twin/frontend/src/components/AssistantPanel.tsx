@@ -10,7 +10,7 @@ type Props = {
   /** A scenario reply carries a fresh assessment; lift it so the map updates too. */
   onAssessment: (assessment: AssessResult) => void;
 };
-
+// The assistant panel shows a chat interface for asking what-ifs and questions about the current result. It runs on the user's machine, so it can read the result and terrain without sending them to a server.
 export function AssistantPanel({ result, onAssessment }: Props) {
   const [turns, setTurns] = useState<Turn[]>([]);
   const [message, setMessage] = useState("");
@@ -18,6 +18,7 @@ export function AssistantPanel({ result, onAssessment }: Props) {
   const [pending, setPending] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+// The explain button runs a local model that reads the result and terrain, and returns a text explanation of the result. It does not change the map or hazard numbers.
   const explain = async () => {
     if (!result) return;
     setBusy(true);
@@ -34,6 +35,7 @@ export function AssistantPanel({ result, onAssessment }: Props) {
     }
   };
 
+  // The send button sends the user's message to the assistant, which can either run a what-if scenario (and return a new assessment) or answer a question (without changing the map).
   const send = async () => {
     const text = message.trim();
     if (!text) return;
@@ -144,7 +146,7 @@ export function AssistantPanel({ result, onAssessment }: Props) {
     </div>
   );
 }
-
+// This function stringifies the body and sets the content-type header.
 function describe(caught: unknown): string {
   if (caught instanceof TwinApiError && caught.status === 503) {
     return `${caught.message}`;

@@ -23,7 +23,8 @@ const ZONE_COLOR: unknown = [
   70, "#e08a4a",
   85, "#c23b35",
 ];
-
+// These props are passed to the Stage3Map component, which renders the 3D map of the mountain and the modelled release zones and runout. 
+// The map uses MapLibre GL JS to render the terrain and imagery tiles, and to display the zones, runout, envelope, and paths as GeoJSON layers.
 type Props = {
   meta: TwinMeta | null;
   result: AssessResult | null;
@@ -47,7 +48,7 @@ export function Stage3Map({ meta, result, exaggeration, camera, surface, onZoneC
     let cancelled = false;
 
     (async () => {
-      if (!container.current || mapRef.current) return;
+      if (!container.current || mapRef.current) return; // already built
       try {
         const maplibre = await import("maplibre-gl");
         if (cancelled || !container.current) return;
@@ -85,6 +86,9 @@ export function Stage3Map({ meta, result, exaggeration, camera, surface, onZoneC
                   }
                 : {}),
             },
+            // The layers are the visual elements of the map. The sky layer is a solid background color. 
+            // The hillshade layer is the shaded relief of the terrain, which is only visible when the surface view is set to "hillshade". 
+            // The zones, runout, envelope, and paths layers are the modelled release zones and runout, which are always visible.
             layers: [
               { id: "sky", type: "background", paint: { "background-color": "#0b0f10" } },
               ...(meta.imagery
@@ -126,7 +130,8 @@ export function Stage3Map({ meta, result, exaggeration, camera, surface, onZoneC
           if (message.includes("404")) return; // tiles outside the AOI legitimately 404
           setError(message || "The map failed to load.");
         });
-
+        // This event listener is called when the map has finished loading. It sets the terrain exaggeration, adds the sources and layers for the zones, runout, envelope, and paths, 
+        // and sets up the click and hover interactions for the zones. Finally, it sets the ready state to true.
         map.on("load", () => {
           map.setTerrain({ source: "terrain", exaggeration });
 
@@ -233,12 +238,14 @@ export function Stage3Map({ meta, result, exaggeration, camera, surface, onZoneC
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !ready) return;
-
+    // These const variables are the sources for the zones, runout, envelope, and paths layers. They are used to update the data for these layers when the result changes.
     const zones = map.getSource("zones") as maplibregl.GeoJSONSource | undefined;
     const runout = map.getSource("runout") as maplibregl.GeoJSONSource | undefined;
     const envelope = map.getSource("envelope") as maplibregl.GeoJSONSource | undefined;
     const paths = map.getSource("paths") as maplibregl.GeoJSONSource | undefined;
-
+    // If there is no result, clear the sources. Otherwise, set the sources with the new result data. 
+    // The zones source is set with the release zones from the result. The runout source is set with the runout polygons from the result. 
+    // The envelope source is set with the uncertainty polygons from the result. The paths source is set with the main paths from the result.
     if (!result) {
       zones?.setData(emptyCollection());
       runout?.setData(emptyCollection());

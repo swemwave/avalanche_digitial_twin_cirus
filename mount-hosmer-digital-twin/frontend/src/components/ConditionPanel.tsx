@@ -13,14 +13,14 @@ const RELEASE_SIZES: [ReleaseSize, string][] = [
 ];
 
 type Preset = { id: string; label: string; value: Omit<AssessRequest, "simulation_mode" | "seed"> };
-
+// The presets are common what-if scenarios that the user can quickly apply to the sliders. They are not based on real weather data, but rather on typical avalanche conditions.
 const PRESETS: Preset[] = [
   { id: "calm", label: "Calm / off-season", value: { new_snow_cm: 0, wind_speed_kmh: 0, wind_direction_deg: 225, release_size: "medium" } },
   { id: "storm_sw", label: "Storm slab, SW wind", value: { new_snow_cm: 40, wind_speed_kmh: 45, wind_direction_deg: 225, release_size: "medium" } },
   { id: "big_storm", label: "Big storm + strong wind", value: { new_snow_cm: 70, wind_speed_kmh: 65, wind_direction_deg: 225, release_size: "large" } },
   { id: "wind_event", label: "Wind event, little snow", value: { new_snow_cm: 8, wind_speed_kmh: 60, wind_direction_deg: 270, release_size: "medium" } },
 ];
-
+// The compass function converts a wind direction in degrees to a compass direction (N, NE, E, SE, S, SW, W, NW). It is used to display the wind direction in the UI.
 const COMPASS = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
 const compass = (deg: number) => COMPASS[Math.round((deg % 360) / 22.5) % 16];
 

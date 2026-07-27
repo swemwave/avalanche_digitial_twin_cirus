@@ -8,7 +8,7 @@ type Props = {
   error: string | null;
   selectedZone: string | null;
 };
-
+// The result card shows the hazard index, the runout footprint, and the selected zone's details. It also shows any warnings and the disclaimer.
 export function ResultCard({ result, running, error, selectedZone }: Props) {
   if (error) {
     return (
@@ -29,9 +29,9 @@ export function ResultCard({ result, running, error, selectedZone }: Props) {
     );
   }
 
-  const { runout } = result;
-  const zones = result.zones;
-  const highlighted = selectedZone ? zones.find((zone) => zone.zone_id === selectedZone) : null;
+  const { runout } = result; // runout is always present in a valid result, even if the model failed to produce any zones.
+  const zones = result.zones;// zones is always present in a valid result, even if the model failed to produce any zones.
+  const highlighted = selectedZone ? zones.find((zone) => zone.zone_id === selectedZone) : null; // highlighted is the zone that the user has clicked on in the map, or null if no zone is selected.
 
   return (
     <div className="flex flex-col gap-4 text-sm">

@@ -56,7 +56,8 @@ export const ASSISTANT_BASE_URL = resolveBase(
 
 const API = `${API_BASE_URL}/api`;
 const ASSISTANT_API = `${ASSISTANT_BASE_URL}/api`;
-
+// --- Low-level fetch wrapper ---------------------------------------------------
+// main fetch function, used by all the typed calls below. It throws a TwinApiError on any non-2xx response, with a message from the body if possible.
 async function request<T>(path: string, init?: RequestInit, base: string = API): Promise<T> {
   const response = await fetch(`${base}${path}`, {
     cache: "no-store",
@@ -84,7 +85,7 @@ export class TwinApiError extends Error {
     this.status = status;
   }
 }
-
+// This function stringifies the body and sets the content-type header.
 const post = <T>(path: string, body: unknown, base: string = API) =>
   request<T>(path, { method: "POST", body: JSON.stringify(body) }, base);
 
@@ -234,7 +235,8 @@ export type ChatResult = {
 };
 
 // --- Calls -------------------------------------------------------------------
-
+//All of the types above are used in the following calls, which are the only ones that go to the Stage 3 API. The two assistant calls go to the assistant service. 
+//postAssess 
 export const getTwinMeta = () => request<TwinMeta>("/twin/meta");
 export const postAssess = (body: AssessRequest) => post<AssessResult>("/assess", body);
 // The two assistant calls are the only ones that go to the assistant service.
