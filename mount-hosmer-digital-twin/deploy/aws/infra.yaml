@@ -381,7 +381,7 @@ Resources:
               return value
           def handler(event,context):
               root=request("/").decode("utf-8","replace")
-              if "Mount Hosmer" not in root or "Experimental and non-operational" not in root: raise RuntimeError("frontend safety copy absent")
+              if "Mount Hosmer" not in root or "Experimental research scenario" not in root or "never replaces Avalanche Canada guidance" not in root: raise RuntimeError("frontend safety copy absent")
               health=object_at("/api/health")
               if health.get("status")!="ok" or health.get("baked") is not True or health.get("bake_sha256")!=EXPECTED: raise RuntimeError("health or bake identity mismatch")
               meta=object_at("/api/twin/meta")

@@ -37,7 +37,8 @@ class _HealthyDeploymentHandler(BaseHTTPRequestHandler):
         if self.path == "/":
             self._send(
                 "text/html",
-                b"<title>Mount Hosmer</title>Experimental and non-operational",
+                b"<title>Mount Hosmer</title>Experimental research scenario"
+                b" &middot; never replaces Avalanche Canada guidance or field assessment",
             )
         elif self.path == "/api/health":
             self._json({"status": "ok", "baked": True, "bake_sha256": BAKE_SHA256})

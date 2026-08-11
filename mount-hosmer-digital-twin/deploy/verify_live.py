@@ -102,8 +102,10 @@ def verify(base_url: str, expected_bake_sha256: str | None = None) -> GateSummar
     root_text = root_body.decode("utf-8", errors="replace")
     if root_status != 200 or root_type != "text/html":
         raise HealthGateError("Frontend root did not return HTTP 200 HTML.")
-    if "Mount Hosmer" not in root_text or "Experimental and non-operational" not in root_text:
+    if "Mount Hosmer" not in root_text or "Experimental research scenario" not in root_text:
         raise HealthGateError("Frontend root is missing the project identity or non-operational warning.")
+    if "never replaces Avalanche Canada guidance" not in root_text:
+        raise HealthGateError("Frontend root is missing the Avalanche Canada deference notice.")
 
     health = _json(f"{base_url}/api/health")
     bake_sha256 = health.get("bake_sha256")

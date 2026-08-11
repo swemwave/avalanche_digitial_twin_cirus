@@ -31,8 +31,8 @@ test("3D terrain renders and an assessment runs", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
   // The disclaimer is not dismissible and not optional (safety rule).
-  await expect(page.getByText(/Experimental and non-operational/i)).toBeVisible();
-  await expect(page.getByText(/never a probability and never a forecast/i)).toBeVisible();
+  await expect(page.getByText(/Experimental research scenario/i)).toBeVisible();
+  await expect(page.getByText(/never replaces Avalanche Canada guidance/i)).toBeVisible();
 
   // The mesh: a MapLibre canvas, built from baked terrain tiles.
   await expect(page.locator("canvas.maplibregl-canvas")).toHaveCount(1, { timeout: 20_000 });

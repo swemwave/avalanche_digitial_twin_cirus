@@ -87,19 +87,6 @@ export function Stage3App() {
         <div className="sticky top-0 z-50 -mx-2 rounded-md border border-[var(--accent-2)] bg-[var(--background)]/95 px-3 py-2 text-center text-xs font-semibold text-[var(--accent-2)] shadow-lg backdrop-blur">
           Experimental research scenario · not operational · not a probability · never replaces Avalanche Canada guidance or field assessment
         </div>
-        <header className="border-b border-[var(--border)] pb-4">
-          <p className="text-sm font-medium text-[var(--accent)]">
-            Mount Hosmer avalanche digital twin
-          </p>
-          <h1 className="mt-1 text-3xl font-semibold">Terrain · Release · Runout</h1>
-          <p className="mt-1 max-w-3xl text-xs leading-relaxed text-[var(--muted)]">
-            Experimental and non-operational. Every score is a relative index, never a probability
-            and never a forecast. It has not been validated against any observed Mount Hosmer
-            avalanche because no eligible local avalanche-observation dataset is currently available
-            to this project. It must never replace Avalanche Canada forecasts or field assessment.
-          </p>
-        </header>
-
         <div className="grid gap-4 xl:grid-cols-[420px_minmax(0,1fr)_400px]">
           {/* Left: conditions */}
           <aside className="flex flex-col gap-4">

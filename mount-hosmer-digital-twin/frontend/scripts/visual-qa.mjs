@@ -47,7 +47,7 @@ await page.screenshot({ path: screenshot, fullPage: true });
 const result = {
   url,
   screenshot,
-  disclaimerVisible: await page.getByText(/never a probability and never a forecast/i).isVisible(),
+  disclaimerVisible: await page.getByText(/never replaces Avalanche Canada guidance/i).isVisible(),
   satelliteEnabled,
   imageryTileLoaded: imageryStatuses.some((status) => status === 200),
   surfaceViewsDiffer,
