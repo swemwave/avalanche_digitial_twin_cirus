@@ -281,14 +281,20 @@ operational tool.
   from the `fast` measurement. It remains capped at 6 zones (`MAX_ADVANCED_ZONES`) versus 12 for fast mode.
 - Assessments are **deterministic**: identical conditions produce an identical hazard score across
   machines and architectures (verified locally and on x86 cloud hardware).
-- **That determinism is at the level of the published numbers, not of the raw float arrays.** Running
-  the frozen M0 baseline on a newer numeric stack (numpy 2.5.2 / scipy 1.18.0, against the 2.2.6 / 1.16.3
-  it was frozen with) reproduced the release field and every published summary exactly — identical
-  `release_valid_cells`, and identical release min/max/mean — while the SHA-256 of the runout ensemble's
-  raw arrays changed. So byte-exact replay of `output_sha256` is bound to the pinned verification
-  toolchain in `backend/requirements-dev.txt`, and a differing hash there means last-place float movement
-  in the particle ensemble, **not** a changed result. Anything asserting exact array replay must pin that
-  stack; re-freezing the baseline against a newer one requires characterizing the difference first.
+- **That claim is broader than the evidence, and the frozen M0 baseline does not currently hold across
+  machines.** `test_baseline_comparison.py` asserts that `m0-baseline.json`'s SHA-256 hashes over raw
+  float arrays reproduce exactly. They do on the machine the baseline was frozen on, and they do **not**
+  on GitHub Actions — on either Ubuntu or Windows runners, and **with numpy and scipy pinned to the exact
+  versions used to freeze it** (2.2.6 / 1.16.3), which rules out package drift as the cause. The
+  remaining candidates are the BLAS/LAPACK build and the CPU instruction set the wheels dispatch to;
+  neither has been isolated yet.
+- **What did reproduce is the science.** On the same runs, the release field and every published summary
+  were identical — `release_valid_cells` 1302 and release min/max/mean 74.375 on both sides — with only
+  the runout ensemble's array hashes differing. So this is last-place floating-point movement, **not** a
+  changed answer, and the published index is not in question. But until it is isolated, treat exact
+  `output_sha256` replay as a property of one machine rather than of the model, and do not cite the
+  baseline as cross-machine numerical evidence. Re-freezing it elsewhere would only move which machine
+  is privileged, and AGENTS.md requires characterizing such a change rather than updating the snapshot.
 
 ## Deployment
 
