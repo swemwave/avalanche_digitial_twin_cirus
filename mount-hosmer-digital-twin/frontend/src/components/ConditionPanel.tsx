@@ -18,12 +18,17 @@ type Preset = {
   windSpeed: string;
   windDirection: string;
   releaseSize: ReleaseSize;
+  /** Blank leaves temperature unknown, which reproduces the temperature-free result. */
+  airTemperature: string;
 };
 
 const PRESETS: Preset[] = [
-  { id: "storm_sw", label: "Storm slab · SW wind", newSnow: "40", windSpeed: "45", windDirection: "225", releaseSize: "medium" },
-  { id: "big_storm", label: "Large storm sensitivity", newSnow: "70", windSpeed: "65", windDirection: "225", releaseSize: "large" },
-  { id: "wind_event", label: "Wind-loading sensitivity", newSnow: "8", windSpeed: "60", windDirection: "270", releaseSize: "medium" },
+  { id: "storm_sw", label: "Storm slab · SW wind", newSnow: "40", windSpeed: "45", windDirection: "225", releaseSize: "medium", airTemperature: "" },
+  { id: "big_storm", label: "Large storm sensitivity", newSnow: "70", windSpeed: "65", windDirection: "225", releaseSize: "large", airTemperature: "" },
+  { id: "wind_event", label: "Wind-loading sensitivity", newSnow: "8", windSpeed: "60", windDirection: "270", releaseSize: "medium", airTemperature: "" },
+  // Makes the phase gate discoverable: the index falls because rain builds no dry
+  // slab, and the result carries a critical advisory saying that is not a safer day.
+  { id: "rain_on_snow", label: "Rain on snow · +4 °C", newSnow: "30", windSpeed: "30", windDirection: "225", releaseSize: "medium", airTemperature: "4" },
 ];
 
 type Props = {
@@ -75,6 +80,7 @@ function SimpleWorkspace({ running, onAssess, onDraftChange }: Pick<Props, "runn
   const [newSnow, setNewSnow] = useState("");
   const [windSpeed, setWindSpeed] = useState("");
   const [windDirection, setWindDirection] = useState("");
+  const [airTemperature, setAirTemperature] = useState("");
   const [releaseSize, setReleaseSize] = useState<ReleaseSize>("medium");
   const [simulationMode, setSimulationMode] = useState<SimulationMode>("fast");
   const [error, setError] = useState<string | null>(null);
@@ -83,6 +89,7 @@ function SimpleWorkspace({ running, onAssess, onDraftChange }: Pick<Props, "runn
     setNewSnow(preset.newSnow);
     setWindSpeed(preset.windSpeed);
     setWindDirection(preset.windDirection);
+    setAirTemperature(preset.airTemperature);
     setReleaseSize(preset.releaseSize);
     setError(null);
     onDraftChange();
@@ -96,6 +103,7 @@ function SimpleWorkspace({ running, onAssess, onDraftChange }: Pick<Props, "runn
         wind_speed_kmh: optionalNumber(windSpeed, "Wind speed"),
         wind_direction_deg: optionalNumber(windDirection, "Wind direction"),
         release_size: releaseSize,
+        air_temperature_c: optionalNumber(airTemperature, "Air temperature"),
         simulation_mode: simulationMode,
         seed: simulationMode === "advanced" ? 42 : null,
       });
@@ -133,6 +141,13 @@ function SimpleWorkspace({ running, onAssess, onDraftChange }: Pick<Props, "runn
       <NumberInput label="New storm-snow depth" value={newSnow} unit="cm" placeholder="unknown" onChange={(value) => { setNewSnow(value); onDraftChange(); }} />
       <NumberInput label="Representative wind speed" value={windSpeed} unit="km/h" placeholder="unknown" onChange={(value) => { setWindSpeed(value); onDraftChange(); }} />
       <NumberInput label="Wind direction (FROM)" value={windDirection} unit="° true" placeholder="unknown" onChange={(value) => { setWindDirection(value); onDraftChange(); }} />
+      <NumberInput label="Air temperature (optional)" value={airTemperature} unit="°C" placeholder="unknown" onChange={(value) => { setAirTemperature(value); onDraftChange(); }} />
+
+      <p className="-mt-1 text-[10px] leading-relaxed text-[var(--muted)]">
+        Temperature only splits new precipitation into snow and rain (0–2 °C). Above 2 °C it is
+        rain, which builds no dry slab — a lower index there means less dry-slab loading, not a
+        safer day.
+      </p>
 
       <label className="flex flex-col gap-1">
         <span className="flex justify-between text-xs text-[var(--muted)]"><span>Release-size assumption</span><span>category</span></span>
@@ -153,7 +168,7 @@ function SimpleWorkspace({ running, onAssess, onDraftChange }: Pick<Props, "runn
       </div>
 
       {error ? <p role="alert" className="text-[11px] text-[var(--danger)]">{error}</p> : null}
-      <button type="button" onClick={submit} disabled={running} className="rounded-md bg-[var(--accent)] px-3 py-2 text-sm font-semibold text-[#101415] disabled:opacity-60">
+      <button type="button" data-testid="simple-assess" onClick={submit} disabled={running} className="rounded-md bg-[var(--accent)] px-3 py-2 text-sm font-semibold text-[#101415] disabled:opacity-60">
         {running ? "Assessing…" : terrainOnly ? "Show terrain-only result" : "Assess hypothetical scenario"}
       </button>
       <p className="text-[11px] leading-relaxed text-[var(--muted)]">

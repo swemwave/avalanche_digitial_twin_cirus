@@ -150,7 +150,10 @@ test("blank simple inputs remain null and render an unavailable terrain-only res
   await page.goto("/");
 
   await expect(page.getByText(/Blank means unknown/i)).toBeVisible();
-  await page.getByRole("button", { name: "Show terrain-only result" }).click();
+  // The label still says what pressing it will do; the click uses a stable hook so
+  // a re-render between locate and click cannot detach the node under load.
+  await expect(page.getByTestId("simple-assess")).toHaveText("Show terrain-only result");
+  await page.getByTestId("simple-assess").click();
   await expect(page.getByText("Unavailable — conditions unknown")).toBeVisible();
   await expect(page.getByText("Terrain-only", { exact: true })).toBeVisible();
   expect(submitted).toMatchObject({
@@ -313,4 +316,66 @@ test("recorded field evidence renders above the number and never changes it", as
   // Notes are collapsed, not shouted.
   await expect(page.getByText("1 further record retained")).toBeVisible();
   await expect(page.getByText("Retained with full provenance: Total snow depth.")).toBeHidden();
+});
+
+test("the simple panel sends air temperature and surfaces the rain advisory", async ({ page }) => {
+  let submitted: Record<string, unknown> | null = null;
+  await page.route("**/api/assess", async (route) => {
+    submitted = route.request().postDataJSON() as Record<string, unknown>;
+    await route.fulfill({
+      json: {
+        ...terrainOnlyResult,
+        release_potential_index: 44.2,
+        hazard_score: 44.2,
+        conditions: {
+          new_snow_cm: 30, wind_speed_kmh: 30, wind_direction_deg: 225,
+          wind_direction_compass: "SW", release_size: "medium",
+          provenance: "user_supplied_simple_scenario", air_temperature_c: 4,
+          precipitation_snow_fraction: 0, effective_new_snow_cm: 0,
+        },
+        scenario: {
+          ...terrainOnlyResult.scenario,
+          classification: "hypothetical",
+          advisories: [{
+            advisory_id: "rain_on_snow",
+            severity: "critical",
+            title: "Precipitation classified as rain at 4 degC",
+            detail: "That is a statement about dry-slab loading, NOT about hazard.",
+            parameters: ["air_temperature", "new_snow_depth"],
+            overrides_model: true,
+            changed_the_number: false,
+          }],
+          advisory_summary: {
+            count: 1, count_by_severity: { critical: 1, warning: 0, note: 0 },
+            field_evidence_overrides_model: true, statement: "No advisory changed the index.",
+          },
+        },
+      },
+    });
+  });
+  await page.goto("/");
+
+  // Temperature is entered here, not only in the expert panel.
+  await expect(page.getByLabel(/Air temperature/)).toBeVisible();
+  await page.getByRole("button", { name: "Rain on snow · +4 °C" }).click();
+  await expect(page.getByLabel(/Air temperature/)).toHaveValue("4");
+
+  await expect(page.getByTestId("simple-assess")).toHaveText("Assess hypothetical scenario");
+  await page.getByTestId("simple-assess").click();
+  await expect.poll(() => submitted?.air_temperature_c).toBe(4);
+
+  // The lower number arrives with the advisory that stops it being misread.
+  await expect(page.getByText("Precipitation classified as rain at 4 degC")).toBeVisible();
+  await expect(page.getByText(/NOT about hazard/)).toBeVisible();
+});
+
+test("a preset without temperature clears a previously entered one", async ({ page }) => {
+  await page.route("**/api/assess", (route) => route.fulfill({ json: terrainOnlyResult }));
+  await page.goto("/");
+
+  await page.getByRole("button", { name: "Rain on snow · +4 °C" }).click();
+  await expect(page.getByLabel(/Air temperature/)).toHaveValue("4");
+  // Switching preset must not leave a stale temperature silently applied.
+  await page.getByRole("button", { name: "Storm slab · SW wind" }).click();
+  await expect(page.getByLabel(/Air temperature/)).toHaveValue("");
 });
