@@ -1,10 +1,9 @@
 # Build context for the backend image. The context is the project root because the
 # backend needs BOTH backend/ and the app/ package shim that sits beside it.
 
-# Generated output. runtime/ is 412 MB of COGs plus previews, the tile cache and
-# avalanche.db. It is a named volume at run time and must never be baked into a
-# layer -- a stale terrain raster inside the image would be served as if it were
-# current.
+# Generated output. runtime/ is the elevation COG plus the baked tile pyramid and
+# layers. It is a named volume at run time and must never be baked into a layer --
+# a stale terrain raster inside the image would be served as if it were current.
 runtime/
 
 # ...with ONE scoped exception: runtime/baked/.

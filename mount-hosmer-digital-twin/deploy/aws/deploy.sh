@@ -435,6 +435,80 @@ step_urls() {
     --query "Stacks[0].Outputs[].[OutputKey,OutputValue]" --output table
 }
 
+# Print the app URL, but ONLY when the stack is actually usable -- prints nothing
+# otherwise. `describe-stacks` will happily return a DELETE_COMPLETE stack along
+# with its old outputs, so querying the URL alone reports a torn-down stack as
+# live, which is exactly the wrong direction for something used to check whether
+# you are still being billed. Every caller that wants "is it up, and where" should
+# use THIS, not `urls`.
+step_app_url() {
+  local out status url
+  out=$("${AWS[@]}" cloudformation describe-stacks --stack-name "$STACK" \
+        --query "Stacks[0].[StackStatus,Outputs[?OutputKey=='AppUrl']|[0].OutputValue]" \
+        --output text 2>/dev/null) || return 0
+  status=$(echo "$out" | awk '{print $1}')
+  url=$(echo "$out" | awk '{print $2}')
+  case "$status" in
+    CREATE_COMPLETE|UPDATE_COMPLETE|UPDATE_ROLLBACK_COMPLETE) echo "$url" ;;
+    *) return 0 ;;   # DELETE_*, ROLLBACK_COMPLETE, *_IN_PROGRESS: not usable
+  esac
+}
+
+# --- Preflight: are the images this stack is about to reference actually pushed? ---
+#
+# `stack` deploys parameters that POINT AT images; it does not build them. Nothing
+# pushed yet (fresh account, or a release tag that was never built) means
+# CloudFormation accepts the parameter, the ECS task then fails its image pull, and
+# the stack sits in CREATE_IN_PROGRESS until it rolls back ~15 minutes later. So
+# verify before spending that, and say plainly what to run.
+#
+# This checks the RELEASE TAG all three services share, written by step 2 into
+# $RELEASE_TAG_FILE and resolved to immutable digests by `stack`. It deliberately
+# does not check `:latest`: this deployment pins digests precisely so that "which
+# code is inside" is answerable, and a mutable tag cannot answer it.
+step_check() {
+  local tag missing=()
+
+  if [[ ! -f runtime/baked/meta.json ]]; then
+    echo "!! No runtime/baked/meta.json -- run 'python -m app.bake' first."
+    echo "   The assess image is built from the local bake; there is nothing to deploy without it."
+    return 1
+  fi
+
+  tag="${RELEASE_TAG:-}"
+  if [[ -z "$tag" ]]; then
+    [[ -f "$RELEASE_TAG_FILE" ]] || {
+      echo "!! No release tag recorded yet -- run: bash deploy/aws/deploy.sh 2"
+      return 1
+    }
+    tag="$(<"$RELEASE_TAG_FILE")"
+  fi
+
+  _has_image() {
+    "${AWS[@]}" ecr describe-images --repository-name "twin/$1" \
+      --image-ids "imageTag=$2" >/dev/null 2>&1
+  }
+
+  local svc
+  for svc in assess assistant frontend; do
+    _has_image "$svc" "$tag" || missing+=("$svc:$tag")
+  done
+
+  if (( ${#missing[@]} )); then
+    echo "!! Not in ECR: ${missing[*]}"
+    echo "   Build and push them first:  bash deploy/aws/deploy.sh 2"
+    return 1
+  fi
+
+  echo "  images: assess, assistant, frontend all present at $tag"
+  local pushed
+  pushed=$("${AWS[@]}" ecr describe-images --repository-name twin/assess \
+            --image-ids "imageTag=$tag" --query 'imageDetails[0].imagePushedAt' --output text 2>/dev/null || true)
+  [[ -n "$pushed" && "$pushed" != "None" ]] && echo "  release $tag pushed  $pushed"
+  echo "  (changed code since then? re-run step 2 to cut a new release before step 3.)"
+  return 0
+}
+
 # --- 4. Point the deployed assistant at the current tunnel -------------------
 # Quick-tunnel hostnames change on every restart, so this is re-run often. It only
 # touches the OllamaUrl parameter; the other images stay as they are.
@@ -491,16 +565,18 @@ case "${1:-}" in
   1|ecr)         step_1_ecr ;;
   2|push)        step_2_push ;;
   3|stack)       step_3_stack ;;
+  check)         step_check ;;
   set-tunnel)    shift; step_4_set_tunnel "$@" ;;
   cert)          step_cert ;;
   cert-wait)     step_cert_wait ;;
   dns)           step_dns ;;
   urls)          step_urls ;;
+  app-url)       step_app_url ;;
   status)        step_status ;;
   logs)          shift; step_logs "$@" ;;
   stop)          step_stop ;;
   start)         step_start ;;
   destroy)       step_destroy ;;
   *) sed -n '1,40p' "${BASH_SOURCE[0]}"
-     echo "Usage: $0 {1|2|3|set-tunnel <url>|cert|cert-wait|dns|urls|status|logs [svc]|stop|start|destroy}" ;;
+     echo "Usage: $0 {1|2|3|check|set-tunnel <url>|cert|cert-wait|dns|urls|app-url|status|logs [svc]|stop|start|destroy}" ;;
 esac

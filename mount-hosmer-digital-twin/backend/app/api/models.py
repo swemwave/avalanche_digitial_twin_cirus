@@ -701,7 +701,16 @@ class ChatTurn(BaseModel):
 
 
 class ChatRequest(BaseModel):
-    message: str
+    """A conversational turn.
+
+    ``message`` is bounded because it is the one field that flows into the language
+    model's prompt. The body ceiling in ``api.middleware`` sizes the *assessment* --
+    a big storm's release-zone and runout GeoJSON -- so without a separate limit here
+    a caller could put megabytes of text in front of the model. 4 000 characters is
+    far more than any real question and cheap to reject.
+    """
+
+    message: str = Field(min_length=1, max_length=4000)
     assessment: AssessResult | dict[str, Any] | None = None
     history: list[ChatTurn] | None = None
 

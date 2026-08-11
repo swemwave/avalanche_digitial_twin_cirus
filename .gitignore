@@ -49,3 +49,6 @@ desktop.ini
 
 # TypeScript incremental build cache
 *.tsbuildinfo
+
+# Bake files
+baked/

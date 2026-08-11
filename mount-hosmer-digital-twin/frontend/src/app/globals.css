@@ -9,6 +9,9 @@
   --panel-strong: #202829;
   --border: #334044;
   --accent: #8fbc8f;
+  /* The advisory colour: everything that RAISES A WARNING rather than moving the
+     number is drawn in this, opposite --accent. Do not remove it as unused -- the
+     condition workspace, the help panel and the presets all read it. */
   --accent-2: #d6a75b;
   --danger: #e16d5a;
 }

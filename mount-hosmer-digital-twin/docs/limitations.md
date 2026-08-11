@@ -288,6 +288,17 @@ See [`deployment.md`](deployment.md) for the full runbook. Limitations specific 
 
 - **The public app uses HTTPS at `avalanche.gotlost.xyz`.** The raw ALB hostname intentionally retains
   plain HTTP for the assistant service's internal call to assess; it is not the QR-code-facing address.
+- **The API is unauthenticated and unthrottled, and the condition for revisiting that has now been met.**
+  `POST /api/assess` is a ~5 s, ~1.5 GB request that anyone who can reach the service may call. This was
+  accepted while the only address was a random, unindexed AWS DNS name and the stack was raised for a few
+  hours at a time; the earlier note said to revisit it **"the moment the deployment becomes permanent,
+  gets a real hostname, or carries anything sensitive."** It now has a real, stable, QR-code-facing
+  hostname, so the unguessable-address half of that reasoning no longer applies and **adding
+  authentication or rate limiting is the first thing to change here.** What still holds is the bounded
+  blast radius: Fargate bills per task-hour so request volume cannot amplify cost, `DesiredCount` is
+  capped at 2, and the worst case is a container reaching its 4 GB ceiling and being restarted by ECS,
+  which is self-healing. The same gap covers the body-size limit, which reads `Content-Length` and so
+  does not bound a chunked request.
 - **The AI assistant depends on an operator's own machine being awake**, reached through a Cloudflare
   Tunnel. The map, terrain and hazard model are unaffected by its absence; only the assistant degrades,
   to a clean 503. A quick tunnel is also **public and unauthenticated** — the hostname is unguessable but

@@ -373,3 +373,78 @@ def test_body_size_limit_is_path_aware(client: TestClient, monkeypatch: pytest.M
     # But the assistant allowance is bounded, not unlimited: over 4 MB is still refused.
     over_4mb = client.post("/api/assistant/explain", json={"assessment": {"_pad": "z" * (5 * 1024 * 1024)}})
     assert over_4mb.status_code == 413
+
+
+# --- Contract tests carried over from main's dead-code audit ------------------
+# These arrived on main in f4b6a8a while Stage 3 was being built here. The
+# behaviour they pin still holds, so they are kept; only the import sites moved,
+# because release sizes and engines are now owned by avycore rather than by the
+# backend facades.
+
+
+def _enum_values(prop: dict, schema: dict) -> list[str]:
+    """The accepted values of an enum property, nullable or not.
+
+    An optional field serialises as ``anyOf: [{enum: [...]}, {type: null}]`` while a
+    defaulted one is a bare ``enum``. Both must be readable, or the assertion below
+    silently passes on the wrong shape.
+    """
+    if "enum" in prop:
+        return prop["enum"]
+    for branch in prop.get("anyOf", []):
+        if "enum" in branch:
+            return branch["enum"]
+    raise AssertionError(f"no enum advertised on {prop!r}")
+
+
+def test_assess_rejects_unknown_simulation_mode(client: TestClient):
+    response = client.post("/api/assess", json={"simulation_mode": "turbo"})
+    assert response.status_code in (400, 422)
+
+
+def test_openapi_advertises_the_valid_enum_values(client: TestClient):
+    """The schema must name the accepted values, not just say "string".
+
+    These were plain ``str`` fields validated by hand inside the handler, so the
+    generated schema told a client nothing about what it could send. Typed as
+    ``Literal`` they are self-documenting -- pin that so nobody widens them back.
+    """
+    from avycore.hazard.conditions import RELEASE_SIZES
+    from avycore.hazard.runout import ENGINES
+
+    schema = client.get("/openapi.json").json()
+    request_model = schema["components"]["schemas"]["AssessRequest"]["properties"]
+    assert set(_enum_values(request_model["release_size"], schema)) == set(RELEASE_SIZES)
+    assert set(_enum_values(request_model["simulation_mode"], schema)) == set(ENGINES)
+
+
+def test_chat_rejects_an_unbounded_message(client: TestClient):
+    """``message`` is the field that reaches the model's prompt, so it is bounded.
+
+    The body ceiling sizes the *assessment* payload; without a limit here a caller
+    could put megabytes of prose in front of the language model.
+    """
+    assert client.post("/api/assistant/chat", json={"message": "x" * 4001}).status_code == 422
+    assert client.post("/api/assistant/chat", json={"message": ""}).status_code == 422
+
+
+def test_an_internal_keyerror_is_a_500_not_a_404(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+):
+    """Our bug must look like our bug.
+
+    A blanket ``KeyError -> 404`` handler used to turn any internal dict-key mistake
+    into a "not found" that blamed the caller and logged no traceback. Nothing
+    user-supplied can reach a KeyError any more, so the handler only ever disguised
+    our own faults. It is gone.
+    """
+    from app import assess as assess_mod
+
+    def _boom(*args, **kwargs):
+        raise KeyError("some_internal_layer")
+
+    monkeypatch.setattr(assess_mod, "assess", _boom)
+
+    response = client.post("/api/assess", json={"new_snow_cm": 10})
+    assert response.status_code == 500
+    assert response.json()["error"]["code"] == "internal_error"

@@ -52,7 +52,10 @@ tunnel_up() {
   else
     command -v cloudflared >/dev/null || { echo "cloudflared missing. Run: brew install cloudflared"; exit 1; }
     : > "$TUNNEL_LOG"
-    cloudflared tunnel --url "http://${OLLAMA_HOST}" >"$TUNNEL_LOG" 2>&1 &
+    # --http-host-header is REQUIRED. Ollama >=0.28 rejects an unrecognised Host
+    # header with a bare 403 (DNS-rebinding protection), and OLLAMA_ORIGINS does
+    # not cover it. See the longer note in ollama-tunnel.sh.
+    cloudflared tunnel --url "http://${OLLAMA_HOST}" --http-host-header localhost >"$TUNNEL_LOG" 2>&1 &
     echo $! > "$TUNNEL_PID"
     echo "  tunnel: starting..."
   fi
@@ -77,16 +80,29 @@ tunnel_down() {
 
 # --- the whole system --------------------------------------------------------
 cmd_up() {
-  echo "=== 1/3  AI on this machine ==="
+  echo "=== 1/4  AI on this machine ==="
   ollama_up
   tunnel_up
 
-  echo "=== 2/3  AWS (this is the slow part, ~8 min) ==="
+  # `up` deploys the stack; it does NOT build images. That is deliberate -- pushing
+  # ~900 MB of assess image every time you start a demo would be absurd. But it means
+  # `up` alone silently ships whatever is already in ECR, so if you have changed code
+  # since the last push you would demo the OLD build and have no way to tell. Check
+  # first: 10 seconds here against 10 minutes of deploying the wrong thing.
+  echo "=== 2/4  checking the images this deploy will use ==="
+  echo y | bash "$HERE/aws/deploy.sh" 1 >/dev/null 2>&1 || true   # ECR repos; idempotent
+  if ! bash "$HERE/aws/deploy.sh" check; then
+    echo
+    echo "Stopping before the slow part. Ollama and the tunnel are up and stay up."
+    exit 1
+  fi
+
+  echo "=== 3/4  AWS (this is the slow part, ~8 min) ==="
   # TUNNEL_URL is exported above, so the assistant task is created already knowing
   # where to find Ollama -- no second deploy needed.
   echo y | CAPACITY="${CAPACITY:-FARGATE}" bash "$HERE/aws/deploy.sh" 3
 
-  echo "=== 3/3  checking it actually works ==="
+  echo "=== 4/4  checking it actually works ==="
   local url; url=$(app_url)
   until curl -sf "$url/api/health" >/dev/null 2>&1; do echo "  waiting for the load balancer..."; sleep 15; done
   curl -s "$url/api/assistant/health" | grep -q '"ollama_configured": *true' \
@@ -112,23 +128,10 @@ cmd_down() {
   echo "stop it with:  pkill ollama"
 }
 
-app_url() {
-  # Ask for the STATUS as well as the URL. `describe-stacks` will happily return a
-  # DELETE_COMPLETE stack along with its old outputs, so querying the URL alone
-  # reports a torn-down stack as live -- which is exactly the wrong direction for
-  # something whose job is to tell you whether you are still being billed.
-  local out status url
-  out=$(aws --profile "${PROFILE:-avalanche}" --region "${REGION:-ca-west-1}" \
-        cloudformation describe-stacks --stack-name "${STACK:-mount-hosmer-twin}" \
-        --query "Stacks[0].[StackStatus,Outputs[?OutputKey=='AppUrl']|[0].OutputValue]" \
-        --output text 2>/dev/null) || return 0
-  status=$(echo "$out" | awk '{print $1}')
-  url=$(echo "$out" | awk '{print $2}')
-  case "$status" in
-    CREATE_COMPLETE|UPDATE_COMPLETE|UPDATE_ROLLBACK_COMPLETE) echo "$url" ;;
-    *) return 0 ;;   # DELETE_*, ROLLBACK_COMPLETE, *_IN_PROGRESS: not usable
-  esac
-}
+# Prints the app URL only when the stack is actually usable (empty otherwise).
+# The status-guard logic lives in deploy.sh so there is ONE definition of "is the
+# stack live"; see the comment on step_app_url there for why the guard matters.
+app_url() { bash "$HERE/aws/deploy.sh" app-url; }
 
 cmd_status() {
   local url; url=$(app_url)
