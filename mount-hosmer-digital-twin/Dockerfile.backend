@@ -28,13 +28,15 @@ ENV PIP_DISABLE_PIP_VERSION_CHECK=1 PIP_NO_CACHE_DIR=1
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH" PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
 
+WORKDIR /app
 # requirements-bake.txt includes requirements.txt via `-r`, so copy both.
 COPY backend/requirements.txt backend/requirements-bake.txt /tmp/
+# requirements.txt installs the canonical repository copy of AvyCore.
+COPY packages/avycore /app/packages/avycore
 RUN pip install --only-binary=:all: -r /tmp/requirements-bake.txt
 
 # WORKDIR is the PROJECT ROOT, not backend/. The app/__init__.py pkgutil shim extends
 # the `app` package onto backend/app, which is why `python -m app.bake` resolves.
-WORKDIR /app
 ENV PYTHONPATH=/app
 COPY app/ /app/app/
 COPY backend/ /app/backend/
@@ -60,10 +62,11 @@ RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH" PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
 
 # Runtime deps ONLY. No rasterio, no pyproj -> no libexpat, no GDAL, no compiler.
+WORKDIR /app
 COPY backend/requirements.txt /tmp/
+COPY packages/avycore /app/packages/avycore
 RUN pip install --only-binary=:all: -r /tmp/requirements.txt
 
-WORKDIR /app
 ENV PYTHONPATH=/app
 COPY app/ /app/app/
 COPY backend/ /app/backend/
@@ -92,7 +95,7 @@ CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
 # ===========================================================================
 # assess target -- terrain + tiles + the assessment model. The HEAVY half.
 # ===========================================================================
-# Carries the baked artifacts, and is the only service that computes a hazard
+# Carries the baked artifacts, and is the only service that computes a release-potential
 # number (and therefore the only one that has to attach the DISCLAIMER).
 #
 # WHY THE DATA IS BAKED INTO THE IMAGE, not mounted:
@@ -111,9 +114,8 @@ FROM runtime AS assess
 # re-pushing 188 MB of terrain.
 COPY --chown=avalanche:avalanche runtime/baked /runtime/baked
 
-# Fail the build rather than ship a hollow assess service. Without this the image
-# builds fine and only fails in production, as a 409 on every request.
-RUN python -c "import pathlib,sys; p=pathlib.Path('/runtime/baked/meta.json'); sys.exit(0) if p.exists() else sys.exit('runtime/baked/meta.json missing -- run `python -m app.bake` before building the assess target')"
+# Fail the build rather than ship a missing, stale, or corrupted scientific bake.
+RUN python -m app.check_bake
 
 EXPOSE 8080
 # Cloud Run injects $PORT and ignores EXPOSE. `sh -c` with `exec` keeps uvicorn as

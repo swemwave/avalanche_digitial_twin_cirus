@@ -25,7 +25,10 @@ export function AssistantPanel({ result, onAssessment }: Props) {
     setError(null);
     try {
       const body = await postExplain(result);
-      setTurns((prev) => [...prev, { role: "assistant", text: body.explanation }]);
+      setTurns((prev) => [
+        ...prev,
+        { role: "assistant", text: `${body.explanation}\n\n⚠ ${body.disclaimer}` },
+      ]);
     } catch (caught) {
       setError(describe(caught));
     } finally {
@@ -56,11 +59,15 @@ export function AssistantPanel({ result, onAssessment }: Props) {
             role: "assistant",
             text:
               `Ran: ${parsed.new_snow_cm} cm snow, wind ${parsed.wind_speed_kmh} km/h from ` +
-              `${parsed.wind_direction_compass}, ${parsed.release_size}.\n\n${body.reply}`,
+              `${parsed.wind_direction_compass}, ${parsed.release_size}. These values are assumed ` +
+              `from your prompt; unmentioned observations remain unknown.\n\n${body.reply}\n\n⚠ ${body.disclaimer}`,
           },
         ]);
       } else {
-        setTurns((prev) => [...prev, { role: "assistant", text: body.reply }]);
+        setTurns((prev) => [
+          ...prev,
+          { role: "assistant", text: `${body.reply}\n\n⚠ ${body.disclaimer}` },
+        ]);
       }
     } catch (caught) {
       setError(describe(caught));

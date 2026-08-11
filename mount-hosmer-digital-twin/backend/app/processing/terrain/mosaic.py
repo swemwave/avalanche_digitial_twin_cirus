@@ -33,6 +33,7 @@ import numpy as np
 from app.core.settings import Settings
 from app.processing.harmonization.grids import NODATA, AnalysisGrid
 from app.processing.harmonization.raster_io import Semantics, read_aligned
+from app.processing.mountain_pack import MountainPackError, load_mountain_pack
 
 #: Codes written into the provenance raster. Ascending code = descending
 #: preference, so "lowest code wins" is the merge rule.
@@ -190,7 +191,11 @@ def _fill_from_copernicus(
     warnings: list[str],
     used: list[Path],
 ) -> None:
-    path = settings.data_root / "static" / "terrain_fallback" / "Copernicus_DEM_GLO30_EPSG26911_30m.tif"
+    pack, _ = load_mountain_pack(settings)
+    fallback = pack.assets["elevation_fallback"]
+    if fallback.adapter != "single_raster":
+        raise MountainPackError("elevation_fallback currently requires adapter='single_raster'.")
+    path = pack.asset_path(settings.data_root, "elevation_fallback")
     remaining = int((provenance == 0).sum())
     if remaining == 0:
         return
@@ -222,13 +227,13 @@ def build_dem(settings: Settings, grid: AnalysisGrid) -> TerrainModel:
     warnings: list[str] = []
     used: list[Path] = []
 
-    folder = (
-        settings.data_root
-        / "static"
-        / "lidar_bc"
-        / "downloads"
-        / "LiDAR_DEM_Index_1_20_000"
-    )
+    pack, _ = load_mountain_pack(settings)
+    primary = pack.assets["elevation_lidar"]
+    if primary.adapter != "geobc_lidar_year_tiles":
+        raise MountainPackError(
+            "elevation_lidar currently requires adapter='geobc_lidar_year_tiles'."
+        )
+    folder = pack.asset_path(settings.data_root, "elevation_lidar")
     _mosaic_lidar(folder, grid, elevation, provenance, warnings, used)
     _fill_from_copernicus(settings, grid, elevation, provenance, warnings, used)
 
@@ -250,13 +255,15 @@ def build_dsm(settings: Settings, grid: AnalysisGrid) -> TerrainModel | None:
     has no meaningful 30 m equivalent, and inventing one would corrupt the canopy
     height model that is derived from it.
     """
-    folder = (
-        settings.data_root
-        / "static"
-        / "lidar_bc"
-        / "downloads"
-        / "LiDAR_DSM_Index_1_20_000"
-    )
+    pack, _ = load_mountain_pack(settings)
+    surface = pack.assets.get("surface_lidar")
+    if surface is None:
+        return None
+    if surface.adapter != "geobc_lidar_year_tiles":
+        raise MountainPackError(
+            "surface_lidar currently requires adapter='geobc_lidar_year_tiles'."
+        )
+    folder = pack.asset_path(settings.data_root, "surface_lidar")
     if not folder.exists():
         return None
 

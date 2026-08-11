@@ -35,9 +35,10 @@ node_modules/
 out/
 npm-debug.log*
 
-# --- .NET launcher build output (the prebuilt .exe at the app root IS tracked) -
+# --- .NET launcher build output -----------------------------------------------
 mount-hosmer-digital-twin/launcher/bin/
 mount-hosmer-digital-twin/launcher/obj/
+mount-hosmer-digital-twin/MountHosmerDigitalTwin.exe
 
 # --- OS / editor cruft --------------------------------------------------------
 Thumbs.db

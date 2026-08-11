@@ -12,18 +12,11 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
+from avycore import DISCLAIMER
+
 from app.core.settings import Settings
 
 CONFIG_FILENAME = "avalanche_model.yaml"
-
-DISCLAIMER = (
-    "Physics-informed estimate from an advanced terrain- and conditions-based avalanche "
-    "digital twin. This is NOT an operational avalanche forecast and is NOT a calibrated "
-    "avalanche probability. It has not been validated against observed Mount Hosmer "
-    "avalanches, because no historical avalanche record exists for this mountain. It must "
-    "never replace Avalanche Canada forecasts or field assessment."
-)
-
 
 class ModelConfigError(RuntimeError):
     pass
@@ -57,15 +50,6 @@ class ModelConfig:
                 f"Refusing to substitute a default for a scientific parameter."
             )
         return value
-
-    def normalized_weights(self, dotted: str) -> dict[str, float]:
-        """Weights rescaled to sum to 1, so only their ratios matter."""
-        raw = self.get(dotted, {}) or {}
-        values = {key: float(value) for key, value in raw.items()}
-        total = sum(values.values())
-        if total <= 0:
-            raise ModelConfigError(f"Weights at {dotted!r} sum to {total}; they must be positive.")
-        return {key: value / total for key, value in values.items()}
 
 _MISSING = object()
 

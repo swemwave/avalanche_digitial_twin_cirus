@@ -22,12 +22,21 @@ AWSTemplateFormatVersion: "2010-09-09"
 #    public IPs, and are protected by a security group that accepts inbound traffic
 #    ONLY from the load balancer. Nothing reaches a task directly from the internet.
 #
-# 2. FARGATE SPOT by default. ~70% cheaper, at the cost of occasional interruption
-#    (ECS restarts the task automatically, typically within a minute or two). Set
-#    CapacityProvider=FARGATE before a graded demo if a two-minute blip is not
-#    acceptable.
+# 2. FARGATE (on-demand) by default. Changed from FARGATE_SPOT because this stack
+#    backs a physical QR code on a capstone poster and must stay live 24/7 --
+#    SPOT's occasional interruption (ECS restarts the task automatically, usually
+#    within a minute or two) is not acceptable for that. Set
+#    CapacityProvider=FARGATE_SPOT for cheaper, interruption-tolerant local dev.
+#
+# CUSTOM DOMAIN + HTTPS. The public, QR-code-facing URL is https://<Domain>
+# (default avalanche.gotlost.xyz), a Namecheap CNAME pointed at the ALB's
+# hostname -- see the `dns` step in deploy.sh. Port 80 (HTTP) is left exactly as
+# it was and is NOT redirected, because the assistant service also calls back
+# into assess over plain HTTP through this same ALB; only port 443 (HTTPS) is new.
 #
 # Teardown is the whole stack:  bash deploy/aws/deploy.sh destroy
+# Do NOT run this against the live poster deployment without repointing the
+# Namecheap CNAME afterwards -- see docs/deployment.md section 5.
 
 Description: >
   Mount Hosmer avalanche digital twin: assess, assistant and frontend microservices
@@ -60,9 +69,28 @@ Parameters:
 
   CapacityProvider:
     Type: String
-    Default: FARGATE_SPOT
+    Default: FARGATE
     AllowedValues: [FARGATE_SPOT, FARGATE]
-    Description: FARGATE_SPOT is ~70% cheaper but interruptible. FARGATE for demos.
+    Description: >
+      FARGATE is on-demand and always-on -- the default, for the live poster
+      deployment. FARGATE_SPOT is ~70% cheaper but interruptible; fine for local
+      dev, not for something a QR code points at unattended.
+
+  Domain:
+    Type: String
+    Default: avalanche.gotlost.xyz
+    Description: >
+      Public hostname for the stable, QR-code-facing URL. CloudFormation does not
+      manage DNS -- a Namecheap CNAME must point this at the ALB's hostname
+      (AlbDnsName output below; also printed by `deploy.sh dns`).
+
+  CertificateArn:
+    Type: String
+    Description: >
+      ARN of an ACM certificate covering Domain, already ISSUED. Request one and
+      get the DNS validation record via `deploy.sh cert`. No default on purpose --
+      a missing certificate fails this deploy loudly instead of silently shipping
+      without HTTPS.
 
   DesiredCount:
     Type: Number
@@ -72,6 +100,11 @@ Parameters:
     Description: >
       Tasks per service. Set to 0 to park the stack: compute billing stops and only
       the ALB (~$16/month) keeps running. This is the single biggest cost lever.
+
+  ExpectedBakeSha256:
+    Type: String
+    AllowedPattern: "^[0-9a-f]{64}$"
+    Description: Exact baked-data identity required by the hourly public health probe.
 
 # ===========================================================================
 Resources:
@@ -142,7 +175,7 @@ Resources:
   AlbSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: Public HTTP entry point.
+      GroupDescription: Public HTTP/HTTPS entry point.
       VpcId: !Ref Vpc
       SecurityGroupIngress:
         - IpProtocol: tcp
@@ -150,6 +183,11 @@ Resources:
           ToPort: 80
           CidrIp: 0.0.0.0/0
           Description: HTTP from anywhere.
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+          Description: HTTPS from anywhere.
       Tags: [{ Key: Name, Value: !Sub "${AWS::StackName}-alb-sg" }]
 
   TaskSecurityGroup:
@@ -238,6 +276,167 @@ Resources:
       UnhealthyThresholdCount: 5
       Matcher: { HttpCode: "200" }
 
+  # Low-cost target-health alarms. They intentionally have no notification action:
+  # alarm state remains visible in CloudWatch without creating an SNS subscription
+  # or sending messages that the operator has not approved. The scheduled public
+  # smoke test separately exercises bake identity, imagery, and a real assessment.
+  AssessUnhealthyAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub "${AWS::StackName}-assess-unhealthy"
+      AlarmDescription: Assess target group has no fully healthy rollout.
+      Namespace: AWS/ApplicationELB
+      MetricName: UnHealthyHostCount
+      Dimensions:
+        - { Name: LoadBalancer, Value: !GetAtt LoadBalancer.LoadBalancerFullName }
+        - { Name: TargetGroup, Value: !GetAtt AssessTargetGroup.TargetGroupFullName }
+      Statistic: Maximum
+      Period: 60
+      EvaluationPeriods: 2
+      DatapointsToAlarm: 2
+      Threshold: 0
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+
+  AssistantUnhealthyAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub "${AWS::StackName}-assistant-unhealthy"
+      AlarmDescription: Assistant container is unhealthy; deterministic services remain independent.
+      Namespace: AWS/ApplicationELB
+      MetricName: UnHealthyHostCount
+      Dimensions:
+        - { Name: LoadBalancer, Value: !GetAtt LoadBalancer.LoadBalancerFullName }
+        - { Name: TargetGroup, Value: !GetAtt AssistantTargetGroup.TargetGroupFullName }
+      Statistic: Maximum
+      Period: 60
+      EvaluationPeriods: 2
+      DatapointsToAlarm: 2
+      Threshold: 0
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+
+  FrontendUnhealthyAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub "${AWS::StackName}-frontend-unhealthy"
+      AlarmDescription: Frontend target group has no fully healthy rollout.
+      Namespace: AWS/ApplicationELB
+      MetricName: UnHealthyHostCount
+      Dimensions:
+        - { Name: LoadBalancer, Value: !GetAtt LoadBalancer.LoadBalancerFullName }
+        - { Name: TargetGroup, Value: !GetAtt FrontendTargetGroup.TargetGroupFullName }
+      Statistic: Maximum
+      Period: 60
+      EvaluationPeriods: 2
+      DatapointsToAlarm: 2
+      Threshold: 0
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+
+  # One small hourly Lambda invocation is materially cheaper than a continuously
+  # running browser canary. It checks the public HTTPS surface, exact bake identity,
+  # distinct centre imagery/terrain bytes and a real deterministic assessment. The
+  # repository Playwright smoke additionally verifies the rendered views differ.
+  LiveSmokeRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: { Service: lambda.amazonaws.com }
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+  LiveSmokeFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Runtime: python3.12
+      Handler: index.handler
+      Role: !GetAtt LiveSmokeRole.Arn
+      Timeout: 60
+      MemorySize: 128
+      Environment:
+        Variables:
+          BASE_URL: !Sub "https://${Domain}"
+          EXPECTED_BAKE_SHA256: !Ref ExpectedBakeSha256
+      Code:
+        ZipFile: |
+          import hashlib,json,math,os,urllib.request
+          BASE=os.environ["BASE_URL"]
+          EXPECTED=os.environ["EXPECTED_BAKE_SHA256"]
+          def request(path,payload=None):
+              data=None if payload is None else json.dumps(payload,separators=(",", ":")).encode()
+              headers={"User-Agent":"mount-hosmer-live-smoke/1"}
+              if data is not None: headers["Content-Type"]="application/json"
+              req=urllib.request.Request(BASE+path,data=data,headers=headers,method="POST" if data else "GET")
+              with urllib.request.urlopen(req,timeout=45) as response:
+                  if response.status != 200: raise RuntimeError(f"{path} returned {response.status}")
+                  return response.read()
+          def object_at(path,payload=None):
+              value=json.loads(request(path,payload))
+              if not isinstance(value,dict): raise RuntimeError(f"{path} returned non-object JSON")
+              return value
+          def handler(event,context):
+              root=request("/").decode("utf-8","replace")
+              if "Mount Hosmer" not in root or "Experimental and non-operational" not in root: raise RuntimeError("frontend safety copy absent")
+              health=object_at("/api/health")
+              if health.get("status")!="ok" or health.get("baked") is not True or health.get("bake_sha256")!=EXPECTED: raise RuntimeError("health or bake identity mismatch")
+              meta=object_at("/api/twin/meta")
+              imagery=meta.get("imagery") or {}; tiles=meta.get("tiles") or {}; center=meta.get("center_wgs84") or []
+              if meta.get("schema")!="stage3-baked-v2" or (meta.get("identity") or {}).get("bake_sha256")!=EXPECTED or imagery.get("visual_context_only") is not True or len(center)!=2: raise RuntimeError("bake metadata incomplete")
+              zoom=min(int(tiles["max_zoom"]),int(imagery["max_zoom"])); scale=2**zoom
+              lat=max(-85.05112878,min(85.05112878,float(center[1]))); x=int((float(center[0])+180)/360*scale); y=int((1-math.asinh(math.tan(math.radians(lat)))/math.pi)/2*scale)
+              def tile(template): return request(template.replace("{z}",str(zoom)).replace("{x}",str(x)).replace("{y}",str(y)))
+              terrain=tile(tiles["url_template"]); satellite=tile(imagery["url_template"])
+              if not terrain.startswith(b"\x89PNG\r\n\x1a\n") or not satellite.startswith(b"\x89PNG\r\n\x1a\n") or hashlib.sha256(terrain).digest()==hashlib.sha256(satellite).digest(): raise RuntimeError("imagery unavailable or identical")
+              result=object_at("/api/assess",{"new_snow_cm":40,"wind_speed_kmh":45,"wind_direction_deg":225,"release_size":"medium","simulation_mode":"fast"})
+              if result.get("is_operational_forecast") is not False or result.get("is_probability") is not False or (result.get("model") or {}).get("bake_sha256")!=EXPECTED or (result.get("conditions") or {}).get("provenance")!="user_supplied" or "NOT an operational avalanche forecast" not in result.get("disclaimer",""): raise RuntimeError("assessment safety or identity contract failed")
+              return {"bake_sha256":EXPECTED,"frontend":True,"imagery":True,"assessment":True}
+
+  LiveSmokeLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${LiveSmokeFunction}"
+      RetentionInDays: 7
+
+  LiveSmokeSchedule:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: Hourly public application and bake-identity health probe.
+      ScheduleExpression: cron(37 * * * ? *)
+      State: ENABLED
+      Targets:
+        - Arn: !GetAtt LiveSmokeFunction.Arn
+          Id: live-smoke
+
+  LiveSmokeInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref LiveSmokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt LiveSmokeSchedule.Arn
+
+  LiveSmokeErrorsAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub "${AWS::StackName}-live-smoke-errors"
+      AlarmDescription: Hourly public frontend, bake, imagery, or assessment probe failed.
+      Namespace: AWS/Lambda
+      MetricName: Errors
+      Dimensions:
+        - { Name: FunctionName, Value: !Ref LiveSmokeFunction }
+      Statistic: Sum
+      Period: 3600
+      EvaluationPeriods: 1
+      DatapointsToAlarm: 1
+      Threshold: 0
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+
   Listener:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
@@ -270,6 +469,48 @@ Resources:
       Conditions:
         - Field: path-pattern
           # Covers /api/assess, /api/twin/meta, and the tile pyramid.
+          PathPatternConfig: { Values: ["/api/*"] }
+      Actions:
+        - Type: forward
+          TargetGroupArn: !Ref AssessTargetGroup
+
+  # Additive, not a replacement for Listener above: the assistant task calls assess
+  # back through this same ALB over plain HTTP (see AVALANCHE_ASSESS_URL below), so
+  # port 80 keeps working unchanged. This is the QR-code-facing, HTTPS listener.
+  HttpsListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref LoadBalancer
+      Port: 443
+      Protocol: HTTPS
+      Certificates:
+        - CertificateArn: !Ref CertificateArn
+      SslPolicy: ELBSecurityPolicy-TLS13-1-2-2021-06
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref FrontendTargetGroup
+
+  # Mirrors AssistantRule/AssessRule exactly -- same priorities, same path
+  # patterns -- so routing behavior is identical on both listeners.
+  AssistantRuleHttps:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      ListenerArn: !Ref HttpsListener
+      Priority: 10
+      Conditions:
+        - Field: path-pattern
+          PathPatternConfig: { Values: ["/api/assistant/*"] }
+      Actions:
+        - Type: forward
+          TargetGroupArn: !Ref AssistantTargetGroup
+
+  AssessRuleHttps:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      ListenerArn: !Ref HttpsListener
+      Priority: 20
+      Conditions:
+        - Field: path-pattern
           PathPatternConfig: { Values: ["/api/*"] }
       Actions:
         - Type: forward
@@ -421,6 +662,10 @@ Resources:
       Cluster: !Ref Cluster
       TaskDefinition: !Ref AssessTaskDefinition
       DesiredCount: !Ref DesiredCount
+      DeploymentConfiguration:
+        MinimumHealthyPercent: 100
+        MaximumPercent: 200
+        DeploymentCircuitBreaker: { Enable: true, Rollback: true }
       CapacityProviderStrategy:
         - { CapacityProvider: !Ref CapacityProvider, Weight: 1 }
       NetworkConfiguration:
@@ -443,6 +688,10 @@ Resources:
       Cluster: !Ref Cluster
       TaskDefinition: !Ref AssistantTaskDefinition
       DesiredCount: !Ref DesiredCount
+      DeploymentConfiguration:
+        MinimumHealthyPercent: 100
+        MaximumPercent: 200
+        DeploymentCircuitBreaker: { Enable: true, Rollback: true }
       CapacityProviderStrategy:
         - { CapacityProvider: !Ref CapacityProvider, Weight: 1 }
       NetworkConfiguration:
@@ -461,6 +710,10 @@ Resources:
       Cluster: !Ref Cluster
       TaskDefinition: !Ref FrontendTaskDefinition
       DesiredCount: !Ref DesiredCount
+      DeploymentConfiguration:
+        MinimumHealthyPercent: 100
+        MaximumPercent: 200
+        DeploymentCircuitBreaker: { Enable: true, Rollback: true }
       CapacityProviderStrategy:
         - { CapacityProvider: !Ref CapacityProvider, Weight: 1 }
       NetworkConfiguration:
@@ -491,3 +744,15 @@ Outputs:
 
   ClusterName:
     Value: !Ref Cluster
+
+  AlbDnsName:
+    Description: >
+      Raw ALB hostname. Recreated (and changes) on every stack teardown/rebuild --
+      point the Namecheap CNAME at this. `deploy.sh dns` prints it for you.
+    Value: !GetAtt LoadBalancer.DNSName
+
+  PublicAppUrl:
+    Description: >
+      The stable, QR-code-facing URL. Only resolves once the Namecheap CNAME
+      points Domain at AlbDnsName.
+    Value: !Sub "https://${Domain}"

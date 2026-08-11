@@ -1,74 +1,65 @@
 import { chromium } from "@playwright/test";
+import { createHash } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 
 const url = process.env.VISUAL_QA_URL ?? "http://127.0.0.1:3000";
-const outputDir = path.resolve(process.env.VISUAL_QA_DIR ?? path.join(process.cwd(), "..", "runtime", "logs"));
-
-await fs.mkdir(outputDir, { recursive: true });
+const output = path.resolve(process.env.VISUAL_QA_DIR ?? "../runtime/logs");
+await fs.mkdir(output, { recursive: true });
 
 const browser = await chromium.launch();
-const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
-const consoleErrors = [];
+const page = await browser.newPage({ viewport: { width: 1600, height: 1000 } });
+const errors = [];
+const imageryStatuses = [];
+page.on("pageerror", (error) => errors.push(error.message));
+page.on("response", (response) => {
+  if (/\/api\/twin\/imagery\//.test(response.url())) imageryStatuses.push(response.status());
+});
 page.on("console", (message) => {
-  if (message.type() === "error") {
-    consoleErrors.push(message.text());
+  if (message.type() === "error" && !/404/.test(message.text())) {
+    errors.push(message.text());
   }
 });
 
-async function capture(name, tabName, expectedText) {
-  await page.getByRole("button", { name: tabName }).click();
-  await page.getByText(expectedText).waitFor({ timeout: 60000 });
-  await page.waitForLoadState("networkidle", { timeout: 60000 }).catch(() => {});
-  await page.waitForTimeout(750);
-  const bodyText = await page.locator("body").innerText();
-  const imageCount = await page.locator("img").count();
-  const visualElementCount = await page
-    .locator("canvas, img, svg, .maplibregl-canvas, [style*='background-image']")
-    .count();
-  const overlayCount = await page
-    .locator("[data-nextjs-dialog], .vite-error-overlay, #webpack-dev-server-client-overlay")
-    .count();
-  const screenshotPath = path.join(outputDir, `visual-qa-${name}.png`);
-  await page.screenshot({ path: screenshotPath, fullPage: true });
-  return {
-    name,
-    tabName,
-    expectedText,
-    screenshotPath,
-    textLength: bodyText.trim().length,
-    imageCount,
-    visualElementCount,
-    overlayCount,
-    hasExpectedText: bodyText.includes(expectedText),
-  };
+await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60_000 });
+const canvas = page.locator("canvas.maplibregl-canvas");
+const satellite = page.getByRole("button", { name: "Satellite / snow" });
+const hillshade = page.getByRole("button", { name: "Hillshade" });
+await canvas.waitFor({ timeout: 30_000 });
+await page.waitForTimeout(5_000);
+
+const satelliteEnabled = await satellite.isEnabled();
+const satelliteImage = await canvas.screenshot();
+await hillshade.click();
+await page.waitForTimeout(500);
+const hillshadeImage = await canvas.screenshot();
+const digest = (value) => createHash("sha256").update(value).digest("hex");
+const surfaceViewsDiffer = digest(satelliteImage) !== digest(hillshadeImage);
+if (satelliteEnabled) {
+  await satellite.click();
+  await page.waitForTimeout(500);
 }
 
-await page.goto(url, { waitUntil: "networkidle", timeout: 60000 });
-const results = [];
-results.push(await capture("terrain", "Terrain & Risk", "Terrain And Prototype Susceptibility"));
-results.push(await capture("events", "Satellite Events", "Satellite Event Viewer"));
-results.push(await capture("conditions", "Conditions", "Weather, Snowpack, And Forecast"));
-results.push(await capture("susceptibility", "Susceptibility", "Prototype Susceptibility"));
-results.push(await capture("overview", "Data Overview", "Data Sources"));
-
+await page.getByRole("button", { name: "Assess" }).click();
+await page.getByText("Release potential index").waitFor({ timeout: 60_000 });
+const screenshot = path.join(output, "visual-qa-stage3.png");
+await page.screenshot({ path: screenshot, fullPage: true });
 const result = {
   url,
-  generatedAtUtc: new Date().toISOString(),
-  outputDir,
-  results,
-  consoleErrors,
+  screenshot,
+  disclaimerVisible: await page.getByText(/never a probability and never a forecast/i).isVisible(),
+  satelliteEnabled,
+  imageryTileLoaded: imageryStatuses.some((status) => status === 200),
+  surfaceViewsDiffer,
+  errors,
 };
-await fs.writeFile(path.join(outputDir, "visual-qa-summary.json"), JSON.stringify(result, null, 2), "utf-8");
+await fs.writeFile(path.join(output, "visual-qa-summary.json"), JSON.stringify(result, null, 2));
 console.log(JSON.stringify(result, null, 2));
 await browser.close();
-
 if (
-  consoleErrors.length > 0 ||
-  results.some((item) => item.overlayCount > 0 || !item.hasExpectedText || item.textLength === 0) ||
-  results
-    .filter((item) => ["terrain", "events"].includes(item.name))
-    .some((item) => item.visualElementCount === 0)
-) {
-  process.exitCode = 1;
-}
+  !result.disclaimerVisible ||
+  !result.satelliteEnabled ||
+  !result.imageryTileLoaded ||
+  !result.surfaceViewsDiffer ||
+  errors.length
+) process.exitCode = 1;

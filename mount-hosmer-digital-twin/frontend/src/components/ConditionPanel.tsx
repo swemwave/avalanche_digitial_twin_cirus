@@ -1,170 +1,180 @@
 "use client";
 
 import { useState } from "react";
+import { AdvancedConditionWorkspace } from "@/components/AdvancedConditionWorkspace";
 import type { AssessRequest, ReleaseSize, SimulationMode } from "@/lib/twin";
 
-/** Conditions come from these sliders/presets — Stage 3 does no weather ingestion. */
-
 const RELEASE_SIZES: [ReleaseSize, string][] = [
-  ["small", "Small (sz 1–2)"],
-  ["medium", "Medium (sz 2–3)"],
-  ["large", "Large (sz 3–4)"],
-  ["very_large", "Very large (sz 4–5)"],
+  ["small", "Small (size 1–2)"],
+  ["medium", "Medium (size 2–3)"],
+  ["large", "Large (size 3–4)"],
+  ["very_large", "Very large (size 4–5)"],
 ];
 
-type Preset = { id: string; label: string; value: Omit<AssessRequest, "simulation_mode" | "seed"> };
+type Preset = {
+  id: string;
+  label: string;
+  newSnow: string;
+  windSpeed: string;
+  windDirection: string;
+  releaseSize: ReleaseSize;
+};
 
 const PRESETS: Preset[] = [
-  { id: "calm", label: "Calm / off-season", value: { new_snow_cm: 0, wind_speed_kmh: 0, wind_direction_deg: 225, release_size: "medium" } },
-  { id: "storm_sw", label: "Storm slab, SW wind", value: { new_snow_cm: 40, wind_speed_kmh: 45, wind_direction_deg: 225, release_size: "medium" } },
-  { id: "big_storm", label: "Big storm + strong wind", value: { new_snow_cm: 70, wind_speed_kmh: 65, wind_direction_deg: 225, release_size: "large" } },
-  { id: "wind_event", label: "Wind event, little snow", value: { new_snow_cm: 8, wind_speed_kmh: 60, wind_direction_deg: 270, release_size: "medium" } },
+  { id: "storm_sw", label: "Storm slab · SW wind", newSnow: "40", windSpeed: "45", windDirection: "225", releaseSize: "medium" },
+  { id: "big_storm", label: "Large storm sensitivity", newSnow: "70", windSpeed: "65", windDirection: "225", releaseSize: "large" },
+  { id: "wind_event", label: "Wind-loading sensitivity", newSnow: "8", windSpeed: "60", windDirection: "270", releaseSize: "medium" },
 ];
-
-const COMPASS = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
-const compass = (deg: number) => COMPASS[Math.round((deg % 360) / 22.5) % 16];
 
 type Props = {
   running: boolean;
   onAssess: (request: AssessRequest) => void;
+  drawnArea: GeoJSON.Polygon | null;
+  onRequestDraw: () => void;
+  onDraftChange: () => void;
 };
 
-export function ConditionPanel({ running, onAssess }: Props) {
-  const [newSnow, setNewSnow] = useState(40);
-  const [windSpeed, setWindSpeed] = useState(45);
-  const [windDir, setWindDir] = useState(225);
-  const [releaseSize, setReleaseSize] = useState<ReleaseSize>("medium");
-  const [simMode, setSimMode] = useState<SimulationMode>("fast");
-
-  const applyPreset = (preset: Preset) => {
-    setNewSnow(preset.value.new_snow_cm);
-    setWindSpeed(preset.value.wind_speed_kmh);
-    setWindDir(preset.value.wind_direction_deg);
-    setReleaseSize(preset.value.release_size);
-  };
-
-  const submit = () =>
-    onAssess({
-      new_snow_cm: newSnow,
-      wind_speed_kmh: windSpeed,
-      wind_direction_deg: windDir,
-      release_size: releaseSize,
-      simulation_mode: simMode,
-      seed: 42,
-    });
+export function ConditionPanel({ running, onAssess, drawnArea, onRequestDraw, onDraftChange }: Props) {
+  const [workspace, setWorkspace] = useState<"simple" | "advanced">("simple");
 
   return (
-    <div className="flex flex-col gap-4 text-sm">
-      <div className="flex flex-wrap gap-1.5">
-        {PRESETS.map((preset) => (
+    <div className="flex flex-col gap-3 text-sm">
+      <div className="grid grid-cols-2 rounded-md border border-[var(--border)] p-1" aria-label="Condition workspace mode">
+        {(["simple", "advanced"] as const).map((mode) => (
           <button
-            key={preset.id}
+            key={mode}
             type="button"
-            disabled={running}
-            onClick={() => applyPreset(preset)}
-            className="rounded-md border border-[var(--border)] bg-[var(--panel-strong)] px-2.5 py-1 text-xs text-[var(--muted)] hover:text-[var(--foreground)] disabled:opacity-50"
+            aria-pressed={workspace === mode}
+            onClick={() => {
+              setWorkspace(mode);
+              onDraftChange();
+            }}
+            className={`rounded px-2 py-1.5 text-xs ${workspace === mode ? "bg-[var(--accent)] font-semibold text-[#101415]" : "text-[var(--muted)]"}`}
           >
-            {preset.label}
+            {mode === "simple" ? "Simple scenario" : "Advanced conditions"}
           </button>
         ))}
       </div>
 
-      <Slider label="New snow" value={newSnow} min={0} max={120} step={1} unit="cm" onChange={setNewSnow} />
-      <Slider label="Wind speed" value={windSpeed} min={0} max={120} step={1} unit="km/h" onChange={setWindSpeed} />
-      <Slider
-        label="Wind direction (FROM)"
-        value={windDir}
-        min={0}
-        max={360}
-        step={5}
-        unit={`° ${compass(windDir)}`}
-        onChange={setWindDir}
-      />
+      {workspace === "simple" ? (
+        <SimpleWorkspace running={running} onAssess={onAssess} onDraftChange={onDraftChange} />
+      ) : (
+        <AdvancedConditionWorkspace
+          running={running}
+          onAssess={onAssess}
+          drawnArea={drawnArea}
+          onRequestDraw={onRequestDraw}
+          onDraftChange={onDraftChange}
+        />
+      )}
+    </div>
+  );
+}
 
-      <label className="flex flex-col gap-1">
-        <span className="text-xs text-[var(--muted)]">Release size</span>
-        <select
-          value={releaseSize}
-          onChange={(event) => setReleaseSize(event.target.value as ReleaseSize)}
-          className="rounded-md border border-[var(--border)] bg-[var(--panel-strong)] px-2 py-1.5 text-sm"
-        >
-          {RELEASE_SIZES.map(([id, label]) => (
-            <option key={id} value={id}>
-              {label}
-            </option>
-          ))}
-        </select>
-      </label>
+function SimpleWorkspace({ running, onAssess, onDraftChange }: Pick<Props, "running" | "onAssess" | "onDraftChange">) {
+  const [newSnow, setNewSnow] = useState("");
+  const [windSpeed, setWindSpeed] = useState("");
+  const [windDirection, setWindDirection] = useState("");
+  const [releaseSize, setReleaseSize] = useState<ReleaseSize>("medium");
+  const [simulationMode, setSimulationMode] = useState<SimulationMode>("fast");
+  const [error, setError] = useState<string | null>(null);
 
-      <div className="flex items-center gap-2 text-xs">
-        <span className="text-[var(--muted)]">Runout model</span>
-        <div className="flex overflow-hidden rounded-md border border-[var(--border)]">
-          {(["fast", "advanced"] as SimulationMode[]).map((mode) => (
+  const applyPreset = (preset: Preset) => {
+    setNewSnow(preset.newSnow);
+    setWindSpeed(preset.windSpeed);
+    setWindDirection(preset.windDirection);
+    setReleaseSize(preset.releaseSize);
+    setError(null);
+    onDraftChange();
+  };
+
+  const submit = () => {
+    setError(null);
+    try {
+      onAssess({
+        new_snow_cm: optionalNumber(newSnow, "New snow"),
+        wind_speed_kmh: optionalNumber(windSpeed, "Wind speed"),
+        wind_direction_deg: optionalNumber(windDirection, "Wind direction"),
+        release_size: releaseSize,
+        simulation_mode: simulationMode,
+        seed: simulationMode === "advanced" ? 42 : null,
+      });
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : String(caught));
+    }
+  };
+
+  const terrainOnly = !newSnow.trim() && !windSpeed.trim() && !windDirection.trim();
+
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="rounded-md border border-[var(--border)] bg-[var(--panel-strong)] p-2 text-[11px] leading-relaxed text-[var(--muted)]">
+        <p className="font-semibold text-[var(--foreground)]">Blank means unknown</p>
+        <p>Entered values are explicit assumptions. Unknown loading is never changed to 0.</p>
+      </div>
+
+      <div>
+        <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-[var(--accent-2)]">Hypothetical examples</p>
+        <div className="flex flex-wrap gap-1.5">
+          {PRESETS.map((preset) => (
             <button
-              key={mode}
+              key={preset.id}
               type="button"
-              onClick={() => setSimMode(mode)}
-              className={`px-2.5 py-1 ${
-                simMode === mode ? "bg-[var(--accent)] text-[#101415]" : "bg-[var(--panel-strong)] text-[var(--muted)]"
-              }`}
+              disabled={running}
+              onClick={() => applyPreset(preset)}
+              className="rounded-md border border-[var(--border)] bg-[var(--panel-strong)] px-2 py-1 text-[11px] text-[var(--muted)] hover:text-[var(--foreground)] disabled:opacity-50"
             >
-              {mode === "fast" ? "Fast (alpha)" : "Advanced (particle)"}
+              {preset.label}
             </button>
           ))}
         </div>
       </div>
 
-      <button
-        type="button"
-        onClick={submit}
-        disabled={running}
-        className="mt-1 rounded-md bg-[var(--accent)] px-3 py-2 text-sm font-semibold text-[#101415] disabled:opacity-60"
-      >
-        {running ? "Assessing…" : "Assess"}
+      <NumberInput label="New storm-snow depth" value={newSnow} unit="cm" placeholder="unknown" onChange={(value) => { setNewSnow(value); onDraftChange(); }} />
+      <NumberInput label="Representative wind speed" value={windSpeed} unit="km/h" placeholder="unknown" onChange={(value) => { setWindSpeed(value); onDraftChange(); }} />
+      <NumberInput label="Wind direction (FROM)" value={windDirection} unit="° true" placeholder="unknown" onChange={(value) => { setWindDirection(value); onDraftChange(); }} />
+
+      <label className="flex flex-col gap-1">
+        <span className="flex justify-between text-xs text-[var(--muted)]"><span>Release-size assumption</span><span>category</span></span>
+        <select value={releaseSize} onChange={(event) => { setReleaseSize(event.target.value as ReleaseSize); onDraftChange(); }} className="input-control">
+          {RELEASE_SIZES.map(([id, label]) => <option key={id} value={id}>{label}</option>)}
+        </select>
+      </label>
+
+      <div className="flex items-center justify-between gap-2 text-xs">
+        <span className="text-[var(--muted)]">Runout engine</span>
+        <div className="flex overflow-hidden rounded-md border border-[var(--border)]">
+          {(["fast", "advanced"] as SimulationMode[]).map((mode) => (
+            <button key={mode} type="button" aria-pressed={simulationMode === mode} onClick={() => { setSimulationMode(mode); onDraftChange(); }} className={`px-2.5 py-1 ${simulationMode === mode ? "bg-[var(--accent)] text-[#101415]" : "bg-[var(--panel-strong)] text-[var(--muted)]"}`}>
+              {mode === "fast" ? "Fast alpha" : "Particle"}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {error ? <p role="alert" className="text-[11px] text-[var(--danger)]">{error}</p> : null}
+      <button type="button" onClick={submit} disabled={running} className="rounded-md bg-[var(--accent)] px-3 py-2 text-sm font-semibold text-[#101415] disabled:opacity-60">
+        {running ? "Assessing…" : terrainOnly ? "Show terrain-only result" : "Assess hypothetical scenario"}
       </button>
       <p className="text-[11px] leading-relaxed text-[var(--muted)]">
-        Conditions are what-if slider values, not measurements. This is an experimental,
-        non-operational research tool.
+        Simple entries have status <strong>assumed</strong>, whole-area applicability, and unquantified uncertainty. Use Advanced conditions for measurements, estimates, sources, times, uncertainty, snowpack/field context, or spatial scopes.
       </p>
     </div>
   );
 }
 
-function Slider({
-  label,
-  value,
-  min,
-  max,
-  step,
-  unit,
-  onChange,
-}: {
-  label: string;
-  value: number;
-  min: number;
-  max: number;
-  step: number;
-  unit: string;
-  onChange: (value: number) => void;
-}) {
+function NumberInput({ label, value, unit, placeholder, onChange }: { label: string; value: string; unit: string; placeholder: string; onChange: (value: string) => void }) {
   return (
     <label className="flex flex-col gap-1">
-      <span className="flex items-baseline justify-between text-xs text-[var(--muted)]">
-        <span>{label}</span>
-        <span className="font-mono text-[var(--foreground)]">
-          {value}
-          {unit}
-        </span>
-      </span>
-      <input
-        type="range"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        onChange={(event) => onChange(Number(event.target.value))}
-        className="accent-[var(--accent)]"
-      />
+      <span className="flex justify-between text-xs text-[var(--muted)]"><span>{label}</span><span>{unit}</span></span>
+      <input type="number" value={value} placeholder={placeholder} onChange={(event) => onChange(event.target.value)} className="input-control" />
     </label>
   );
+}
+
+function optionalNumber(value: string, label: string): number | null {
+  if (!value.trim()) return null;
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) throw new Error(`${label} must be a finite number.`);
+  return parsed;
 }

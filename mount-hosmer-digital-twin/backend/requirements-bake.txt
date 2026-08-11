@@ -8,3 +8,6 @@ rasterio>=1.5
 pyproj>=3.7
 pillow>=12.0
 pyyaml>=6.0
+xdem>=0.2.3,<0.3
+rio-tiler>=9.4.2,<10
+morecantile>=7.0.3,<8

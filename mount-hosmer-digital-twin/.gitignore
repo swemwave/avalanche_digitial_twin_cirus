@@ -3,12 +3,20 @@
 __pycache__/
 .pytest_cache/
 *.pyc
+dist/
+build/
 node_modules/
 .next/
+frontend/src/generated/
 launcher/bin/
 launcher/obj/
+MountHosmerDigitalTwin.exe
 runtime/cache/
 runtime/processed/
 runtime/previews/
 runtime/exports/
 runtime/logs/*.log
+
+# Local pytest run artifacts (-o cache_dir=... / --basetemp=...).
+.test-cache/
+.test-tmp/

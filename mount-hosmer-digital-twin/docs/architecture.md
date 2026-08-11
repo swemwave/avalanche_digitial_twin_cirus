@@ -2,12 +2,9 @@
 
 How the Mount Hosmer digital twin is put together, and why.
 
-**Related:** [`limitations.md`](limitations.md) (what it can't do) ·
+**Related:** [`limitations.md`](limitations.md) (what it cannot do) ·
 [`../../docs/data-footprint.md`](../../docs/data-footprint.md) (the bake input contract) ·
-[`../../CLAUDE.md`](../../CLAUDE.md) (orientation + invariants).
-
-> Docs under this folder marked *(superseded)* — `backend-reference`, `frontend-reference`, `data-pipeline`,
-> `data-dictionary`, `susceptibility-model` — describe the pre-Stage-3 build. Trust this file and the code.
+[`../../AGENTS.md`](../../AGENTS.md) (development objective and invariants).
 
 ---
 
@@ -32,18 +29,18 @@ once, offline, in the bake** — so the running service is a thin, dependency-li
                                 ▼
 ┌──────────────────────────────────────────────────────────────────────┐
 │  backend\app\main.py         FastAPI · 127.0.0.1:8000                  │
-│  health · twin/meta · twin/tiles · assess · assistant                 │
+│  health · twin/meta · twin/tiles · twin/exposure · assess · assistant  │
 │  /assess does its numerical work inside the request and returns JSON  │
 └───────────────────────────────┬──────────────────────────────────────┘
                                 │  HTTP/JSON + PNG tiles
                                 ▼
 ┌──────────────────────────────────────────────────────────────────────┐
-│  frontend\src\               Next.js · localhost:3000 · ONE screen     │
+│  frontend\out\               static export served at 127.0.0.1:8000    │
 │  Stage3App · Stage3Map (MapLibre 3D mesh) · ConditionPanel ·          │
 │  ResultCard · AssistantPanel · lib/twin.ts (typed client)             │
 └──────────────────────────────────────────────────────────────────────┘
 
-   launcher\  →  MountHosmerDigitalTwin.exe  bakes if needed, then starts both servers
+   launcher\  ->  optional .NET source that builds/bakes/starts one server
 ```
 
 ---
@@ -61,11 +58,15 @@ Fernie `2C21P` archive returns HTTP 404 and cannot be re-downloaded. Only `bake.
 allow-list in [`../../docs/data-footprint.md`](../../docs/data-footprint.md). Everything generated goes
 under `runtime\`, which is always safe to delete and rebuild.
 
-**Conditions are sliders, not feeds.** Stage 3 does no weather/snow or dynamic satellite ingestion. One
-fixed Sentinel-2 capture is baked as visual context only and never enters the model. The user supplies
-new snow, wind speed, wind direction, and release size; the model turns terrain capability × that loading
-into a release estimate. This is what let the old `models/`/`jobs/`/`storage/`/`processing/weather/` stack
-(and ~35 endpoints across five tabs) collapse to a few hundred lines.
+**Conditions are explicit user-entered scenarios, not feeds.** Stage 3 does no live weather/snow or dynamic
+satellite ingestion. One fixed Sentinel-2 capture is baked as visual context only and never enters the
+model. Simple inputs are assumptions; the advanced workspace records status, units, UTC time, source,
+uncertainty and whole-area/elevation/aspect/drawn-area applicability. Seven inputs are active in the
+current equations — new snow, wind speed/direction, release size, and the optional air temperature, flow
+regime and user alpha angle — and every optional one is inert when left unknown. Snowpack, weak-layer and
+field records are preserved and drive **advisories** rather than being translated into invented hazard
+adjustments: the model has no term for them, and inventing a coefficient to give it one would be
+fabricated accuracy. See [`limitations.md`](limitations.md).
 
 **Missing data is never zero** because this is a safety-adjacent system. See §5.
 
@@ -78,17 +79,22 @@ FastAPI, ~1k LOC of runtime, plus a bake-time engine that is never imported by t
 | Piece | Path | Job |
 |---|---|---|
 | **App** | `app/main.py` | Builds FastAPI, installs middleware + error handlers, includes the one router, exposes `/api/health`. |
-| **Routes** | `app/api/stage3.py` | The entire HTTP surface: meta, tiles, assess, assistant. Thin — parse, call, return. |
+| **Routes** | `app/api/{terrain,assess,assistant}.py` | The HTTP surface: meta, tiles, exposure, assess, assistant. Thin — parse, call, return. |
 | **Bake** | `app/bake.py` | Offline. Reuses `processing/terrain/engine.compute()` → writes `runtime\baked\`. |
 | **Baked loader** | `app/baked.py` | numpy loader for `.npy` layers (as masked arrays) + `Reprojector` (grid→WGS84 from the baked lattice, via scipy). |
-| **Risk** | `app/risk.py` | One transparent release model + release-zone extraction. Owns the `ReleaseZone`-consuming data. |
-| **Assess** | `app/assess.py` | sliders → release raster → zones → runout (top-N) → one JSON. Disclaimer attached here, in code. |
-| **Geometry** | `app/geo.py` | rasterio-free mask→GeoJSON (shapely) and path→LineString. |
-| **Assistant** | `app/assistant.py` | Local Ollama. `explain` narrates an assessment; `chat` parses to sliders → runs the real `/assess` → narrates. |
-| **Simulation** | `app/simulation/{runout,zone}.py` | Runout engines (fast + advanced) + the neutral `ReleaseZone` value type. |
+| **AvyCore — hazard** | `packages/avycore/src/avycore/hazard` | Release estimate, zone extraction, geometry and both runout engines. |
+| **Scenario contract** | `packages/avycore/src/avycore/scenario.py` | Strict user inputs, status/provenance/uncertainty, spatial support, classification and canonical identity. Each parameter is `active` (enters an equation) or `advisory` (cannot). |
+| **Advisories** | `packages/avycore/src/avycore/advisories.py` | Deterministic rules turning snowpack/field records into ranked written statements. Never numeric — every advisory publishes `changed_the_number: false`. |
+| **Assess** | `app/assess.py` | scenario → supported-condition mask → release raster → zones → runout (top-N) → one JSON. Disclaimer attached here, in code. |
+| **AvyCore — assistant** | `packages/avycore/src/avycore/assistant` | Local Ollama. `explain` narrates an assessment; `chat` parses to sliders → runs the real `/assess` → narrates. |
+| **Compatibility facades** | `app/{risk,geo,assistant}.py`, `app/simulation/*` | Keep existing imports and monkeypatch points working while delegating to the packages. |
 | **Core** | `app/core/` | `settings.py` (env-driven paths), `paths.py` (path-escape guards, bake-time), `model_config.py` (the `DISCLAIMER` + bake-time YAML loader). |
-| **Bake-time engine** | `app/processing/*`, `app/services/{tiles,cache}.py` | ⚠️ rasterio/pyproj live here. Imported by `bake.py` only, never by `app.main`. |
-| **Config** | `backend/config/avalanche_model.yaml` | Terrain/runout parameters, read at bake time. |
+| **Bake-time engine** | `app/processing/*`, xDEM, rio-tiler | ⚠️ rasterio/pyproj live here. Imported by `bake.py` only, never by `app.main`. |
+| **Bake-time exposure** | `app/processing/exposure.py` | ⚠️ pyproj + shapely. Reprojects, classifies and buffers the declared OSM extract, derives built-up outlines, rasterises by cell centre. |
+| **AvyCore — composite index** | `packages/avycore/src/avycore/hazard/composite.py` | Per-zone release/reach/exposure terms, their combination, and the area-weighted aggregate. |
+| **Offline conditions** | `app/processing/conditions/` | Strict ECCC and PCIC source-cache import, provider normalization, disagreement reports, non-activating M2 forcing characterization, and atomic publication. Not imported by `app.main`; network access exists only in explicit acquisition commands. |
+| **Offline snow integration** | `packages/avycore/src/avycore/snow/`, `app/processing/snow/` | Provider-neutral SnowStatePack plus strict SMET adapter, bounded external-process runner and atomic storage. Isolated from serving imports and inactive in assessments. |
+| **Config** | `backend/config/avalanche_model.yaml` | Active terrain parameters, read at bake time. |
 
 ### The `app\` package shim — do not delete
 
@@ -108,19 +114,85 @@ DATA\ (allow-list)  ──►  python -m app.bake  ──►  runtime\baked\  �
 
 `bake.py`:
 
-1. loads the analysis grid + AOI from `metadata\`,
+1. validates the configured Mountain Pack and loads its projected grid + AOI,
 2. runs the tested 5 m terrain engine, which **mosaics the LiDAR DEM/DSM to ~99.9 % AOI coverage**
    (Copernicus GLO-30 as gap-fill only), derives slope/aspect/curvature/forest, and renders terrain-RGB
    tiles,
 3. renders a fixed winter Sentinel-2 capture into natural-colour tiles for visual context only,
-4. writes 7 `.npy` layers (elevation, slope, aspect, plan_curvature, general_curvature, forest_mask,
-   distance_to_ridge) as float32 with NaN in masked cells,
-5. writes `meta.json` including a **21×21 grid→WGS84 control lattice** computed with pyproj — the runtime
+4. writes six model `.npy` layers (elevation, slope, aspect, plan curvature, general curvature and forest)
+   plus categorical terrain-source and forest-source rasters; missing model values are NaN and missing
+   source codes are zero and masked by the runtime,
+5. optionally builds **exposure** from the declared OSM extract — reproject to the analysis CRS, clip to
+   the AOI, classify and buffer by class, derive built-up outlines from residential/service road
+   clustering, then rasterise by cell centre (chunked shapely predicates, no new dependency). It writes
+   `layers/exposure_weight.npy` (float32 0–1, NaN outside the AOI), `layers/exposure_class.npy` (uint8
+   class code, 255 for unknown — a **zero here is the measurement** "the extract maps nothing on this
+   cell"), and `exposure/features.geojson` for display. A pack with no exposure asset simply skips this,
+6. writes `meta.json` including per-layer units/checksums, source lineage, an `exposure` block (source,
+   licence, attribution, derivation rule, class weights, per-class counts, limitation), a bake SHA-256
+   identity, and a **21×21 grid→WGS84 control lattice** computed with pyproj — the runtime
    interpolates that lattice (scipy) instead of importing pyproj, accurate to <1 cm over the AOI.
 
-At runtime, `/assess` does the whole thing synchronously: `risk.compute_release` → `risk.extract_release_zones`
+Exposure is a **consequence term and nothing else**. `avycore.hazard.risk` never imports, receives or sees
+it; it enters only the named exposure term of the composite hazard index, where it can raise a zone's index
+and never lower one. `mountain_pack.py` enforces that boundary in both directions — see
+[`limitations.md`](limitations.md).
+
+The portable bake-input contract is documented in [`mountain-packs.md`](mountain-packs.md). A pack
+selects source roles, grid, CRS, identity, units and licence; it does not change the deterministic model
+profile or turn unverified data into validation evidence.
+
+Historical conditions form a separate offline-only pipeline and never read `DATA/`:
+
+```text
+official source snapshot -> runtime/sources/conditions/<provider>/<snapshot_id>/
+                         -> offline normalization + disagreement reports
+                         -> runtime/baked/conditions/<condition_id>/
+```
+
+The source cache and reports are not read by the serving application. A validated ConditionPack can be
+stored on the served surface, but Stage 3 assessment still uses explicit slider scenarios and does not
+silently select, merge, or ingest a historical provider.
+
+`characterize-m2-forcing` is an additional offline, cache-native diagnostic. It reads immutable ECCC/PCIC
+artifacts plus the baked arrays, preserves masks, builds twice for deterministic replay, and atomically
+publishes `runtime/reports/conditions/m2/<characterization_id>/`. It does not alter the bake or any
+ConditionPack and is never imported by serving code. The inverse target lookup uses the baked reprojection
+lattice and scipy, so `pyproj` remains bake-only.
+
+`derive-reference-elevation` publishes an inactive, content-addressed contract below
+`runtime/reports/terrain/reference-elevations/`. The controlled rebuild preserves `runtime/baked/conditions`
+through whole-directory promotion. A complete pre-rebuild inventory is retained under
+`runtime/verification/bake-preservation/`; the active rebuild is a zero-array-difference lineage refresh.
+
+The M3 code path is deliberately disconnected:
+
+```text
+validated ConditionPack + reference/terrain contract
+  -> offline strict SMET adapter (complete forcing only)
+  -> version/hash-bound disposable external process
+  -> validated atomic SnowStatePack
+  -X-> serving imports / default assessment
+```
+
+At runtime, `/assess` first resolves the canonical scenario and its spatial support, then does the numerical
+work synchronously: `risk.compute_release` → `risk.extract_release_zones`
 → `runout` for the top-scoring zones → `geo` builds all GeoJSON from the numpy masks → one JSON with the
-hazard index, zones, runout footprints/uncertainty/paths, warnings, and the disclaimer.
+release-potential index, zones, runout footprints/sensitivity envelopes/paths, required-input coverage,
+source and bake provenance, uncertainty meaning, validation status, warnings, and the disclaimer.
+
+Reach and exposure are measured **inside** the runout loop, while each `RunoutResult`'s full-grid masks are
+still alive — each holds ~55 MiB on the real grid, so nothing is accumulated for post-processing. Every
+zone then gets a composite `hazard_index`, `hazard_band`, `hazard_color` and its decomposed
+`hazard_components`; the area-weighted mean is published as `area_hazard_index` alongside `peak_zone_index`
+and `peak_zone_id`. These are new fields: `release_potential_index` and the legacy `hazard_score` /
+`risk_level` aliases keep exactly their previous meaning and become components of the composite rather than
+being redefined by it.
+
+Assessment schema v3 publishes nullable `release_potential_index`; terrain-only/incomplete scenarios leave
+it null and produce no condition-dependent runout. The deprecated JSON field `hazard_score` remains
+for API compatibility but has exactly the same uncalibrated relative-index meaning. Fast routing reports no
+random seed; particle mode reports the configured or supplied seed that reproduces its ensemble.
 
 **LiDAR IS used now.** Older docs describe a legacy 30 m pipeline that fell back to Copernicus at 61.9 %
 coverage. Stage 3's 5 m engine reaches 99.9 %. The 171 `.laz` point clouds remain unused (the DEM rasters
@@ -130,21 +202,23 @@ are derived from them).
 
 ## 5. Invariants
 
-Correctness and safety properties, not preferences. Full text in [`../../CLAUDE.md`](../../CLAUDE.md) §4.
+Correctness and safety properties, not preferences. See [`../../AGENTS.md`](../../AGENTS.md).
 
 - **Source data is read-only, and bake-time only.** Nothing writes to `DATA\`; the running service never
   reads it. All output goes under `runtime\`.
 - **The app folder and `DATA\` must remain siblings.** `core/settings.py` and `launcher/Program.cs`
   independently resolve `<project_root>\..\DATA\mount_hosmer_data`. This only bites at bake time now, but
   relocating either folder still breaks the bake in two languages; `Program.cs` needs a .NET 9 rebuild.
-- **Missing data is missing — never zero, never safe.** Baked layers load via `np.ma.masked_invalid`, so a
-  NaN pixel is masked, not 0. And `assess.py` never reports a below-threshold day as zero hazard: it falls
+- **Missing data is missing — never zero, never safe.** Continuous layers mask NaN and categorical
+  provenance layers mask their explicit zero NoData code. `assess.py` never reports a below-threshold day
+  as a zero release-potential index: it falls
   back to the 95th percentile of the release estimate on avalanche terrain and labels it. Never `fillna(0)`
-  a measurement; never let a gap lower a hazard score.
-- **The disclaimer is attached in code, on every hazard number, and never generated by the AI.**
-- **Bake reuse is content-hashed (ex-I5).** The terrain engine writes SHA-256 input signatures to
-  `runtime\cache\` and reuses baked output only when they still match; `python -m app.bake --force`
-  rebuilds. The running service has no processors and no cache to invalidate.
+  a measurement; never let a gap lower a release estimate.
+- **The disclaimer is attached in code, on every release-potential number, and never generated by the AI.**
+- **Bake reuse requires proof of compatibility.** Schema, processing/config hash, required layer set,
+  file sizes, layer checksums and the bake identity are validated before reuse or runtime loading. A stale
+  bake fails visibly and `python -m app.bake --force` builds a complete staging directory before promoting
+  it atomically. The running service has no processors or mutable scientific cache.
 
 ---
 
@@ -161,13 +235,13 @@ the bake's reads of `DATA\`.
 ## 7. Frontend
 
 Next.js (App Router) + React + MapLibre GL. One screen: `Stage3App` holds the state and composes
-`Stage3Map` (the 3D LiDAR mesh with hillshade/natural-surface views, plus release-zone / runout overlays),
-`ConditionPanel` (sliders + presets), `ResultCard` (hazard index + zones + disclaimer), and
+`Stage3Map` (the 3D LiDAR mesh with fixed-RGB/hillshade views, release/runout overlays and drawn condition
+scope), `ConditionPanel` (simple assumptions + advanced condition workspace), `ResultCard` (classification,
+completeness, release result, provenance/replay identity + disclaimer), and
 `AssistantPanel` (the Ollama AI). There is no router, no global state library, no server-side fetching.
 
-`src/lib/twin.ts` is the **contract mirror** of `api/stage3.py`: `API_BASE_URL`, a typed fetch per route,
-and a TypeScript type for every response. Change a response shape in the backend and change it here, or the
-UI breaks silently at runtime (types are compile-time only).
+Pydantic output models are the canonical API contract. Hey API generates `src/generated/` from the
+exported OpenAPI schema; `src/lib/twin.ts` is a small application adapter over that generated SDK.
 
 ---
 
@@ -178,10 +252,15 @@ runtime\
 ├── baked\            THE SERVED SURFACE (built by python -m app.bake)
 │   ├── tiles\{z}\{x}\{y}.png   terrain-RGB tiles, z8–15
 │   ├── imagery\{z}\{x}\{y}.png winter Sentinel-2 natural-colour tiles, z8–15
-│   ├── layers\*.npy            7 terrain layers (float32, NaN = masked)
-│   └── meta.json               grid/AOI/tiles + the grid→WGS84 lattice
-├── cache\            SHA-256 input signatures written by the bake's terrain engine
-└── logs\             launcher-bake / backend / frontend logs
+│   ├── exposure\features.geojson  classified WGS84 exposure vectors (optional)
+│   ├── layers\*.npy            6 model layers + 2 provenance layers (+ 2 optional exposure)
+│   └── meta.json               lineage/checksums/identity + grid/AOI/tiles/exposure/reprojection
+├── sources\conditions\  immutable offline ECCC/PCIC source snapshots
+├── reports\conditions\  generated coverage, disagreement, and M2 characterization reports
+├── reports\terrain\     generated inactive reference-elevation contracts
+├── snow-state-packs\    generated inactive offline M3 products (none from SNOWPACK yet)
+├── verification\        complete pre-rebuild bake preservation and inventories
+└── logs\             launcher setup and backend logs
 ```
 
 Generated and gitignored. Delete it and run `python -m app.bake` to rebuild.
@@ -190,16 +269,19 @@ Generated and gitignored. Delete it and run `python -m app.bake` to rebuild.
 
 ## 9. Launcher
 
-`MountHosmerDigitalTwin.exe` (C#, .NET 9) is what users double-click. It:
+The optional C#/.NET 9 launcher can be built into `MountHosmerDigitalTwin.exe`. It:
 
 1. finds the project root by searching upward for marker files (`backend\app\main.py` +
    `frontend\package.json`) — so it is relocatable,
 2. loads `.env` if present,
 3. defaults the data root to `<projectRoot>\..\DATA\mount_hosmer_data`,
-4. **runs `python -m app.bake` if `runtime\baked\meta.json` is missing**,
-5. starts uvicorn (:8000) and Next.js (:3000), logging to `runtime\logs\`,
-6. opens the browser and holds the servers until you close it.
+4. runs the serving-dependency-only `python -m app.check_bake` when a bake exists, or `python -m app.bake` when it is missing;
+   stale or corrupted artifacts stop startup with an explicit rebuild instruction,
+5. uses the generated API client, exports the frontend, and starts uvicorn (:8000),
+6. opens the combined app and holds the server until you close it.
 
-> ⚠️ The `.exe` is **committed and prebuilt**. Editing `launcher\Program.cs` has no effect until you rebuild
-> with the .NET 9 SDK (`dotnet publish -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true
-> -p:DebugType=None -p:DebugSymbols=false -o .`).
+The generated `.exe` is ignored. Build it from `launcher/` with the .NET 9 SDK:
+
+```powershell
+dotnet publish -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -p:DebugType=None -p:DebugSymbols=false
+```

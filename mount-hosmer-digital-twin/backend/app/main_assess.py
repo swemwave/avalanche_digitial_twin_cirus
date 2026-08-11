@@ -1,6 +1,6 @@
 r"""The **assess** service: terrain, tiles, and the assessment model.
 
-This is the heavy half. It carries the baked artifacts -- the 7 ``.npy`` layers,
+This is the heavy half. It carries the baked artifacts -- the 8 ``.npy`` layers,
 ``meta.json``, and the tile pyramid -- and it is the only service that computes a
 hazard number, so it is also the only one that has to attach the ``DISCLAIMER``.
 

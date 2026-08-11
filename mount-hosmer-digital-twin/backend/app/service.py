@@ -41,7 +41,7 @@ def baked_present() -> bool:
 #: Parsed once, on the first health check that finds a bake. Under compose the
 #: volume may still be filling when the service starts, so this is not cached until
 #: the read actually succeeds.
-_bake_stamp: str | None = None
+_bake_stamp: dict[str, object] | None = None
 
 
 def baked_stamp() -> dict[str, object]:
@@ -57,19 +57,32 @@ def baked_stamp() -> dict[str, object]:
 
     meta_path = get_settings().runtime_root / "baked" / "meta.json"
     if not meta_path.exists():
-        return {"baked": False, "bake_generated_at": None}
+        return {
+            "baked": False,
+            "bake_generated_at": None,
+            "bake_schema": None,
+            "bake_sha256": None,
+        }
     if _bake_stamp is None:
         import json
 
         try:
-            _bake_stamp = json.loads(meta_path.read_text(encoding="utf-8")).get(
-                "generated_at_utc"
-            )
+            meta = json.loads(meta_path.read_text(encoding="utf-8"))
+            _bake_stamp = {
+                "bake_generated_at": meta.get("generated_at_utc"),
+                "bake_schema": meta.get("schema"),
+                "bake_sha256": meta.get("identity", {}).get("bake_sha256"),
+            }
         except (OSError, ValueError):
             # A present-but-unreadable meta.json is a real problem, but a health
             # check is the wrong place to fail: report the gap, don't hide it.
-            return {"baked": True, "bake_generated_at": None}
-    return {"baked": True, "bake_generated_at": _bake_stamp}
+            return {
+                "baked": True,
+                "bake_generated_at": None,
+                "bake_schema": None,
+                "bake_sha256": None,
+            }
+    return {"baked": True, **_bake_stamp}
 
 
 def create_app(

@@ -1,8 +1,7 @@
 # Mount Hosmer Avalanche Digital Twin (Stage 3) -- server (Linux/Docker) delivery mode.
 #
-# This is the SECONDARY delivery mode. The primary one is a double-clicked, offline
-# MountHosmerDigitalTwin.exe on Windows. Stage 3 has no database and no job queue, so
-# this file is small: a one-shot `bake` builds runtime/baked/, then a SLIM backend
+# Stage 3 has no database and no job queue, so this file is small: a one-shot
+# `bake` builds runtime/baked/, then a slim backend
 # serves it (no geospatial stack), and the frontend serves the one screen.
 #
 #   docker compose up --build            # first run: builds, bakes, serves
@@ -21,8 +20,9 @@
 # uses the slim `runtime` target with NO geospatial stack. They share the runtime volume:
 # bake writes runtime/baked/, backend reads it. That is what keeps the serving image thin.
 #
-# Re-running is cheap: the terrain engine's content-hash cache turns a second bake into a
-# cache hit, so restarts cost seconds.
+# Re-running without `--force` is cheap because an existing `runtime/baked/meta.json`
+# is reused. Source or configuration changes are not detected automatically; force
+# a rebuild after changing anything upstream of the bake.
 
 name: mount-hosmer-digital-twin
 
@@ -90,7 +90,7 @@ services:
       retries: 3
 
   # ===========================================================================
-  # frontend -- Next.js, standalone output.
+  # frontend -- static Next.js export served by nginx (no Node runtime).
   # ===========================================================================
   frontend:
     build:
@@ -101,6 +101,7 @@ services:
         # reach -- `http://backend:8000` resolves only on this compose network, not in
         # the user's browser. Change it and rebuild: `docker compose build frontend`.
         NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:8000}
+        NEXT_PUBLIC_ASSISTANT_BASE_URL: ${NEXT_PUBLIC_ASSISTANT_BASE_URL:-http://localhost:8000}
     image: mount-hosmer-frontend:latest
     ports:
       - "${FRONTEND_PORT:-3000}:3000"
@@ -112,9 +113,10 @@ services:
     healthcheck:
       test:
         - CMD
-        - node
-        - -e
-        - "require('http').get('http://127.0.0.1:3000/',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))"
+        - wget
+        - -q
+        - --spider
+        - http://127.0.0.1:3000/
       interval: 30s
       timeout: 5s
       start_period: 15s

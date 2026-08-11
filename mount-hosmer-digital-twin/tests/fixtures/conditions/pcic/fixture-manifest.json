@@ -1,0 +1,18 @@
+{
+  "schema": "mount-hosmer-synthetic-pcic-fixture-v1",
+  "synthetic": true,
+  "licence": "Project-generated synthetic test data",
+  "attribution": "Synthetic software-verification fixture; contains no PCIC, ENV-AQN, Teck, or ECCC observations.",
+  "source_identity": "Schema emulator for PCIC ENV-AQN aggregate CSV only",
+  "acquisition_utc": "2026-08-09T00:00:00+00:00",
+  "files": {
+    "observations.csv": {
+      "bytes": 122,
+      "sha256": "593d4ce70cbac090f1d2eac39fc38f55fefcda1852e2a9ccb5b69cc7db9cfc5a"
+    },
+    "variables.csv": {
+      "bytes": 136,
+      "sha256": "0374bc23686b406681a48598fc9733eb6dce3369bc2e682d56d38918d7766bea"
+    }
+  }
+}

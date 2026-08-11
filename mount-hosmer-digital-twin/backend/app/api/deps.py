@@ -24,11 +24,11 @@ def baked():
     service -- which mounts this module for :func:`assess_client` but ships no
     baked artifacts at all -- never loads the terrain reader.
     """
-    from app.baked import BakeNotFoundError, load_baked
+    from app.baked import BakeIncompatibleError, BakeNotFoundError, load_baked
 
     try:
         return load_baked(get_settings())
-    except BakeNotFoundError as exc:
+    except (BakeNotFoundError, BakeIncompatibleError) as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
 
 

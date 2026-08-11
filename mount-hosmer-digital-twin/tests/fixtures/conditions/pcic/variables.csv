@@ -1,0 +1,4 @@
+variables
+variable,standard_name,cell_method,unit
+WDIR_VECT,wind_from_direction,time: point,degree
+WSPD_SCLR,wind_speed,time: point,m/s

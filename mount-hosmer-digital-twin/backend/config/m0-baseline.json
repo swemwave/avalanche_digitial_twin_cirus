@@ -1,0 +1,372 @@
+{
+  "schema": "mount-hosmer-m0-baseline-v1",
+  "purpose": "synthetic software verification; not field validation",
+  "seed": 20260713,
+  "model": {
+    "parameter_manifest": {
+      "version": "stage3-1.2.0",
+      "release": {
+        "rain_snow_lower_c": 0.0,
+        "rain_snow_upper_c": 2.0,
+        "slope_breakpoints_deg": [
+          0,
+          20,
+          25,
+          30,
+          34,
+          40,
+          45,
+          50,
+          55,
+          65,
+          90
+        ],
+        "slope_scores": [
+          0,
+          0,
+          15,
+          55,
+          85,
+          100,
+          95,
+          75,
+          45,
+          15,
+          0
+        ],
+        "slope_min_deg": 25.0,
+        "slope_max_deg": 60.0,
+        "wind_transport_min_kmh": 15.0,
+        "wind_transport_full_kmh": 40.0,
+        "new_snow_full_cm": 50.0,
+        "forest_damping_max": 0.7,
+        "loading_base": 0.2,
+        "snow_loading_weight": 0.6,
+        "wind_loading_weight": 0.75,
+        "release_threshold": 55.0,
+        "minimum_zone_area_m2": 2500.0,
+        "smoothing_radius_m": 15.0,
+        "aspect_sector_deg": 45.0,
+        "elevation_band_m": 300.0,
+        "maximum_zones": 40
+      },
+      "runout": {
+        "alpha_angle_deg": {
+          "small": 32.0,
+          "medium": 27.0,
+          "large": 23.0,
+          "very_large": 19.0
+        },
+        "alpha_uncertainty_deg": 4.0,
+        "alpha_override_bounds_deg": {
+          "minimum": 15.0,
+          "maximum": 40.0
+        },
+        "flow_regime": {
+          "dry_slab": {
+            "mu_scale": 1.0,
+            "xi_scale": 1.0,
+            "alpha_shift_deg": 0.0
+          },
+          "wet_snow": {
+            "mu_scale": 1.45,
+            "xi_scale": 0.7,
+            "alpha_shift_deg": 3.0
+          },
+          "powder": {
+            "mu_scale": 0.75,
+            "xi_scale": 1.4,
+            "alpha_shift_deg": -2.0
+          },
+          "mixed": {
+            "mu_scale": 1.1,
+            "xi_scale": 0.9,
+            "alpha_shift_deg": 1.0
+          }
+        },
+        "friction": {
+          "open_snow": 0.2,
+          "forest": 0.35,
+          "gully": 0.16,
+          "xi_open": 1200.0,
+          "xi_forest": 500.0
+        },
+        "fast_mode": {
+          "spreading": 0.35,
+          "max_path_length_m": 4000.0,
+          "minimum_flux": 0.02
+        },
+        "advanced_mode": {
+          "particles_per_zone": 300,
+          "max_steps": 4000,
+          "time_step_s": 0.2,
+          "lateral_jitter": 0.35,
+          "stopping_velocity_ms": 1.0,
+          "random_seed": 20260713,
+          "velocity_classes_ms": [
+            5,
+            15,
+            25,
+            40
+          ]
+        }
+      },
+      "composite_hazard_index": {
+        "reach_full_distance_m": 2000.0,
+        "reach_full_drop_m": 1000.0,
+        "reach_full_velocity_ms": 40.0,
+        "reach_distance_weight": 0.45,
+        "reach_drop_weight": 0.35,
+        "reach_velocity_weight": 0.2,
+        "reach_base": 0.55,
+        "exposure_full_coverage_m2": 10000.0,
+        "exposure_peak_weight": 0.55,
+        "exposure_extent_weight": 0.2,
+        "exposure_envelope_weight": 0.25,
+        "exposure_max_uplift": 0.35,
+        "aggregation": "area_weighted_mean_of_zone_index",
+        "is_probability": false,
+        "is_calibrated": false
+      }
+    },
+    "sha256": "aaafd6f9fc6e8d598cb56c479bcc072374ee94ba17613c0ac2df0594f8059628"
+  },
+  "results": {
+    "advanced": {
+      "benign": {
+        "input_sha256": "9a429130e29c8eaed068a9671d3131cfc6c8da155e43ca8b2ec3d0614a24e220",
+        "input_coverage": {
+          "grid_cell_count": 1488,
+          "layer_valid_fraction": {
+            "aspect": 1.0,
+            "elevation": 1.0,
+            "forest_mask": 1.0,
+            "general_curvature": 1.0,
+            "plan_curvature": 1.0,
+            "slope": 1.0
+          },
+          "release_required_valid_fraction": 1.0,
+          "runout_required_valid_fraction": 1.0
+        },
+        "output_sha256": "ab0b7e5487090d6186f45df5443259c62ddcea4c312566f9e3a707f68835692c",
+        "summary": {
+          "release_valid_cells": 1488,
+          "release_min": 14.875,
+          "release_max": 14.875,
+          "release_mean": 14.875,
+          "reached_cells": 0,
+          "uncertainty_cells": 0,
+          "runout_area_m2": 0.0,
+          "uncertainty_area_m2": 0.0,
+          "maximum_velocity_ms": 0.0,
+          "particles_left_the_aoi": 0
+        }
+      },
+      "loaded": {
+        "input_sha256": "0242702e2bb6bb29e92c2573790f96d69bc98753b6c17de034328e65d8be3710",
+        "input_coverage": {
+          "grid_cell_count": 1488,
+          "layer_valid_fraction": {
+            "aspect": 1.0,
+            "elevation": 1.0,
+            "forest_mask": 1.0,
+            "general_curvature": 1.0,
+            "plan_curvature": 1.0,
+            "slope": 1.0
+          },
+          "release_required_valid_fraction": 1.0,
+          "runout_required_valid_fraction": 1.0
+        },
+        "output_sha256": "0bf74845d904d4d6e17782b6f64d95d5ad4e5bee7cab3928ff1e4a3b01f9e458",
+        "summary": {
+          "release_valid_cells": 1488,
+          "release_min": 74.375,
+          "release_max": 74.375,
+          "release_mean": 74.375,
+          "reached_cells": 227,
+          "uncertainty_cells": 375,
+          "runout_area_m2": 5675.0,
+          "uncertainty_area_m2": 9375.0,
+          "maximum_velocity_ms": 21.547728,
+          "particles_left_the_aoi": 300
+        }
+      },
+      "missing_data": {
+        "input_sha256": "4c990c95e4eb987c2f33341b6a0e05cde56b892c0df6ebfa472fe8768b276a80",
+        "input_coverage": {
+          "grid_cell_count": 1488,
+          "layer_valid_fraction": {
+            "aspect": 0.989247,
+            "elevation": 0.916667,
+            "forest_mask": 0.905914,
+            "general_curvature": 0.989247,
+            "plan_curvature": 0.916667,
+            "slope": 1.0
+          },
+          "release_required_valid_fraction": 0.884409,
+          "runout_required_valid_fraction": 0.905914
+        },
+        "output_sha256": "638e6ad1ad86669b3ae5686177f1ebe0320f7536c4a6ae20f8766407540dccb6",
+        "summary": {
+          "release_valid_cells": 1316,
+          "release_min": 74.375,
+          "release_max": 74.375,
+          "release_mean": 74.375,
+          "reached_cells": 65,
+          "uncertainty_cells": 107,
+          "runout_area_m2": 1625.0,
+          "uncertainty_area_m2": 2675.0,
+          "maximum_velocity_ms": 19.695065,
+          "particles_left_the_aoi": 0
+        }
+      },
+      "aoi_boundary": {
+        "input_sha256": "8e5f06bf632f886aad22377d1060970881e6031b37de464c200dc1a928781072",
+        "input_coverage": {
+          "grid_cell_count": 1302,
+          "layer_valid_fraction": {
+            "aspect": 1.0,
+            "elevation": 1.0,
+            "forest_mask": 1.0,
+            "general_curvature": 1.0,
+            "plan_curvature": 1.0,
+            "slope": 1.0
+          },
+          "release_required_valid_fraction": 1.0,
+          "runout_required_valid_fraction": 1.0
+        },
+        "output_sha256": "225b3005cc0edabf4798f7df654d15fb7cfb4621e2104c19f2f9f67eb3a422af",
+        "summary": {
+          "release_valid_cells": 1302,
+          "release_min": 74.375,
+          "release_max": 74.375,
+          "release_mean": 74.375,
+          "reached_cells": 187,
+          "uncertainty_cells": 311,
+          "runout_area_m2": 4675.0,
+          "uncertainty_area_m2": 7775.0,
+          "maximum_velocity_ms": 22.4603,
+          "particles_left_the_aoi": 300
+        }
+      }
+    },
+    "fast": {
+      "benign": {
+        "input_sha256": "9a429130e29c8eaed068a9671d3131cfc6c8da155e43ca8b2ec3d0614a24e220",
+        "input_coverage": {
+          "grid_cell_count": 1488,
+          "layer_valid_fraction": {
+            "aspect": 1.0,
+            "elevation": 1.0,
+            "forest_mask": 1.0,
+            "general_curvature": 1.0,
+            "plan_curvature": 1.0,
+            "slope": 1.0
+          },
+          "release_required_valid_fraction": 1.0,
+          "runout_required_valid_fraction": 1.0
+        },
+        "output_sha256": "ab0b7e5487090d6186f45df5443259c62ddcea4c312566f9e3a707f68835692c",
+        "summary": {
+          "release_valid_cells": 1488,
+          "release_min": 14.875,
+          "release_max": 14.875,
+          "release_mean": 14.875,
+          "reached_cells": 0,
+          "uncertainty_cells": 0,
+          "runout_area_m2": 0.0,
+          "uncertainty_area_m2": 0.0,
+          "maximum_velocity_ms": 0.0,
+          "particles_left_the_aoi": 0
+        }
+      },
+      "loaded": {
+        "input_sha256": "0242702e2bb6bb29e92c2573790f96d69bc98753b6c17de034328e65d8be3710",
+        "input_coverage": {
+          "grid_cell_count": 1488,
+          "layer_valid_fraction": {
+            "aspect": 1.0,
+            "elevation": 1.0,
+            "forest_mask": 1.0,
+            "general_curvature": 1.0,
+            "plan_curvature": 1.0,
+            "slope": 1.0
+          },
+          "release_required_valid_fraction": 1.0,
+          "runout_required_valid_fraction": 1.0
+        },
+        "output_sha256": "4528961b9a90e19206247ea397f8d29dabaf3e4c10a70bc305512a34bc5765ba",
+        "summary": {
+          "release_valid_cells": 1488,
+          "release_min": 74.375,
+          "release_max": 74.375,
+          "release_mean": 74.375,
+          "reached_cells": 298,
+          "uncertainty_cells": 300,
+          "runout_area_m2": 7450.0,
+          "uncertainty_area_m2": 7500.0,
+          "maximum_velocity_ms": 0.0,
+          "particles_left_the_aoi": 0
+        }
+      },
+      "missing_data": {
+        "input_sha256": "4c990c95e4eb987c2f33341b6a0e05cde56b892c0df6ebfa472fe8768b276a80",
+        "input_coverage": {
+          "grid_cell_count": 1488,
+          "layer_valid_fraction": {
+            "aspect": 0.989247,
+            "elevation": 0.916667,
+            "forest_mask": 0.905914,
+            "general_curvature": 0.989247,
+            "plan_curvature": 0.916667,
+            "slope": 1.0
+          },
+          "release_required_valid_fraction": 0.884409,
+          "runout_required_valid_fraction": 0.905914
+        },
+        "output_sha256": "dfad2548ee111e23d8c94d9b0f7fc9fdf06ff8ee1947f255538e540616b9802a",
+        "summary": {
+          "release_valid_cells": 1316,
+          "release_min": 74.375,
+          "release_max": 74.375,
+          "release_mean": 74.375,
+          "reached_cells": 130,
+          "uncertainty_cells": 132,
+          "runout_area_m2": 3250.0,
+          "uncertainty_area_m2": 3300.0,
+          "maximum_velocity_ms": 0.0,
+          "particles_left_the_aoi": 0
+        }
+      },
+      "aoi_boundary": {
+        "input_sha256": "8e5f06bf632f886aad22377d1060970881e6031b37de464c200dc1a928781072",
+        "input_coverage": {
+          "grid_cell_count": 1302,
+          "layer_valid_fraction": {
+            "aspect": 1.0,
+            "elevation": 1.0,
+            "forest_mask": 1.0,
+            "general_curvature": 1.0,
+            "plan_curvature": 1.0,
+            "slope": 1.0
+          },
+          "release_required_valid_fraction": 1.0,
+          "runout_required_valid_fraction": 1.0
+        },
+        "output_sha256": "0ec87966f030e585b48fc80f588321615a9547f802e0cb9658ddea3afa7d523b",
+        "summary": {
+          "release_valid_cells": 1302,
+          "release_min": 74.375,
+          "release_max": 74.375,
+          "release_mean": 74.375,
+          "reached_cells": 297,
+          "uncertainty_cells": 297,
+          "runout_area_m2": 7425.0,
+          "uncertainty_area_m2": 7425.0,
+          "maximum_velocity_ms": 0.0,
+          "particles_left_the_aoi": 0
+        }
+      }
+    }
+  }
+}

@@ -11,10 +11,10 @@ runtime/
 #
 # Cloud Run has no named volumes, so the `assess` target copies the baked terrain
 # into the image instead. That reintroduces exactly the staleness risk the rule
-# above exists to prevent, so it is handled rather than ignored: the assess image
-# is TAGGED with the bake's `generated_at_utc`, and `/api/health` reports the same
-# value. A stale image is therefore visible in the tag and at runtime, instead of
-# being served silently as if it were current.
+# above exists to prevent, so it is handled rather than ignored: the assess build
+# validates schema, processing/configuration identity, and layer checksums before
+# accepting the bake. The image remains tagged with `generated_at_utc`, while
+# `/api/health` also reports `bake_sha256`.
 #
 # Only the `assess` target copies it. `runtime` (the combined compose image) and
 # `assistant` do not, and compose still mounts the named volume as before.
@@ -38,6 +38,8 @@ __pycache__/
 .venv/
 venv/
 *.egg-info/
+build/
+dist/
 
 # Node -- the frontend has its own image and its own context.
 frontend/node_modules/

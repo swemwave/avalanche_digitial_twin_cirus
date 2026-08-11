@@ -18,13 +18,14 @@
 #
 # Nothing here bills while it is down, so ALWAYS run `down` when you finish.
 # If you forget, the AWS budget alarm emails its configured address at $10.
-# (Set one up if you have not -- see docs/deployment.md section 7.)
+# (Set one up if you have not -- see docs/deployment.md section 8.)
 # ---------------------------------------------------------------------------
 
 set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 OLLAMA_HOST="${OLLAMA_HOST:-127.0.0.1:11434}"
+DOMAIN="${DOMAIN:-avalanche.gotlost.xyz}"     # the stable, QR-code-facing URL
 TUNNEL_LOG=/tmp/mh-cloudflared.log
 TUNNEL_PID=/tmp/mh-cloudflared.pid
 
@@ -91,11 +92,17 @@ cmd_up() {
   curl -s "$url/api/assistant/health" | grep -q '"ollama_configured": *true' \
     && echo "  assistant: wired to the tunnel" || echo "  !! assistant is not seeing the tunnel"
   echo
-  echo "  OPEN:  $url"
+  echo "  OPEN (stable, poster URL):      https://${DOMAIN}"
+  echo "  (raw ALB, for debugging only):  $url"
   echo "  When you are finished:  bash deploy/session.sh down"
 }
 
 cmd_down() {
+  echo "!! This deletes the load balancer. https://${DOMAIN} will be BROKEN until"
+  echo "!! the Namecheap CNAME is repointed at the new ALB (bash deploy/aws/deploy.sh dns)."
+  echo "!! Do not do this while this is the live poster deployment."
+  read -r -p "Type DESTROY to continue: " reply
+  [[ "$reply" == "DESTROY" ]] || { echo "Aborted."; exit 1; }
   echo "=== tearing down AWS (billing stops when this finishes) ==="
   bash "$HERE/aws/deploy.sh" destroy
   echo "=== stopping the tunnel ==="
@@ -129,7 +136,8 @@ cmd_status() {
     # \$0 escaped: inside double quotes a bare $0 expands to the script name.
     echo "AWS:    not deployed  (costing \$0/hour)"
   else
-    echo "AWS:    $url"
+    echo "AWS:    https://${DOMAIN}  (stable poster URL)"
+    echo "        raw ALB: $url"
     echo "        ~\$0.09/hour while this exists -- run 'down' when finished"
   fi
   if [[ -f $TUNNEL_PID ]] && kill -0 "$(cat $TUNNEL_PID)" 2>/dev/null; then

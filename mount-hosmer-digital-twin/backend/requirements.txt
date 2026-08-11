@@ -4,10 +4,15 @@
 # .npy layers + static PNG tiles). It touches no source data and no geospatial
 # library. Everything geospatial is bake-time only -- see requirements-bake.txt.
 # Test tooling is not runtime -- see requirements-dev.txt.
+# Install the repository source so the running app and tests use the exact same
+# hazard/runout implementation. Run pip from the project root.
+-e ./packages/avycore
 fastapi>=0.121
 uvicorn[standard]>=0.38
 pydantic>=2.10
+pydantic-settings>=2.14.2,<3
 numpy>=2.2
 scipy>=1.14
 shapely>=2.1
 httpx>=0.28
+ollama>=0.6.2,<0.7

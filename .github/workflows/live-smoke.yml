@@ -1,0 +1,44 @@
+name: live smoke
+
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mount-hosmer-live-smoke
+  cancel-in-progress: true
+
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: mount-hosmer-digital-twin
+    env:
+      LIVE_URL: https://avalanche.gotlost.xyz
+      EXPECTED_BAKE_SHA256: 1b6524c462db40f2bbfb65aa27e3fbd73e2478829c427b80fc476ad9c4bf3cc3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: mount-hosmer-digital-twin/frontend/package-lock.json
+      - run: npm --prefix frontend ci
+      - run: npm --prefix frontend exec -- playwright install --with-deps chromium
+      - name: Verify HTTPS, bake identity, imagery, and assessment
+        run: >-
+          python deploy/verify_live.py "$LIVE_URL"
+          --expected-bake-sha256 "$EXPECTED_BAKE_SHA256"
+      - name: Verify browser tiles and distinct surface views
+        env:
+          PLAYWRIGHT_BASE_URL: ${{ env.LIVE_URL }}
+        run: npm --prefix frontend run smoke

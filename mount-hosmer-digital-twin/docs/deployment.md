@@ -8,11 +8,11 @@ answer which requests is a deployment decision.
 
 | Shape | Entrypoint(s) | Used by |
 |---|---|---|
-| **One process** | `app.main` | Local dev, the one-click `.exe`, `docker compose` |
+| **One process** | `app.main` | Local dev, optional launcher, `docker compose` |
 | **Three services** | `app.main_assess`, `app.main_assistant`, frontend | AWS ECS Fargate |
 
-Everything in §5 of `CLAUDE.md` (running it locally) is unchanged. If you only work
-locally, you can ignore this document entirely.
+Local development instructions live in the repository `README.md`. If you only
+work locally, you can ignore this document entirely.
 
 ---
 
@@ -93,11 +93,11 @@ starts high. It runs 1 vCPU / 4 GB.
 **I-D. The baked terrain ships inside the assess image.**
 `runtime/` is gitignored, so the bake exists only on the machine that ran it.
 `.dockerignore` excludes `runtime/` with one scoped exception, `!runtime/baked/`.
-The staleness risk that exclusion normally guards against is handled instead by
-**tagging the assess image with the bake's `generated_at_utc`** and reporting the
-same value at `/api/health` as `bake_generated_at`. Consequence: **build the assess
-image on a machine that has run the bake**. A source-based cloud build would
-produce an image that reports `baked: false`.
+The assess image remains tagged with the bake's `generated_at_utc`, while runtime
+loading validates the bake schema, processing/configuration hash, layer checksums
+and overall `bake_sha256`. `/api/health` reports both the timestamp and identity.
+Consequence: **build the assess image on a machine that has run the current bake**.
+A source-based cloud build would produce an image that reports `baked: false`.
 
 **I-E. Build `--platform linux/amd64`.**
 Fargate is x86_64. On Apple Silicon this cross-compiles, which also means a local
@@ -171,7 +171,67 @@ bash deploy/aws/deploy.sh start    # DesiredCount=1; same URL, ~2 min to be read
 
 ---
 
-## 5. Updating a deployed service
+## 5. Custom domain & HTTPS
+
+The load balancer's own hostname (`*.ca-west-1.elb.amazonaws.com`) is regenerated
+— and changes — every time the stack is destroyed and rebuilt (`session.sh down`,
+`deploy.sh destroy`). That is fine for development, but a QR code printed on a
+physical poster needs a URL that **never changes**, even across a full teardown.
+
+The fix is one Namecheap CNAME in front of the ALB: the QR code encodes
+**`https://avalanche.gotlost.xyz`**, never the raw ALB hostname. If the stack is
+ever destroyed and recreated, only that one record needs to be repointed — the
+QR code itself never has to change.
+
+HTTPS is **additive**, not a redirect: port 80 keeps working exactly as before
+(including the assistant's internal `http://${LoadBalancer.DNSName}` call back
+into assess — see `AVALANCHE_ASSESS_URL` in `infra.yaml`), and port 443 is a
+second, independent listener serving the public domain.
+
+The ACM certificate's lifecycle is decoupled from the CloudFormation stack, the
+same way ECR images already are — requested once via the CLI, validated by one
+DNS record, and its ARN is looked up dynamically by `deploy.sh` on every deploy.
+Destroying and recreating the stack never re-requests or re-validates it.
+
+### One-time setup
+
+```bash
+bash deploy/aws/deploy.sh cert         # requests the ACM certificate (idempotent)
+#   -> add the printed CNAME (validation record) in Namecheap
+bash deploy/aws/deploy.sh cert-wait    # blocks until ACM shows the cert ISSUED
+bash deploy/session.sh up              # (or: bash deploy/aws/deploy.sh 3)
+bash deploy/aws/deploy.sh dns          # prints the current ALB hostname
+#   -> add/update the "avalanche" CNAME in Namecheap to point at it
+```
+
+Two separate Namecheap records are involved — do not confuse them:
+
+| Record | Purpose | Changes when? |
+|---|---|---|
+| `_xxxx.avalanche` → ACM-provided value | Proves domain ownership to ACM | Once, ever (same cert survives stack rebuilds) |
+| `avalanche` → the ALB hostname | Routes real traffic to the ALB | Every time the stack is destroyed and recreated |
+
+### Recovery after a full stack rebuild
+
+The certificate survives a rebuild untouched (it lives outside CloudFormation).
+Only the second CNAME needs attention:
+
+```bash
+bash deploy/aws/deploy.sh dns    # prints the new ALB hostname
+#   -> update the "avalanche" CNAME in Namecheap to the new value
+```
+
+DNS propagation is typically a few minutes; `curl -I https://avalanche.gotlost.xyz`
+to confirm.
+
+> **Do not run `session.sh down` / `deploy.sh destroy` while this is the live
+> poster deployment.** `session.sh down` requires typing `DESTROY` to proceed for
+> exactly this reason — it is the direct safeguard against an accidental teardown
+> during the exhibit window.
+
+---
+
+## 6. Updating a deployed service
 
 ### After changing backend code
 
@@ -180,9 +240,19 @@ bash deploy/aws/deploy.sh 2     # rebuild + push all three images
 bash deploy/aws/deploy.sh 3     # roll the services onto the new images
 ```
 
-Step 2 rebuilds all three; Docker layer caching makes the unchanged ones fast. The
-assess image's 188 MB data layer is copied **last**, so a code-only change re-pushes
-a few MB rather than the whole bake.
+Step 2 validates the bake, builds all three images under one unique release tag,
+runs their exact containers locally, and only then pushes them. It stores the
+validated tag under generated `runtime/deployment/`; mutable `latest` tags are not
+used for a rollout. Docker layer caching keeps unchanged work fast, and the assess
+image's baked-data layer is copied last.
+
+Step 3 resolves every ECR tag to an immutable `repository@sha256:...` identity,
+updates the existing stack, waits for the real CloudFormation-generated ECS service
+names to stabilize, and runs the public HTTPS/API/imagery/assessment and Playwright
+browser gates. ECS keeps the previous task healthy during replacement and has its
+deployment circuit breaker configured to roll back startup failures. If a
+post-rollout functional or browser gate fails, the script restores all three prior
+image identities and waits for them to become stable before returning failure.
 
 ### After changing the frontend
 
@@ -191,12 +261,13 @@ those values means rebuilding the image, not restarting the task.
 
 ### After re-running the bake
 
-The assess image tag is derived from `meta.json`'s `generated_at_utc`, so a new
-bake automatically produces a new tag and `deploy.sh 3` rolls onto it. Verify:
+A release tag includes the first 12 hexadecimal characters of the validated bake
+identity. `deploy.sh 3` refuses to roll it if the current local bake no longer
+matches. Verify independently:
 
 ```bash
 curl -s "$(bash deploy/session.sh status | awk '/^AWS:/{print $2}')/api/health"
-# -> bake_generated_at should match the new bake
+# -> bake_generated_at and bake_sha256 should match the new bake
 ```
 
 ### After changing infrastructure (`infra.yaml`)
@@ -209,7 +280,23 @@ bash deploy/aws/deploy.sh 3
 
 CloudFormation computes a changeset and updates only what differs. Changing a task
 definition (CPU, memory, environment) rolls the service onto a new task revision
-with no downtime.
+with no downtime. The three target groups also have inexpensive CloudWatch
+`UnHealthyHostCount` alarms. They intentionally have no notification action, so
+adding an email/SMS destination remains an explicit operator decision.
+
+The stack's 128 MiB Lambda probe runs once per hour and checks the public HTTPS
+frontend safety copy, exact `ExpectedBakeSha256`, distinct centre terrain/imagery
+PNG bytes, and a real deterministic assessment with its identity and disclaimer.
+Its log retention is seven days and a CloudWatch `Errors` alarm records failures;
+there is no unapproved notification destination. `deploy.sh 3` updates the expected
+bake automatically and restores the prior value when it performs a functional
+rollback.
+
+The scheduled `.github/workflows/live-smoke.yml` check adds the browser-level
+test: both imagery tiles must return 200 and rendered satellite and hillshade
+canvas screenshots must differ. It becomes active when this workflow is present
+on the repository's default branch. Update its `EXPECTED_BAKE_SHA256` whenever a
+reviewed bake is deliberately rolled.
 
 ### Changing the tunnel URL only
 
@@ -221,7 +308,7 @@ bash deploy/aws/deploy.sh set-tunnel https://<host>.trycloudflare.com
 
 ### Adding an API endpoint
 
-1. Add the function (`assess.py` / `risk.py` / `assistant.py`).
+1. Add the function (`app/assess.py`, `avycore.hazard`, or `avycore.assistant`, as appropriate).
 2. Wire the route into the **correct** router — `api/terrain.py`, `api/assess.py`,
    or `api/assistant.py`. It is served by whichever service mounts that router.
 3. If the path does not already fall under an existing ALB rule, add a listener
@@ -251,7 +338,7 @@ aws --profile avalanche --region ca-west-1 ecs describe-tasks \
 
 ---
 
-## 6. Gotchas actually hit during setup
+## 7. Gotchas actually hit during setup
 
 | Symptom | Cause | Fix |
 |---|---|---|
@@ -266,7 +353,7 @@ aws --profile avalanche --region ca-west-1 ecs describe-tasks \
 
 ---
 
-## 7. Cost model
+## 8. Cost model
 
 Two deliberate decisions in `infra.yaml`:
 
@@ -277,18 +364,19 @@ the tasks sit in public subnets with public IPs, protected by a security group t
 accepts inbound traffic **only** from the load balancer. Nothing reaches a task
 directly from the internet.
 
-**`CapacityProvider` is a parameter.** `FARGATE_SPOT` is ~70% cheaper but
-interruptible; `FARGATE` is on-demand. Deploy with `CAPACITY=FARGATE` for anything
-graded — at short demo durations the saving is cents and an interruption is not
-worth it.
+**`CapacityProvider` is a parameter, and defaults to `FARGATE` (on-demand).**
+`FARGATE_SPOT` is ~70% cheaper but interruptible (ECS restarts the task
+automatically, typically within a minute or two) — fine for local dev, not for
+the poster deployment sitting behind a QR code that must stay up unattended.
+Deploy with `CAPACITY=FARGATE_SPOT` for cheap, interruption-tolerant dev/testing.
 
 Rough figures (ca-west-1, on-demand):
 
 | | |
 |---|---|
-| Everything running | ~$0.09/hour |
+| Everything running, always-on (the poster deployment) | ~$0.09/hour, **~$65–70/month** |
 | Parked (`deploy.sh stop`) — ALB only | ~$0.025/hour |
-| Torn down (`session.sh down`) | **~$0.10/month** (ECR images only) |
+| Torn down (`session.sh down`) | **~$0.10/month** (ECR images only) — **do not do this to the live poster deployment**, see §5 |
 
 Set a budget alarm. It is free and it is the real safety net:
 
@@ -302,7 +390,7 @@ aws --profile avalanche --region us-east-1 budgets create-budget \
 
 ---
 
-## 8. Verifying a teardown
+## 9. Verifying a teardown
 
 `session.sh status` should report `not deployed`. To check independently:
 
@@ -325,13 +413,14 @@ data lags roughly 24 hours.
 
 ---
 
-## 9. Files
+## 10. Files
 
 | Path | What it is |
 |---|---|
 | `deploy/session.sh` | `up` / `down` / `status` — the whole system, both halves |
-| `deploy/aws/deploy.sh` | ECR + build/push + stack; also `stop`, `start`, `logs`, `destroy` |
+| `deploy/aws/deploy.sh` | ECR + build/push + stack; also `cert`, `cert-wait`, `dns`, `stop`, `start`, `logs`, `destroy` |
 | `deploy/aws/infra.yaml` | The entire AWS stack (VPC, ALB, ECS, IAM, logs) |
+| `deploy/verify_live.py` | Dependency-free public health gate for HTTPS, bake identity, imagery and assessment success |
 | `deploy/ollama-tunnel.sh` | Ollama + Cloudflare Tunnel on the local machine |
 | `backend/app/assess_client.py` | How the assistant reaches assess (in-process or HTTP) |
 | `backend/app/service.py` | Shared FastAPI app factory |
@@ -341,13 +430,14 @@ data lags roughly 24 hours.
 
 ---
 
-## 10. Known limitations
+## 11. Known limitations
 
 - **Assessment memory.** ~1477 MB peak for a 12×12 km AOI is large; the model
   holds several full-grid float64 arrays simultaneously. Reducing it is an open
   optimisation. See `docs/limitations.md`.
-- **HTTP only.** The ALB serves plain HTTP. HTTPS needs a domain and an ACM
-  certificate.
+- **HTTPS only on the custom domain.** `https://avalanche.gotlost.xyz` (§5) has a
+  valid cert. The raw ALB hostname still only serves plain HTTP on port 80 (kept
+  working deliberately, for the assistant's internal call into assess).
 - **The tunnel is public and unauthenticated.** The hostname is random and
   unguessable, but anyone who learns it can send prompts to the operator's machine.
   Bring it up for a session and take it down afterwards; do not leave it running

@@ -85,6 +85,82 @@ def test_assistant_service_does_not_import_the_runout_engine():
     assert out.stdout.strip() == "", f"assistant service imported: {out.stdout.strip()}"
 
 
+@pytest.mark.parametrize("entrypoint", ["app.main", "app.main_assess", "app.main_assistant"])
+def test_runtime_entrypoints_do_not_import_bake_only_dependencies(entrypoint: str):
+    """Every serving shape stays independent of DATA/geospatial bake libraries."""
+    import subprocess
+    import sys
+
+    banned = (
+        "rasterio",
+        "pyproj",
+        "xdem",
+        "osgeo",
+        "pandas",
+        "geopandas",
+        "laspy",
+        "cdsapi",
+        "eccodes",
+        "cfgrib",
+        "PIL",
+        "matplotlib",
+        "yaml",
+        "sqlalchemy",
+    )
+    probe = (
+        "import importlib,sys;"
+        f"importlib.import_module({entrypoint!r});"
+        f"bad=[name for name in {banned!r} if name in sys.modules];"
+        "print(','.join(bad))"
+    )
+    out = subprocess.run(
+        [sys.executable, "-c", probe], capture_output=True, text=True, check=True
+    )
+    assert out.stdout.strip() == "", f"{entrypoint} imported: {out.stdout.strip()}"
+
+
+def test_combined_serving_import_is_socket_blocked_and_offline_processing_free():
+    """Serving import must neither open a socket nor load M2/M3 offline adapters."""
+    import subprocess
+    import sys
+
+    forbidden_modules = (
+        # Exposure is built once, offline, with pyproj and shapely. The serving
+        # app reads the two baked rasters and the static vector and nothing else.
+        "app.processing.exposure",
+        "app.processing.conditions.eccc",
+        "app.processing.conditions.pcic",
+        "app.processing.conditions.era5_land",
+        "app.processing.snow",
+        "app.processing.snow.official_example",
+        "app.processing.snow.snowpack_output",
+        "cdsapi",
+        "eccodes",
+        "cfgrib",
+    )
+    probe = f"""
+import fastapi, socket, sys
+class BlockedSocket(socket.socket):
+    def connect(self, *args, **kwargs):
+        raise RuntimeError('socket connect attempted during import')
+    def connect_ex(self, *args, **kwargs):
+        raise RuntimeError('socket connect_ex attempted during import')
+    def bind(self, *args, **kwargs):
+        raise RuntimeError('socket bind attempted during import')
+def blocked_connection(*args, **kwargs):
+    raise RuntimeError('socket create_connection attempted during import')
+socket.socket = BlockedSocket
+socket.create_connection = blocked_connection
+import app.main
+bad = [name for name in {forbidden_modules!r} if name in sys.modules]
+print(','.join(bad))
+"""
+    out = subprocess.run(
+        [sys.executable, "-c", probe], capture_output=True, text=True, check=True
+    )
+    assert out.stdout.strip() == "", f"serving import loaded offline modules: {out.stdout.strip()}"
+
+
 # --- the assess client -------------------------------------------------------
 
 

@@ -1,23 +1,23 @@
-# Data Footprint (Stage 3 — Ultra)
+# Data footprint
 
-What the **Stage 3 "Ultra"** simplification actually consumes from `DATA\mount_hosmer_data\`, what it stops
-using, and — importantly — **what may be moved off the working disk without destroying anything.**
+What the active Digital Twin consumes from `DATA\mount_hosmer_data\`, what it does
+not use, and what may be archived off the working disk without destroying anything.
 
 > ⛔ **`DATA\` is read-only (invariant I1).** "No longer consumed by the app" is **not** the same as "safe to
 > delete." Some of this data cannot be re-downloaded. The correct action for unused bulk is **archive, not
 > delete** — see [Archiving, not deleting](#archiving-not-deleting).
 
-Companion to [`data-inventory.md`](data-inventory.md), which describes the full tree and the *current* app.
-This doc describes the **target** footprint once Stage 3 lands. Stage 3 keeps only: the 3D terrain model, the
-runout simulation, a simplified risk analysis, and a local (Ollama) AI. Everything that fed the five research
-tabs — dynamic satellite events, weather/snow ingestion, the Avalanche Canada panel, susceptibility — is
-removed. One fixed winter Sentinel-2 RGB capture remains as bake-time-only visual context.
+The active application keeps the 3D terrain model, runout simulation, a simplified
+release analysis, and a local Ollama assistant. Dynamic satellite events,
+weather/snow ingestion, Avalanche Canada context, and the old susceptibility
+pipeline are not runtime inputs. One fixed winter Sentinel-2 RGB capture remains
+as bake-time-only visual context.
 
 ---
 
 ## At a glance
 
-| | Today | Stage 3 target |
+| | Entire source holding | Active Digital Twin |
 |---|---:|---:|
 | Source data the app *reads* | ~46 GB | **~6.5 GB, bake-time only** |
 | Source data the app reads *at runtime* | ~46 GB (indirectly, via processors) | **0 GB** (runs off baked artifacts) |
@@ -35,17 +35,16 @@ The 6.5 GB below is an input to `bake.py` only.
 | `static\lidar_bc\*.laz` (point clouds) | **38.74 GB** | 171 | ❌ **Not used** — already unused today; the DEM rasters were derived from these, so the app never reads them |
 | `static\lidar_bc\*.tif` (LiDAR DEM/DSM) | **6.53 GB** | 20 | ⚠️ **Bake-time only** — source for the 5 m mesh, `.npy` terrain layers, and terrain-RGB tiles |
 | `events\` (Sentinel-2 + Landsat scenes) | 92 MB | — | ➖ **One fixed RGB capture only** — three 10 m Sentinel-2 bands are baked as visual context; no values enter risk |
-| `dynamic\` (ECCC weather, BC snow, Avalanche Canada) | 48 MB | — | ❌ **Not used** — conditions now come from UI sliders/presets |
+| `dynamic\` (ECCC weather, BC snow, Avalanche Canada) | 48 MB | — | ❌ **Not used** — conditions are explicit user-entered simple/advanced research-scenario records |
 | `static\terrain_fallback\` (Copernicus GLO-30) | 1.7 MB | 3 | ⚠️ **Bake-time only** — gap-fill where LiDAR has holes |
 | `static\landcover\` (ESA WorldCover 10 m) | 104 KB | 1 | ⚠️ **Bake-time only** — forest mask for risk damping |
-| `static\openstreetmap\` (OSM features) | 2.3 MB | 2 | ➖ **Optional** — only if runout keeps exposure/consequence |
-| `metadata\` (grid, AOI, manifests) | 306 KB | — | ⚠️ **Bake-time only** — `grid_and_aoi.json`, `mount_hosmer_aoi.geojson` |
+| `static\openstreetmap\` (OSM features) | 2.3 MB | 2 | ⚠️ **Bake-time only** — the GeoJSON becomes the exposure layer (roads, rail, derived built-up outlines); the raw Overpass JSON is not read |
+| `metadata\` (grid, AOI, manifests) | 306 KB | — | ⚠️ **Bake-time only** — the AOI and acquisition manifest are consumed; legacy grid metadata is preserved |
 | `logs\`, `download.log` | ~0 | — | keep (provenance) |
 
-> **LiDAR-usage note.** [`data-inventory.md`](data-inventory.md) says LiDAR is *not* used (61.9 % coverage,
-> 30 m Copernicus fallback). That describes the **legacy 30 m** pipeline. Stage 3 adopts the newer **5 m
-> terrain engine**, which mosaics the LiDAR DEM/DSM tiles to ~99.9 % AOI coverage — so under Stage 3 the
-> 6.5 GB of `lidar_bc\*.tif` **is** the terrain source, and Copernicus becomes gap-fill only.
+The active 5 m terrain engine mosaics the LiDAR DEM/DSM tiles to approximately
+99.9% AOI coverage. Copernicus is gap fill only; the raw `.laz` point clouds are
+not read because the DEM/DSM rasters were derived from them.
 
 ---
 
@@ -58,7 +57,6 @@ opened by the bake.
 **Reads (inputs):**
 
 ```
-DATA\mount_hosmer_data\metadata\grid_and_aoi.json          # analysis grid + CRS + bounds
 DATA\mount_hosmer_data\metadata\mount_hosmer_aoi.geojson   # AOI polygon
 DATA\mount_hosmer_data\static\lidar_bc\*.tif               # LiDAR DEM/DSM  (~6.5 GB, the bulk of bake input)
 DATA\mount_hosmer_data\static\terrain_fallback\*.tif       # Copernicus GLO-30 gap-fill
@@ -66,16 +64,31 @@ DATA\mount_hosmer_data\static\landcover\ESA_WorldCover_2021_EPSG26911_10m.tif
 DATA\mount_hosmer_data\events\MH_20260116T183016Z\sentinel2\*_B02_EPSG26911_10m.tif  # blue
 DATA\mount_hosmer_data\events\MH_20260116T183016Z\sentinel2\*_B03_EPSG26911_10m.tif  # green
 DATA\mount_hosmer_data\events\MH_20260116T183016Z\sentinel2\*_B04_EPSG26911_10m.tif  # red
-DATA\mount_hosmer_data\static\openstreetmap\mount_hosmer_osm_features.geojson   # only if exposure is kept
+DATA\mount_hosmer_data\static\openstreetmap\mount_hosmer_osm_features.geojson   # exposure (ODbL 1.0)
 ```
+
+The OpenStreetMap extract is **exposure, not a hazard input**: it never enters the release model and acts
+only as the consequence term of the composite hazard index. It is © OpenStreetMap contributors under the
+Open Database License (ODbL) 1.0, and the attribution is carried through the bake into the served vector
+and rendered wherever the layer is visible.
+
+The analysis grid, CRS, asset allow-list, units and source statements come from
+`mount-hosmer-digital-twin/backend/config/mount_hosmer.pack.json`. Its SHA-256
+identity is bound into every new bake. `metadata/grid_and_aoi.json` remains
+preserved source metadata but is no longer interpreted by the bake.
 
 **Writes (outputs) — all under `runtime\`, never `DATA\` (invariant I1):**
 
 ```
 runtime\baked\tiles\{z}\{x}\{y}.png        # terrain-RGB tiles for the 3D MapLibre mesh
 runtime\baked\imagery\{z}\{x}\{y}.png      # winter Sentinel-2 natural-colour surface
-runtime\baked\layers\*.npy                 # slope, aspect, curvature, elevation, forest_mask
-runtime\baked\meta.json                    # grid/AOI/tile metadata the app serves
+runtime\baked\exposure\features.geojson    # classified exposure vectors for display (optional)
+runtime\baked\layers\*.npy                 # six model layers + terrain/forest source-code rasters
+                                           #   + optional exposure_weight / exposure_class
+runtime\baked\meta.json                    # lineage, checksums, bake identity, grid/AOI/tile metadata
+runtime\reports\terrain\reference-elevations\... # inactive bake-bound elevation contracts
+runtime\verification\bake-preservation\...       # complete pre-rebuild inventory/copy
+runtime\snow-state-packs\...                      # inactive offline M3 outputs, when eligible
 ```
 
 The runtime app loads the `.npy` layers with plain **numpy** and serves the static tiles — so `rasterio`,
@@ -91,7 +104,8 @@ running service. This is the mechanism that takes runtime's `DATA\` dependency t
   re-derive a *finer-than-1 m* surface, which is out of scope.
 - **Most of `events\` — ~78 MB.** No satellite viewer or NDSI-based snow presence; only the fixed winter
   B02/B03/B04 rasters are read to build the optional natural-colour surface.
-- **`dynamic\` — 48 MB.** No weather/snow ingestion; conditions are user-supplied.
+- **`dynamic\` — 48 MB.** No serving-time weather/snow ingestion; condition observations and assumptions
+  are explicitly entered by the user with visible provenance and missingness.
 
 ---
 
@@ -107,8 +121,8 @@ running service. This is the mechanism that takes runtime's `DATA\` dependency t
 
 ## Archiving, not deleting
 
-The 38.9 GB is dead weight for Stage 3, but invariant I1 and the *Known gaps* in
-[`data-inventory.md`](data-inventory.md) still bind. Reduce footprint **without destroying anything**:
+The 38.9 GB is not consumed by the active application, but some sources are
+irreplaceable. Reduce the working footprint **without destroying anything**:
 
 - **Move `static\lidar_bc\*.laz` (38.7 GB) to cold storage** — an external drive or archive. Keep them
   *somewhere*; they are the only path back to the raw point cloud. Just not on the working disk.

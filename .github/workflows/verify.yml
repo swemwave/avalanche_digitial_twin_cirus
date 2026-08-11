@@ -1,0 +1,52 @@
+name: verify
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: mount-hosmer-digital-twin
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: |
+            mount-hosmer-digital-twin/backend/requirements.txt
+            mount-hosmer-digital-twin/backend/requirements-dev.txt
+            mount-hosmer-digital-twin/packages/avycore/pyproject.toml
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -r backend/requirements-dev.txt
+      - run: python -m pytest
+      - if: runner.os == 'Linux'
+        run: python -m app.export_openapi
+      - if: runner.os == 'Linux'
+        run: git diff --exit-code -- frontend/openapi.json
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mount-hosmer-digital-twin/frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: mount-hosmer-digital-twin/frontend/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build

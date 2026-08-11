@@ -5,32 +5,23 @@ same projected CRS, with the same origin and pixel alignment. That is what makes
 layers stackable: a pixel at (row, col) on the terrain grid refers to exactly the
 same ground as the pixel at (row, col) on any other terrain-grid layer.
 
-Three grids exist, and the reason there are three is the reason the whole
-harmonization layer exists:
+The runtime bake uses one terrain grid (5 m default).
 
-``terrain`` (5 m default)
+``terrain``
     Built from the 1 m BC LiDAR. Slope, curvature, gullies and ridges are the
     inputs that actually decide where an avalanche starts, and they are exactly
     the quantities destroyed by coarse pixels. This grid must never be derived
     from the 30 m DEM where LiDAR exists.
 
-``environmental`` (10 m)
-    The native resolution of Sentinel-2 and ESA WorldCover. Snow cover, land
-    cover, and vegetation live here. Resampling these to 5 m would invent detail
-    that the sensor never measured.
-
-``fallback`` (30 m)
-    The native resolution of Copernicus GLO-30 and Landsat. Used only where no
-    better source exists, and always recorded as such in the provenance raster.
 """
 
 from __future__ import annotations
 
-import json
 from dataclasses import dataclass
 from typing import Any
 
 from app.core.settings import Settings
+from app.processing.mountain_pack import load_mountain_pack
 
 try:  # pragma: no cover - exercised implicitly wherever rasterio is installed
     from rasterio.coords import BoundingBox
@@ -38,10 +29,6 @@ try:  # pragma: no cover - exercised implicitly wherever rasterio is installed
     from rasterio.transform import Affine, from_origin
 except Exception:  # pragma: no cover
     pass
-
-#: Used only when metadata/grid_and_aoi.json is unavailable. These are the
-#: published AOI bounds for Mount Hosmer in EPSG:26911.
-DEFAULT_EXTENT = (637650.0, 5491570.0, 649650.0, 5503570.0)
 
 NODATA = -9999.0
 
@@ -122,38 +109,19 @@ class AnalysisGrid:
         }
 
 
-@dataclass(frozen=True)
-class GridSet:
-    terrain: AnalysisGrid
-    environmental: AnalysisGrid
-    fallback: AnalysisGrid
-
-    def describe(self) -> dict[str, Any]:
-        return {
-            "analysis_crs": self.terrain.crs_string,
-            "grids": [
-                self.terrain.describe(),
-                self.environmental.describe(),
-                self.fallback.describe(),
-            ],
-        }
-
-
 def aoi_extent(settings: Settings) -> tuple[float, float, float, float]:
-    """Read the fixed AOI extent from source metadata, falling back to constants."""
-    path = settings.data_root / "metadata" / "grid_and_aoi.json"
-    if not path.exists():
-        return DEFAULT_EXTENT
-    try:
-        grid = json.loads(path.read_text(encoding="utf-8"))
-        west, south, east, north = grid["fixed_extent_analysis_crs"]
-        return float(west), float(south), float(east), float(north)
-    except (json.JSONDecodeError, KeyError, TypeError, ValueError):
-        return DEFAULT_EXTENT
+    """Read the declared extent from the validated mountain pack.
+
+    There is intentionally no Mount Hosmer fallback. A missing or malformed
+    pack must stop the bake rather than quietly select a different mountain.
+    """
+    pack, _ = load_mountain_pack(settings)
+    return pack.grid.bounds
 
 
 def _grid(settings: Settings, name: str, resolution: float) -> AnalysisGrid:
     west, south, east, north = aoi_extent(settings)
+    pack, _ = load_mountain_pack(settings)
     # Snap the extent outward to a whole number of pixels so every grid shares
     # the same origin and no grid is a fractional pixel wider than another.
     east = west + round((east - west) / resolution) * resolution
@@ -165,25 +133,10 @@ def _grid(settings: Settings, name: str, resolution: float) -> AnalysisGrid:
         south=south,
         east=east,
         north=north,
-        crs_string=settings.analysis_crs,
+        crs_string=pack.grid.analysis_crs,
     )
 
 
 def terrain_grid(settings: Settings) -> AnalysisGrid:
-    return _grid(settings, "terrain", settings.terrain_resolution_m)
-
-
-def environmental_grid(settings: Settings) -> AnalysisGrid:
-    return _grid(settings, "environmental", settings.environmental_resolution_m)
-
-
-def fallback_grid(settings: Settings) -> AnalysisGrid:
-    return _grid(settings, "fallback", settings.fallback_resolution_m)
-
-
-def grid_set(settings: Settings) -> GridSet:
-    return GridSet(
-        terrain=terrain_grid(settings),
-        environmental=environmental_grid(settings),
-        fallback=fallback_grid(settings),
-    )
+    pack, _ = load_mountain_pack(settings)
+    return _grid(settings, "terrain", pack.grid.resolution_m)

@@ -14,12 +14,12 @@ from __future__ import annotations
 
 from typing import Any
 
+from avycore.assistant import AssistantError, chat as assistant_chat, explain as assistant_explain
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
 
 from app.api.deps import assess_client
+from app.api.models import AssessResult, ChatRequest, ChatResult, ExplainRequest, ExplainResult
 from app.assess_client import AssessUnavailableError
-from app.assistant import AssistantError, chat as assistant_chat, explain as assistant_explain
 
 router = APIRouter(prefix="/api", tags=["assistant"])
 
@@ -50,31 +50,34 @@ def assistant_health() -> dict[str, Any]:
     payload.update(assess_backend())
     return payload
 
-
-class ExplainRequest(BaseModel):
-    assessment: dict[str, Any]
-
-
-class ChatRequest(BaseModel):
-    message: str
-    assessment: dict[str, Any] | None = None
-    history: list[dict[str, str]] | None = None
-
-
-@router.post("/assistant/explain")
-def assistant_explain_route(body: ExplainRequest) -> dict[str, Any]:
+@router.post(
+    "/assistant/explain", response_model=ExplainResult, operation_id="postExplain"
+)
+def assistant_explain_route(body: ExplainRequest) -> ExplainResult:
     """Plain-language read of an assessment. The disclaimer is appended in code."""
     try:
-        return assistant_explain(body.assessment)
+        assessment = (
+            body.assessment.model_dump() if isinstance(body.assessment, AssessResult) else body.assessment
+        )
+        return ExplainResult.model_validate(assistant_explain(assessment))
     except AssistantError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
 
 
-@router.post("/assistant/chat")
-def assistant_chat_route(body: ChatRequest, assess=Depends(assess_client)) -> dict[str, Any]:
+@router.post("/assistant/chat", response_model=ChatResult, operation_id="postChat")
+def assistant_chat_route(body: ChatRequest, assess=Depends(assess_client)) -> ChatResult:
     """Scenario chat: parse the message to slider values, re-run the assessment, narrate."""
     try:
-        return assistant_chat(assess, body.message, body.assessment, body.history)
+        return ChatResult.model_validate(
+            assistant_chat(
+                assess,
+                body.message,
+                body.assessment.model_dump()
+                if isinstance(body.assessment, AssessResult)
+                else body.assessment,
+                [turn.model_dump() for turn in body.history] if body.history else None,
+            )
+        )
     except AssistantError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
     except AssessUnavailableError as exc:

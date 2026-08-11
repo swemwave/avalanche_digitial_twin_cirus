@@ -12,7 +12,6 @@ interpolation of the reprojection lattice, and scipy is a runtime dependency.
 
 from __future__ import annotations
 
-import json
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
@@ -20,11 +19,16 @@ from typing import Any
 
 import numpy as np
 
+from app.bake_identity import BakeCompatibilityError, processing_manifest, validate_bake
 from app.core.settings import Settings
 
 
 class BakeNotFoundError(RuntimeError):
     """Raised when the baked terrain is missing. Run ``python -m app.bake``."""
+
+
+class BakeIncompatibleError(RuntimeError):
+    """Raised when baked artifacts do not match the current scientific contract."""
 
 
 @dataclass(frozen=True)
@@ -100,12 +104,25 @@ class BakedTerrain:
             if not path.exists():
                 available = [record["name"] for record in self.meta.get("layers", [])]
                 raise KeyError(f"Baked layer {name!r} not found. Available: {available}")
-            self._cache[name] = np.ma.masked_invalid(np.load(path))
+            values = np.load(path, mmap_mode="r")
+            record = next(
+                (item for item in self.meta.get("layers", []) if item.get("name") == name), {}
+            )
+            nodata = record.get("nodata", "NaN")
+            if nodata == "NaN":
+                layer = np.ma.masked_invalid(values, copy=False)
+            else:
+                layer = np.ma.masked_equal(values, nodata, copy=False)
+            self._cache[name] = layer
         return self._cache[name]
 
     @property
     def disclaimer(self) -> str:
         return str(self.meta.get("disclaimer", ""))
+
+    @property
+    def bake_sha256(self) -> str:
+        return str(self.meta.get("identity", {}).get("bake_sha256", ""))
 
 
 def baked_root(settings: Settings) -> Path:
@@ -113,9 +130,17 @@ def baked_root(settings: Settings) -> Path:
 
 
 @lru_cache(maxsize=2)
-def _load(root_str: str, mtime: float) -> BakedTerrain:
+def _load(root_str: str, mtime: float, expected_processing_sha256: str | None) -> BakedTerrain:
     root = Path(root_str)
-    meta = json.loads((root / "meta.json").read_text(encoding="utf-8"))
+    try:
+        meta = validate_bake(
+            root, expected_processing_sha256=expected_processing_sha256
+        )
+    except BakeCompatibilityError as exc:
+        raise BakeIncompatibleError(
+            f"The terrain bake is stale, incomplete, or corrupted: {exc} "
+            "Rebuild it with: python -m app.bake --force"
+        ) from exc
     g = meta["grid"]
     grid = BakedGrid(
         resolution_m=float(g["resolution_m"]),
@@ -145,7 +170,13 @@ def load_baked(settings: Settings) -> BakedTerrain:
         raise BakeNotFoundError(
             f"No baked terrain at {root}. Build it once with: python -m app.bake"
         )
-    return _load(str(root), meta_path.stat().st_mtime)
+    try:
+        expected_processing = processing_manifest(settings.project_root)["sha256"]
+    except FileNotFoundError:
+        # Hermetic callers may supply a synthetic runtime without a source checkout.
+        # The bake's own schema, identity, and layer checksums are still validated.
+        expected_processing = None
+    return _load(str(root), meta_path.stat().st_mtime, expected_processing)
 
 
 def tile_path(settings: Settings, z: int, x: int, y: int) -> Path:
@@ -156,3 +187,8 @@ def tile_path(settings: Settings, z: int, x: int, y: int) -> Path:
 def imagery_tile_path(settings: Settings, z: int, x: int, y: int) -> Path:
     """Filesystem path of a baked natural-colour tile. Static PNG; no source-data read."""
     return baked_root(settings) / "imagery" / str(z) / str(x) / f"{y}.png"
+
+
+def exposure_features_path(settings: Settings) -> Path:
+    """Filesystem path of the baked exposure vectors. Static GeoJSON; nothing computed."""
+    return baked_root(settings) / "exposure" / "features.geojson"

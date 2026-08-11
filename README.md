@@ -1,154 +1,114 @@
 # Mount Hosmer Avalanche Digital Twin
 
-A local research prototype that builds a "digital twin" of **Mount Hosmer, British Columbia** (near Fernie)
-from ~46 GB of public geospatial data, and serves it as a web app: terrain, satellite imagery, weather and
-snowpack conditions, and an **experimental** avalanche-susceptibility score.
+An offline-first research prototype for exploring avalanche release and runout on
+Mount Hosmer near Fernie, British Columbia. It bakes a fixed 12 x 12 km terrain
+model from local geospatial sources, then serves a 3D map, deterministic scenario
+assessment, two runout engines, and an optional local AI explanation layer.
 
-> ⚠️ **This is a research and decision-support prototype, not an operational avalanche forecast.**
-> It does not replace Avalanche Canada forecasts or field assessment. See
-> [`limitations.md`](mount-hosmer-digital-twin/docs/limitations.md).
+> This is not an operational avalanche forecast. Scores are uncalibrated relative
+> indices, not probabilities, and must not replace Avalanche Canada guidance or
+> field assessment.
 
-**AI agents:** start with [`CLAUDE.md`](CLAUDE.md).
+## Current objective
 
----
+Improve the Digital Twin's scientific fidelity and usefulness. Work should favor
+data quality, explicit units and provenance, physically justified modeling,
+validation, uncertainty, reproducibility, and characterized performance. UI or AI
+changes are valuable when they make those properties clearer; they are not, by
+themselves, evidence of accuracy.
+
+AI coding agents must read [`AGENTS.md`](AGENTS.md) before changing the project.
 
 ## Repository layout
 
-```
-Avalanche\
-├── CLAUDE.md                    Orientation for AI agents — read first
-├── README.md                    You are here
-│
-├── mount-hosmer-digital-twin\   ✅ THE APPLICATION — all active work
-│   ├── backend\                 FastAPI + the processing pipeline (Python)
-│   ├── frontend\                Next.js + MapLibre + Recharts (TypeScript)
-│   ├── launcher\                One-click .exe launcher (C# / .NET 9)
-│   ├── tests\                   20 pytest tests
-│   ├── docs\                    Architecture, pipeline, model, limitations
-│   ├── runtime\                 Generated output (gitignored, rebuildable)
-│   └── MountHosmerDigitalTwin.exe   ← double-click this to run everything
-│
-├── DATA\mount_hosmer_data\      ⛔ READ-ONLY source data — 271 files, ~46 GB
-├── docs\                        Repo-level docs (map, data inventory, glossary)
-├── archive\                     ⛔ Superseded work, kept for reference only
-│   ├── web-app-demo\            Earlier prototype (own git repo)
-│   └── qgis-project\            QGIS project + raw DEM/DSM/derived rasters
-└── Tools\QGIS\                  Vendored QGIS/OSGeo4W install (third-party)
+```text
+Avalanche/
+|-- AGENTS.md                     durable development rules
+|-- DATA/mount_hosmer_data/       read-only source data; bake time only
+|-- docs/                         source-data inventory and terminology
+|-- mount-hosmer-digital-twin/    active application
+|   |-- backend/                  FastAPI, bake, assessment orchestration
+|   |-- frontend/                 Next.js and MapLibre interface
+|   |-- packages/avycore/         canonical hazard and runout library source
+|   |-- tests/                    hermetic numerical and API tests
+|   |-- launcher/                 optional Windows launcher source
+|   `-- runtime/                  generated bake and logs; ignored
+|-- archive/                      superseded local material; ignored
+`-- Tools/                        vendored QGIS tooling; ignored
 ```
 
-Only `mount-hosmer-digital-twin\` is live code. `DATA\`, `archive\`, and `Tools\` are inputs and history.
-
----
+Only `mount-hosmer-digital-twin/` is active code. Do not build new behavior on
+`archive/`, and never modify source files under `DATA/`.
 
 ## Quick start
 
-**The easy way** — double-click:
-
-```
-mount-hosmer-digital-twin\MountHosmerDigitalTwin.exe
-```
-
-It locates the project, scans the data catalog if it is missing, starts the backend on
-`http://127.0.0.1:8000` and the frontend on `http://127.0.0.1:3000`, and opens your browser. Leave the
-launcher window open while you use the app; press Enter in it to shut both servers down.
-
-**By hand:**
+From PowerShell:
 
 ```powershell
-cd D:\school\capstone\Avalanche\mount-hosmer-digital-twin
+cd mount-hosmer-digital-twin
 
-# one-time setup
 py -3.13 -m venv .venv
 .\.venv\Scripts\Activate.ps1
-python -m pip install -r backend\requirements.txt
-cd frontend; npm install; cd ..
+python -m pip install --upgrade pip
+python -m pip install -r backend\requirements-dev.txt
 
-# run
-python -m uvicorn app.main:app --reload --port 8000    # terminal 1
-cd frontend; npm run dev                               # terminal 2
+cd frontend
+npm install
+cd ..
 ```
 
-Then open <http://localhost:3000>.
-
-Full setup notes, including Rasterio/GeoPandas on Windows:
-[`windows-setup.md`](mount-hosmer-digital-twin/docs/windows-setup.md).
-
----
-
-## What the app shows
-
-| View | Content |
-|---|---|
-| **Terrain & Risk** | Hillshade backdrop, prototype risk areas, slope steepness, open vs. forested land cover, OSM infrastructure, layer toggles and strength sliders |
-| **Satellite Events** | Sentinel-2 and Landsat imagery for the two captured events — snow cover, moisture, surface temperature, cloud/validity masks |
-| **Conditions** | ECCC weather and BC snow-station charts (temperature, precipitation, wind, snow depth, SWE) plus current Avalanche Canada forecast context |
-| **Susceptibility** | Combined terrain + conditions score with per-component breakdown, missing-data warnings, and a downloadable GeoTIFF |
-| **Data Overview** | Catalog, AOI, and source-file summary |
-
----
-
-## The study area
-
-| | |
-|---|---|
-| Location | Mount Hosmer, BC (near Fernie) |
-| Analysis CRS | EPSG:26911 (UTM zone 11N) |
-| AOI bounds (WGS84) | −115.0965, 49.5582 → −114.9261, 49.6689 |
-| Fixed extent (UTM) | 637650, 5491570 → 649650, 5503570 (12 × 12 km) |
-| Analysis grids | 30 m → 400 × 400 · 10 m → 1200 × 1200 |
-| Data date range | 2025-11-01 → 2026-05-31 |
-| Events captured | `MH_20260116T183016Z`, `MH_20260430T182949Z` |
-
----
-
-## How it works
-
-```
-DATA\ (read-only)  →  processing services  →  runtime\ (generated)  →  FastAPI  →  Next.js UI
-```
-
-Source data is **never** modified. Every processor hashes its inputs (SHA-256) and writes a cache sidecar,
-so re-running only rebuilds what actually changed; `--force` overrides. The pipeline stages are
-`catalog → terrain → events → conditions → susceptibility`, and susceptibility depends on the three before it.
+Validate an existing bake without reading `DATA/`:
 
 ```powershell
-python -m app.cli scan-data
-python -m app.cli process-terrain
-python -m app.cli process-events --all
-python -m app.cli process-dynamic
-python -m app.cli process-susceptibility --all
+python -m app.check_bake
 ```
 
-Details: [`architecture.md`](mount-hosmer-digital-twin/docs/architecture.md) ·
-[`data-pipeline.md`](mount-hosmer-digital-twin/docs/data-pipeline.md) ·
-[`susceptibility-model.md`](mount-hosmer-digital-twin/docs/susceptibility-model.md)
-
----
-
-## Tests
+If the bake is missing or incompatible, install the bake dependencies and build
+the offline artifacts explicitly:
 
 ```powershell
-cd D:\school\capstone\Avalanche\mount-hosmer-digital-twin
+python -m pip install -r backend\requirements-bake.txt
+python -m app.bake --force
+```
+
+Run the backend and frontend in separate terminals:
+
+```powershell
+python -m uvicorn app.main:app --reload --port 8000
+```
+
+```powershell
+cd frontend
+$env:NEXT_PUBLIC_API_BASE_URL="http://localhost:8000"
+npm run dev
+```
+
+Open `http://localhost:3000`.
+
+## Verification
+
+```powershell
 python -m pytest
+cd frontend
+npm run lint
+npm run build
 ```
 
-20 tests covering the catalog, AOI, raster metadata, path security, OSM categorization, event discovery,
-quality masks, weather/snow normalization, cache invalidation, API path security, and susceptibility
-scoring. They run on generated fixtures and never touch the real `DATA\` tree.
+The tests use a synthetic bake and never read the real dataset. Pytest imports the
+local `packages/avycore/src` tree so core edits cannot be hidden by an installed
+PyPI package.
 
----
+## Durable documentation
 
-## Documentation
+- [`architecture.md`](mount-hosmer-digital-twin/docs/architecture.md): runtime and
+  bake design, service boundaries, and invariants.
+- [`limitations.md`](mount-hosmer-digital-twin/docs/limitations.md): scientific and
+  operational limits; read before making model claims.
+- [`data-footprint.md`](docs/data-footprint.md): authoritative bake-input allow-list.
+- [`glossary.md`](docs/glossary.md): project-specific terrain and avalanche terms.
+- [`deployment.md`](mount-hosmer-digital-twin/docs/deployment.md): optional service
+  deployment runbook.
+- [`windows-setup.md`](mount-hosmer-digital-twin/docs/windows-setup.md): local setup.
 
-| Doc | What it covers |
-|---|---|
-| [`CLAUDE.md`](CLAUDE.md) | **AI agents start here** — where to work, invariants, gotchas |
-| [`docs/repository-map.md`](docs/repository-map.md) | Every directory, annotated |
-| [`docs/data-inventory.md`](docs/data-inventory.md) | What the 271 source files are and which are actually used |
-| [`docs/glossary.md`](docs/glossary.md) | Domain terms (SWE, NDSI, DEM vs DSM, AOI…) |
-| [`.../docs/architecture.md`](mount-hosmer-digital-twin/docs/architecture.md) | System design, request/data flow, invariants |
-| [`.../docs/backend-reference.md`](mount-hosmer-digital-twin/docs/backend-reference.md) | Module-by-module backend map |
-| [`.../docs/frontend-reference.md`](mount-hosmer-digital-twin/docs/frontend-reference.md) | Component + API-client map |
-| [`.../docs/data-pipeline.md`](mount-hosmer-digital-twin/docs/data-pipeline.md) | What each processing stage does |
-| [`.../docs/susceptibility-model.md`](mount-hosmer-digital-twin/docs/susceptibility-model.md) | The scoring model and its weights |
-| [`.../docs/limitations.md`](mount-hosmer-digital-twin/docs/limitations.md) | **What this cannot do** |
+Generated binaries, session handoffs, milestone journals, presentations, and
+superseded architecture references do not belong in the repository.

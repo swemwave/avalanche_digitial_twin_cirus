@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "AvyCore"
+version = "0.1.0"
+description = "Deterministic avalanche hazard, runout, geometry, and grounded assistant kernels"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [{ name = "John Stewart" }]
+maintainers = [{ name = "John Stewart" }]
+dependencies = [
+  "numpy>=2.2,<3",
+  "scipy>=1.14,<2",
+  "shapely>=2.1,<3",
+  "ollama>=0.6.2,<0.7",
+  "pydantic>=2.10,<3",
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Typing :: Typed",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+avycore = ["py.typed"]

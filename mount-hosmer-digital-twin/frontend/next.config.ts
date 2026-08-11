@@ -9,11 +9,9 @@ const nextConfig: NextConfig = {
   // renders but never hydrates when opened via 127.0.0.1.
   allowedDevOrigins: ["localhost", "127.0.0.1"],
 
-  // Emit .next/standalone: a self-contained server.js plus only the node_modules it
-  // actually traced. The Docker image copies that instead of the full dependency
-  // tree. This is additive -- `next dev` and `next start` are unaffected, so the
-  // Windows/PowerShell route and the one-click .exe keep working unchanged.
-  output: "standalone",
+  // The screen has no server-only Next features. Export plain HTML/CSS/JS so the
+  // combined FastAPI app (local) or nginx (AWS) can serve it without a Node runtime.
+  output: "export",
 };
 
 export default nextConfig;

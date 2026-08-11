@@ -1,0 +1,30 @@
+{
+  "schema": "eccc-test-fixture-v1",
+  "purpose": "Small historical-provider contract and replay fixture; not Mount Hosmer validation evidence.",
+  "created_utc": "2026-08-08T00:00:00Z",
+  "source": {
+    "provider": "Environment and Climate Change Canada GeoMet historical climate collections",
+    "stations_uri": "https://api.weather.gc.ca/collections/climate-stations/items",
+    "hourly_uri": "https://api.weather.gc.ca/collections/climate-hourly/items",
+    "licence": "ECCC Data Servers End-use Licence v2.1 (September 2022)",
+    "licence_uri": "https://eccc-msc.github.io/open-data/licence/readme_en/",
+    "attribution": "Contains information licensed under the ECCC Data Servers End-use Licence.",
+    "local_source_acquisition_evidence_utc": "2026-07-05T21:43:16Z/2026-07-05T21:43:26Z",
+    "local_source_acquisition_caveat": "Times are original file mtimes because the downloader manifest omitted acquisition timestamps."
+  },
+  "derivation": "Selected columns and six records were extracted without changing source values from the existing immutable local snapshot.",
+  "original_source_sha256": {
+    "climate-stations_2025-11-01_2026-05-31.csv": "96c270e6eea1eb06702f0df0341fbf33086aa642866ce830d11f21da7561b2aa",
+    "climate-hourly_2025-11-01_2026-05-31.csv": "0e336e718a7b8a268efdc9b876a0cef5b4b16edf17db8e85ef41c519f09942fe"
+  },
+  "files": {
+    "climate-stations.csv": {
+      "bytes": 387,
+      "sha256": "f54056e3130f38d85f5fcd5eaf223870ee6f832d2463265799355b96c483b642"
+    },
+    "climate-hourly.csv": {
+      "bytes": 725,
+      "sha256": "7d19f8903a265ec16e3ea2ca888d92bec52c002d62d4acc323a8839cdfc75b67"
+    }
+  }
+}

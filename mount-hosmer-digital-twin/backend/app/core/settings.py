@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-import os
-from dataclasses import dataclass, field
 from pathlib import Path
 
-APP_VERSION = "1.0.0"
+from pydantic import AliasChoices, Field, ValidationError, field_validator
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
-ANALYSIS_CRS = "EPSG:26911"
+APP_VERSION = "1.1.0"
 
 
 class ConfigurationError(RuntimeError):
@@ -17,73 +16,55 @@ def _project_root() -> Path:
     return Path(__file__).resolve().parents[3]
 
 
-def _load_env_file(path: Path) -> None:
-    if not path.exists():
-        return
-    for raw_line in path.read_text(encoding="utf-8").splitlines():
-        line = raw_line.strip()
-        if not line or line.startswith("#") or "=" not in line:
-            continue
-        key, value = line.split("=", 1)
-        os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
+class Settings(BaseSettings):
+    """Application paths and bake tunables, populated by pydantic-settings."""
 
-
-def _env(*names: str, default: str | None = None) -> str | None:
-    """First non-empty value among ``names``. Earlier names win."""
-    for name in names:
-        value = os.environ.get(name)
-        if value is not None and value.strip():
-            return value.strip()
-    return default
-
-
-def _resolve(project_root: Path, value: str) -> Path:
-    """Resolve a configured path, allowing values relative to the project root.
-
-    Written so ``.\\runtime`` (Windows), ``./runtime`` (POSIX), and ``/runtime``
-    (container volume mount) all behave sensibly.
-    """
-    candidate = Path(value.strip().strip('"'))
-    if not candidate.is_absolute():
-        candidate = project_root / candidate
-    return candidate.resolve()
-
-
-def _float_env(name: str, default: float) -> float:
-    raw = os.environ.get(name)
-    if raw is None or not raw.strip():
-        return default
-    try:
-        parsed = float(raw)
-    except ValueError as exc:
-        raise ConfigurationError(f"{name} must be a number, got {raw!r}") from exc
-    if parsed <= 0:
-        raise ConfigurationError(f"{name} must be greater than zero, got {parsed}")
-    return parsed
-
-
-@dataclass(frozen=True)
-class Settings:
-    """Resolved application layout and the handful of bake-time tunables.
-
-    Stage 3 has two roots that matter: ``data_root`` (read-only source, read only by
-    the bake) and ``runtime_root`` (everything generated, including ``baked/`` which
-    the running service serves). The resolution/CRS fields are consumed only at bake
-    time by the terrain engine; the running service reads none of them.
-    """
-
-    project_root: Path
-    backend_root: Path
-    runtime_root: Path
-    data_root: Path
-    terrain_resolution_m: float = 5.0
-    environmental_resolution_m: float = 10.0
-    fallback_resolution_m: float = 30.0
-    app_version: str = APP_VERSION
-    analysis_crs: str = ANALYSIS_CRS
-    cors_origins: tuple[str, ...] = field(
-        default=("http://localhost:3000", "http://127.0.0.1:3000")
+    model_config = SettingsConfigDict(
+        env_file=_project_root() / ".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+        frozen=True,
+        populate_by_name=True,
     )
+
+    project_root: Path = Field(default_factory=_project_root)
+    backend_root: Path = Field(default_factory=lambda: _project_root() / "backend")
+    runtime_root: Path = Field(
+        default_factory=lambda: _project_root() / "runtime",
+        validation_alias=AliasChoices(
+            "AVALANCHE_RUNTIME_ROOT", "MOUNT_HOSMER_RUNTIME_ROOT", "runtime_root"
+        ),
+    )
+    data_root: Path = Field(
+        default_factory=lambda: _project_root().parent / "DATA" / "mount_hosmer_data",
+        validation_alias=AliasChoices(
+            "AVALANCHE_DATA_ROOT", "MOUNT_HOSMER_DATA_ROOT", "data_root"
+        ),
+    )
+    mountain_pack_path: Path = Field(
+        default_factory=lambda: _project_root() / "backend" / "config" / "mount_hosmer.pack.json",
+        validation_alias=AliasChoices("AVALANCHE_MOUNTAIN_PACK", "mountain_pack_path"),
+    )
+    terrain_resolution_m: float = Field(
+        default=5.0, gt=0, validation_alias="AVALANCHE_TERRAIN_RESOLUTION_M"
+    )
+    app_version: str = APP_VERSION
+    cors_origins: tuple[str, ...] = Field(
+        default=("http://localhost:3000", "http://127.0.0.1:3000"),
+        validation_alias="AVALANCHE_CORS_ORIGINS",
+    )
+
+    @field_validator("runtime_root", "data_root", "mountain_pack_path", mode="after")
+    @classmethod
+    def _resolved_path(cls, value: Path) -> Path:
+        return (value if value.is_absolute() else _project_root() / value).resolve()
+
+    @field_validator("cors_origins", mode="before")
+    @classmethod
+    def _split_origins(cls, value):
+        if isinstance(value, str):
+            return tuple(part.strip() for part in value.split(",") if part.strip())
+        return value
 
     @property
     def config_root(self) -> Path:
@@ -91,84 +72,41 @@ class Settings:
 
     @classmethod
     def from_environment(cls) -> "Settings":
-        project = _project_root()
-        _load_env_file(project / ".env")
-
-        # AVALANCHE_* is the documented interface. MOUNT_HOSMER_* is the
-        # pre-1.0 interface and is still honoured so existing local .env files
-        # and the compiled launcher keep working.
-        data_root_value = _env(
-            "AVALANCHE_DATA_ROOT",
-            "MOUNT_HOSMER_DATA_ROOT",
-            default=str(project.parent / "DATA" / "mount_hosmer_data"),
-        )
-        runtime_root_value = _env(
-            "AVALANCHE_RUNTIME_ROOT",
-            "MOUNT_HOSMER_RUNTIME_ROOT",
-            default=str(project / "runtime"),
-        )
-        assert data_root_value and runtime_root_value
-
-        origins = _env("AVALANCHE_CORS_ORIGINS")
-        cors_origins = (
-            tuple(origin.strip() for origin in origins.split(",") if origin.strip())
-            if origins
-            else ("http://localhost:3000", "http://127.0.0.1:3000")
-        )
-
-        return cls(
-            project_root=project,
-            backend_root=project / "backend",
-            runtime_root=_resolve(project, runtime_root_value),
-            data_root=_resolve(project, data_root_value),
-            terrain_resolution_m=_float_env("AVALANCHE_TERRAIN_RESOLUTION_M", 5.0),
-            environmental_resolution_m=_float_env("AVALANCHE_ENVIRONMENTAL_RESOLUTION_M", 10.0),
-            fallback_resolution_m=_float_env("AVALANCHE_FALLBACK_RESOLUTION_M", 30.0),
-            cors_origins=cors_origins,
-        )
+        try:
+            return cls()
+        except ValidationError as exc:
+            raise ConfigurationError(str(exc)) from exc
 
     def validate(self, *, require_data_root: bool = True) -> list[str]:
-        """Check the resolved layout. Returns non-fatal warnings.
-
-        Raises :class:`ConfigurationError` with an actionable message when the
-        layout cannot work at all, so a misconfigured bake fails loudly at startup
-        rather than silently producing empty results.
-        """
+        """Validate writable/read-only roots and return non-fatal warnings."""
         warnings: list[str] = []
-
         if require_data_root and not self.data_root.exists():
             raise ConfigurationError(
                 f"Source data root does not exist: {self.data_root}\n"
-                f"  Set AVALANCHE_DATA_ROOT to the folder that contains "
-                f"'static/', 'metadata/' and the rest of the bake inputs."
+                "  Set AVALANCHE_DATA_ROOT to the folder containing the bake inputs."
             )
-
+        if require_data_root and not self.mountain_pack_path.is_file():
+            raise ConfigurationError(
+                f"Mountain pack does not exist: {self.mountain_pack_path}\n"
+                "  Set AVALANCHE_MOUNTAIN_PACK to a validated pack JSON file."
+            )
         if self.data_root.exists():
             for required in ("metadata", "static"):
                 if not (self.data_root / required).is_dir():
                     warnings.append(
                         f"Source data root is missing the '{required}/' folder: {self.data_root}"
                     )
-
         try:
             self.runtime_root.mkdir(parents=True, exist_ok=True)
         except OSError as exc:
             raise ConfigurationError(
                 f"Cannot create the runtime directory {self.runtime_root}: {exc}"
             ) from exc
-
         if self.runtime_root == self.data_root or self.runtime_root.is_relative_to(self.data_root):
             raise ConfigurationError(
                 f"The runtime root ({self.runtime_root}) must not live inside the source data "
                 f"root ({self.data_root}). Source data is strictly read-only."
             )
-
-        if self.terrain_resolution_m > self.environmental_resolution_m:
-            warnings.append(
-                f"Terrain grid ({self.terrain_resolution_m} m) is coarser than the environmental "
-                f"grid ({self.environmental_resolution_m} m); terrain detail is being discarded."
-            )
-
         return warnings
 
 

@@ -104,3 +104,25 @@ def test_route_falls_back_to_heuristic_on_bad_json(monkeypatch: pytest.MonkeyPat
 
     intent, _c, _d = assistant._route("tell me about the model", risk.Conditions(), None)
     assert intent == "question"
+
+
+def test_terrain_only_summary_never_invents_zero_conditions():
+    summary = assistant._summarize(
+        {
+            "conditions": None,
+            "release_potential_index": None,
+            "release_potential_band": None,
+            "release_zones": {"zone_count": 0},
+            "runout": {"core_area_m2": None},
+            "scenario": {"classification": "terrain_only"},
+            "coverage": {"release_model": {"valid_fraction": 0}},
+            "validation": {
+                "field_validation": {"status": "unavailable", "eligible_observation_count": 0}
+            },
+        }
+    )
+
+    assert "incomplete/unknown" in summary
+    assert "were replaced with zero" in summary
+    assert "index: unavailable" in summary
+    assert "0 cm new snow" not in summary

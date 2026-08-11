@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "id": "mount-hosmer",
+  "name": "Mount Hosmer",
+  "center_wgs84": [-115.01138889, 49.61361111],
+  "grid": {
+    "analysis_crs": "EPSG:26911",
+    "coordinate_order": "easting,northing",
+    "bounds": [637650.0, 5491570.0, 649650.0, 5503570.0],
+    "resolution_m": 5.0,
+    "vertical_datum": {
+      "status": "unknown",
+      "name": null
+    }
+  },
+  "model_profile": "canadian-rockies-uncalibrated-stage3-v1",
+  "model_calibrated_locally": false,
+  "assets": {
+    "aoi": {
+      "href": "metadata/mount_hosmer_aoi.geojson",
+      "adapter": "geojson",
+      "purpose": "model_input",
+      "required": true,
+      "units": "longitude,latitude degrees",
+      "source": {
+        "provider": "Mount Hosmer Digital Twin project",
+        "citation": "Project-authored Mount Hosmer analysis area",
+        "licence": "Project source data"
+      }
+    },
+    "elevation_lidar": {
+      "href": "static/lidar_bc/downloads/LiDAR_DEM_Index_1_20_000",
+      "adapter": "geobc_lidar_year_tiles",
+      "purpose": "model_input",
+      "required": true,
+      "units": "metres",
+      "native_resolution_m": 1.0,
+      "source": {
+        "provider": "GeoBC",
+        "citation": "BC LiDAR bare-earth DEM tiles",
+        "licence": "Open Government Licence - British Columbia"
+      }
+    },
+    "elevation_fallback": {
+      "href": "static/terrain_fallback/Copernicus_DEM_GLO30_EPSG26911_30m.tif",
+      "adapter": "single_raster",
+      "purpose": "model_input",
+      "required": true,
+      "units": "metres",
+      "native_resolution_m": 30.0,
+      "source": {
+        "provider": "Copernicus",
+        "citation": "Copernicus DEM GLO-30 gap-fill raster",
+        "licence": "Copernicus DEM licence"
+      }
+    },
+    "surface_lidar": {
+      "href": "static/lidar_bc/downloads/LiDAR_DSM_Index_1_20_000",
+      "adapter": "geobc_lidar_year_tiles",
+      "purpose": "model_input",
+      "required": false,
+      "units": "metres",
+      "native_resolution_m": 1.0,
+      "source": {
+        "provider": "GeoBC",
+        "citation": "BC LiDAR first-return DSM tiles",
+        "licence": "Open Government Licence - British Columbia"
+      }
+    },
+    "landcover": {
+      "href": "static/landcover/ESA_WorldCover_2021_EPSG26911_10m.tif",
+      "adapter": "categorical_raster",
+      "purpose": "model_input",
+      "required": true,
+      "units": "ESA WorldCover class code",
+      "native_resolution_m": 10.0,
+      "source": {
+        "provider": "ESA WorldCover",
+        "citation": "ESA WorldCover 2021",
+        "licence": "CC BY 4.0"
+      }
+    },
+    "imagery_red": {
+      "href": "events/MH_20260116T183016Z/sentinel2/S2B_MSIL2A_20260115T184629_R070_T11UPR_20260115T223427_B04_EPSG26911_10m.tif",
+      "adapter": "single_raster",
+      "purpose": "display_only",
+      "required": false,
+      "units": "surface reflectance",
+      "native_resolution_m": 10.0,
+      "captured_at_utc": "2026-01-15T18:46:29.024000+00:00",
+      "cloud_percent": 6.523087,
+      "visual_context_only": true,
+      "source": {
+        "provider": "Copernicus Sentinel-2",
+        "citation": "Sentinel-2 L2A red band for winter visual context",
+        "licence": "Copernicus Sentinel Data Legal Notice"
+      }
+    },
+    "imagery_green": {
+      "href": "events/MH_20260116T183016Z/sentinel2/S2B_MSIL2A_20260115T184629_R070_T11UPR_20260115T223427_B03_EPSG26911_10m.tif",
+      "adapter": "single_raster",
+      "purpose": "display_only",
+      "required": false,
+      "units": "surface reflectance",
+      "native_resolution_m": 10.0,
+      "captured_at_utc": "2026-01-15T18:46:29.024000+00:00",
+      "cloud_percent": 6.523087,
+      "visual_context_only": true,
+      "source": {
+        "provider": "Copernicus Sentinel-2",
+        "citation": "Sentinel-2 L2A green band for winter visual context",
+        "licence": "Copernicus Sentinel Data Legal Notice"
+      }
+    },
+    "exposure_features": {
+      "href": "static/openstreetmap/mount_hosmer_osm_features.geojson",
+      "adapter": "geojson",
+      "purpose": "exposure",
+      "required": false,
+      "units": "WGS84 longitude,latitude degrees",
+      "source": {
+        "provider": "OpenStreetMap contributors",
+        "citation": "OpenStreetMap Overpass extract of the Mount Hosmer AOI bounding box, 2026-07-05",
+        "licence": "Open Database License (ODbL) 1.0"
+      }
+    },
+    "imagery_blue": {
+      "href": "events/MH_20260116T183016Z/sentinel2/S2B_MSIL2A_20260115T184629_R070_T11UPR_20260115T223427_B02_EPSG26911_10m.tif",
+      "adapter": "single_raster",
+      "purpose": "display_only",
+      "required": false,
+      "units": "surface reflectance",
+      "native_resolution_m": 10.0,
+      "captured_at_utc": "2026-01-15T18:46:29.024000+00:00",
+      "cloud_percent": 6.523087,
+      "visual_context_only": true,
+      "source": {
+        "provider": "Copernicus Sentinel-2",
+        "citation": "Sentinel-2 L2A blue band for winter visual context",
+        "licence": "Copernicus Sentinel Data Legal Notice"
+      }
+    }
+  }
+}

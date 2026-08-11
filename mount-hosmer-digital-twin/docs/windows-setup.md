@@ -1,8 +1,8 @@
 # Windows Setup
 
 > **Stage 3 note.** The geospatial stack (rasterio/GeoPandas/laspy) is now needed only to **build the bake**
-> (`pip install -r backend\requirements-bake.txt`; run `python -m app.bake`). The running service needs only
-> `backend\requirements.txt`. The setup notes below still apply to the bake environment.
+> (`pip install -r backend\requirements-bake.txt`; run `python -m app.bake --force`).
+> Validate an existing bake without access to the source tree with `python -m app.check_bake`.
 
 ## PowerShell Environment
 
@@ -19,15 +19,13 @@ Edit `.env` only if the source data moves.
 py -3.13 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
-python -m pip install -r backend\requirements.txt
+python -m pip install -r backend\requirements-dev.txt
 ```
 
 ## Backend
 
 ```powershell
 cd D:\school\capstone\Avalanche\mount-hosmer-digital-twin
-$env:MOUNT_HOSMER_DATA_ROOT="D:\school\capstone\Avalanche\DATA\mount_hosmer_data"
-python -m app.cli scan-data
 python -m uvicorn app.main:app --reload --port 8000
 ```
 

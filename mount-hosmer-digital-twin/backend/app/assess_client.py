@@ -25,7 +25,7 @@ import threading
 import time
 from typing import Any, Protocol
 
-from app import risk
+from avycore.hazard import risk
 
 #: How long to wait on a remote assessment. A big storm at `advanced` can light up
 #: ~40 release zones and take a while; the assistant only ever asks for `fast`, but
