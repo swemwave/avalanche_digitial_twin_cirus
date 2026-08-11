@@ -148,6 +148,23 @@ def test_unknown_vertical_datum_is_reported_not_invented(tmp_path: Path) -> None
     assert any("not calibrated" in warning for warning in pack.warnings())
 
 
+# CRS validation resolves the declared projection through pyproj, which is bake-only
+# and absent from requirements-dev.txt and CI. The two tests below assert on the
+# message that validation produces, so without pyproj they see a "no module" error
+# instead of the real rejection reason. Skip them there.
+try:
+    import pyproj  # noqa: F401
+
+    _HAS_PYPROJ = True
+except ImportError:  # pragma: no cover - depends on the installed extras
+    _HAS_PYPROJ = False
+
+requires_pyproj = pytest.mark.skipif(
+    not _HAS_PYPROJ, reason="bake-only dependency (pyproj); see backend/requirements-bake.txt"
+)
+
+
+@requires_pyproj
 def test_required_declared_source_must_exist(tmp_path: Path) -> None:
     pack_path = tmp_path / "missing-source.pack.json"
     pack_path.write_text(json.dumps(_pack()), encoding="utf-8")
@@ -157,6 +174,7 @@ def test_required_declared_source_must_exist(tmp_path: Path) -> None:
         validate_declared_sources(pack, tmp_path / "data")
 
 
+@requires_pyproj
 def test_geographic_degree_grid_is_rejected_before_bake(tmp_path: Path) -> None:
     raw = _pack()
     raw["grid"]["analysis_crs"] = "EPSG:4326"

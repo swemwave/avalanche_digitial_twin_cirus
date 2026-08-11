@@ -4,3 +4,25 @@
 # production, only in a developer checkout or CI.
 -r requirements.txt
 pytest>=8.3
+
+# --- The frozen-baseline toolchain -------------------------------------------
+#
+# backend/config/m0-baseline.json stores SHA-256 hashes of raw float arrays, and
+# test_baseline_comparison.py asserts they reproduce EXACTLY. That is only true
+# against the numeric stack the baseline was frozen with: runtime/requirements.txt
+# floats these as `numpy>=2.2` / `scipy>=1.14`, so CI resolved numpy 2.5.2 and
+# scipy 1.18.0 and produced bit-different runout arrays. The release field and
+# every published summary statistic were identical -- release_valid_cells 1302 and
+# release min/max/mean 74.375 across both -- so this is last-place float movement
+# in the particle ensemble, not a change in results. It still breaks a hash.
+#
+# Pinned HERE rather than in requirements.txt on purpose: the deployed image should
+# not be frozen to one numpy for the sake of a verification artifact, and the
+# baseline is verification. Regenerating the baseline against a newer stack is the
+# other option, but AGENTS.md requires characterizing an intentional numerical
+# change rather than casually updating a snapshot -- so the snapshot stands and the
+# toolchain that reproduces it is declared.
+#
+# Raising these means re-freezing the baseline and characterizing the difference.
+numpy==2.2.6
+scipy==1.16.3

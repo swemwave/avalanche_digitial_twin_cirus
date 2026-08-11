@@ -13,17 +13,22 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-try:  # `app.bake` pulls rasterio/GDAL, which the serving runtime and CI omit.
+# This whole module is bake-time, as the docstring says: every fixture reprojects
+# through pyproj, which is bake-only and therefore absent from requirements-dev.txt
+# and from CI. (shapely, the other half of the pair, IS a runtime dependency and
+# needs no guard.) Skip the module where pyproj is missing rather than failing it;
+# install backend/requirements-bake.txt to run these.
+pytest.importorskip("pyproj", reason="bake-only dependency; see backend/requirements-bake.txt")
+
+try:  # `app.bake` additionally pulls rasterio/GDAL.
     import rasterio  # noqa: F401
 
     _HAS_BAKE_STACK = True
 except ImportError:  # pragma: no cover - depends on the installed extras
     _HAS_BAKE_STACK = False
 
-#: Most tests here exercise the pure exposure rules and need only pyproj/shapely.
-#: The two that drive ``app.bake._bake_exposure`` need the full offline stack, so
-#: they skip where it is absent rather than failing the suite. Install
-#: backend/requirements-bake.txt to run them.
+#: The two tests that drive ``app.bake._bake_exposure`` need rasterio on top of
+#: pyproj/shapely, so they carry this in addition to the module-level guards.
 requires_bake_stack = pytest.mark.skipif(
     not _HAS_BAKE_STACK, reason="bake-only dependency (rasterio); see backend/requirements-bake.txt"
 )
