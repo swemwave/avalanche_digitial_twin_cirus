@@ -4,10 +4,20 @@ import json
 from pathlib import Path
 
 import numpy as np
-import rasterio
-from rasterio.transform import from_origin
+import pytest
 
-from app.bake import bake
+# This module drives the REAL bake, so it needs the offline geospatial stack
+# (rasterio/pyproj/GDAL). That stack is deliberately absent from the serving runtime
+# and from requirements-dev.txt -- keeping it out is the point of the bake/serve
+# split -- so CI, which installs only the dev requirements, does not have it. Skip
+# cleanly there instead of failing collection for the whole suite. Install
+# backend/requirements-bake.txt to actually run this.
+pytest.importorskip("rasterio", reason="bake-only dependency; see backend/requirements-bake.txt")
+
+import rasterio  # noqa: E402
+from rasterio.transform import from_origin  # noqa: E402
+
+from app.bake import bake  # noqa: E402
 from app.bake_identity import bake_fingerprint_payload, sha256_file, sha256_json
 from app.core.settings import Settings
 

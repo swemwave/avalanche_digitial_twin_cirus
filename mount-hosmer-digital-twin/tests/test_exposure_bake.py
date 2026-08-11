@@ -13,7 +13,22 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from app.processing.exposure import (
+try:  # `app.bake` pulls rasterio/GDAL, which the serving runtime and CI omit.
+    import rasterio  # noqa: F401
+
+    _HAS_BAKE_STACK = True
+except ImportError:  # pragma: no cover - depends on the installed extras
+    _HAS_BAKE_STACK = False
+
+#: Most tests here exercise the pure exposure rules and need only pyproj/shapely.
+#: The two that drive ``app.bake._bake_exposure`` need the full offline stack, so
+#: they skip where it is absent rather than failing the suite. Install
+#: backend/requirements-bake.txt to run them.
+requires_bake_stack = pytest.mark.skipif(
+    not _HAS_BAKE_STACK, reason="bake-only dependency (rasterio); see backend/requirements-bake.txt"
+)
+
+from app.processing.exposure import (  # noqa: E402
     EXPOSURE_CLASSES,
     SETTLEMENT_CLUSTER_BUFFER_M,
     SETTLEMENT_MIN_ROAD_LENGTH_M,
@@ -379,6 +394,7 @@ def _pack(tmp_path: Path, *, with_exposure: bool) -> object:
     )
 
 
+@requires_bake_stack
 def test_the_bake_writes_the_layers_the_vector_and_the_meta_block(tmp_path: Path) -> None:
     from app.bake import _bake_exposure
     from app.core.settings import Settings
@@ -420,6 +436,7 @@ def test_the_bake_writes_the_layers_the_vector_and_the_meta_block(tmp_path: Path
     assert np.nanmax(written) == pytest.approx(1.0)
 
 
+@requires_bake_stack
 def test_a_pack_without_an_exposure_asset_still_bakes(tmp_path: Path) -> None:
     from app.bake import _bake_exposure
     from app.core.settings import Settings
