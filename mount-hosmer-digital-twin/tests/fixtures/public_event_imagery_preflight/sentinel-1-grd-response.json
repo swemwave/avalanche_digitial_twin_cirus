@@ -1,0 +1,88 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "stac_version": "1.1.0",
+      "id": "S1_PRE_COMPATIBLE",
+      "collection": "sentinel-1-grd",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[9.0, 59.0], [11.0, 59.0], [11.0, 61.0], [9.0, 61.0], [9.0, 59.0]]]
+      },
+      "properties": {
+        "datetime": "2023-12-31T00:00:00Z",
+        "platform": "sentinel-1a",
+        "product:type": "IW_GRDH_1S",
+        "processing:level": "L1",
+        "sat:orbit_state": "ascending",
+        "sat:relative_orbit": 42,
+        "sar:instrument_mode": "IW",
+        "sar:polarizations": ["VV", "VH"]
+      }
+    },
+    {
+      "type": "Feature",
+      "stac_version": "1.1.0",
+      "id": "S1_DURING_EVENT",
+      "collection": "sentinel-1-grd",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[9.0, 59.0], [11.0, 59.0], [11.0, 61.0], [9.0, 61.0], [9.0, 59.0]]]
+      },
+      "properties": {
+        "datetime": "2024-01-02T01:00:00Z",
+        "platform": "sentinel-1a",
+        "product:type": "IW_GRDH_1S",
+        "processing:level": "L1",
+        "sat:orbit_state": "ascending",
+        "sat:relative_orbit": 42,
+        "sar:instrument_mode": "IW",
+        "sar:polarizations": ["VV", "VH"]
+      }
+    },
+    {
+      "type": "Feature",
+      "stac_version": "1.1.0",
+      "id": "S1_POST_COMPATIBLE",
+      "collection": "sentinel-1-grd",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[9.0, 59.0], [11.0, 59.0], [11.0, 61.0], [9.0, 61.0], [9.0, 59.0]]]
+      },
+      "properties": {
+        "datetime": "2024-01-04T00:00:00Z",
+        "platform": "sentinel-1a",
+        "product:type": "IW_GRDH_1S",
+        "processing:level": "L1",
+        "sat:orbit_state": "ascending",
+        "sat:relative_orbit": 42,
+        "sar:instrument_mode": "IW",
+        "sar:polarizations": ["VH", "VV"]
+      }
+    },
+    {
+      "type": "Feature",
+      "stac_version": "1.1.0",
+      "id": "S1_POST_INCOMPATIBLE",
+      "collection": "sentinel-1-grd",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[9.0, 59.0], [11.0, 59.0], [11.0, 61.0], [9.0, 61.0], [9.0, 59.0]]]
+      },
+      "properties": {
+        "datetime": "2024-01-05T00:00:00Z",
+        "platform": "sentinel-1a",
+        "product:type": "EW_GRDM_1S",
+        "processing:level": "L1",
+        "sat:orbit_state": "descending",
+        "sat:relative_orbit": 43,
+        "sar:instrument_mode": "EW",
+        "sar:polarizations": ["HH", "HV"]
+      }
+    }
+  ],
+  "links": [],
+  "numberMatched": 4,
+  "numberReturned": 4
+}

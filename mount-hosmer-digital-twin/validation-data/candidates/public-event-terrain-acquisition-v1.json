@@ -1,0 +1,3627 @@
+{
+  "asset_role": "Ten-metre buffered evidence-screening chip only. Native, 2x, and 4x solver grids would be frozen only after an event passed the observation funnel.",
+  "candidates": [
+    {
+      "blockers": [
+        "screening_10m_chip_is_not_native_solver_terrain",
+        "avalanche_day_snow_surface_mismatch_unquantified",
+        "vertical_accuracy_uncertainty_unavailable",
+        "horizontal_accuracy_uncertainty_unavailable"
+      ],
+      "candidate_id": "regobs-330446",
+      "event_surface_mismatch": {
+        "horizontal_accuracy_uncertainty_m": null,
+        "missing_uncertainties_remain_masked": true,
+        "quantitative_mismatch_treatment_available": false,
+        "signed_event_minus_flight_days": 166.45,
+        "snow_depth_uncertainty_m": null,
+        "surface_type": "bare-earth DTM, not avalanche-day snow surface",
+        "vegetation_or_classification_residual_uncertainty_m": null,
+        "vertical_accuracy_uncertainty_m": null
+      },
+      "event_time": "2023-02-19T11:48:00+01:00",
+      "normalized_candidate_sha256": "c6498532fc738bc694ec6efd1d3ff872aea56f1695c2ad346fe25b4e4fbb7e43",
+      "selected_project": {
+        "AARSTALL": 2022,
+        "CATEGORY": 1,
+        "DEKNINGSNUMMER": "42415",
+        "FKB_LASERSTANDARD": "Psky_1_ALS_C",
+        "FLYFIRMA": "Terratec AS",
+        "HOYDESYSTEM": "5941",
+        "KOORDINATSYSTEM": "25832",
+        "LAS_PROJECT_ID": 5889,
+        "LAS_PROJECT_NAME": "NDH Stryn 2pkt 2022",
+        "NAME": "NDH Stryn 2pkt 2022",
+        "OBJECTID": 194038,
+        "OBJEKTKATALOG": "Punktsky 1.0",
+        "OPPDRAGSGIVER": "Kartverket",
+        "OPPLOSNING": 0.5,
+        "PROSJEKTNR": null,
+        "PUBLISERT": "published",
+        "PUNKTTETTHET": 2,
+        "RAPPORT": null,
+        "SISTEFLYDATO": 1662422400000,
+        "TILGANG": "1",
+        "TYPE": "1"
+      },
+      "source_geometry_sha256": "07bb0601e3e77aafb1fbe375ff1709ec6f3fbdd8b126ba30e53de039a22e01d8",
+      "source_project_count_returned": 20,
+      "source_project_lineage": {
+        "access": "anonymous public Høydedata ImageServer read",
+        "flight_time_utc": "2022-09-06T00:00:00Z",
+        "las_project_id": 5889,
+        "name": "NDH Stryn 2pkt 2022",
+        "objectid": 194038,
+        "point_density_m2": 2,
+        "project_report": null,
+        "provider": "Kartverket Høydedata DTM ImageServer",
+        "provider_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer",
+        "source_horizontal_crs": "EPSG:25832",
+        "source_horizontal_units": "metre",
+        "source_resolution_m": 0.5,
+        "vertical_reference": {
+          "epsg": 5941,
+          "name": "NN2000 height",
+          "resolved": true
+        },
+        "year": 2022
+      },
+      "source_project_query": {
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-330446/source-project-query.request.json",
+        "request_sha256": "71ec2faae9551a9845e558f7147f3d9cc6b2269c632b3fdf6314e049aac3981e",
+        "response_metadata": {
+          "content_length_header": null,
+          "content_type": "application/json; charset=UTF-8",
+          "etag": "\"8ae9f129\"",
+          "final_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer/query?f=json&geometry=6.6967584035%2C61.9402966362&geometryType=esriGeometryPoint&inSR=4326&outFields=OBJECTID%2CNAME%2CCATEGORY%2CLAS_PROJECT_ID%2CLAS_PROJECT_NAME%2COPPDRAGSGIVER%2CDEKNINGSNUMMER%2CFKB_LASERSTANDARD%2CFLYFIRMA%2CTYPE%2CTILGANG%2CPROSJEKTNR%2CKOORDINATSYSTEM%2CHOYDESYSTEM%2CPUNKTTETTHET%2CAARSTALL%2CSISTEFLYDATO%2CPUBLISERT%2CRAPPORT%2COPPLOSNING%2COBJEKTKATALOG&resultRecordCount=200&returnGeometry=false&spatialRel=esriSpatialRelIntersects&where=1%3D1",
+          "last_modified": null,
+          "status": 200
+        },
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-330446/source-project-query.response-metadata.json",
+        "response_metadata_sha256": "435c6e184864d53fa34ff82e0b9408506dc3488eba70ee010b6780da95a00408",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-330446/source-project-query.response.json",
+        "response_sha256": "712e6a71ba42b48d6af24f812f51d34a61966726b3ffa8b97717224290083b3a"
+      },
+      "status": "acquired_screening_terrain_not_event_surface_eligible",
+      "terrain": {
+        "raster": {
+          "count": 1,
+          "crs": "EPSG:25833",
+          "driver": "GTiff",
+          "dtype": "float32",
+          "height": 116,
+          "maximum_m": 1034.5992431640625,
+          "minimum_m": 624.3189086914062,
+          "missing_pixels": 3120,
+          "nodata": -9999.0,
+          "transform": [
+            10.0,
+            0.0,
+            64500.0,
+            0.0,
+            -10.0,
+            6895920.0
+          ],
+          "valid_pixels": 9872,
+          "width": 112
+        },
+        "raster_bytes": 66689,
+        "raster_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-330446/terrain-screening-10m.metadata.json",
+        "raster_metadata_sha256": "04cce702725b842734aa6990990cbd6589bf8e695de4e9517d92ef7baca855d6",
+        "raster_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-330446/terrain-screening-10m.tif",
+        "raster_sha256": "adaa9a631ecb99cf1703f27af9cc27bb3035a279078bb700e55de9caf3f5dbfa",
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-330446/export.request.json",
+        "request_sha256": "4238bcb25c42874f16862a8a7e7287baae380f1eae2a8b18ddb5df62a10d7b65",
+        "requested_bounds": [
+          64500.0,
+          6894760.0,
+          65620.0,
+          6895920.0
+        ],
+        "requested_crs": "EPSG:25833",
+        "requested_resolution_m": 10.0,
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-330446/export.response-metadata.json",
+        "response_metadata_sha256": "e669ce81d46165a04d208a37c827509e957641f4d207c6374184530f8afb5f3e",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-330446/export.response.json",
+        "response_sha256": "368e55411177ea6dc9502cd63aec4c3e8d658704d1e116cf23411f9764db312c"
+      },
+      "terrain_acquired": true,
+      "transformations": [
+        {
+          "coordinate_order": "always_xy",
+          "library": "PROJ via pyproj",
+          "operation": "candidate EPSG:4326 longitude/latitude to output grid",
+          "target_crs": "EPSG:25833"
+        },
+        {
+          "horizontal_resampling": "bilinear",
+          "operation": "ImageServer source project mosaic to requested output grid",
+          "source_crs": "EPSG:25832",
+          "target_crs": "EPSG:25833",
+          "vertical_transformation": "none; elevations retain the selected project's height reference"
+        }
+      ],
+      "validation_contract_v3_terrain_eligible": false
+    },
+    {
+      "blockers": [
+        "screening_10m_chip_is_not_native_solver_terrain",
+        "avalanche_day_snow_surface_mismatch_unquantified",
+        "vertical_accuracy_uncertainty_unavailable",
+        "horizontal_accuracy_uncertainty_unavailable"
+      ],
+      "candidate_id": "regobs-331395",
+      "event_surface_mismatch": {
+        "horizontal_accuracy_uncertainty_m": null,
+        "missing_uncertainties_remain_masked": true,
+        "quantitative_mismatch_treatment_available": false,
+        "signed_event_minus_flight_days": 919.361111,
+        "snow_depth_uncertainty_m": null,
+        "surface_type": "bare-earth DTM, not avalanche-day snow surface",
+        "vegetation_or_classification_residual_uncertainty_m": null,
+        "vertical_accuracy_uncertainty_m": null
+      },
+      "event_time": "2023-02-23T09:40:00+01:00",
+      "normalized_candidate_sha256": "a6f60cd9b2622996c334b6656237a3d321c754ca6a0d22949c5f9f9c5592d567",
+      "selected_project": {
+        "AARSTALL": 2020,
+        "CATEGORY": 1,
+        "DEKNINGSNUMMER": "42406",
+        "FKB_LASERSTANDARD": "FKB-Laser-C-DTM10",
+        "FLYFIRMA": "Terratec AS",
+        "HOYDESYSTEM": "5941",
+        "KOORDINATSYSTEM": "25832",
+        "LAS_PROJECT_ID": 4706,
+        "LAS_PROJECT_NAME": "NDH Jostedalsbreen 2pkt 2020",
+        "NAME": "NDH Jostedalsbreen 2pkt 2020",
+        "OBJECTID": 170444,
+        "OBJEKTKATALOG": "FKB-Laser 3.0",
+        "OPPDRAGSGIVER": "Kartverket",
+        "OPPLOSNING": 0.5,
+        "PROSJEKTNR": null,
+        "PUBLISERT": "published",
+        "PUNKTTETTHET": 2,
+        "RAPPORT": null,
+        "SISTEFLYDATO": 1597708800000,
+        "TILGANG": "1",
+        "TYPE": "1"
+      },
+      "source_geometry_sha256": "0a0596310e5f676ee3ed5997136df6acd4d1ac5dbcac28e18e9eb621b5cdf3eb",
+      "source_project_count_returned": 19,
+      "source_project_lineage": {
+        "access": "anonymous public Høydedata ImageServer read",
+        "flight_time_utc": "2020-08-18T00:00:00Z",
+        "las_project_id": 4706,
+        "name": "NDH Jostedalsbreen 2pkt 2020",
+        "objectid": 170444,
+        "point_density_m2": 2,
+        "project_report": null,
+        "provider": "Kartverket Høydedata DTM ImageServer",
+        "provider_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer",
+        "source_horizontal_crs": "EPSG:25832",
+        "source_horizontal_units": "metre",
+        "source_resolution_m": 0.5,
+        "vertical_reference": {
+          "epsg": 5941,
+          "name": "NN2000 height",
+          "resolved": true
+        },
+        "year": 2020
+      },
+      "source_project_query": {
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-331395/source-project-query.request.json",
+        "request_sha256": "c12cf5b3c7cf4b6949a37847a9dfa1d1b2be47ccb12a66b8bcb6e51b28b310a4",
+        "response_metadata": {
+          "content_length_header": null,
+          "content_type": "application/json; charset=UTF-8",
+          "etag": "\"e308f513\"",
+          "final_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer/query?f=json&geometry=8.2591208453%2C61.5695510316&geometryType=esriGeometryPoint&inSR=4326&outFields=OBJECTID%2CNAME%2CCATEGORY%2CLAS_PROJECT_ID%2CLAS_PROJECT_NAME%2COPPDRAGSGIVER%2CDEKNINGSNUMMER%2CFKB_LASERSTANDARD%2CFLYFIRMA%2CTYPE%2CTILGANG%2CPROSJEKTNR%2CKOORDINATSYSTEM%2CHOYDESYSTEM%2CPUNKTTETTHET%2CAARSTALL%2CSISTEFLYDATO%2CPUBLISERT%2CRAPPORT%2COPPLOSNING%2COBJEKTKATALOG&resultRecordCount=200&returnGeometry=false&spatialRel=esriSpatialRelIntersects&where=1%3D1",
+          "last_modified": null,
+          "status": 200
+        },
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-331395/source-project-query.response-metadata.json",
+        "response_metadata_sha256": "e13754e9094966abf3c7491d311951509fe3e2637ea891e3d8bf8326de3db8fc",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-331395/source-project-query.response.json",
+        "response_sha256": "1efbdebe33085a734ebb88a6417c6b44cb98ccb4774d7615e38ad18cca79c353"
+      },
+      "status": "acquired_screening_terrain_not_event_surface_eligible",
+      "terrain": {
+        "raster": {
+          "count": 1,
+          "crs": "EPSG:25833",
+          "driver": "GTiff",
+          "dtype": "float32",
+          "height": 147,
+          "maximum_m": 2158.819580078125,
+          "minimum_m": 1573.877197265625,
+          "missing_pixels": 0,
+          "nodata": -9999.0,
+          "transform": [
+            10.0,
+            0.0,
+            141540.0,
+            0.0,
+            -10.0,
+            6845500.0
+          ],
+          "valid_pixels": 20874,
+          "width": 142
+        },
+        "raster_bytes": 263329,
+        "raster_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-331395/terrain-screening-10m.metadata.json",
+        "raster_metadata_sha256": "e4775e6178dbadf2590cb3aba1d3828f0edeb35b2151a1eacdee84232e3a9172",
+        "raster_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-331395/terrain-screening-10m.tif",
+        "raster_sha256": "056d555a8d5efd350fe3bd7711b1c0d954fbb70a1ebbd352e64c502c09b4edbd",
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-331395/export.request.json",
+        "request_sha256": "a78f1df1aa5ed87c937f60ad7bfaf60412c1f5eb35ffd8d849b7ab8ff2128324",
+        "requested_bounds": [
+          141540.0,
+          6844030.0,
+          142960.0,
+          6845500.0
+        ],
+        "requested_crs": "EPSG:25833",
+        "requested_resolution_m": 10.0,
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-331395/export.response-metadata.json",
+        "response_metadata_sha256": "c4ecbb90d07a72fa6fe68dd136e0701fd9e8ca726a54ae87292d56974dca3465",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-331395/export.response.json",
+        "response_sha256": "bf1cfaee96dc18c35d2784411b01d2dae6d04c0065cfd3b26efa17a58339a980"
+      },
+      "terrain_acquired": true,
+      "transformations": [
+        {
+          "coordinate_order": "always_xy",
+          "library": "PROJ via pyproj",
+          "operation": "candidate EPSG:4326 longitude/latitude to output grid",
+          "target_crs": "EPSG:25833"
+        },
+        {
+          "horizontal_resampling": "bilinear",
+          "operation": "ImageServer source project mosaic to requested output grid",
+          "source_crs": "EPSG:25832",
+          "target_crs": "EPSG:25833",
+          "vertical_transformation": "none; elevations retain the selected project's height reference"
+        }
+      ],
+      "validation_contract_v3_terrain_eligible": false
+    },
+    {
+      "blockers": [
+        "screening_10m_chip_is_not_native_solver_terrain",
+        "avalanche_day_snow_surface_mismatch_unquantified",
+        "vertical_accuracy_uncertainty_unavailable",
+        "horizontal_accuracy_uncertainty_unavailable"
+      ],
+      "candidate_id": "regobs-334839",
+      "event_surface_mismatch": {
+        "horizontal_accuracy_uncertainty_m": null,
+        "missing_uncertainties_remain_masked": true,
+        "quantitative_mismatch_treatment_available": false,
+        "signed_event_minus_flight_days": 1266.166667,
+        "snow_depth_uncertainty_m": null,
+        "surface_type": "bare-earth DTM, not avalanche-day snow surface",
+        "vegetation_or_classification_residual_uncertainty_m": null,
+        "vertical_accuracy_uncertainty_m": null
+      },
+      "event_time": "2023-03-12T05:00:00+01:00",
+      "normalized_candidate_sha256": "bf8a83187ca3cd0359edc19ffd49609f5ab305c65cd19b468140d80355ae51ba",
+      "selected_project": {
+        "AARSTALL": 2019,
+        "CATEGORY": 1,
+        "DEKNINGSNUMMER": "42329",
+        "FKB_LASERSTANDARD": "FKB-Laser-C-DTM10",
+        "FLYFIRMA": "Terratec AS",
+        "HOYDESYSTEM": "5941",
+        "KOORDINATSYSTEM": "25832",
+        "LAS_PROJECT_ID": 1182,
+        "LAS_PROJECT_NAME": "NDH Volda-Ørsta 2pkt 2019",
+        "NAME": "NDH Volda-Ørsta 2pkt 2019",
+        "OBJECTID": 124719,
+        "OBJEKTKATALOG": "FKB-Laser 3.0",
+        "OPPDRAGSGIVER": "Kartverket",
+        "OPPLOSNING": 0.5,
+        "PROSJEKTNR": null,
+        "PUBLISERT": "published",
+        "PUNKTTETTHET": 2,
+        "RAPPORT": null,
+        "SISTEFLYDATO": 1569196800000,
+        "TILGANG": "1",
+        "TYPE": "1"
+      },
+      "source_geometry_sha256": "d296069b62c458aad07017ff04dd955b4bcab296bf76a08c1fbf29f896acbcd4",
+      "source_project_count_returned": 19,
+      "source_project_lineage": {
+        "access": "anonymous public Høydedata ImageServer read",
+        "flight_time_utc": "2019-09-23T00:00:00Z",
+        "las_project_id": 1182,
+        "name": "NDH Volda-Ørsta 2pkt 2019",
+        "objectid": 124719,
+        "point_density_m2": 2,
+        "project_report": null,
+        "provider": "Kartverket Høydedata DTM ImageServer",
+        "provider_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer",
+        "source_horizontal_crs": "EPSG:25832",
+        "source_horizontal_units": "metre",
+        "source_resolution_m": 0.5,
+        "vertical_reference": {
+          "epsg": 5941,
+          "name": "NN2000 height",
+          "resolved": true
+        },
+        "year": 2019
+      },
+      "source_project_query": {
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-334839/source-project-query.request.json",
+        "request_sha256": "b4d6ed14afe939a510cb99d8f0a0a60fa9bf30dd0a97a5e2a1da254313857a16",
+        "response_metadata": {
+          "content_length_header": null,
+          "content_type": "application/json; charset=UTF-8",
+          "etag": "\"980c3884\"",
+          "final_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer/query?f=json&geometry=6.3846015930%2C62.2089030978&geometryType=esriGeometryPoint&inSR=4326&outFields=OBJECTID%2CNAME%2CCATEGORY%2CLAS_PROJECT_ID%2CLAS_PROJECT_NAME%2COPPDRAGSGIVER%2CDEKNINGSNUMMER%2CFKB_LASERSTANDARD%2CFLYFIRMA%2CTYPE%2CTILGANG%2CPROSJEKTNR%2CKOORDINATSYSTEM%2CHOYDESYSTEM%2CPUNKTTETTHET%2CAARSTALL%2CSISTEFLYDATO%2CPUBLISERT%2CRAPPORT%2COPPLOSNING%2COBJEKTKATALOG&resultRecordCount=200&returnGeometry=false&spatialRel=esriSpatialRelIntersects&where=1%3D1",
+          "last_modified": null,
+          "status": 200
+        },
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-334839/source-project-query.response-metadata.json",
+        "response_metadata_sha256": "a800df3446ce053f347b9ab2f35c634b24059258d20a15d90380f7710cd15d9d",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-334839/source-project-query.response.json",
+        "response_sha256": "083d78ba4f6256a64d72a6dbde29744f6e589f3d194a2d9d621089cc572d637f"
+      },
+      "status": "acquired_screening_terrain_not_event_surface_eligible",
+      "terrain": {
+        "raster": {
+          "count": 1,
+          "crs": "EPSG:25833",
+          "driver": "GTiff",
+          "dtype": "float32",
+          "height": 224,
+          "maximum_m": 1266.6409912109375,
+          "minimum_m": 180.88743591308594,
+          "missing_pixels": 1157,
+          "nodata": -9999.0,
+          "transform": [
+            10.0,
+            0.0,
+            51970.0,
+            0.0,
+            -10.0,
+            6927780.0
+          ],
+          "valid_pixels": 31771,
+          "width": 147
+        },
+        "raster_bytes": 263329,
+        "raster_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-334839/terrain-screening-10m.metadata.json",
+        "raster_metadata_sha256": "4cc892bdbc09936e5e90c8dbd367754228a27ede8a560b1445913030cf89539b",
+        "raster_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-334839/terrain-screening-10m.tif",
+        "raster_sha256": "b4165afebde7266c7a5fe8c5960b652391d8eda93a73876bb1c5638234e08703",
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-334839/export.request.json",
+        "request_sha256": "d7c3463b9e793fab83d1b9c3ecabd2e81acf2f37d2f0a4184c24010b156b4d99",
+        "requested_bounds": [
+          51970.0,
+          6925540.0,
+          53440.0,
+          6927780.0
+        ],
+        "requested_crs": "EPSG:25833",
+        "requested_resolution_m": 10.0,
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-334839/export.response-metadata.json",
+        "response_metadata_sha256": "6c695dd514f3d89402f2b89777a3789b8d3366a98f5256ecf2f6874dc0ad24b7",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-334839/export.response.json",
+        "response_sha256": "60d1b57add24b1663f5d99ccb3cbe0b59296cb10038b92c2248b79e7d61d8ff8"
+      },
+      "terrain_acquired": true,
+      "transformations": [
+        {
+          "coordinate_order": "always_xy",
+          "library": "PROJ via pyproj",
+          "operation": "candidate EPSG:4326 longitude/latitude to output grid",
+          "target_crs": "EPSG:25833"
+        },
+        {
+          "horizontal_resampling": "bilinear",
+          "operation": "ImageServer source project mosaic to requested output grid",
+          "source_crs": "EPSG:25832",
+          "target_crs": "EPSG:25833",
+          "vertical_transformation": "none; elevations retain the selected project's height reference"
+        }
+      ],
+      "validation_contract_v3_terrain_eligible": false
+    },
+    {
+      "blockers": [
+        "screening_10m_chip_is_not_native_solver_terrain",
+        "avalanche_day_snow_surface_mismatch_unquantified",
+        "vertical_accuracy_uncertainty_unavailable",
+        "horizontal_accuracy_uncertainty_unavailable"
+      ],
+      "candidate_id": "regobs-335278",
+      "event_surface_mismatch": {
+        "horizontal_accuracy_uncertainty_m": null,
+        "missing_uncertainties_remain_masked": true,
+        "quantitative_mismatch_treatment_available": false,
+        "signed_event_minus_flight_days": 1265.358113,
+        "snow_depth_uncertainty_m": null,
+        "surface_type": "bare-earth DTM, not avalanche-day snow surface",
+        "vegetation_or_classification_residual_uncertainty_m": null,
+        "vertical_accuracy_uncertainty_m": null
+      },
+      "event_time": "2023-03-14T09:35:41+01:00",
+      "normalized_candidate_sha256": "d54a4f6ca711b953b85f7c8c1f990a8c3307b315c76765f03c2dbc5e2cb7cad3",
+      "selected_project": {
+        "AARSTALL": 2019,
+        "CATEGORY": 1,
+        "DEKNINGSNUMMER": "42369",
+        "FKB_LASERSTANDARD": "FKB-Laser-C-DTM10",
+        "FLYFIRMA": "Terratec AS",
+        "HOYDESYSTEM": "5941",
+        "KOORDINATSYSTEM": "25832",
+        "LAS_PROJECT_ID": 1167,
+        "LAS_PROJECT_NAME": "NDH Storfjorden 2pkt 2019",
+        "NAME": "NDH Storfjorden 2pkt 2019",
+        "OBJECTID": 121552,
+        "OBJEKTKATALOG": "FKB-Laser 3.0",
+        "OPPDRAGSGIVER": "Kartverket",
+        "OPPLOSNING": 0.5,
+        "PROSJEKTNR": null,
+        "PUBLISERT": "published",
+        "PUNKTTETTHET": 2,
+        "RAPPORT": null,
+        "SISTEFLYDATO": 1569456000000,
+        "TILGANG": "1",
+        "TYPE": "1"
+      },
+      "source_geometry_sha256": "196519bb703c521a8ba3b19669989c67c03178387d275248dd7a5f18a815a993",
+      "source_project_count_returned": 12,
+      "source_project_lineage": {
+        "access": "anonymous public Høydedata ImageServer read",
+        "flight_time_utc": "2019-09-26T00:00:00Z",
+        "las_project_id": 1167,
+        "name": "NDH Storfjorden 2pkt 2019",
+        "objectid": 121552,
+        "point_density_m2": 2,
+        "project_report": null,
+        "provider": "Kartverket Høydedata DTM ImageServer",
+        "provider_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer",
+        "source_horizontal_crs": "EPSG:25832",
+        "source_horizontal_units": "metre",
+        "source_resolution_m": 0.5,
+        "vertical_reference": {
+          "epsg": 5941,
+          "name": "NN2000 height",
+          "resolved": true
+        },
+        "year": 2019
+      },
+      "source_project_query": {
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-335278/source-project-query.request.json",
+        "request_sha256": "d09a0b01c0964d240d4738c9fa22dba8387b62823f78b363e5edfb1407eda2df",
+        "response_metadata": {
+          "content_length_header": null,
+          "content_type": "application/json; charset=UTF-8",
+          "etag": "\"7e7b71a8\"",
+          "final_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer/query?f=json&geometry=6.6295503761%2C62.2538763297&geometryType=esriGeometryPoint&inSR=4326&outFields=OBJECTID%2CNAME%2CCATEGORY%2CLAS_PROJECT_ID%2CLAS_PROJECT_NAME%2COPPDRAGSGIVER%2CDEKNINGSNUMMER%2CFKB_LASERSTANDARD%2CFLYFIRMA%2CTYPE%2CTILGANG%2CPROSJEKTNR%2CKOORDINATSYSTEM%2CHOYDESYSTEM%2CPUNKTTETTHET%2CAARSTALL%2CSISTEFLYDATO%2CPUBLISERT%2CRAPPORT%2COPPLOSNING%2COBJEKTKATALOG&resultRecordCount=200&returnGeometry=false&spatialRel=esriSpatialRelIntersects&where=1%3D1",
+          "last_modified": null,
+          "status": 200
+        },
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-335278/source-project-query.response-metadata.json",
+        "response_metadata_sha256": "7716f1319e3ac7478ec91e94ca02bf4ad6cf8fe812e95993d99b4a9043ae6fa3",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-335278/source-project-query.response.json",
+        "response_sha256": "1731e33c194135618dab7fc741cdb9502e767e07227ddeffdc3e456b6d6df3fd"
+      },
+      "status": "acquired_screening_terrain_not_event_surface_eligible",
+      "terrain": {
+        "raster": {
+          "count": 1,
+          "crs": "EPSG:25833",
+          "driver": "GTiff",
+          "dtype": "float32",
+          "height": 168,
+          "maximum_m": 1401.8712158203125,
+          "minimum_m": 431.4056091308594,
+          "missing_pixels": 0,
+          "nodata": -9999.0,
+          "transform": [
+            10.0,
+            0.0,
+            65520.0,
+            0.0,
+            -10.0,
+            6931760.0
+          ],
+          "valid_pixels": 44184,
+          "width": 263
+        },
+        "raster_bytes": 394417,
+        "raster_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-335278/terrain-screening-10m.metadata.json",
+        "raster_metadata_sha256": "2b91a00d49ccc78b76901e9fb36e9e16a55080a9cafa6e70447752469cc78da2",
+        "raster_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-335278/terrain-screening-10m.tif",
+        "raster_sha256": "ac55673e48cf7b4550ccc6eb56d5ddaf647fa1f2da51de58cd6e59f2eb569361",
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-335278/export.request.json",
+        "request_sha256": "36bd504c0a3692be44f88caace2f42dc60285c8b526adbf40dfd444227f51867",
+        "requested_bounds": [
+          65520.0,
+          6930080.0,
+          68150.0,
+          6931760.0
+        ],
+        "requested_crs": "EPSG:25833",
+        "requested_resolution_m": 10.0,
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-335278/export.response-metadata.json",
+        "response_metadata_sha256": "8fbf8c95e3bb1b5d2e20ceb83a93a955ad83b485eec7267bc397f9a687becbb5",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-335278/export.response.json",
+        "response_sha256": "e9e21aeb8faa060bd2d240fb4cb5e85c3396d122bf3edf93eea4a1115521a158"
+      },
+      "terrain_acquired": true,
+      "transformations": [
+        {
+          "coordinate_order": "always_xy",
+          "library": "PROJ via pyproj",
+          "operation": "candidate EPSG:4326 longitude/latitude to output grid",
+          "target_crs": "EPSG:25833"
+        },
+        {
+          "horizontal_resampling": "bilinear",
+          "operation": "ImageServer source project mosaic to requested output grid",
+          "source_crs": "EPSG:25832",
+          "target_crs": "EPSG:25833",
+          "vertical_transformation": "none; elevations retain the selected project's height reference"
+        }
+      ],
+      "validation_contract_v3_terrain_eligible": false
+    },
+    {
+      "blockers": [
+        "screening_10m_chip_is_not_native_solver_terrain",
+        "avalanche_day_snow_surface_mismatch_unquantified",
+        "vertical_accuracy_uncertainty_unavailable",
+        "horizontal_accuracy_uncertainty_unavailable"
+      ],
+      "candidate_id": "regobs-338556",
+      "event_surface_mismatch": {
+        "horizontal_accuracy_uncertainty_m": null,
+        "missing_uncertainties_remain_masked": true,
+        "quantitative_mismatch_treatment_available": false,
+        "signed_event_minus_flight_days": 919.194444,
+        "snow_depth_uncertainty_m": null,
+        "surface_type": "bare-earth DTM, not avalanche-day snow surface",
+        "vegetation_or_classification_residual_uncertainty_m": null,
+        "vertical_accuracy_uncertainty_m": null
+      },
+      "event_time": "2023-03-31T06:40:00+02:00",
+      "normalized_candidate_sha256": "4701a3aff109b0ca23fe62cc47e18701b7a8d6904a7267cb1db3ee0c0fc5f27f",
+      "selected_project": {
+        "AARSTALL": 2020,
+        "CATEGORY": 1,
+        "DEKNINGSNUMMER": "42197",
+        "FKB_LASERSTANDARD": "FKB-Laser-C-DTM10",
+        "FLYFIRMA": "Terratec AS",
+        "HOYDESYSTEM": "5941",
+        "KOORDINATSYSTEM": "25835",
+        "LAS_PROJECT_ID": 4846,
+        "LAS_PROJECT_NAME": "NDH Hammerfest 2pkt 2020",
+        "NAME": "NDH Hammerfest 2pkt 2020",
+        "OBJECTID": 151012,
+        "OBJEKTKATALOG": "FKB-Laser 3.0",
+        "OPPDRAGSGIVER": "Kartverket",
+        "OPPLOSNING": 0.5,
+        "PROSJEKTNR": null,
+        "PUBLISERT": "published",
+        "PUNKTTETTHET": 2,
+        "RAPPORT": null,
+        "SISTEFLYDATO": 1600819200000,
+        "TILGANG": "1",
+        "TYPE": "1"
+      },
+      "source_geometry_sha256": "6b901a84f0a4afc269114d3582415fcfc57e5ec319d0c33f291f03610a42456b",
+      "source_project_count_returned": 31,
+      "source_project_lineage": {
+        "access": "anonymous public Høydedata ImageServer read",
+        "flight_time_utc": "2020-09-23T00:00:00Z",
+        "las_project_id": 4846,
+        "name": "NDH Hammerfest 2pkt 2020",
+        "objectid": 151012,
+        "point_density_m2": 2,
+        "project_report": null,
+        "provider": "Kartverket Høydedata DTM ImageServer",
+        "provider_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer",
+        "source_horizontal_crs": "EPSG:25835",
+        "source_horizontal_units": "metre",
+        "source_resolution_m": 0.5,
+        "vertical_reference": {
+          "epsg": 5941,
+          "name": "NN2000 height",
+          "resolved": true
+        },
+        "year": 2020
+      },
+      "source_project_query": {
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-338556/source-project-query.request.json",
+        "request_sha256": "f11c124238cfa0dcef17c9e8d2b5096dbeaa5bfbf6c893ec5688812a376edbbc",
+        "response_metadata": {
+          "content_length_header": null,
+          "content_type": "application/json; charset=UTF-8",
+          "etag": "\"ecb80b3a\"",
+          "final_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer/query?f=json&geometry=23.6889515072%2C70.6914931962&geometryType=esriGeometryPoint&inSR=4326&outFields=OBJECTID%2CNAME%2CCATEGORY%2CLAS_PROJECT_ID%2CLAS_PROJECT_NAME%2COPPDRAGSGIVER%2CDEKNINGSNUMMER%2CFKB_LASERSTANDARD%2CFLYFIRMA%2CTYPE%2CTILGANG%2CPROSJEKTNR%2CKOORDINATSYSTEM%2CHOYDESYSTEM%2CPUNKTTETTHET%2CAARSTALL%2CSISTEFLYDATO%2CPUBLISERT%2CRAPPORT%2COPPLOSNING%2COBJEKTKATALOG&resultRecordCount=200&returnGeometry=false&spatialRel=esriSpatialRelIntersects&where=1%3D1",
+          "last_modified": null,
+          "status": 200
+        },
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-338556/source-project-query.response-metadata.json",
+        "response_metadata_sha256": "69d8e3cc4962094036a62c461f6de6e9107e37e84bab8ac7aac3d5c902bfbc5a",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-338556/source-project-query.response.json",
+        "response_sha256": "2971c3b99dbe4c94c0578df68d12545051ec5e66ebe946a9060472574e642ffb"
+      },
+      "status": "acquired_screening_terrain_not_event_surface_eligible",
+      "terrain": {
+        "raster": {
+          "count": 1,
+          "crs": "EPSG:25833",
+          "driver": "GTiff",
+          "dtype": "float32",
+          "height": 113,
+          "maximum_m": 323.558837890625,
+          "minimum_m": 90.92436218261719,
+          "missing_pixels": 442,
+          "nodata": -9999.0,
+          "transform": [
+            10.0,
+            0.0,
+            819150.0,
+            0.0,
+            -10.0,
+            7866460.0
+          ],
+          "valid_pixels": 12214,
+          "width": 112
+        },
+        "raster_bytes": 66689,
+        "raster_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-338556/terrain-screening-10m.metadata.json",
+        "raster_metadata_sha256": "7e218afe540d6ac02c7d6467a9dfed61f4ce18be9e97e2b2a23bcb8552914d93",
+        "raster_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-338556/terrain-screening-10m.tif",
+        "raster_sha256": "5bd3d41ed1a86a8782cdbb957914509559820676934fcea5be2b5d7b2aa4686a",
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-338556/export.request.json",
+        "request_sha256": "9c4ee29007367362e25c68e1a557f02e0fe18e6da17a78d3f8b81e573aca43a2",
+        "requested_bounds": [
+          819150.0,
+          7865330.0,
+          820270.0,
+          7866460.0
+        ],
+        "requested_crs": "EPSG:25833",
+        "requested_resolution_m": 10.0,
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-338556/export.response-metadata.json",
+        "response_metadata_sha256": "443ab3bf3ea388e58229dad3a3f77d02b301660e4aa0f19cba5536b4d3806a88",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-338556/export.response.json",
+        "response_sha256": "6ff85ab518fb867ca1257522e456f73a8b878e541b2f2af368e01d532b7c2a32"
+      },
+      "terrain_acquired": true,
+      "transformations": [
+        {
+          "coordinate_order": "always_xy",
+          "library": "PROJ via pyproj",
+          "operation": "candidate EPSG:4326 longitude/latitude to output grid",
+          "target_crs": "EPSG:25833"
+        },
+        {
+          "horizontal_resampling": "bilinear",
+          "operation": "ImageServer source project mosaic to requested output grid",
+          "source_crs": "EPSG:25835",
+          "target_crs": "EPSG:25833",
+          "vertical_transformation": "none; elevations retain the selected project's height reference"
+        }
+      ],
+      "validation_contract_v3_terrain_eligible": false
+    },
+    {
+      "blockers": [
+        "screening_10m_chip_is_not_native_solver_terrain",
+        "avalanche_day_snow_surface_mismatch_unquantified",
+        "vertical_accuracy_uncertainty_unavailable",
+        "horizontal_accuracy_uncertainty_unavailable"
+      ],
+      "candidate_id": "regobs-339023",
+      "event_surface_mismatch": {
+        "horizontal_accuracy_uncertainty_m": null,
+        "missing_uncertainties_remain_masked": true,
+        "quantitative_mismatch_treatment_available": false,
+        "signed_event_minus_flight_days": 2053.366875,
+        "snow_depth_uncertainty_m": null,
+        "surface_type": "bare-earth DTM, not avalanche-day snow surface",
+        "vegetation_or_classification_residual_uncertainty_m": null,
+        "vertical_accuracy_uncertainty_m": null
+      },
+      "event_time": "2023-04-02T10:48:18+02:00",
+      "normalized_candidate_sha256": "8574b01ba204fc2a402f8b3b35f4723e2045932eca3487465a7b3e6eed53395b",
+      "selected_project": {
+        "AARSTALL": 2017,
+        "CATEGORY": 1,
+        "DEKNINGSNUMMER": "42330",
+        "FKB_LASERSTANDARD": "10",
+        "FLYFIRMA": "Terratec AS",
+        "HOYDESYSTEM": "5941",
+        "KOORDINATSYSTEM": "25832",
+        "LAS_PROJECT_ID": 867,
+        "LAS_PROJECT_NAME": "NDH Volda-Ørsta 5pkt 2017",
+        "NAME": "NDH Volda-Ørsta 5pkt 2017",
+        "OBJECTID": 80843,
+        "OBJEKTKATALOG": "FKB-Laser 3.0",
+        "OPPDRAGSGIVER": "Kartverket",
+        "OPPLOSNING": 0.25,
+        "PROSJEKTNR": null,
+        "PUBLISERT": "published",
+        "PUNKTTETTHET": 5,
+        "RAPPORT": null,
+        "SISTEFLYDATO": 1503014400000,
+        "TILGANG": "1",
+        "TYPE": "1"
+      },
+      "source_geometry_sha256": "56a7ba5b5361cef8dcfa91d7d2d5ee6efdeb31a12aa4d76fbe4946028e38a4e0",
+      "source_project_count_returned": 27,
+      "source_project_lineage": {
+        "access": "anonymous public Høydedata ImageServer read",
+        "flight_time_utc": "2017-08-18T00:00:00Z",
+        "las_project_id": 867,
+        "name": "NDH Volda-Ørsta 5pkt 2017",
+        "objectid": 80843,
+        "point_density_m2": 5,
+        "project_report": null,
+        "provider": "Kartverket Høydedata DTM ImageServer",
+        "provider_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer",
+        "source_horizontal_crs": "EPSG:25832",
+        "source_horizontal_units": "metre",
+        "source_resolution_m": 0.25,
+        "vertical_reference": {
+          "epsg": 5941,
+          "name": "NN2000 height",
+          "resolved": true
+        },
+        "year": 2017
+      },
+      "source_project_query": {
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-339023/source-project-query.request.json",
+        "request_sha256": "d691e485f20910b9de02931572acbf8d79695f8469cc421fc1472e2680c8be04",
+        "response_metadata": {
+          "content_length_header": null,
+          "content_type": "application/json; charset=UTF-8",
+          "etag": "\"174683a1\"",
+          "final_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer/query?f=json&geometry=6.2780535221%2C62.1607901050&geometryType=esriGeometryPoint&inSR=4326&outFields=OBJECTID%2CNAME%2CCATEGORY%2CLAS_PROJECT_ID%2CLAS_PROJECT_NAME%2COPPDRAGSGIVER%2CDEKNINGSNUMMER%2CFKB_LASERSTANDARD%2CFLYFIRMA%2CTYPE%2CTILGANG%2CPROSJEKTNR%2CKOORDINATSYSTEM%2CHOYDESYSTEM%2CPUNKTTETTHET%2CAARSTALL%2CSISTEFLYDATO%2CPUBLISERT%2CRAPPORT%2COPPLOSNING%2COBJEKTKATALOG&resultRecordCount=200&returnGeometry=false&spatialRel=esriSpatialRelIntersects&where=1%3D1",
+          "last_modified": null,
+          "status": 200
+        },
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-339023/source-project-query.response-metadata.json",
+        "response_metadata_sha256": "6512a7ff9137f3f433326aaa4fba91707923989c735a37d22a11a4e1ac9c0385",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-339023/source-project-query.response.json",
+        "response_sha256": "0d5745038cebb04f3a0c011af72c01ac11cbcb6bbde36cd193da0bd9fa10212c"
+      },
+      "status": "acquired_screening_terrain_not_event_surface_eligible",
+      "terrain": {
+        "raster": {
+          "count": 1,
+          "crs": "EPSG:25833",
+          "driver": "GTiff",
+          "dtype": "float32",
+          "height": 102,
+          "maximum_m": 704.5158081054688,
+          "minimum_m": 332.5157165527344,
+          "missing_pixels": 2036,
+          "nodata": -9999.0,
+          "transform": [
+            10.0,
+            0.0,
+            46040.0,
+            0.0,
+            -10.0,
+            6923210.0
+          ],
+          "valid_pixels": 8572,
+          "width": 104
+        },
+        "raster_bytes": 66689,
+        "raster_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-339023/terrain-screening-10m.metadata.json",
+        "raster_metadata_sha256": "9371c3e3639b659cd2fbeea8785841fc92d4c452798347eed6be45ac0fd1394d",
+        "raster_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-339023/terrain-screening-10m.tif",
+        "raster_sha256": "ce7e37088e0ff77c3c79640f173654da4d976db3db26435c301a74fe533e7e4a",
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-339023/export.request.json",
+        "request_sha256": "f52138992ecd32b4de2fe922610a985e0a1b6339e3cb03be79b9bc8ad36365dd",
+        "requested_bounds": [
+          46040.0,
+          6922190.0,
+          47080.0,
+          6923210.0
+        ],
+        "requested_crs": "EPSG:25833",
+        "requested_resolution_m": 10.0,
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-339023/export.response-metadata.json",
+        "response_metadata_sha256": "1fbc32f408b7c85f1cde6f2da9a7694a8d824e53a6f2f1f3f2d526bc46c5e126",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-339023/export.response.json",
+        "response_sha256": "0a28a0eac30ae8a93abb44659f6ed010f224ab06149802550c1abea562bf7b15"
+      },
+      "terrain_acquired": true,
+      "transformations": [
+        {
+          "coordinate_order": "always_xy",
+          "library": "PROJ via pyproj",
+          "operation": "candidate EPSG:4326 longitude/latitude to output grid",
+          "target_crs": "EPSG:25833"
+        },
+        {
+          "horizontal_resampling": "bilinear",
+          "operation": "ImageServer source project mosaic to requested output grid",
+          "source_crs": "EPSG:25832",
+          "target_crs": "EPSG:25833",
+          "vertical_transformation": "none; elevations retain the selected project's height reference"
+        }
+      ],
+      "validation_contract_v3_terrain_eligible": false
+    },
+    {
+      "blockers": [
+        "screening_10m_chip_is_not_native_solver_terrain",
+        "avalanche_day_snow_surface_mismatch_unquantified",
+        "vertical_accuracy_uncertainty_unavailable",
+        "horizontal_accuracy_uncertainty_unavailable"
+      ],
+      "candidate_id": "regobs-340048",
+      "event_surface_mismatch": {
+        "horizontal_accuracy_uncertainty_m": null,
+        "missing_uncertainties_remain_masked": true,
+        "quantitative_mismatch_treatment_available": false,
+        "signed_event_minus_flight_days": 2015.529167,
+        "snow_depth_uncertainty_m": null,
+        "surface_type": "bare-earth DTM, not avalanche-day snow surface",
+        "vegetation_or_classification_residual_uncertainty_m": null,
+        "vertical_accuracy_uncertainty_m": null
+      },
+      "event_time": "2023-03-31T14:42:00+02:00",
+      "normalized_candidate_sha256": "de111b9a1dc4ff6a6928cbf6a0746cf340a27779a420c6c9c683cbbe7cce746f",
+      "selected_project": {
+        "AARSTALL": 2017,
+        "CATEGORY": 1,
+        "DEKNINGSNUMMER": "42160",
+        "FKB_LASERSTANDARD": "10",
+        "FLYFIRMA": "Terratec AS",
+        "HOYDESYSTEM": "5941",
+        "KOORDINATSYSTEM": "25833",
+        "LAS_PROJECT_ID": 902,
+        "LAS_PROJECT_NAME": "NDH Jiehkkevárri 2pkt 2017",
+        "NAME": "NDH Jiehkkevárri 2pkt 2017",
+        "OBJECTID": 79319,
+        "OBJEKTKATALOG": "FKB-Laser 3.0",
+        "OPPDRAGSGIVER": "Kartverket",
+        "OPPLOSNING": 0.5,
+        "PROSJEKTNR": null,
+        "PUBLISERT": "published",
+        "PUNKTTETTHET": 2,
+        "RAPPORT": null,
+        "SISTEFLYDATO": 1506124800000,
+        "TILGANG": "1",
+        "TYPE": "1"
+      },
+      "source_geometry_sha256": "5d096e4b426c02fa9e72efbec5742c3205fb050b0e09d8cad28a16625bd14da9",
+      "source_project_count_returned": 13,
+      "source_project_lineage": {
+        "access": "anonymous public Høydedata ImageServer read",
+        "flight_time_utc": "2017-09-23T00:00:00Z",
+        "las_project_id": 902,
+        "name": "NDH Jiehkkevárri 2pkt 2017",
+        "objectid": 79319,
+        "point_density_m2": 2,
+        "project_report": null,
+        "provider": "Kartverket Høydedata DTM ImageServer",
+        "provider_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer",
+        "source_horizontal_crs": "EPSG:25833",
+        "source_horizontal_units": "metre",
+        "source_resolution_m": 0.5,
+        "vertical_reference": {
+          "epsg": 5941,
+          "name": "NN2000 height",
+          "resolved": true
+        },
+        "year": 2017
+      },
+      "source_project_query": {
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-340048/source-project-query.request.json",
+        "request_sha256": "c288ce8801b5ace2ac578015d44366f549cc887186371b06d79b56c5141edb51",
+        "response_metadata": {
+          "content_length_header": null,
+          "content_type": "application/json; charset=UTF-8",
+          "etag": "\"36f82eaf\"",
+          "final_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer/query?f=json&geometry=20.1516939122%2C69.5249483668&geometryType=esriGeometryPoint&inSR=4326&outFields=OBJECTID%2CNAME%2CCATEGORY%2CLAS_PROJECT_ID%2CLAS_PROJECT_NAME%2COPPDRAGSGIVER%2CDEKNINGSNUMMER%2CFKB_LASERSTANDARD%2CFLYFIRMA%2CTYPE%2CTILGANG%2CPROSJEKTNR%2CKOORDINATSYSTEM%2CHOYDESYSTEM%2CPUNKTTETTHET%2CAARSTALL%2CSISTEFLYDATO%2CPUBLISERT%2CRAPPORT%2COPPLOSNING%2COBJEKTKATALOG&resultRecordCount=200&returnGeometry=false&spatialRel=esriSpatialRelIntersects&where=1%3D1",
+          "last_modified": null,
+          "status": 200
+        },
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-340048/source-project-query.response-metadata.json",
+        "response_metadata_sha256": "f73ad456b05fdd8e7bcbab5a0024669996f44043f795a484dd70cbb795d9040f",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-340048/source-project-query.response.json",
+        "response_sha256": "0d34d9e4ff6e4f6ae55cc3ddc97baabcccd2a1aaf4948f0f17661e2d95508465"
+      },
+      "status": "acquired_screening_terrain_not_event_surface_eligible",
+      "terrain": {
+        "raster": {
+          "count": 1,
+          "crs": "EPSG:25833",
+          "driver": "GTiff",
+          "dtype": "float32",
+          "height": 155,
+          "maximum_m": 563.3470458984375,
+          "minimum_m": 90.9217300415039,
+          "missing_pixels": 10686,
+          "nodata": -9999.0,
+          "transform": [
+            10.0,
+            0.0,
+            700280.0,
+            0.0,
+            -10.0,
+            7722030.0
+          ],
+          "valid_pixels": 11014,
+          "width": 140
+        },
+        "raster_bytes": 263329,
+        "raster_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-340048/terrain-screening-10m.metadata.json",
+        "raster_metadata_sha256": "e51074b6e41c4adbef23e6bdcd1a24443513d4f8da69222765a47654b68c74bf",
+        "raster_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-340048/terrain-screening-10m.tif",
+        "raster_sha256": "50021168ab8b1326df4d9090ff69c351beeb91f9aa75abe4c083df2de1bacd2c",
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-340048/export.request.json",
+        "request_sha256": "08fa74a01ee895b7601963303468ce36b564f547d923c7851bce401a8b4f1391",
+        "requested_bounds": [
+          700280.0,
+          7720480.0,
+          701680.0,
+          7722030.0
+        ],
+        "requested_crs": "EPSG:25833",
+        "requested_resolution_m": 10.0,
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-340048/export.response-metadata.json",
+        "response_metadata_sha256": "60902fdb606fffdbdc047f01068065e01e4c0ce411f382777e0f6068c03a9522",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-340048/export.response.json",
+        "response_sha256": "0fca2a7cc0ab31bd6fe32f04df4c3827484289218736eb641573699430f1d62e"
+      },
+      "terrain_acquired": true,
+      "transformations": [
+        {
+          "coordinate_order": "always_xy",
+          "library": "PROJ via pyproj",
+          "operation": "candidate EPSG:4326 longitude/latitude to output grid",
+          "target_crs": "EPSG:25833"
+        },
+        {
+          "horizontal_resampling": "bilinear",
+          "operation": "ImageServer source project mosaic to requested output grid",
+          "source_crs": "EPSG:25833",
+          "target_crs": "EPSG:25833",
+          "vertical_transformation": "none; elevations retain the selected project's height reference"
+        }
+      ],
+      "validation_contract_v3_terrain_eligible": false
+    },
+    {
+      "blockers": [
+        "screening_10m_chip_is_not_native_solver_terrain",
+        "avalanche_day_snow_surface_mismatch_unquantified",
+        "vertical_accuracy_uncertainty_unavailable",
+        "horizontal_accuracy_uncertainty_unavailable"
+      ],
+      "candidate_id": "regobs-341799",
+      "event_surface_mismatch": {
+        "horizontal_accuracy_uncertainty_m": null,
+        "missing_uncertainties_remain_masked": true,
+        "quantitative_mismatch_treatment_available": false,
+        "signed_event_minus_flight_days": 2358.36875,
+        "snow_depth_uncertainty_m": null,
+        "surface_type": "bare-earth DTM, not avalanche-day snow surface",
+        "vegetation_or_classification_residual_uncertainty_m": null,
+        "vertical_accuracy_uncertainty_m": null
+      },
+      "event_time": "2023-03-31T10:51:00+02:00",
+      "normalized_candidate_sha256": "37278d445a23b35e63132435054cfe2e6c7aad3d16f7f9b9c06804e2ff13450d",
+      "selected_project": {
+        "AARSTALL": 2016,
+        "CATEGORY": 1,
+        "DEKNINGSNUMMER": "42107",
+        "FKB_LASERSTANDARD": "10",
+        "FLYFIRMA": "Terratec AS",
+        "HOYDESYSTEM": "5941",
+        "KOORDINATSYSTEM": "25832",
+        "LAS_PROJECT_ID": 562,
+        "LAS_PROJECT_NAME": "NDH Sykkylven 2pkt 2016",
+        "NAME": "NDH Sykkylven 2pkt 2016",
+        "OBJECTID": 41448,
+        "OBJEKTKATALOG": "FKB-Laser 2.0",
+        "OPPDRAGSGIVER": "Kartverket",
+        "OPPLOSNING": 0.5,
+        "PROSJEKTNR": null,
+        "PUBLISERT": "published",
+        "PUNKTTETTHET": 2,
+        "RAPPORT": null,
+        "SISTEFLYDATO": 1476489600000,
+        "TILGANG": "1",
+        "TYPE": "1"
+      },
+      "source_geometry_sha256": "9c8e03958fad25b773cea8fba0ee1d824d363f18b34cfa34efa9490332ed6fdf",
+      "source_project_count_returned": 12,
+      "source_project_lineage": {
+        "access": "anonymous public Høydedata ImageServer read",
+        "flight_time_utc": "2016-10-15T00:00:00Z",
+        "las_project_id": 562,
+        "name": "NDH Sykkylven 2pkt 2016",
+        "objectid": 41448,
+        "point_density_m2": 2,
+        "project_report": null,
+        "provider": "Kartverket Høydedata DTM ImageServer",
+        "provider_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer",
+        "source_horizontal_crs": "EPSG:25832",
+        "source_horizontal_units": "metre",
+        "source_resolution_m": 0.5,
+        "vertical_reference": {
+          "epsg": 5941,
+          "name": "NN2000 height",
+          "resolved": true
+        },
+        "year": 2016
+      },
+      "source_project_query": {
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-341799/source-project-query.request.json",
+        "request_sha256": "6490e91b00b87568132f218508ee2ade668cb6cfc7b5c156b29cc5bbfbdf2e98",
+        "response_metadata": {
+          "content_length_header": null,
+          "content_type": "application/json; charset=UTF-8",
+          "etag": "\"cef27b83\"",
+          "final_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer/query?f=json&geometry=6.7887955528%2C62.3022473198&geometryType=esriGeometryPoint&inSR=4326&outFields=OBJECTID%2CNAME%2CCATEGORY%2CLAS_PROJECT_ID%2CLAS_PROJECT_NAME%2COPPDRAGSGIVER%2CDEKNINGSNUMMER%2CFKB_LASERSTANDARD%2CFLYFIRMA%2CTYPE%2CTILGANG%2CPROSJEKTNR%2CKOORDINATSYSTEM%2CHOYDESYSTEM%2CPUNKTTETTHET%2CAARSTALL%2CSISTEFLYDATO%2CPUBLISERT%2CRAPPORT%2COPPLOSNING%2COBJEKTKATALOG&resultRecordCount=200&returnGeometry=false&spatialRel=esriSpatialRelIntersects&where=1%3D1",
+          "last_modified": null,
+          "status": 200
+        },
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-341799/source-project-query.response-metadata.json",
+        "response_metadata_sha256": "cfd3ebc01f62174e2aca9b9f30298a8d43ff4acbd93f12a6548c372b81123029",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-341799/source-project-query.response.json",
+        "response_sha256": "71b57970bb8f9a9f3917acc20b792eb41d79b3642acfb33f43e40136029bcb82"
+      },
+      "status": "acquired_screening_terrain_not_event_surface_eligible",
+      "terrain": {
+        "raster": {
+          "count": 1,
+          "crs": "EPSG:25833",
+          "driver": "GTiff",
+          "dtype": "float32",
+          "height": 128,
+          "maximum_m": 1072.5413818359375,
+          "minimum_m": 747.1517333984375,
+          "missing_pixels": 5208,
+          "nodata": -9999.0,
+          "transform": [
+            10.0,
+            0.0,
+            74300.0,
+            0.0,
+            -10.0,
+            6935600.0
+          ],
+          "valid_pixels": 12072,
+          "width": 135
+        },
+        "raster_bytes": 132241,
+        "raster_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-341799/terrain-screening-10m.metadata.json",
+        "raster_metadata_sha256": "93d58b1376df9f17a22f1a02a77de64e51bc5dd0adca7ce9a97d37f2e0b7d0d2",
+        "raster_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-341799/terrain-screening-10m.tif",
+        "raster_sha256": "0b693d2cc8596acb563dbb70d71ab2e3a4782ac79486b6fdd7410024176258a9",
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-341799/export.request.json",
+        "request_sha256": "cfef2f493382f2f05e353b53a2e6806152de05c15c0fdb44ed3ce93a1cc2d5e2",
+        "requested_bounds": [
+          74300.0,
+          6934320.0,
+          75650.0,
+          6935600.0
+        ],
+        "requested_crs": "EPSG:25833",
+        "requested_resolution_m": 10.0,
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-341799/export.response-metadata.json",
+        "response_metadata_sha256": "403e5dc7a0244d2d6a604fa88b53695d62ea0ad0343d822cb9c38eb771a5f7a3",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-341799/export.response.json",
+        "response_sha256": "863f8e9416562b01635e50d23fc7c8e7193ec0b63b6e0974f7fc252cbb8de2af"
+      },
+      "terrain_acquired": true,
+      "transformations": [
+        {
+          "coordinate_order": "always_xy",
+          "library": "PROJ via pyproj",
+          "operation": "candidate EPSG:4326 longitude/latitude to output grid",
+          "target_crs": "EPSG:25833"
+        },
+        {
+          "horizontal_resampling": "bilinear",
+          "operation": "ImageServer source project mosaic to requested output grid",
+          "source_crs": "EPSG:25832",
+          "target_crs": "EPSG:25833",
+          "vertical_transformation": "none; elevations retain the selected project's height reference"
+        }
+      ],
+      "validation_contract_v3_terrain_eligible": false
+    },
+    {
+      "blockers": [
+        "screening_10m_chip_is_not_native_solver_terrain",
+        "avalanche_day_snow_surface_mismatch_unquantified",
+        "vertical_accuracy_uncertainty_unavailable",
+        "horizontal_accuracy_uncertainty_unavailable"
+      ],
+      "candidate_id": "regobs-354318",
+      "event_surface_mismatch": {
+        "horizontal_accuracy_uncertainty_m": null,
+        "missing_uncertainties_remain_masked": true,
+        "quantitative_mismatch_treatment_available": false,
+        "signed_event_minus_flight_days": 1149.490961,
+        "snow_depth_uncertainty_m": null,
+        "surface_type": "bare-earth DTM, not avalanche-day snow surface",
+        "vegetation_or_classification_residual_uncertainty_m": null,
+        "vertical_accuracy_uncertainty_m": null
+      },
+      "event_time": "2023-11-06T12:46:59+01:00",
+      "normalized_candidate_sha256": "e77250b021f4557bdb96dd7cbac16b40670a82e1f8133ec4c0ccd49aaa32adda",
+      "selected_project": {
+        "AARSTALL": 2020,
+        "CATEGORY": 1,
+        "DEKNINGSNUMMER": "42166",
+        "FKB_LASERSTANDARD": "FKB-Laser-C-DTM10",
+        "FLYFIRMA": "Terratec AS",
+        "HOYDESYSTEM": "5941",
+        "KOORDINATSYSTEM": "25833",
+        "LAS_PROJECT_ID": 4712,
+        "LAS_PROJECT_NAME": "NDH Ullsfjorden 2pkt 2020",
+        "NAME": "NDH Ullsfjorden 2pkt 2020",
+        "OBJECTID": 155196,
+        "OBJEKTKATALOG": "FKB-Laser 3.0",
+        "OPPDRAGSGIVER": "Kartverket",
+        "OPPLOSNING": 0.5,
+        "PROSJEKTNR": null,
+        "PUBLISERT": "published",
+        "PUNKTTETTHET": 2,
+        "RAPPORT": null,
+        "SISTEFLYDATO": 1599955200000,
+        "TILGANG": "1",
+        "TYPE": "1"
+      },
+      "source_geometry_sha256": "1b21ffad9c7f3ad54e84c97d986b9574907825496bbfe0633b15f9084be1ed2c",
+      "source_project_count_returned": 13,
+      "source_project_lineage": {
+        "access": "anonymous public Høydedata ImageServer read",
+        "flight_time_utc": "2020-09-13T00:00:00Z",
+        "las_project_id": 4712,
+        "name": "NDH Ullsfjorden 2pkt 2020",
+        "objectid": 155196,
+        "point_density_m2": 2,
+        "project_report": null,
+        "provider": "Kartverket Høydedata DTM ImageServer",
+        "provider_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer",
+        "source_horizontal_crs": "EPSG:25833",
+        "source_horizontal_units": "metre",
+        "source_resolution_m": 0.5,
+        "vertical_reference": {
+          "epsg": 5941,
+          "name": "NN2000 height",
+          "resolved": true
+        },
+        "year": 2020
+      },
+      "source_project_query": {
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-354318/source-project-query.request.json",
+        "request_sha256": "b247ac91019ac6b6aeebf087affeb62207f38c5544ab9cf76d83712ec51ffa44",
+        "response_metadata": {
+          "content_length_header": null,
+          "content_type": "application/json; charset=UTF-8",
+          "etag": "\"1025700d\"",
+          "final_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer/query?f=json&geometry=20.2525734910%2C69.8876830593&geometryType=esriGeometryPoint&inSR=4326&outFields=OBJECTID%2CNAME%2CCATEGORY%2CLAS_PROJECT_ID%2CLAS_PROJECT_NAME%2COPPDRAGSGIVER%2CDEKNINGSNUMMER%2CFKB_LASERSTANDARD%2CFLYFIRMA%2CTYPE%2CTILGANG%2CPROSJEKTNR%2CKOORDINATSYSTEM%2CHOYDESYSTEM%2CPUNKTTETTHET%2CAARSTALL%2CSISTEFLYDATO%2CPUBLISERT%2CRAPPORT%2COPPLOSNING%2COBJEKTKATALOG&resultRecordCount=200&returnGeometry=false&spatialRel=esriSpatialRelIntersects&where=1%3D1",
+          "last_modified": null,
+          "status": 200
+        },
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-354318/source-project-query.response-metadata.json",
+        "response_metadata_sha256": "c2a7a588d83cd57a761f66976798aec9bd5b54e095e6a4edc7140bbbebe1a2b7",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-354318/source-project-query.response.json",
+        "response_sha256": "c24c0e022be196809a1e8ed7c43497e58a6b0c8a31e5c180b17e23a86ab27cc3"
+      },
+      "status": "acquired_screening_terrain_not_event_surface_eligible",
+      "terrain": {
+        "raster": {
+          "count": 1,
+          "crs": "EPSG:25833",
+          "driver": "GTiff",
+          "dtype": "float32",
+          "height": 131,
+          "maximum_m": 1218.18798828125,
+          "minimum_m": 503.1332702636719,
+          "missing_pixels": 0,
+          "nodata": -9999.0,
+          "transform": [
+            10.0,
+            0.0,
+            700680.0,
+            0.0,
+            -10.0,
+            7762830.0
+          ],
+          "valid_pixels": 15720,
+          "width": 120
+        },
+        "raster_bytes": 132241,
+        "raster_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-354318/terrain-screening-10m.metadata.json",
+        "raster_metadata_sha256": "c4c3453471badbee2d25516b1ab658d12559cc0fca84c019a50813cacfb87962",
+        "raster_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-354318/terrain-screening-10m.tif",
+        "raster_sha256": "57bde92a8c2ed368179855790d657a83eec601423aa7e1e92c72b599ec94c048",
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-354318/export.request.json",
+        "request_sha256": "56a509a8f5e8f6ac26e3f0a8f3f520be78fbfffeea5cc9b7e00827c23f12a217",
+        "requested_bounds": [
+          700680.0,
+          7761520.0,
+          701880.0,
+          7762830.0
+        ],
+        "requested_crs": "EPSG:25833",
+        "requested_resolution_m": 10.0,
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-354318/export.response-metadata.json",
+        "response_metadata_sha256": "02c95bd2658bbbaee5e33e9c2457e70f0bc8521581f25b8709516f1875585428",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-354318/export.response.json",
+        "response_sha256": "ab0a612f275cb0337bf9b987e5e8143598a268c86e034dbbf5cef6c49859ea99"
+      },
+      "terrain_acquired": true,
+      "transformations": [
+        {
+          "coordinate_order": "always_xy",
+          "library": "PROJ via pyproj",
+          "operation": "candidate EPSG:4326 longitude/latitude to output grid",
+          "target_crs": "EPSG:25833"
+        },
+        {
+          "horizontal_resampling": "bilinear",
+          "operation": "ImageServer source project mosaic to requested output grid",
+          "source_crs": "EPSG:25833",
+          "target_crs": "EPSG:25833",
+          "vertical_transformation": "none; elevations retain the selected project's height reference"
+        }
+      ],
+      "validation_contract_v3_terrain_eligible": false
+    },
+    {
+      "blockers": [
+        "screening_10m_chip_is_not_native_solver_terrain",
+        "avalanche_day_snow_surface_mismatch_unquantified",
+        "vertical_accuracy_uncertainty_unavailable",
+        "horizontal_accuracy_uncertainty_unavailable"
+      ],
+      "candidate_id": "regobs-358192",
+      "event_surface_mismatch": {
+        "horizontal_accuracy_uncertainty_m": null,
+        "missing_uncertainties_remain_masked": true,
+        "quantitative_mismatch_treatment_available": false,
+        "signed_event_minus_flight_days": 1538.545139,
+        "snow_depth_uncertainty_m": null,
+        "surface_type": "bare-earth DTM, not avalanche-day snow surface",
+        "vegetation_or_classification_residual_uncertainty_m": null,
+        "vertical_accuracy_uncertainty_m": null
+      },
+      "event_time": "2023-12-09T14:05:00+01:00",
+      "normalized_candidate_sha256": "82e8268d8f24201f7b3765c156c72f54be2b5aaf44a55d5c2ea80342360b2c6d",
+      "selected_project": {
+        "AARSTALL": 2019,
+        "CATEGORY": 1,
+        "DEKNINGSNUMMER": "42329",
+        "FKB_LASERSTANDARD": "FKB-Laser-C-DTM10",
+        "FLYFIRMA": "Terratec AS",
+        "HOYDESYSTEM": "5941",
+        "KOORDINATSYSTEM": "25832",
+        "LAS_PROJECT_ID": 1182,
+        "LAS_PROJECT_NAME": "NDH Volda-Ørsta 2pkt 2019",
+        "NAME": "NDH Volda-Ørsta 2pkt 2019",
+        "OBJECTID": 124719,
+        "OBJEKTKATALOG": "FKB-Laser 3.0",
+        "OPPDRAGSGIVER": "Kartverket",
+        "OPPLOSNING": 0.5,
+        "PROSJEKTNR": null,
+        "PUBLISERT": "published",
+        "PUNKTTETTHET": 2,
+        "RAPPORT": null,
+        "SISTEFLYDATO": 1569196800000,
+        "TILGANG": "1",
+        "TYPE": "1"
+      },
+      "source_geometry_sha256": "fc57874d5b758c49f6e85657903dc59cdefd9c48ecd0afc0b0a9fb80ce055a1d",
+      "source_project_count_returned": 12,
+      "source_project_lineage": {
+        "access": "anonymous public Høydedata ImageServer read",
+        "flight_time_utc": "2019-09-23T00:00:00Z",
+        "las_project_id": 1182,
+        "name": "NDH Volda-Ørsta 2pkt 2019",
+        "objectid": 124719,
+        "point_density_m2": 2,
+        "project_report": null,
+        "provider": "Kartverket Høydedata DTM ImageServer",
+        "provider_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer",
+        "source_horizontal_crs": "EPSG:25832",
+        "source_horizontal_units": "metre",
+        "source_resolution_m": 0.5,
+        "vertical_reference": {
+          "epsg": 5941,
+          "name": "NN2000 height",
+          "resolved": true
+        },
+        "year": 2019
+      },
+      "source_project_query": {
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-358192/source-project-query.request.json",
+        "request_sha256": "4c7a404bdd5ef9f22766da9bde41da1574e48ea335758330cbfc58aa9595a353",
+        "response_metadata": {
+          "content_length_header": null,
+          "content_type": "application/json; charset=UTF-8",
+          "etag": "\"e87249ba\"",
+          "final_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer/query?f=json&geometry=6.3893866539%2C62.2811087624&geometryType=esriGeometryPoint&inSR=4326&outFields=OBJECTID%2CNAME%2CCATEGORY%2CLAS_PROJECT_ID%2CLAS_PROJECT_NAME%2COPPDRAGSGIVER%2CDEKNINGSNUMMER%2CFKB_LASERSTANDARD%2CFLYFIRMA%2CTYPE%2CTILGANG%2CPROSJEKTNR%2CKOORDINATSYSTEM%2CHOYDESYSTEM%2CPUNKTTETTHET%2CAARSTALL%2CSISTEFLYDATO%2CPUBLISERT%2CRAPPORT%2COPPLOSNING%2COBJEKTKATALOG&resultRecordCount=200&returnGeometry=false&spatialRel=esriSpatialRelIntersects&where=1%3D1",
+          "last_modified": null,
+          "status": 200
+        },
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-358192/source-project-query.response-metadata.json",
+        "response_metadata_sha256": "5b28c01d448c7a05dac0ae6bd4be481a544d42292fdbf0a26beb680e57f50423",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-358192/source-project-query.response.json",
+        "response_sha256": "8511a2e904244ffe8db50e14782c94c4a0f9f18057eb602192b24a2528b31dc2"
+      },
+      "status": "acquired_screening_terrain_not_event_surface_eligible",
+      "terrain": {
+        "raster": {
+          "count": 1,
+          "crs": "EPSG:25833",
+          "driver": "GTiff",
+          "dtype": "float32",
+          "height": 117,
+          "maximum_m": 1203.9600830078125,
+          "minimum_m": 606.669189453125,
+          "missing_pixels": 273,
+          "nodata": -9999.0,
+          "transform": [
+            10.0,
+            0.0,
+            53210.0,
+            0.0,
+            -10.0,
+            6935740.0
+          ],
+          "valid_pixels": 16224,
+          "width": 141
+        },
+        "raster_bytes": 132241,
+        "raster_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-358192/terrain-screening-10m.metadata.json",
+        "raster_metadata_sha256": "a22caec272823f877884ad37a6b8cd6f0f8db08781b55a335b704053bede4054",
+        "raster_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-358192/terrain-screening-10m.tif",
+        "raster_sha256": "37973baa7c8afa934fda7d82fd5f359921590d5b8881d25a246dc6f63fba33fe",
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-358192/export.request.json",
+        "request_sha256": "6b34253559b54f33ceab546610b4118fa0bdfba6487d8bc291ff2cb8977b07ab",
+        "requested_bounds": [
+          53210.0,
+          6934570.0,
+          54620.0,
+          6935740.0
+        ],
+        "requested_crs": "EPSG:25833",
+        "requested_resolution_m": 10.0,
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-358192/export.response-metadata.json",
+        "response_metadata_sha256": "325829af386f96af497870421228e8f73672275a350288d5bba31c198df50aa9",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-358192/export.response.json",
+        "response_sha256": "07789761532f7fa1dedd3447cc9f5c5b33e70a733895eaa99db1b71203b48721"
+      },
+      "terrain_acquired": true,
+      "transformations": [
+        {
+          "coordinate_order": "always_xy",
+          "library": "PROJ via pyproj",
+          "operation": "candidate EPSG:4326 longitude/latitude to output grid",
+          "target_crs": "EPSG:25833"
+        },
+        {
+          "horizontal_resampling": "bilinear",
+          "operation": "ImageServer source project mosaic to requested output grid",
+          "source_crs": "EPSG:25832",
+          "target_crs": "EPSG:25833",
+          "vertical_transformation": "none; elevations retain the selected project's height reference"
+        }
+      ],
+      "validation_contract_v3_terrain_eligible": false
+    },
+    {
+      "blockers": [
+        "screening_10m_chip_is_not_native_solver_terrain",
+        "avalanche_day_snow_surface_mismatch_unquantified",
+        "vertical_accuracy_uncertainty_unavailable",
+        "horizontal_accuracy_uncertainty_unavailable"
+      ],
+      "candidate_id": "regobs-369343",
+      "event_surface_mismatch": {
+        "horizontal_accuracy_uncertainty_m": null,
+        "missing_uncertainties_remain_masked": true,
+        "quantitative_mismatch_treatment_available": false,
+        "signed_event_minus_flight_days": 2383.506389,
+        "snow_depth_uncertainty_m": null,
+        "surface_type": "bare-earth DTM, not avalanche-day snow surface",
+        "vegetation_or_classification_residual_uncertainty_m": null,
+        "vertical_accuracy_uncertainty_m": null
+      },
+      "event_time": "2024-01-27T13:09:12+01:00",
+      "normalized_candidate_sha256": "47b3219344ee5eb876cd1a47451350f2ff811d98b599ce6ebd0b5e9a4962f686",
+      "selected_project": {
+        "AARSTALL": 2017,
+        "CATEGORY": 1,
+        "DEKNINGSNUMMER": "42266",
+        "FKB_LASERSTANDARD": "10",
+        "FLYFIRMA": "Terratec AS",
+        "HOYDESYSTEM": "5941",
+        "KOORDINATSYSTEM": "25832",
+        "LAS_PROJECT_ID": 799,
+        "LAS_PROJECT_NAME": "NDH Mørkedalen 5pkt 2017",
+        "NAME": "NDH Mørkedalen 5pkt 2017",
+        "OBJECTID": 56415,
+        "OBJEKTKATALOG": "FKB-Laser 3.0",
+        "OPPDRAGSGIVER": "Kartverket",
+        "OPPLOSNING": 0.25,
+        "PROSJEKTNR": null,
+        "PUBLISERT": "published",
+        "PUNKTTETTHET": 5,
+        "RAPPORT": null,
+        "SISTEFLYDATO": 1500422400000,
+        "TILGANG": "1",
+        "TYPE": "1"
+      },
+      "source_geometry_sha256": "4273c410950943a5205f82d96737fb6b70bdc1d145a1a8f7a8fa84c2a63d1386",
+      "source_project_count_returned": 18,
+      "source_project_lineage": {
+        "access": "anonymous public Høydedata ImageServer read",
+        "flight_time_utc": "2017-07-19T00:00:00Z",
+        "las_project_id": 799,
+        "name": "NDH Mørkedalen 5pkt 2017",
+        "objectid": 56415,
+        "point_density_m2": 5,
+        "project_report": null,
+        "provider": "Kartverket Høydedata DTM ImageServer",
+        "provider_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer",
+        "source_horizontal_crs": "EPSG:25832",
+        "source_horizontal_units": "metre",
+        "source_resolution_m": 0.25,
+        "vertical_reference": {
+          "epsg": 5941,
+          "name": "NN2000 height",
+          "resolved": true
+        },
+        "year": 2017
+      },
+      "source_project_query": {
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-369343/source-project-query.request.json",
+        "request_sha256": "66df97af800e3755574a49d536c9d625dc8b90b9608fd5380d56939aeb41e40f",
+        "response_metadata": {
+          "content_length_header": null,
+          "content_type": "application/json; charset=UTF-8",
+          "etag": "\"aeebfe60\"",
+          "final_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer/query?f=json&geometry=8.5196828842%2C60.8486423079&geometryType=esriGeometryPoint&inSR=4326&outFields=OBJECTID%2CNAME%2CCATEGORY%2CLAS_PROJECT_ID%2CLAS_PROJECT_NAME%2COPPDRAGSGIVER%2CDEKNINGSNUMMER%2CFKB_LASERSTANDARD%2CFLYFIRMA%2CTYPE%2CTILGANG%2CPROSJEKTNR%2CKOORDINATSYSTEM%2CHOYDESYSTEM%2CPUNKTTETTHET%2CAARSTALL%2CSISTEFLYDATO%2CPUBLISERT%2CRAPPORT%2COPPLOSNING%2COBJEKTKATALOG&resultRecordCount=200&returnGeometry=false&spatialRel=esriSpatialRelIntersects&where=1%3D1",
+          "last_modified": null,
+          "status": 200
+        },
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-369343/source-project-query.response-metadata.json",
+        "response_metadata_sha256": "65fe986ebd29c650c43ec4f5fd651aa41d57d6fc49bdacd1e39d8b33111b3ee0",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-369343/source-project-query.response.json",
+        "response_sha256": "ce07ea6ce660f11018838ebad5e7ee8e2330c75408550a6780746cd1e70f2cd5"
+      },
+      "status": "acquired_screening_terrain_not_event_surface_eligible",
+      "terrain": {
+        "raster": {
+          "count": 1,
+          "crs": "EPSG:25833",
+          "driver": "GTiff",
+          "dtype": "float32",
+          "height": 121,
+          "maximum_m": 1296.4046630859375,
+          "minimum_m": 938.61962890625,
+          "missing_pixels": 494,
+          "nodata": -9999.0,
+          "transform": [
+            10.0,
+            0.0,
+            147730.0,
+            0.0,
+            -10.0,
+            6763950.0
+          ],
+          "valid_pixels": 13421,
+          "width": 115
+        },
+        "raster_bytes": 66689,
+        "raster_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-369343/terrain-screening-10m.metadata.json",
+        "raster_metadata_sha256": "7fae83a5f96c7979334b3bb34ae6adbdae2df2b31c76ee059323fcdb93aaae5b",
+        "raster_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-369343/terrain-screening-10m.tif",
+        "raster_sha256": "d6f4e2594554aa22c9feafd8664d2deceec274883f9e0f50c68ae9e42c16632b",
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-369343/export.request.json",
+        "request_sha256": "ee64eb37892b3b5c6056ff6b9b004a2e8c6a9f769c91c85aed08ba88c7711cd4",
+        "requested_bounds": [
+          147730.0,
+          6762740.0,
+          148880.0,
+          6763950.0
+        ],
+        "requested_crs": "EPSG:25833",
+        "requested_resolution_m": 10.0,
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-369343/export.response-metadata.json",
+        "response_metadata_sha256": "e742ed10699e7df21521394a6d74bf1dc0ee2230011206cbea698735e71d4440",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-369343/export.response.json",
+        "response_sha256": "280ed7823ddf51cc78e33adc11faa78e928b86652fb2d51ade1e53e7045acf2c"
+      },
+      "terrain_acquired": true,
+      "transformations": [
+        {
+          "coordinate_order": "always_xy",
+          "library": "PROJ via pyproj",
+          "operation": "candidate EPSG:4326 longitude/latitude to output grid",
+          "target_crs": "EPSG:25833"
+        },
+        {
+          "horizontal_resampling": "bilinear",
+          "operation": "ImageServer source project mosaic to requested output grid",
+          "source_crs": "EPSG:25832",
+          "target_crs": "EPSG:25833",
+          "vertical_transformation": "none; elevations retain the selected project's height reference"
+        }
+      ],
+      "validation_contract_v3_terrain_eligible": false
+    },
+    {
+      "blockers": [
+        "screening_10m_chip_is_not_native_solver_terrain",
+        "avalanche_day_snow_surface_mismatch_unquantified",
+        "vertical_accuracy_uncertainty_unavailable",
+        "horizontal_accuracy_uncertainty_unavailable"
+      ],
+      "candidate_id": "regobs-376510",
+      "event_surface_mismatch": {
+        "horizontal_accuracy_uncertainty_m": null,
+        "missing_uncertainties_remain_masked": true,
+        "quantitative_mismatch_treatment_available": false,
+        "signed_event_minus_flight_days": 4201.549132,
+        "snow_depth_uncertainty_m": null,
+        "surface_type": "bare-earth DTM, not avalanche-day snow surface",
+        "vegetation_or_classification_residual_uncertainty_m": null,
+        "vertical_accuracy_uncertainty_m": null
+      },
+      "event_time": "2024-02-17T14:10:45+01:00",
+      "normalized_candidate_sha256": "0f7f436bbbc3b111a1df78ec53b9f45a3b350c668f64ce78a27eea6b903cbf3c",
+      "selected_project": {
+        "AARSTALL": 2012,
+        "CATEGORY": 1,
+        "DEKNINGSNUMMER": "BNO12010",
+        "FKB_LASERSTANDARD": "10",
+        "FLYFIRMA": "Blom Geomatics AS",
+        "HOYDESYSTEM": "5941",
+        "KOORDINATSYSTEM": "25832",
+        "LAS_PROJECT_ID": 86,
+        "LAS_PROJECT_NAME": "Midt-Gudbrandsdalen 2012",
+        "NAME": "Midt-Gudbrandsdalen 2012",
+        "OBJECTID": 4683,
+        "OBJEKTKATALOG": "FKB-Laser 2.0",
+        "OPPDRAGSGIVER": "Kartverket",
+        "OPPLOSNING": 0.25,
+        "PROSJEKTNR": null,
+        "PUBLISERT": "published",
+        "PUNKTTETTHET": 5,
+        "RAPPORT": null,
+        "SISTEFLYDATO": 1345161600000,
+        "TILGANG": "1",
+        "TYPE": "1"
+      },
+      "source_geometry_sha256": "a256f44dcf181237b4b8bcbad75d62bfacc327f2eefa3f6b2cb576de1f374948",
+      "source_project_count_returned": 19,
+      "source_project_lineage": {
+        "access": "anonymous public Høydedata ImageServer read",
+        "flight_time_utc": "2012-08-17T00:00:00Z",
+        "las_project_id": 86,
+        "name": "Midt-Gudbrandsdalen 2012",
+        "objectid": 4683,
+        "point_density_m2": 5,
+        "project_report": null,
+        "provider": "Kartverket Høydedata DTM ImageServer",
+        "provider_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer",
+        "source_horizontal_crs": "EPSG:25832",
+        "source_horizontal_units": "metre",
+        "source_resolution_m": 0.25,
+        "vertical_reference": {
+          "epsg": 5941,
+          "name": "NN2000 height",
+          "resolved": true
+        },
+        "year": 2012
+      },
+      "source_project_query": {
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-376510/source-project-query.request.json",
+        "request_sha256": "cdc7de54799b2f11055f0d1c3ab1f8aea9ffd1ae6a33c45c3a88abb339158057",
+        "response_metadata": {
+          "content_length_header": null,
+          "content_type": "application/json; charset=UTF-8",
+          "etag": "\"708540ae\"",
+          "final_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer/query?f=json&geometry=10.3267326951%2C61.4180556689&geometryType=esriGeometryPoint&inSR=4326&outFields=OBJECTID%2CNAME%2CCATEGORY%2CLAS_PROJECT_ID%2CLAS_PROJECT_NAME%2COPPDRAGSGIVER%2CDEKNINGSNUMMER%2CFKB_LASERSTANDARD%2CFLYFIRMA%2CTYPE%2CTILGANG%2CPROSJEKTNR%2CKOORDINATSYSTEM%2CHOYDESYSTEM%2CPUNKTTETTHET%2CAARSTALL%2CSISTEFLYDATO%2CPUBLISERT%2CRAPPORT%2COPPLOSNING%2COBJEKTKATALOG&resultRecordCount=200&returnGeometry=false&spatialRel=esriSpatialRelIntersects&where=1%3D1",
+          "last_modified": null,
+          "status": 200
+        },
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-376510/source-project-query.response-metadata.json",
+        "response_metadata_sha256": "30a9cde5f041ee0c665334bc2f63af0a8f7c6a98af79ad9a37ada84e55d61321",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-376510/source-project-query.response.json",
+        "response_sha256": "f01e5ad3dab09c326dd86897bca3d168a9e08120e4b7f8f9db337b648cbd7d4b"
+      },
+      "status": "acquired_screening_terrain_not_event_surface_eligible",
+      "terrain": {
+        "raster": {
+          "count": 1,
+          "crs": "EPSG:25833",
+          "driver": "GTiff",
+          "dtype": "float32",
+          "height": 106,
+          "maximum_m": 1064.682861328125,
+          "minimum_m": 896.4741821289062,
+          "missing_pixels": 3025,
+          "nodata": -9999.0,
+          "transform": [
+            10.0,
+            0.0,
+            250220.0,
+            0.0,
+            -10.0,
+            6818810.0
+          ],
+          "valid_pixels": 7787,
+          "width": 102
+        },
+        "raster_bytes": 66689,
+        "raster_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-376510/terrain-screening-10m.metadata.json",
+        "raster_metadata_sha256": "2d025e97447f108546a26da55d08e77df1d1ae9125e3ccc16c8bc51640ca5268",
+        "raster_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-376510/terrain-screening-10m.tif",
+        "raster_sha256": "067b6d34bc71d5218fd5c8f55444396992941ff96964dcad219d86ea59bb2927",
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-376510/export.request.json",
+        "request_sha256": "34fc2cd2b5e935af3eae7d12cd26b7a1ff3390a4633e2f4e7a573834380e71dc",
+        "requested_bounds": [
+          250220.0,
+          6817750.0,
+          251240.0,
+          6818810.0
+        ],
+        "requested_crs": "EPSG:25833",
+        "requested_resolution_m": 10.0,
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-376510/export.response-metadata.json",
+        "response_metadata_sha256": "4a8478f0d9cf703b6ef9d858cb3475a3b467fd293ca1e6f6e4d6c43e81641ff1",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-376510/export.response.json",
+        "response_sha256": "bcba26c98e871307d89e7165b65727ed9733b6315da9e00f9be5de6e9d2caafd"
+      },
+      "terrain_acquired": true,
+      "transformations": [
+        {
+          "coordinate_order": "always_xy",
+          "library": "PROJ via pyproj",
+          "operation": "candidate EPSG:4326 longitude/latitude to output grid",
+          "target_crs": "EPSG:25833"
+        },
+        {
+          "horizontal_resampling": "bilinear",
+          "operation": "ImageServer source project mosaic to requested output grid",
+          "source_crs": "EPSG:25832",
+          "target_crs": "EPSG:25833",
+          "vertical_transformation": "none; elevations retain the selected project's height reference"
+        }
+      ],
+      "validation_contract_v3_terrain_eligible": false
+    },
+    {
+      "blockers": [
+        "screening_10m_chip_is_not_native_solver_terrain",
+        "avalanche_day_snow_surface_mismatch_unquantified",
+        "vertical_accuracy_uncertainty_unavailable",
+        "horizontal_accuracy_uncertainty_unavailable"
+      ],
+      "candidate_id": "regobs-382585",
+      "event_surface_mismatch": {
+        "horizontal_accuracy_uncertainty_m": null,
+        "missing_uncertainties_remain_masked": true,
+        "quantitative_mismatch_treatment_available": false,
+        "signed_event_minus_flight_days": 3127.500567,
+        "snow_depth_uncertainty_m": null,
+        "surface_type": "bare-earth DTM, not avalanche-day snow surface",
+        "vegetation_or_classification_residual_uncertainty_m": null,
+        "vertical_accuracy_uncertainty_m": null
+      },
+      "event_time": "2024-03-15T13:00:49+01:00",
+      "normalized_candidate_sha256": "c22e41792065f9cd836872d9a4f6ccd0447c491c10e8ed06079ba808d3cc442a",
+      "selected_project": {
+        "AARSTALL": 2014,
+        "CATEGORY": 1,
+        "DEKNINGSNUMMER": "ukjent",
+        "FKB_LASERSTANDARD": "FKB-Laser-C-DTM10",
+        "FLYFIRMA": "BLOM",
+        "HOYDESYSTEM": "5941",
+        "KOORDINATSYSTEM": "25832",
+        "LAS_PROJECT_ID": 742,
+        "LAS_PROJECT_NAME": "Sogndal_Aurland_Lærdal 2014",
+        "NAME": "Sogndal_Aurland_Lærdal 2014",
+        "OBJECTID": 149382,
+        "OBJEKTKATALOG": "FKB-Laser 3.0",
+        "OPPDRAGSGIVER": "Kartverket Bergen",
+        "OPPLOSNING": 0.5,
+        "PROSJEKTNR": null,
+        "PUBLISERT": "published",
+        "PUNKTTETTHET": 2,
+        "RAPPORT": null,
+        "SISTEFLYDATO": 1440288000000,
+        "TILGANG": "1",
+        "TYPE": "1"
+      },
+      "source_geometry_sha256": "a1e084c5220442b148ffb049a524581ea1401411e6b2bd9ad2a1482365291db7",
+      "source_project_count_returned": 13,
+      "source_project_lineage": {
+        "access": "anonymous public Høydedata ImageServer read",
+        "flight_time_utc": "2015-08-23T00:00:00Z",
+        "las_project_id": 742,
+        "name": "Sogndal_Aurland_Lærdal 2014",
+        "objectid": 149382,
+        "point_density_m2": 2,
+        "project_report": null,
+        "provider": "Kartverket Høydedata DTM ImageServer",
+        "provider_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer",
+        "source_horizontal_crs": "EPSG:25832",
+        "source_horizontal_units": "metre",
+        "source_resolution_m": 0.5,
+        "vertical_reference": {
+          "epsg": 5941,
+          "name": "NN2000 height",
+          "resolved": true
+        },
+        "year": 2014
+      },
+      "source_project_query": {
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-382585/source-project-query.request.json",
+        "request_sha256": "b842292b61c9697d5cc607c1e3697cd3d9fbb541ca4df2630ae61ed3eb4b936e",
+        "response_metadata": {
+          "content_length_header": null,
+          "content_type": "application/json; charset=UTF-8",
+          "etag": "\"2a944dc\"",
+          "final_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer/query?f=json&geometry=6.8361146003%2C60.9028694871&geometryType=esriGeometryPoint&inSR=4326&outFields=OBJECTID%2CNAME%2CCATEGORY%2CLAS_PROJECT_ID%2CLAS_PROJECT_NAME%2COPPDRAGSGIVER%2CDEKNINGSNUMMER%2CFKB_LASERSTANDARD%2CFLYFIRMA%2CTYPE%2CTILGANG%2CPROSJEKTNR%2CKOORDINATSYSTEM%2CHOYDESYSTEM%2CPUNKTTETTHET%2CAARSTALL%2CSISTEFLYDATO%2CPUBLISERT%2CRAPPORT%2COPPLOSNING%2COBJEKTKATALOG&resultRecordCount=200&returnGeometry=false&spatialRel=esriSpatialRelIntersects&where=1%3D1",
+          "last_modified": null,
+          "status": 200
+        },
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-382585/source-project-query.response-metadata.json",
+        "response_metadata_sha256": "5b8dcb6b00af5ca52c124dc0b661cd73c04d74e21b0fcb8c2328893fddea9f70",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-382585/source-project-query.response.json",
+        "response_sha256": "f65a1cda35c26f3adcd7d1981db89b7db7a9b5201249435beefd6508a595947d"
+      },
+      "status": "acquired_screening_terrain_not_event_surface_eligible",
+      "terrain": {
+        "raster": {
+          "count": 1,
+          "crs": "EPSG:25833",
+          "driver": "GTiff",
+          "dtype": "float32",
+          "height": 207,
+          "maximum_m": 1474.0833740234375,
+          "minimum_m": -0.12013866007328033,
+          "missing_pixels": 8413,
+          "nodata": -9999.0,
+          "transform": [
+            10.0,
+            0.0,
+            57060.0,
+            0.0,
+            -10.0,
+            6780750.0
+          ],
+          "valid_pixels": 48305,
+          "width": 274
+        },
+        "raster_bytes": 328881,
+        "raster_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-382585/terrain-screening-10m.metadata.json",
+        "raster_metadata_sha256": "1673f8482349b5213ed2b68ff38fe488ce9b88b875af0c74ebc5aee1b8fa315d",
+        "raster_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-382585/terrain-screening-10m.tif",
+        "raster_sha256": "4ce9b9f31fd3380b176990283900e909c7046bf9b5e195aea3793068de7c3474",
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-382585/export.request.json",
+        "request_sha256": "fa49246c63d023a36c9c44a7b17d1e5c6579caf6f9e5fbad8f299552c6e7a41a",
+        "requested_bounds": [
+          57060.0,
+          6778680.0,
+          59800.0,
+          6780750.0
+        ],
+        "requested_crs": "EPSG:25833",
+        "requested_resolution_m": 10.0,
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-382585/export.response-metadata.json",
+        "response_metadata_sha256": "5bead3f5786eea289b9f9290d4d35a4b16ee07181abb9b95ca6899addb1535ba",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-382585/export.response.json",
+        "response_sha256": "9d755fff89b77111106c344849e3ac2464ab2968670d10ae830f2d8ef4f9814f"
+      },
+      "terrain_acquired": true,
+      "transformations": [
+        {
+          "coordinate_order": "always_xy",
+          "library": "PROJ via pyproj",
+          "operation": "candidate EPSG:4326 longitude/latitude to output grid",
+          "target_crs": "EPSG:25833"
+        },
+        {
+          "horizontal_resampling": "bilinear",
+          "operation": "ImageServer source project mosaic to requested output grid",
+          "source_crs": "EPSG:25832",
+          "target_crs": "EPSG:25833",
+          "vertical_transformation": "none; elevations retain the selected project's height reference"
+        }
+      ],
+      "validation_contract_v3_terrain_eligible": false
+    },
+    {
+      "blockers": [
+        "screening_10m_chip_is_not_native_solver_terrain",
+        "avalanche_day_snow_surface_mismatch_unquantified",
+        "vertical_accuracy_uncertainty_unavailable",
+        "horizontal_accuracy_uncertainty_unavailable"
+      ],
+      "candidate_id": "regobs-389737",
+      "event_surface_mismatch": {
+        "horizontal_accuracy_uncertainty_m": null,
+        "missing_uncertainties_remain_masked": true,
+        "quantitative_mismatch_treatment_available": false,
+        "signed_event_minus_flight_days": 3938.708333,
+        "snow_depth_uncertainty_m": null,
+        "surface_type": "bare-earth DTM, not avalanche-day snow surface",
+        "vegetation_or_classification_residual_uncertainty_m": null,
+        "vertical_accuracy_uncertainty_m": null
+      },
+      "event_time": "2024-04-21T19:00:00+02:00",
+      "normalized_candidate_sha256": "cb48f601cdbb4128fb5995aad11b76ee4d4c2420416238c74f6d84b4f6e8d728",
+      "selected_project": {
+        "AARSTALL": 2013,
+        "CATEGORY": 1,
+        "DEKNINGSNUMMER": "BNO13012",
+        "FKB_LASERSTANDARD": null,
+        "FLYFIRMA": "Blom Geomatics AS",
+        "HOYDESYSTEM": "5941",
+        "KOORDINATSYSTEM": "25832",
+        "LAS_PROJECT_ID": 60,
+        "LAS_PROJECT_NAME": "Valdres 2013",
+        "NAME": "Valdres 2013",
+        "OBJECTID": 85582,
+        "OBJEKTKATALOG": "FKB-Laser 3.0",
+        "OPPDRAGSGIVER": "Kartverket",
+        "OPPLOSNING": 0.25,
+        "PROSJEKTNR": null,
+        "PUBLISERT": "published",
+        "PUNKTTETTHET": 5,
+        "RAPPORT": null,
+        "SISTEFLYDATO": 1373414400000,
+        "TILGANG": "1",
+        "TYPE": "1"
+      },
+      "source_geometry_sha256": "f7ccf537d3c2351de16adca40062dd4230f5f80a3ecc8a878e137ff25ef74fe5",
+      "source_project_count_returned": 20,
+      "source_project_lineage": {
+        "access": "anonymous public Høydedata ImageServer read",
+        "flight_time_utc": "2013-07-10T00:00:00Z",
+        "las_project_id": 60,
+        "name": "Valdres 2013",
+        "objectid": 85582,
+        "point_density_m2": 5,
+        "project_report": null,
+        "provider": "Kartverket Høydedata DTM ImageServer",
+        "provider_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer",
+        "source_horizontal_crs": "EPSG:25832",
+        "source_horizontal_units": "metre",
+        "source_resolution_m": 0.25,
+        "vertical_reference": {
+          "epsg": 5941,
+          "name": "NN2000 height",
+          "resolved": true
+        },
+        "year": 2013
+      },
+      "source_project_query": {
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-389737/source-project-query.request.json",
+        "request_sha256": "36f4abacb579e39c81e758440ea1df8645bc5b69aa2e35a7373d64f656fc39ea",
+        "response_metadata": {
+          "content_length_header": null,
+          "content_type": "application/json; charset=UTF-8",
+          "etag": "\"dab7f165\"",
+          "final_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer/query?f=json&geometry=8.2098555565%2C61.1979706462&geometryType=esriGeometryPoint&inSR=4326&outFields=OBJECTID%2CNAME%2CCATEGORY%2CLAS_PROJECT_ID%2CLAS_PROJECT_NAME%2COPPDRAGSGIVER%2CDEKNINGSNUMMER%2CFKB_LASERSTANDARD%2CFLYFIRMA%2CTYPE%2CTILGANG%2CPROSJEKTNR%2CKOORDINATSYSTEM%2CHOYDESYSTEM%2CPUNKTTETTHET%2CAARSTALL%2CSISTEFLYDATO%2CPUBLISERT%2CRAPPORT%2COPPLOSNING%2COBJEKTKATALOG&resultRecordCount=200&returnGeometry=false&spatialRel=esriSpatialRelIntersects&where=1%3D1",
+          "last_modified": null,
+          "status": 200
+        },
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-389737/source-project-query.response-metadata.json",
+        "response_metadata_sha256": "e322605547a5024c20a9d0cbbe1758807dfc16456a2dd989c2210c455db152b9",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-389737/source-project-query.response.json",
+        "response_sha256": "4a6b1e1bb8765e344f76ce3f42a665dc279e3a85137e2c263fc9905e188fef03"
+      },
+      "status": "acquired_screening_terrain_not_event_surface_eligible",
+      "terrain": {
+        "raster": {
+          "count": 1,
+          "crs": "EPSG:25833",
+          "driver": "GTiff",
+          "dtype": "float32",
+          "height": 113,
+          "maximum_m": 1448.177978515625,
+          "minimum_m": 970.55029296875,
+          "missing_pixels": 0,
+          "nodata": -9999.0,
+          "transform": [
+            10.0,
+            0.0,
+            134980.0,
+            0.0,
+            -10.0,
+            6804420.0
+          ],
+          "valid_pixels": 12543,
+          "width": 111
+        },
+        "raster_bytes": 66689,
+        "raster_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-389737/terrain-screening-10m.metadata.json",
+        "raster_metadata_sha256": "0ae9389ec5c95cc5e9b5204a96a035232e8f120b7412497bfdeb09b6277080d3",
+        "raster_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-389737/terrain-screening-10m.tif",
+        "raster_sha256": "1a3c9b27dc9f3159d1ceed937ea9418ce843b55825e03ca8c4b214a5de82682a",
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-389737/export.request.json",
+        "request_sha256": "589a508b6eebd2acfb7654eb1820f0fee2d844a46ec54fead9b13abf95d43ce3",
+        "requested_bounds": [
+          134980.0,
+          6803290.0,
+          136090.0,
+          6804420.0
+        ],
+        "requested_crs": "EPSG:25833",
+        "requested_resolution_m": 10.0,
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-389737/export.response-metadata.json",
+        "response_metadata_sha256": "7e6a09db6bc8ccda73a947774da0eb488017b544d3845c5a0dfb4d50eb6fb001",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-389737/export.response.json",
+        "response_sha256": "d95e41417b1bd82ed9182f9cb5cf2abbefae6330f49e18e998744680a2f997c6"
+      },
+      "terrain_acquired": true,
+      "transformations": [
+        {
+          "coordinate_order": "always_xy",
+          "library": "PROJ via pyproj",
+          "operation": "candidate EPSG:4326 longitude/latitude to output grid",
+          "target_crs": "EPSG:25833"
+        },
+        {
+          "horizontal_resampling": "bilinear",
+          "operation": "ImageServer source project mosaic to requested output grid",
+          "source_crs": "EPSG:25832",
+          "target_crs": "EPSG:25833",
+          "vertical_transformation": "none; elevations retain the selected project's height reference"
+        }
+      ],
+      "validation_contract_v3_terrain_eligible": false
+    },
+    {
+      "blockers": [
+        "screening_10m_chip_is_not_native_solver_terrain",
+        "avalanche_day_snow_surface_mismatch_unquantified",
+        "vertical_accuracy_uncertainty_unavailable",
+        "horizontal_accuracy_uncertainty_unavailable"
+      ],
+      "candidate_id": "regobs-420503",
+      "event_surface_mismatch": {
+        "horizontal_accuracy_uncertainty_m": null,
+        "missing_uncertainties_remain_masked": true,
+        "quantitative_mismatch_treatment_available": false,
+        "signed_event_minus_flight_days": 1644.9625,
+        "snow_depth_uncertainty_m": null,
+        "surface_type": "bare-earth DTM, not avalanche-day snow surface",
+        "vegetation_or_classification_residual_uncertainty_m": null,
+        "vertical_accuracy_uncertainty_m": null
+      },
+      "event_time": "2025-03-16T00:06:00+01:00",
+      "normalized_candidate_sha256": "e4cd259dba6f47f4e4dfda8a60a317a0b8247fb4099d0af307ad67dbd9566224",
+      "selected_project": {
+        "AARSTALL": 2020,
+        "CATEGORY": 1,
+        "DEKNINGSNUMMER": "42166",
+        "FKB_LASERSTANDARD": "FKB-Laser-C-DTM10",
+        "FLYFIRMA": "Terratec AS",
+        "HOYDESYSTEM": "5941",
+        "KOORDINATSYSTEM": "25833",
+        "LAS_PROJECT_ID": 4712,
+        "LAS_PROJECT_NAME": "NDH Ullsfjorden 2pkt 2020",
+        "NAME": "NDH Ullsfjorden 2pkt 2020",
+        "OBJECTID": 155194,
+        "OBJEKTKATALOG": "FKB-Laser 3.0",
+        "OPPDRAGSGIVER": "Kartverket",
+        "OPPLOSNING": 0.5,
+        "PROSJEKTNR": null,
+        "PUBLISERT": "published",
+        "PUNKTTETTHET": 2,
+        "RAPPORT": null,
+        "SISTEFLYDATO": 1599955200000,
+        "TILGANG": "1",
+        "TYPE": "1"
+      },
+      "source_geometry_sha256": "68f56b6c46ee6f8e9ea09397b3e8f20fab4233cd76e08b9ffe52a82254cbada9",
+      "source_project_count_returned": 13,
+      "source_project_lineage": {
+        "access": "anonymous public Høydedata ImageServer read",
+        "flight_time_utc": "2020-09-13T00:00:00Z",
+        "las_project_id": 4712,
+        "name": "NDH Ullsfjorden 2pkt 2020",
+        "objectid": 155194,
+        "point_density_m2": 2,
+        "project_report": null,
+        "provider": "Kartverket Høydedata DTM ImageServer",
+        "provider_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer",
+        "source_horizontal_crs": "EPSG:25833",
+        "source_horizontal_units": "metre",
+        "source_resolution_m": 0.5,
+        "vertical_reference": {
+          "epsg": 5941,
+          "name": "NN2000 height",
+          "resolved": true
+        },
+        "year": 2020
+      },
+      "source_project_query": {
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-420503/source-project-query.request.json",
+        "request_sha256": "dfaa255fa9400a3017715f629bac953b0cff2532ba59679852600c1f10655d44",
+        "response_metadata": {
+          "content_length_header": null,
+          "content_type": "application/json; charset=UTF-8",
+          "etag": "\"d9c44c7\"",
+          "final_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer/query?f=json&geometry=19.6281050473%2C69.6756784521&geometryType=esriGeometryPoint&inSR=4326&outFields=OBJECTID%2CNAME%2CCATEGORY%2CLAS_PROJECT_ID%2CLAS_PROJECT_NAME%2COPPDRAGSGIVER%2CDEKNINGSNUMMER%2CFKB_LASERSTANDARD%2CFLYFIRMA%2CTYPE%2CTILGANG%2CPROSJEKTNR%2CKOORDINATSYSTEM%2CHOYDESYSTEM%2CPUNKTTETTHET%2CAARSTALL%2CSISTEFLYDATO%2CPUBLISERT%2CRAPPORT%2COPPLOSNING%2COBJEKTKATALOG&resultRecordCount=200&returnGeometry=false&spatialRel=esriSpatialRelIntersects&where=1%3D1",
+          "last_modified": null,
+          "status": 200
+        },
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-420503/source-project-query.response-metadata.json",
+        "response_metadata_sha256": "f9b6dc2cd8dce301e7aa80c96105604d99526684e9feed1d9d1f4133a5f313f5",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-420503/source-project-query.response.json",
+        "response_sha256": "3f58b4e8ca0ecd70e453c4a89a377441f011b1f372107d0686bf8964d91cc8d6"
+      },
+      "status": "acquired_screening_terrain_not_event_surface_eligible",
+      "terrain": {
+        "raster": {
+          "count": 1,
+          "crs": "EPSG:25833",
+          "driver": "GTiff",
+          "dtype": "float32",
+          "height": 185,
+          "maximum_m": 886.904541015625,
+          "minimum_m": 0.0,
+          "missing_pixels": 8530,
+          "nodata": -9999.0,
+          "transform": [
+            10.0,
+            0.0,
+            678700.0,
+            0.0,
+            -10.0,
+            7737070.0
+          ],
+          "valid_pixels": 23475,
+          "width": 173
+        },
+        "raster_bytes": 263329,
+        "raster_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-420503/terrain-screening-10m.metadata.json",
+        "raster_metadata_sha256": "85a0fbe40cdf6d622b44f4364acbd82969ba2114f3d64f28c4f14192bd07b9f4",
+        "raster_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-420503/terrain-screening-10m.tif",
+        "raster_sha256": "76cf0b06ee0b297d2ac14d1ba33674d8f7ab55a0213896950c1b0c5919a24747",
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-420503/export.request.json",
+        "request_sha256": "ef0a0db1a73402fecab4e118081d61c36ba424c1fd2ff8832b7a5ca39b2573b2",
+        "requested_bounds": [
+          678700.0,
+          7735220.0,
+          680430.0,
+          7737070.0
+        ],
+        "requested_crs": "EPSG:25833",
+        "requested_resolution_m": 10.0,
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-420503/export.response-metadata.json",
+        "response_metadata_sha256": "adbd0fea5c6dd6d9ca1d4d7888c2055005233e4d8628bab66c73e36af739fb04",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-420503/export.response.json",
+        "response_sha256": "143cac63fb6841de268ae17a70759d5f7bf54b1f9f5d8241b69dab421e7d4ea0"
+      },
+      "terrain_acquired": true,
+      "transformations": [
+        {
+          "coordinate_order": "always_xy",
+          "library": "PROJ via pyproj",
+          "operation": "candidate EPSG:4326 longitude/latitude to output grid",
+          "target_crs": "EPSG:25833"
+        },
+        {
+          "horizontal_resampling": "bilinear",
+          "operation": "ImageServer source project mosaic to requested output grid",
+          "source_crs": "EPSG:25833",
+          "target_crs": "EPSG:25833",
+          "vertical_transformation": "none; elevations retain the selected project's height reference"
+        }
+      ],
+      "validation_contract_v3_terrain_eligible": false
+    },
+    {
+      "blockers": [
+        "screening_10m_chip_is_not_native_solver_terrain",
+        "avalanche_day_snow_surface_mismatch_unquantified",
+        "vertical_accuracy_uncertainty_unavailable",
+        "horizontal_accuracy_uncertainty_unavailable"
+      ],
+      "candidate_id": "regobs-422102",
+      "event_surface_mismatch": {
+        "horizontal_accuracy_uncertainty_m": null,
+        "missing_uncertainties_remain_masked": true,
+        "quantitative_mismatch_treatment_available": false,
+        "signed_event_minus_flight_days": 3102.364583,
+        "snow_depth_uncertainty_m": null,
+        "surface_type": "bare-earth DTM, not avalanche-day snow surface",
+        "vegetation_or_classification_residual_uncertainty_m": null,
+        "vertical_accuracy_uncertainty_m": null
+      },
+      "event_time": "2025-03-22T09:45:00+01:00",
+      "normalized_candidate_sha256": "e3301ee50a01930d7da3e0ce6faade3183a0cae9ba0e6845925012b15f7e90d7",
+      "selected_project": {
+        "AARSTALL": 2016,
+        "CATEGORY": 1,
+        "DEKNINGSNUMMER": "42172",
+        "FKB_LASERSTANDARD": "10",
+        "FLYFIRMA": "Blom Geomatics AS",
+        "HOYDESYSTEM": "5941",
+        "KOORDINATSYSTEM": "25833",
+        "LAS_PROJECT_ID": 519,
+        "LAS_PROJECT_NAME": "NDH Kvænangen 2pkt 2016",
+        "NAME": "NDH Kvænangen 2pkt 2016",
+        "OBJECTID": 91988,
+        "OBJEKTKATALOG": "FKB-Laser 3.0",
+        "OPPDRAGSGIVER": "Kartverket",
+        "OPPLOSNING": 0.5,
+        "PROSJEKTNR": null,
+        "PUBLISERT": "published",
+        "PUNKTTETTHET": 2,
+        "RAPPORT": null,
+        "SISTEFLYDATO": 1474588800000,
+        "TILGANG": "1",
+        "TYPE": "1"
+      },
+      "source_geometry_sha256": "69c61519865814da417a3688aa5be2a557e6954a77e07089c8320b3e568eaa4f",
+      "source_project_count_returned": 13,
+      "source_project_lineage": {
+        "access": "anonymous public Høydedata ImageServer read",
+        "flight_time_utc": "2016-09-23T00:00:00Z",
+        "las_project_id": 519,
+        "name": "NDH Kvænangen 2pkt 2016",
+        "objectid": 91988,
+        "point_density_m2": 2,
+        "project_report": null,
+        "provider": "Kartverket Høydedata DTM ImageServer",
+        "provider_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer",
+        "source_horizontal_crs": "EPSG:25833",
+        "source_horizontal_units": "metre",
+        "source_resolution_m": 0.5,
+        "vertical_reference": {
+          "epsg": 5941,
+          "name": "NN2000 height",
+          "resolved": true
+        },
+        "year": 2016
+      },
+      "source_project_query": {
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-422102/source-project-query.request.json",
+        "request_sha256": "91b00125dc7b4dd56e6c4bdbb064235074b35bb088802b4fece1f2de91b43444",
+        "response_metadata": {
+          "content_length_header": null,
+          "content_type": "application/json; charset=UTF-8",
+          "etag": "\"3461d733\"",
+          "final_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer/query?f=json&geometry=21.9543957710%2C70.0426001203&geometryType=esriGeometryPoint&inSR=4326&outFields=OBJECTID%2CNAME%2CCATEGORY%2CLAS_PROJECT_ID%2CLAS_PROJECT_NAME%2COPPDRAGSGIVER%2CDEKNINGSNUMMER%2CFKB_LASERSTANDARD%2CFLYFIRMA%2CTYPE%2CTILGANG%2CPROSJEKTNR%2CKOORDINATSYSTEM%2CHOYDESYSTEM%2CPUNKTTETTHET%2CAARSTALL%2CSISTEFLYDATO%2CPUBLISERT%2CRAPPORT%2COPPLOSNING%2COBJEKTKATALOG&resultRecordCount=200&returnGeometry=false&spatialRel=esriSpatialRelIntersects&where=1%3D1",
+          "last_modified": null,
+          "status": 200
+        },
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-422102/source-project-query.response-metadata.json",
+        "response_metadata_sha256": "08d5fffd26317629ff9796e0abd015e6df62179e1f91da7623599f4cc6f3ad79",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-422102/source-project-query.response.json",
+        "response_sha256": "275e05591e9f2365fe69f09456fac6c380165eb1f9b5def83124a77ae374ed0e"
+      },
+      "status": "acquired_screening_terrain_not_event_surface_eligible",
+      "terrain": {
+        "raster": {
+          "count": 1,
+          "crs": "EPSG:25833",
+          "driver": "GTiff",
+          "dtype": "float32",
+          "height": 160,
+          "maximum_m": 935.5791015625,
+          "minimum_m": 339.90020751953125,
+          "missing_pixels": 0,
+          "nodata": -9999.0,
+          "transform": [
+            10.0,
+            0.0,
+            763910.0,
+            0.0,
+            -10.0,
+            7786310.0
+          ],
+          "valid_pixels": 32640,
+          "width": 204
+        },
+        "raster_bytes": 263329,
+        "raster_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-422102/terrain-screening-10m.metadata.json",
+        "raster_metadata_sha256": "36ee6e3bc08fab7b41fc6ea3203244e3d41c5a55fd7418ecc48871657e3ee5a2",
+        "raster_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-422102/terrain-screening-10m.tif",
+        "raster_sha256": "2bcfad183b72916df81a4d92d18233eba9fb19f881f56b2f297bf0fabb65e068",
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-422102/export.request.json",
+        "request_sha256": "627298a19167fd948e85b64dd8270ea2b5d5cd920bfd6f33bc549f51c43baac3",
+        "requested_bounds": [
+          763910.0,
+          7784710.0,
+          765950.0,
+          7786310.0
+        ],
+        "requested_crs": "EPSG:25833",
+        "requested_resolution_m": 10.0,
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-422102/export.response-metadata.json",
+        "response_metadata_sha256": "9d7ec36231243138035c630102510ca9b0cd9fc64120abd90ccb6c48c52694c1",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-422102/export.response.json",
+        "response_sha256": "b3185c3bd8fb21f23b68ac02fdf2ee25fb21b13778f83ba595796e5732dd25f5"
+      },
+      "terrain_acquired": true,
+      "transformations": [
+        {
+          "coordinate_order": "always_xy",
+          "library": "PROJ via pyproj",
+          "operation": "candidate EPSG:4326 longitude/latitude to output grid",
+          "target_crs": "EPSG:25833"
+        },
+        {
+          "horizontal_resampling": "bilinear",
+          "operation": "ImageServer source project mosaic to requested output grid",
+          "source_crs": "EPSG:25833",
+          "target_crs": "EPSG:25833",
+          "vertical_transformation": "none; elevations retain the selected project's height reference"
+        }
+      ],
+      "validation_contract_v3_terrain_eligible": false
+    },
+    {
+      "blockers": [
+        "screening_10m_chip_is_not_native_solver_terrain",
+        "avalanche_day_snow_surface_mismatch_unquantified",
+        "vertical_accuracy_uncertainty_unavailable",
+        "horizontal_accuracy_uncertainty_unavailable"
+      ],
+      "candidate_id": "regobs-427508",
+      "event_surface_mismatch": {
+        "horizontal_accuracy_uncertainty_m": null,
+        "missing_uncertainties_remain_masked": true,
+        "quantitative_mismatch_treatment_available": false,
+        "signed_event_minus_flight_days": 2773.480451,
+        "snow_depth_uncertainty_m": null,
+        "surface_type": "bare-earth DTM, not avalanche-day snow surface",
+        "vegetation_or_classification_residual_uncertainty_m": null,
+        "vertical_accuracy_uncertainty_m": null
+      },
+      "event_time": "2025-04-24T13:31:51+02:00",
+      "normalized_candidate_sha256": "25cacf2a67316127327525e95750120a57dd51e85f4d8b7e77e5e2c4445523ae",
+      "selected_project": {
+        "AARSTALL": 2017,
+        "CATEGORY": 1,
+        "DEKNINGSNUMMER": "42171",
+        "FKB_LASERSTANDARD": "10",
+        "FLYFIRMA": "Terratec AS",
+        "HOYDESYSTEM": "5941",
+        "KOORDINATSYSTEM": "25833",
+        "LAS_PROJECT_ID": 886,
+        "LAS_PROJECT_NAME": "NDH Kvæfjord 2pkt 2017",
+        "NAME": "NDH Kvæfjord 2pkt 2017",
+        "OBJECTID": 72216,
+        "OBJEKTKATALOG": "FKB-Laser 3.0",
+        "OPPDRAGSGIVER": "Kartverket",
+        "OPPLOSNING": 0.5,
+        "PROSJEKTNR": null,
+        "PUBLISERT": "published",
+        "PUNKTTETTHET": 2,
+        "RAPPORT": null,
+        "SISTEFLYDATO": 1505865600000,
+        "TILGANG": "1",
+        "TYPE": "1"
+      },
+      "source_geometry_sha256": "ccd476de16df2891817504d382d8c5952c6c4ec1408ee9ede0d38f3da36ca544",
+      "source_project_count_returned": 13,
+      "source_project_lineage": {
+        "access": "anonymous public Høydedata ImageServer read",
+        "flight_time_utc": "2017-09-20T00:00:00Z",
+        "las_project_id": 886,
+        "name": "NDH Kvæfjord 2pkt 2017",
+        "objectid": 72216,
+        "point_density_m2": 2,
+        "project_report": null,
+        "provider": "Kartverket Høydedata DTM ImageServer",
+        "provider_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer",
+        "source_horizontal_crs": "EPSG:25833",
+        "source_horizontal_units": "metre",
+        "source_resolution_m": 0.5,
+        "vertical_reference": {
+          "epsg": 5941,
+          "name": "NN2000 height",
+          "resolved": true
+        },
+        "year": 2017
+      },
+      "source_project_query": {
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-427508/source-project-query.request.json",
+        "request_sha256": "659d7b70edf2ca0c720afb9817f232244280ed9b55cf7b77a5977f3f1b8beaf3",
+        "response_metadata": {
+          "content_length_header": null,
+          "content_type": "application/json; charset=UTF-8",
+          "etag": "\"8fdce750\"",
+          "final_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer/query?f=json&geometry=16.0913497210%2C68.7040459819&geometryType=esriGeometryPoint&inSR=4326&outFields=OBJECTID%2CNAME%2CCATEGORY%2CLAS_PROJECT_ID%2CLAS_PROJECT_NAME%2COPPDRAGSGIVER%2CDEKNINGSNUMMER%2CFKB_LASERSTANDARD%2CFLYFIRMA%2CTYPE%2CTILGANG%2CPROSJEKTNR%2CKOORDINATSYSTEM%2CHOYDESYSTEM%2CPUNKTTETTHET%2CAARSTALL%2CSISTEFLYDATO%2CPUBLISERT%2CRAPPORT%2COPPLOSNING%2COBJEKTKATALOG&resultRecordCount=200&returnGeometry=false&spatialRel=esriSpatialRelIntersects&where=1%3D1",
+          "last_modified": null,
+          "status": 200
+        },
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-427508/source-project-query.response-metadata.json",
+        "response_metadata_sha256": "100149a8af7c8d3db568b26e7bd6acd83d1dea0e1b7d5c295c69cfd3d1784824",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-427508/source-project-query.response.json",
+        "response_sha256": "c44bcc2e32e58f654a96d78ad56662f0e31cce0f1783c3b4dec2fa47be128f3a"
+      },
+      "status": "acquired_screening_terrain_not_event_surface_eligible",
+      "terrain": {
+        "raster": {
+          "count": 1,
+          "crs": "EPSG:25833",
+          "driver": "GTiff",
+          "dtype": "float32",
+          "height": 105,
+          "maximum_m": 910.5291137695312,
+          "minimum_m": 454.73028564453125,
+          "missing_pixels": 0,
+          "nodata": -9999.0,
+          "transform": [
+            10.0,
+            0.0,
+            543730.0,
+            0.0,
+            -10.0,
+            7622290.0
+          ],
+          "valid_pixels": 11550,
+          "width": 110
+        },
+        "raster_bytes": 66689,
+        "raster_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-427508/terrain-screening-10m.metadata.json",
+        "raster_metadata_sha256": "a9fa217e79ab68e81f362e5d22346f66842aea3ae1ea645ea14e25bcbf123f9b",
+        "raster_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-427508/terrain-screening-10m.tif",
+        "raster_sha256": "0f06e76a66b8ebdd0adce5122353ef9b6a3034263c4469005d165f026f8526cc",
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-427508/export.request.json",
+        "request_sha256": "f9fcd77018c605e6a2bce27689b51c803517ed5a9813745e5261f8b1fd082889",
+        "requested_bounds": [
+          543730.0,
+          7621240.0,
+          544830.0,
+          7622290.0
+        ],
+        "requested_crs": "EPSG:25833",
+        "requested_resolution_m": 10.0,
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-427508/export.response-metadata.json",
+        "response_metadata_sha256": "f02b08e06b35820d05caaebc566ecbdd97d1a6e024ca928ce9b8d114ef69886c",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-427508/export.response.json",
+        "response_sha256": "f1e2ec7bf1836349001b384dc7304adeff3106279941b3363a30c065a15608d8"
+      },
+      "terrain_acquired": true,
+      "transformations": [
+        {
+          "coordinate_order": "always_xy",
+          "library": "PROJ via pyproj",
+          "operation": "candidate EPSG:4326 longitude/latitude to output grid",
+          "target_crs": "EPSG:25833"
+        },
+        {
+          "horizontal_resampling": "bilinear",
+          "operation": "ImageServer source project mosaic to requested output grid",
+          "source_crs": "EPSG:25833",
+          "target_crs": "EPSG:25833",
+          "vertical_transformation": "none; elevations retain the selected project's height reference"
+        }
+      ],
+      "validation_contract_v3_terrain_eligible": false
+    },
+    {
+      "blockers": [
+        "screening_10m_chip_is_not_native_solver_terrain",
+        "avalanche_day_snow_surface_mismatch_unquantified",
+        "vertical_accuracy_uncertainty_unavailable",
+        "horizontal_accuracy_uncertainty_unavailable"
+      ],
+      "candidate_id": "regobs-442413",
+      "event_surface_mismatch": {
+        "horizontal_accuracy_uncertainty_m": null,
+        "missing_uncertainties_remain_masked": true,
+        "quantitative_mismatch_treatment_available": false,
+        "signed_event_minus_flight_days": 2305.472755,
+        "snow_depth_uncertainty_m": null,
+        "surface_type": "bare-earth DTM, not avalanche-day snow surface",
+        "vegetation_or_classification_residual_uncertainty_m": null,
+        "vertical_accuracy_uncertainty_m": null
+      },
+      "event_time": "2026-01-14T12:20:46+01:00",
+      "normalized_candidate_sha256": "02b7835fa82dddc585544e19ca323cd4c4b46b412a323debd6800ada784bd702",
+      "selected_project": {
+        "AARSTALL": 2019,
+        "CATEGORY": 1,
+        "DEKNINGSNUMMER": "42329",
+        "FKB_LASERSTANDARD": "FKB-Laser-C-DTM10",
+        "FLYFIRMA": "Terratec AS",
+        "HOYDESYSTEM": "5941",
+        "KOORDINATSYSTEM": "25832",
+        "LAS_PROJECT_ID": 1182,
+        "LAS_PROJECT_NAME": "NDH Volda-Ørsta 2pkt 2019",
+        "NAME": "NDH Volda-Ørsta 2pkt 2019",
+        "OBJECTID": 124719,
+        "OBJEKTKATALOG": "FKB-Laser 3.0",
+        "OPPDRAGSGIVER": "Kartverket",
+        "OPPLOSNING": 0.5,
+        "PROSJEKTNR": null,
+        "PUBLISERT": "published",
+        "PUNKTTETTHET": 2,
+        "RAPPORT": null,
+        "SISTEFLYDATO": 1569196800000,
+        "TILGANG": "1",
+        "TYPE": "1"
+      },
+      "source_geometry_sha256": "4ab7bfdc3a0915653ba5045f8bc64c26c11323651446565ffd80b744420ce135",
+      "source_project_count_returned": 26,
+      "source_project_lineage": {
+        "access": "anonymous public Høydedata ImageServer read",
+        "flight_time_utc": "2019-09-23T00:00:00Z",
+        "las_project_id": 1182,
+        "name": "NDH Volda-Ørsta 2pkt 2019",
+        "objectid": 124719,
+        "point_density_m2": 2,
+        "project_report": null,
+        "provider": "Kartverket Høydedata DTM ImageServer",
+        "provider_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer",
+        "source_horizontal_crs": "EPSG:25832",
+        "source_horizontal_units": "metre",
+        "source_resolution_m": 0.5,
+        "vertical_reference": {
+          "epsg": 5941,
+          "name": "NN2000 height",
+          "resolved": true
+        },
+        "year": 2019
+      },
+      "source_project_query": {
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-442413/source-project-query.request.json",
+        "request_sha256": "e8a5b51e7dda7e8f43b6c1a853e255a9e3d9e98b7d899ab8a9eec7923ac144d7",
+        "response_metadata": {
+          "content_length_header": null,
+          "content_type": "application/json; charset=UTF-8",
+          "etag": "\"4815e06d\"",
+          "final_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer/query?f=json&geometry=6.2853491306%2C62.1673374292&geometryType=esriGeometryPoint&inSR=4326&outFields=OBJECTID%2CNAME%2CCATEGORY%2CLAS_PROJECT_ID%2CLAS_PROJECT_NAME%2COPPDRAGSGIVER%2CDEKNINGSNUMMER%2CFKB_LASERSTANDARD%2CFLYFIRMA%2CTYPE%2CTILGANG%2CPROSJEKTNR%2CKOORDINATSYSTEM%2CHOYDESYSTEM%2CPUNKTTETTHET%2CAARSTALL%2CSISTEFLYDATO%2CPUBLISERT%2CRAPPORT%2COPPLOSNING%2COBJEKTKATALOG&resultRecordCount=200&returnGeometry=false&spatialRel=esriSpatialRelIntersects&where=1%3D1",
+          "last_modified": null,
+          "status": 200
+        },
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-442413/source-project-query.response-metadata.json",
+        "response_metadata_sha256": "f59f850cb7f287dc2183caed20919d4ee9219fbf70e03bfe0e37d9e2035f5dc5",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-442413/source-project-query.response.json",
+        "response_sha256": "79dedeb03194b82345ebd414010410675206d060382c6ccc986eafa2a63dde71"
+      },
+      "status": "acquired_screening_terrain_not_event_surface_eligible",
+      "terrain": {
+        "raster": {
+          "count": 1,
+          "crs": "EPSG:25833",
+          "driver": "GTiff",
+          "dtype": "float32",
+          "height": 114,
+          "maximum_m": 963.889892578125,
+          "minimum_m": 608.4592895507812,
+          "missing_pixels": 4997,
+          "nodata": -9999.0,
+          "transform": [
+            10.0,
+            0.0,
+            46370.0,
+            0.0,
+            -10.0,
+            6923950.0
+          ],
+          "valid_pixels": 8911,
+          "width": 122
+        },
+        "raster_bytes": 66689,
+        "raster_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-442413/terrain-screening-10m.metadata.json",
+        "raster_metadata_sha256": "a46f1152b802d04a20991c97eac6111c0e8e4e7caf96459aacb54443d16318e5",
+        "raster_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-442413/terrain-screening-10m.tif",
+        "raster_sha256": "b75e29af0f14d180f0c77b50674d22d7731dbbb7d745406ec2c49c4629ac4b22",
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-442413/export.request.json",
+        "request_sha256": "3e4e8ccd1006cc306f65c58b685f75cbaf9dc64b065b0820f073d425e3a43222",
+        "requested_bounds": [
+          46370.0,
+          6922810.0,
+          47590.0,
+          6923950.0
+        ],
+        "requested_crs": "EPSG:25833",
+        "requested_resolution_m": 10.0,
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-442413/export.response-metadata.json",
+        "response_metadata_sha256": "bfcce9ce07992cba57da31dc93cc77937d8d1bfc785c64b13968ea8430794f04",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-442413/export.response.json",
+        "response_sha256": "d727504473c1b67f44ea050c840b5aadfded5bc21a69ae11efeb418e1c670a43"
+      },
+      "terrain_acquired": true,
+      "transformations": [
+        {
+          "coordinate_order": "always_xy",
+          "library": "PROJ via pyproj",
+          "operation": "candidate EPSG:4326 longitude/latitude to output grid",
+          "target_crs": "EPSG:25833"
+        },
+        {
+          "horizontal_resampling": "bilinear",
+          "operation": "ImageServer source project mosaic to requested output grid",
+          "source_crs": "EPSG:25832",
+          "target_crs": "EPSG:25833",
+          "vertical_transformation": "none; elevations retain the selected project's height reference"
+        }
+      ],
+      "validation_contract_v3_terrain_eligible": false
+    },
+    {
+      "blockers": [
+        "screening_10m_chip_is_not_native_solver_terrain",
+        "avalanche_day_snow_surface_mismatch_unquantified",
+        "vertical_accuracy_uncertainty_unavailable",
+        "horizontal_accuracy_uncertainty_unavailable"
+      ],
+      "candidate_id": "regobs-442574",
+      "event_surface_mismatch": {
+        "horizontal_accuracy_uncertainty_m": null,
+        "missing_uncertainties_remain_masked": true,
+        "quantitative_mismatch_treatment_available": false,
+        "signed_event_minus_flight_days": 2306.505382,
+        "snow_depth_uncertainty_m": null,
+        "surface_type": "bare-earth DTM, not avalanche-day snow surface",
+        "vegetation_or_classification_residual_uncertainty_m": null,
+        "vertical_accuracy_uncertainty_m": null
+      },
+      "event_time": "2026-01-15T13:07:45+01:00",
+      "normalized_candidate_sha256": "9589e99db1b78ab144404b6a51151b8931128f1ce1c42435d599427c81e666d1",
+      "selected_project": {
+        "AARSTALL": 2019,
+        "CATEGORY": 1,
+        "DEKNINGSNUMMER": "42329",
+        "FKB_LASERSTANDARD": "FKB-Laser-C-DTM10",
+        "FLYFIRMA": "Terratec AS",
+        "HOYDESYSTEM": "5941",
+        "KOORDINATSYSTEM": "25832",
+        "LAS_PROJECT_ID": 1182,
+        "LAS_PROJECT_NAME": "NDH Volda-Ørsta 2pkt 2019",
+        "NAME": "NDH Volda-Ørsta 2pkt 2019",
+        "OBJECTID": 124719,
+        "OBJEKTKATALOG": "FKB-Laser 3.0",
+        "OPPDRAGSGIVER": "Kartverket",
+        "OPPLOSNING": 0.5,
+        "PROSJEKTNR": null,
+        "PUBLISERT": "published",
+        "PUNKTTETTHET": 2,
+        "RAPPORT": null,
+        "SISTEFLYDATO": 1569196800000,
+        "TILGANG": "1",
+        "TYPE": "1"
+      },
+      "source_geometry_sha256": "7d29d8cbdfa79e3148a91924d7c695709369684c2163b9ff8947c81224dd9215",
+      "source_project_count_returned": 19,
+      "source_project_lineage": {
+        "access": "anonymous public Høydedata ImageServer read",
+        "flight_time_utc": "2019-09-23T00:00:00Z",
+        "las_project_id": 1182,
+        "name": "NDH Volda-Ørsta 2pkt 2019",
+        "objectid": 124719,
+        "point_density_m2": 2,
+        "project_report": null,
+        "provider": "Kartverket Høydedata DTM ImageServer",
+        "provider_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer",
+        "source_horizontal_crs": "EPSG:25832",
+        "source_horizontal_units": "metre",
+        "source_resolution_m": 0.5,
+        "vertical_reference": {
+          "epsg": 5941,
+          "name": "NN2000 height",
+          "resolved": true
+        },
+        "year": 2019
+      },
+      "source_project_query": {
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-442574/source-project-query.request.json",
+        "request_sha256": "a24ff7c99069d95aa4cb6f46b7187e329bcb25a6c87cbacb6d32d81591ecb432",
+        "response_metadata": {
+          "content_length_header": null,
+          "content_type": "application/json; charset=UTF-8",
+          "etag": "\"5f95c441\"",
+          "final_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer/query?f=json&geometry=6.2906545401%2C62.1717669693&geometryType=esriGeometryPoint&inSR=4326&outFields=OBJECTID%2CNAME%2CCATEGORY%2CLAS_PROJECT_ID%2CLAS_PROJECT_NAME%2COPPDRAGSGIVER%2CDEKNINGSNUMMER%2CFKB_LASERSTANDARD%2CFLYFIRMA%2CTYPE%2CTILGANG%2CPROSJEKTNR%2CKOORDINATSYSTEM%2CHOYDESYSTEM%2CPUNKTTETTHET%2CAARSTALL%2CSISTEFLYDATO%2CPUBLISERT%2CRAPPORT%2COPPLOSNING%2COBJEKTKATALOG&resultRecordCount=200&returnGeometry=false&spatialRel=esriSpatialRelIntersects&where=1%3D1",
+          "last_modified": null,
+          "status": 200
+        },
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-442574/source-project-query.response-metadata.json",
+        "response_metadata_sha256": "2da7dec2309c7a11f7d614e26b065ddd7b71b177a77ffb73114afc6e6b84a717",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-442574/source-project-query.response.json",
+        "response_sha256": "2e44dc3091a09ca1f29a9c1471535a2e0b0d6a3d1fc7cdf02b5bbd0385625e49"
+      },
+      "status": "acquired_screening_terrain_not_event_surface_eligible",
+      "terrain": {
+        "raster": {
+          "count": 1,
+          "crs": "EPSG:25833",
+          "driver": "GTiff",
+          "dtype": "float32",
+          "height": 107,
+          "maximum_m": 1056.25341796875,
+          "minimum_m": 643.14794921875,
+          "missing_pixels": 29,
+          "nodata": -9999.0,
+          "transform": [
+            10.0,
+            0.0,
+            46820.0,
+            0.0,
+            -10.0,
+            6924340.0
+          ],
+          "valid_pixels": 11527,
+          "width": 108
+        },
+        "raster_bytes": 66689,
+        "raster_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-442574/terrain-screening-10m.metadata.json",
+        "raster_metadata_sha256": "9b7b8bd5a0377fe8b14c1231fcb43bdbd566abccb7aaf30a250b84001b54c7c8",
+        "raster_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-442574/terrain-screening-10m.tif",
+        "raster_sha256": "b15133f1660f8598d9a754ddd3d3add307bed0cc7cd33526dfcffc243a29dd48",
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-442574/export.request.json",
+        "request_sha256": "c86e14bb146b7f6e25e6b54a7a084039408788928d2262ea3d6e1f51339afea2",
+        "requested_bounds": [
+          46820.0,
+          6923270.0,
+          47900.0,
+          6924340.0
+        ],
+        "requested_crs": "EPSG:25833",
+        "requested_resolution_m": 10.0,
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-442574/export.response-metadata.json",
+        "response_metadata_sha256": "d8ed764767295a0b5a3244cb246ae03485d93fae3a0ba7779728283db928835a",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-442574/export.response.json",
+        "response_sha256": "c5b4bfd54827d8c493465417063b8bde645a35c9d1b97f8b050c35223f4c1399"
+      },
+      "terrain_acquired": true,
+      "transformations": [
+        {
+          "coordinate_order": "always_xy",
+          "library": "PROJ via pyproj",
+          "operation": "candidate EPSG:4326 longitude/latitude to output grid",
+          "target_crs": "EPSG:25833"
+        },
+        {
+          "horizontal_resampling": "bilinear",
+          "operation": "ImageServer source project mosaic to requested output grid",
+          "source_crs": "EPSG:25832",
+          "target_crs": "EPSG:25833",
+          "vertical_transformation": "none; elevations retain the selected project's height reference"
+        }
+      ],
+      "validation_contract_v3_terrain_eligible": false
+    },
+    {
+      "blockers": [
+        "no_dated_pre_event_public_terrain_project"
+      ],
+      "candidate_id": "regobs-448389",
+      "event_surface_mismatch": null,
+      "event_time": "2026-02-16T18:52:06+01:00",
+      "normalized_candidate_sha256": "74e35a7497ac5b74f5ae65bcc78b0965e21363d1c540dcac8ffbfcb522930bc9",
+      "selected_project": null,
+      "source_geometry_sha256": "189bbef45676fe6253841a8cdc7a3884abdeb8f030479d0440b5e5d33d0dcbbd",
+      "source_project_count_returned": 0,
+      "source_project_query": {
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-448389/source-project-query.request.json",
+        "request_sha256": "4b2350a31527c59f4cd61ffe07b359ab4f075e3a5d5879600618ef3528bbb0df",
+        "response_metadata": {
+          "content_length_header": "2516",
+          "content_type": "application/json; charset=UTF-8",
+          "etag": "\"5ceda2e7\"",
+          "final_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer/query?f=json&geometry=14.2523574829%2C78.0540237382&geometryType=esriGeometryPoint&inSR=4326&outFields=OBJECTID%2CNAME%2CCATEGORY%2CLAS_PROJECT_ID%2CLAS_PROJECT_NAME%2COPPDRAGSGIVER%2CDEKNINGSNUMMER%2CFKB_LASERSTANDARD%2CFLYFIRMA%2CTYPE%2CTILGANG%2CPROSJEKTNR%2CKOORDINATSYSTEM%2CHOYDESYSTEM%2CPUNKTTETTHET%2CAARSTALL%2CSISTEFLYDATO%2CPUBLISERT%2CRAPPORT%2COPPLOSNING%2COBJEKTKATALOG&resultRecordCount=200&returnGeometry=false&spatialRel=esriSpatialRelIntersects&where=1%3D1",
+          "last_modified": null,
+          "status": 200
+        },
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-448389/source-project-query.response-metadata.json",
+        "response_metadata_sha256": "a0339062da3b11da8a87b217202a89a425e1058bfcb7c7594b51614e643bd679",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-448389/source-project-query.response.json",
+        "response_sha256": "3496719d786f73bf2923a9955b5efca7deccdaa77195a8eae93b2acb6ced23ac"
+      },
+      "status": "excluded_no_dated_pre_event_public_terrain_project",
+      "terrain": null,
+      "terrain_acquired": false,
+      "validation_contract_v3_terrain_eligible": false
+    },
+    {
+      "blockers": [
+        "screening_10m_chip_is_not_native_solver_terrain",
+        "avalanche_day_snow_surface_mismatch_unquantified",
+        "vertical_accuracy_uncertainty_unavailable",
+        "horizontal_accuracy_uncertainty_unavailable"
+      ],
+      "candidate_id": "regobs-449426",
+      "event_surface_mismatch": {
+        "horizontal_accuracy_uncertainty_m": null,
+        "missing_uncertainties_remain_masked": true,
+        "quantitative_mismatch_treatment_available": false,
+        "signed_event_minus_flight_days": 3164.449549,
+        "snow_depth_uncertainty_m": null,
+        "surface_type": "bare-earth DTM, not avalanche-day snow surface",
+        "vegetation_or_classification_residual_uncertainty_m": null,
+        "vertical_accuracy_uncertainty_m": null
+      },
+      "event_time": "2026-02-20T11:47:21+01:00",
+      "normalized_candidate_sha256": "f2c4a44555ab8a23d3f19476af224df6f258c4209560998a8aaa0887a4d7f098",
+      "selected_project": {
+        "AARSTALL": 2017,
+        "CATEGORY": 1,
+        "DEKNINGSNUMMER": "42149",
+        "FKB_LASERSTANDARD": "10",
+        "FLYFIRMA": "Terratec AS",
+        "HOYDESYSTEM": "5941",
+        "KOORDINATSYSTEM": "25833",
+        "LAS_PROJECT_ID": 782,
+        "LAS_PROJECT_NAME": "NDH Tranøy 2pkt 2017",
+        "NAME": "NDH Tranøy 2pkt 2017",
+        "OBJECTID": 58331,
+        "OBJEKTKATALOG": "FKB-Laser 3.0",
+        "OPPDRAGSGIVER": "Kartverket",
+        "OPPLOSNING": 0.5,
+        "PROSJEKTNR": null,
+        "PUBLISERT": "published",
+        "PUNKTTETTHET": 2,
+        "RAPPORT": null,
+        "SISTEFLYDATO": 1498176000000,
+        "TILGANG": "1",
+        "TYPE": "1"
+      },
+      "source_geometry_sha256": "4f1ad9de6b0e795833fb2fa8f80bccbd718e9d4e08a79ef652b8054392496453",
+      "source_project_count_returned": 20,
+      "source_project_lineage": {
+        "access": "anonymous public Høydedata ImageServer read",
+        "flight_time_utc": "2017-06-23T00:00:00Z",
+        "las_project_id": 782,
+        "name": "NDH Tranøy 2pkt 2017",
+        "objectid": 58331,
+        "point_density_m2": 2,
+        "project_report": null,
+        "provider": "Kartverket Høydedata DTM ImageServer",
+        "provider_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer",
+        "source_horizontal_crs": "EPSG:25833",
+        "source_horizontal_units": "metre",
+        "source_resolution_m": 0.5,
+        "vertical_reference": {
+          "epsg": 5941,
+          "name": "NN2000 height",
+          "resolved": true
+        },
+        "year": 2017
+      },
+      "source_project_query": {
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-449426/source-project-query.request.json",
+        "request_sha256": "6bcf7e2e9beb9a87f3e54c281ba2a34aab3417994d1fc4dcb9a61dd38d7f0223",
+        "response_metadata": {
+          "content_length_header": null,
+          "content_type": "application/json; charset=UTF-8",
+          "etag": "\"5b73a853\"",
+          "final_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer/query?f=json&geometry=17.1243703365%2C69.2222306942&geometryType=esriGeometryPoint&inSR=4326&outFields=OBJECTID%2CNAME%2CCATEGORY%2CLAS_PROJECT_ID%2CLAS_PROJECT_NAME%2COPPDRAGSGIVER%2CDEKNINGSNUMMER%2CFKB_LASERSTANDARD%2CFLYFIRMA%2CTYPE%2CTILGANG%2CPROSJEKTNR%2CKOORDINATSYSTEM%2CHOYDESYSTEM%2CPUNKTTETTHET%2CAARSTALL%2CSISTEFLYDATO%2CPUBLISERT%2CRAPPORT%2COPPLOSNING%2COBJEKTKATALOG&resultRecordCount=200&returnGeometry=false&spatialRel=esriSpatialRelIntersects&where=1%3D1",
+          "last_modified": null,
+          "status": 200
+        },
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-449426/source-project-query.response-metadata.json",
+        "response_metadata_sha256": "f6595914892c288ef5cbd0e5b82f6356eea14aac597d25e6abb8f1cd219f7101",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-449426/source-project-query.response.json",
+        "response_sha256": "7d0428f6f7a22628b33ebfe3009c764af8ed3057329be6d79ae729e50c67139b"
+      },
+      "status": "acquired_screening_terrain_not_event_surface_eligible",
+      "terrain": {
+        "raster": {
+          "count": 1,
+          "crs": "EPSG:25833",
+          "driver": "GTiff",
+          "dtype": "float32",
+          "height": 120,
+          "maximum_m": 690.843017578125,
+          "minimum_m": 0.0,
+          "missing_pixels": 0,
+          "nodata": -9999.0,
+          "transform": [
+            10.0,
+            0.0,
+            583560.0,
+            0.0,
+            -10.0,
+            7681110.0
+          ],
+          "valid_pixels": 13200,
+          "width": 110
+        },
+        "raster_bytes": 66689,
+        "raster_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-449426/terrain-screening-10m.metadata.json",
+        "raster_metadata_sha256": "026bf94e3f5096c00ae2f1b6166b8abd4730d7fb9e938b633a66172797690451",
+        "raster_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-449426/terrain-screening-10m.tif",
+        "raster_sha256": "8a6a3b78958dbd5b111014b4a19e1465f2762dd1bf077f16715c5fbc6998869c",
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-449426/export.request.json",
+        "request_sha256": "546de760d64df04d021eda30837a5733316b5dfa3aa01237464776130c08d9d6",
+        "requested_bounds": [
+          583560.0,
+          7679910.0,
+          584660.0,
+          7681110.0
+        ],
+        "requested_crs": "EPSG:25833",
+        "requested_resolution_m": 10.0,
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-449426/export.response-metadata.json",
+        "response_metadata_sha256": "4a857ea36c45eb6301f57f265b9f67db34fabc429fb1e820443e6602a8b454d8",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-449426/export.response.json",
+        "response_sha256": "65663a10acffa5aebb906d3473b634a2d94353b20719236f6bb07b05cac6f205"
+      },
+      "terrain_acquired": true,
+      "transformations": [
+        {
+          "coordinate_order": "always_xy",
+          "library": "PROJ via pyproj",
+          "operation": "candidate EPSG:4326 longitude/latitude to output grid",
+          "target_crs": "EPSG:25833"
+        },
+        {
+          "horizontal_resampling": "bilinear",
+          "operation": "ImageServer source project mosaic to requested output grid",
+          "source_crs": "EPSG:25833",
+          "target_crs": "EPSG:25833",
+          "vertical_transformation": "none; elevations retain the selected project's height reference"
+        }
+      ],
+      "validation_contract_v3_terrain_eligible": false
+    },
+    {
+      "blockers": [
+        "screening_10m_chip_is_not_native_solver_terrain",
+        "avalanche_day_snow_surface_mismatch_unquantified",
+        "vertical_accuracy_uncertainty_unavailable",
+        "horizontal_accuracy_uncertainty_unavailable"
+      ],
+      "candidate_id": "regobs-449728",
+      "event_surface_mismatch": {
+        "horizontal_accuracy_uncertainty_m": null,
+        "missing_uncertainties_remain_masked": true,
+        "quantitative_mismatch_treatment_available": false,
+        "signed_event_minus_flight_days": 3167.554201,
+        "snow_depth_uncertainty_m": null,
+        "surface_type": "bare-earth DTM, not avalanche-day snow surface",
+        "vegetation_or_classification_residual_uncertainty_m": null,
+        "vertical_accuracy_uncertainty_m": null
+      },
+      "event_time": "2026-02-21T14:18:03+01:00",
+      "normalized_candidate_sha256": "2253cfce9b2f24eb9cda28e5eadce95fffa8e44f67ab5d0a82e59dc5a8f43480",
+      "selected_project": {
+        "AARSTALL": 2017,
+        "CATEGORY": 1,
+        "DEKNINGSNUMMER": "42276",
+        "FKB_LASERSTANDARD": "10",
+        "FLYFIRMA": "COWI AS",
+        "HOYDESYSTEM": "5941",
+        "KOORDINATSYSTEM": "25832",
+        "LAS_PROJECT_ID": 780,
+        "LAS_PROJECT_NAME": "NDH Tinn-Tuddal 5pkt 2017",
+        "NAME": "NDH Tinn-Tuddal 5pkt 2017",
+        "OBJECTID": 57924,
+        "OBJEKTKATALOG": "FKB-Laser 3.0",
+        "OPPDRAGSGIVER": "Kartverket",
+        "OPPLOSNING": 0.25,
+        "PROSJEKTNR": null,
+        "PUBLISERT": "published",
+        "PUNKTTETTHET": 5,
+        "RAPPORT": null,
+        "SISTEFLYDATO": 1498003200000,
+        "TILGANG": "1",
+        "TYPE": "1"
+      },
+      "source_geometry_sha256": "ed7191b2d9dd617b365fe4457872084c0e942a378e925c1b27ea157fc2ed4e09",
+      "source_project_count_returned": 19,
+      "source_project_lineage": {
+        "access": "anonymous public Høydedata ImageServer read",
+        "flight_time_utc": "2017-06-21T00:00:00Z",
+        "las_project_id": 780,
+        "name": "NDH Tinn-Tuddal 5pkt 2017",
+        "objectid": 57924,
+        "point_density_m2": 5,
+        "project_report": null,
+        "provider": "Kartverket Høydedata DTM ImageServer",
+        "provider_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer",
+        "source_horizontal_crs": "EPSG:25832",
+        "source_horizontal_units": "metre",
+        "source_resolution_m": 0.25,
+        "vertical_reference": {
+          "epsg": 5941,
+          "name": "NN2000 height",
+          "resolved": true
+        },
+        "year": 2017
+      },
+      "source_project_query": {
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-449728/source-project-query.request.json",
+        "request_sha256": "f1355701057d3739fb5b15a77a90a4c51ff1ba3ce64b5c71cda2465e33cf79c5",
+        "response_metadata": {
+          "content_length_header": null,
+          "content_type": "application/json; charset=UTF-8",
+          "etag": "\"1365da\"",
+          "final_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer/query?f=json&geometry=8.7550216913%2C59.8621291957&geometryType=esriGeometryPoint&inSR=4326&outFields=OBJECTID%2CNAME%2CCATEGORY%2CLAS_PROJECT_ID%2CLAS_PROJECT_NAME%2COPPDRAGSGIVER%2CDEKNINGSNUMMER%2CFKB_LASERSTANDARD%2CFLYFIRMA%2CTYPE%2CTILGANG%2CPROSJEKTNR%2CKOORDINATSYSTEM%2CHOYDESYSTEM%2CPUNKTTETTHET%2CAARSTALL%2CSISTEFLYDATO%2CPUBLISERT%2CRAPPORT%2COPPLOSNING%2COBJEKTKATALOG&resultRecordCount=200&returnGeometry=false&spatialRel=esriSpatialRelIntersects&where=1%3D1",
+          "last_modified": null,
+          "status": 200
+        },
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-449728/source-project-query.response-metadata.json",
+        "response_metadata_sha256": "540f72f70e101c954b9264ab228ce9b7a3ebc3d90ea371f75235e3d06b755d5b",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-449728/source-project-query.response.json",
+        "response_sha256": "23bc1268fc22a25b0cd48ee9086c8d60c17cb3b2e449b12de2b0ae20b64a6629"
+      },
+      "status": "acquired_screening_terrain_not_event_surface_eligible",
+      "terrain": {
+        "raster": {
+          "count": 1,
+          "crs": "EPSG:25833",
+          "driver": "GTiff",
+          "dtype": "float32",
+          "height": 109,
+          "maximum_m": 1322.76611328125,
+          "minimum_m": 948.5239868164062,
+          "missing_pixels": 0,
+          "nodata": -9999.0,
+          "transform": [
+            10.0,
+            0.0,
+            150030.0,
+            0.0,
+            -10.0,
+            6653140.0
+          ],
+          "valid_pixels": 11663,
+          "width": 107
+        },
+        "raster_bytes": 66689,
+        "raster_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-449728/terrain-screening-10m.metadata.json",
+        "raster_metadata_sha256": "67e628e5501d70f501cf76f0e92f91b58985b3caf8e4a74b027e64dc4edc7bba",
+        "raster_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-449728/terrain-screening-10m.tif",
+        "raster_sha256": "97a59f526a6d58e9619a1e8d9e11b5f477b5ae4812fe49429111d9ce69bb81a3",
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-449728/export.request.json",
+        "request_sha256": "9d7f9da1f00c991c774bfab10d95671ba48063478f82bda6b30f3fd56ab5120e",
+        "requested_bounds": [
+          150030.0,
+          6652050.0,
+          151100.0,
+          6653140.0
+        ],
+        "requested_crs": "EPSG:25833",
+        "requested_resolution_m": 10.0,
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-449728/export.response-metadata.json",
+        "response_metadata_sha256": "fb2bd832bbe6184096785e8faf3023b40d5c839f5cf5910617919ef4aff80887",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-449728/export.response.json",
+        "response_sha256": "d6f4694d24dc7ecc137cbfa45e05df3b8761dbe6f724ea665324f4a871cfd9d5"
+      },
+      "terrain_acquired": true,
+      "transformations": [
+        {
+          "coordinate_order": "always_xy",
+          "library": "PROJ via pyproj",
+          "operation": "candidate EPSG:4326 longitude/latitude to output grid",
+          "target_crs": "EPSG:25833"
+        },
+        {
+          "horizontal_resampling": "bilinear",
+          "operation": "ImageServer source project mosaic to requested output grid",
+          "source_crs": "EPSG:25832",
+          "target_crs": "EPSG:25833",
+          "vertical_transformation": "none; elevations retain the selected project's height reference"
+        }
+      ],
+      "validation_contract_v3_terrain_eligible": false
+    },
+    {
+      "blockers": [
+        "screening_10m_chip_is_not_native_solver_terrain",
+        "avalanche_day_snow_surface_mismatch_unquantified",
+        "vertical_accuracy_uncertainty_unavailable",
+        "horizontal_accuracy_uncertainty_unavailable"
+      ],
+      "candidate_id": "regobs-453367",
+      "event_surface_mismatch": {
+        "horizontal_accuracy_uncertainty_m": null,
+        "missing_uncertainties_remain_masked": true,
+        "quantitative_mismatch_treatment_available": false,
+        "signed_event_minus_flight_days": 4620.566308,
+        "snow_depth_uncertainty_m": null,
+        "surface_type": "bare-earth DTM, not avalanche-day snow surface",
+        "vegetation_or_classification_residual_uncertainty_m": null,
+        "vertical_accuracy_uncertainty_m": null
+      },
+      "event_time": "2026-03-04T14:35:29+01:00",
+      "normalized_candidate_sha256": "b6b13d97e7b0c167cd26b2cc5ecdaa7f4de2db9b82c1be3c7831b85583e8eec2",
+      "selected_project": {
+        "AARSTALL": 2013,
+        "CATEGORY": 1,
+        "DEKNINGSNUMMER": "BNO13012",
+        "FKB_LASERSTANDARD": null,
+        "FLYFIRMA": "Blom Geomatics AS",
+        "HOYDESYSTEM": "5941",
+        "KOORDINATSYSTEM": "25832",
+        "LAS_PROJECT_ID": 60,
+        "LAS_PROJECT_NAME": "Valdres 2013",
+        "NAME": "Valdres 2013",
+        "OBJECTID": 85582,
+        "OBJEKTKATALOG": "FKB-Laser 3.0",
+        "OPPDRAGSGIVER": "Kartverket",
+        "OPPLOSNING": 0.25,
+        "PROSJEKTNR": null,
+        "PUBLISERT": "published",
+        "PUNKTTETTHET": 5,
+        "RAPPORT": null,
+        "SISTEFLYDATO": 1373414400000,
+        "TILGANG": "1",
+        "TYPE": "1"
+      },
+      "source_geometry_sha256": "caf7aaeb873c6713b35cfbd853b63dd0ddd62fb7d96d0eab89aa6805d9fce949",
+      "source_project_count_returned": 20,
+      "source_project_lineage": {
+        "access": "anonymous public Høydedata ImageServer read",
+        "flight_time_utc": "2013-07-10T00:00:00Z",
+        "las_project_id": 60,
+        "name": "Valdres 2013",
+        "objectid": 85582,
+        "point_density_m2": 5,
+        "project_report": null,
+        "provider": "Kartverket Høydedata DTM ImageServer",
+        "provider_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer",
+        "source_horizontal_crs": "EPSG:25832",
+        "source_horizontal_units": "metre",
+        "source_resolution_m": 0.25,
+        "vertical_reference": {
+          "epsg": 5941,
+          "name": "NN2000 height",
+          "resolved": true
+        },
+        "year": 2013
+      },
+      "source_project_query": {
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-453367/source-project-query.request.json",
+        "request_sha256": "62a27a19d98471bf8676405b7647c1fa067693c1587aa365aa3ce712dd4a9184",
+        "response_metadata": {
+          "content_length_header": null,
+          "content_type": "application/json; charset=UTF-8",
+          "etag": "\"f82f069e\"",
+          "final_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer/query?f=json&geometry=8.1774401665%2C61.2801613447&geometryType=esriGeometryPoint&inSR=4326&outFields=OBJECTID%2CNAME%2CCATEGORY%2CLAS_PROJECT_ID%2CLAS_PROJECT_NAME%2COPPDRAGSGIVER%2CDEKNINGSNUMMER%2CFKB_LASERSTANDARD%2CFLYFIRMA%2CTYPE%2CTILGANG%2CPROSJEKTNR%2CKOORDINATSYSTEM%2CHOYDESYSTEM%2CPUNKTTETTHET%2CAARSTALL%2CSISTEFLYDATO%2CPUBLISERT%2CRAPPORT%2COPPLOSNING%2COBJEKTKATALOG&resultRecordCount=200&returnGeometry=false&spatialRel=esriSpatialRelIntersects&where=1%3D1",
+          "last_modified": null,
+          "status": 200
+        },
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-453367/source-project-query.response-metadata.json",
+        "response_metadata_sha256": "df894a21c31e0d33dd0eb5dedc8910d9f61c42bfe1561b655d00d91599d6d0fe",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-453367/source-project-query.response.json",
+        "response_sha256": "84d358ff2c362f30b17ee401853a1f38a16b55300ab627b6a0f89345298b7abf"
+      },
+      "status": "acquired_screening_terrain_not_event_surface_eligible",
+      "terrain": {
+        "raster": {
+          "count": 1,
+          "crs": "EPSG:25833",
+          "driver": "GTiff",
+          "dtype": "float32",
+          "height": 112,
+          "maximum_m": 1251.373291015625,
+          "minimum_m": 1080.5560302734375,
+          "missing_pixels": 2050,
+          "nodata": -9999.0,
+          "transform": [
+            10.0,
+            0.0,
+            134210.0,
+            0.0,
+            -10.0,
+            6813680.0
+          ],
+          "valid_pixels": 9598,
+          "width": 104
+        },
+        "raster_bytes": 66689,
+        "raster_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-453367/terrain-screening-10m.metadata.json",
+        "raster_metadata_sha256": "7fcb11e2a683f43cd37de7450f7eea92974340db521e921e0c25b915fee8b27b",
+        "raster_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-453367/terrain-screening-10m.tif",
+        "raster_sha256": "63d0480dd965f962d25fce8197e4d946485a24ff531c8e5fe48bf3739cc77576",
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-453367/export.request.json",
+        "request_sha256": "411995da8df9c785a9750a29e455194fb42d07feaf1189047df231302824e9ba",
+        "requested_bounds": [
+          134210.0,
+          6812560.0,
+          135250.0,
+          6813680.0
+        ],
+        "requested_crs": "EPSG:25833",
+        "requested_resolution_m": 10.0,
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-453367/export.response-metadata.json",
+        "response_metadata_sha256": "cac65340d4acb80564d6f9b1601fcfe42eef3bf42db53fb57e82ee47a7c09404",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-453367/export.response.json",
+        "response_sha256": "97b30e0f597364c9d1f329a994e5b1ef18a2c67a3de70ad49fe36c0e66f578d5"
+      },
+      "terrain_acquired": true,
+      "transformations": [
+        {
+          "coordinate_order": "always_xy",
+          "library": "PROJ via pyproj",
+          "operation": "candidate EPSG:4326 longitude/latitude to output grid",
+          "target_crs": "EPSG:25833"
+        },
+        {
+          "horizontal_resampling": "bilinear",
+          "operation": "ImageServer source project mosaic to requested output grid",
+          "source_crs": "EPSG:25832",
+          "target_crs": "EPSG:25833",
+          "vertical_transformation": "none; elevations retain the selected project's height reference"
+        }
+      ],
+      "validation_contract_v3_terrain_eligible": false
+    },
+    {
+      "blockers": [
+        "screening_10m_chip_is_not_native_solver_terrain",
+        "avalanche_day_snow_surface_mismatch_unquantified",
+        "vertical_accuracy_uncertainty_unavailable",
+        "horizontal_accuracy_uncertainty_unavailable"
+      ],
+      "candidate_id": "regobs-455982",
+      "event_surface_mismatch": {
+        "horizontal_accuracy_uncertainty_m": null,
+        "missing_uncertainties_remain_masked": true,
+        "quantitative_mismatch_treatment_available": false,
+        "signed_event_minus_flight_days": 2363.474699,
+        "snow_depth_uncertainty_m": null,
+        "surface_type": "bare-earth DTM, not avalanche-day snow surface",
+        "vegetation_or_classification_residual_uncertainty_m": null,
+        "vertical_accuracy_uncertainty_m": null
+      },
+      "event_time": "2026-03-16T12:23:34+01:00",
+      "normalized_candidate_sha256": "726953bd1826e6a8850204587f20a753cca2b3543f722e1071b76f5d9055c2fc",
+      "selected_project": {
+        "AARSTALL": 2019,
+        "CATEGORY": 1,
+        "DEKNINGSNUMMER": "42325",
+        "FKB_LASERSTANDARD": "FKB-Laser-C-DTM10",
+        "FLYFIRMA": "Terratec AS",
+        "HOYDESYSTEM": "5941",
+        "KOORDINATSYSTEM": "25832",
+        "LAS_PROJECT_ID": 3764,
+        "LAS_PROJECT_NAME": "NDH Eid 2pkt 2019",
+        "NAME": "NDH Eid 2pkt 2019",
+        "OBJECTID": 127918,
+        "OBJEKTKATALOG": "FKB-Laser 3.0",
+        "OPPDRAGSGIVER": "Kartverket",
+        "OPPLOSNING": 0.5,
+        "PROSJEKTNR": null,
+        "PUBLISERT": "published",
+        "PUNKTTETTHET": 2,
+        "RAPPORT": null,
+        "SISTEFLYDATO": 1569456000000,
+        "TILGANG": "1",
+        "TYPE": "1"
+      },
+      "source_geometry_sha256": "f37b684fe3e298f592403f6ffb272571e54d2d137a269401b72929a5a76b9e29",
+      "source_project_count_returned": 19,
+      "source_project_lineage": {
+        "access": "anonymous public Høydedata ImageServer read",
+        "flight_time_utc": "2019-09-26T00:00:00Z",
+        "las_project_id": 3764,
+        "name": "NDH Eid 2pkt 2019",
+        "objectid": 127918,
+        "point_density_m2": 2,
+        "project_report": null,
+        "provider": "Kartverket Høydedata DTM ImageServer",
+        "provider_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer",
+        "source_horizontal_crs": "EPSG:25832",
+        "source_horizontal_units": "metre",
+        "source_resolution_m": 0.5,
+        "vertical_reference": {
+          "epsg": 5941,
+          "name": "NN2000 height",
+          "resolved": true
+        },
+        "year": 2019
+      },
+      "source_project_query": {
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-455982/source-project-query.request.json",
+        "request_sha256": "07c68df472ab88689bc941a862f452fdc8c8dc1155278b391e8f818d2b4f1872",
+        "response_metadata": {
+          "content_length_header": null,
+          "content_type": "application/json; charset=UTF-8",
+          "etag": "\"f08a83a4\"",
+          "final_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer/query?f=json&geometry=6.2577724457%2C62.0310523293&geometryType=esriGeometryPoint&inSR=4326&outFields=OBJECTID%2CNAME%2CCATEGORY%2CLAS_PROJECT_ID%2CLAS_PROJECT_NAME%2COPPDRAGSGIVER%2CDEKNINGSNUMMER%2CFKB_LASERSTANDARD%2CFLYFIRMA%2CTYPE%2CTILGANG%2CPROSJEKTNR%2CKOORDINATSYSTEM%2CHOYDESYSTEM%2CPUNKTTETTHET%2CAARSTALL%2CSISTEFLYDATO%2CPUBLISERT%2CRAPPORT%2COPPLOSNING%2COBJEKTKATALOG&resultRecordCount=200&returnGeometry=false&spatialRel=esriSpatialRelIntersects&where=1%3D1",
+          "last_modified": null,
+          "status": 200
+        },
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-455982/source-project-query.response-metadata.json",
+        "response_metadata_sha256": "92b92275ba67d9c3fafa3e69a8214503b8c7a7ca17b76af742e802762eb695b1",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-455982/source-project-query.response.json",
+        "response_sha256": "e87ea2e9aa74af6c372b2eff55a1ab01f685f6a52ac24fceb52fc192a5abd9dc"
+      },
+      "status": "acquired_screening_terrain_not_event_surface_eligible",
+      "terrain": {
+        "raster": {
+          "count": 1,
+          "crs": "EPSG:25833",
+          "driver": "GTiff",
+          "dtype": "float32",
+          "height": 135,
+          "maximum_m": 1365.2608642578125,
+          "minimum_m": 662.7963256835938,
+          "missing_pixels": 0,
+          "nodata": -9999.0,
+          "transform": [
+            10.0,
+            0.0,
+            43060.0,
+            0.0,
+            -10.0,
+            6909280.0
+          ],
+          "valid_pixels": 22140,
+          "width": 164
+        },
+        "raster_bytes": 263329,
+        "raster_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-455982/terrain-screening-10m.metadata.json",
+        "raster_metadata_sha256": "16634672b775c5c25848dfa67bc64e00b43850100da5a47af6bf8df9925af8e7",
+        "raster_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-455982/terrain-screening-10m.tif",
+        "raster_sha256": "f57a5815ea2fef9952ca6f4d705929cf84a211926df05a257261d15e25541794",
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-455982/export.request.json",
+        "request_sha256": "7502eef9a4e995e666927b59ef0f9be9faf2593645fb11c736c84bd5da268a6c",
+        "requested_bounds": [
+          43060.0,
+          6907930.0,
+          44700.0,
+          6909280.0
+        ],
+        "requested_crs": "EPSG:25833",
+        "requested_resolution_m": 10.0,
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-455982/export.response-metadata.json",
+        "response_metadata_sha256": "61104741787a43ea9d336229d4f6cd564cf64ffc76352754a3f369439da261bb",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-455982/export.response.json",
+        "response_sha256": "e9dadf2072c46104d30464b265545ba3400d158cd8349440a5af813b0738f3f3"
+      },
+      "terrain_acquired": true,
+      "transformations": [
+        {
+          "coordinate_order": "always_xy",
+          "library": "PROJ via pyproj",
+          "operation": "candidate EPSG:4326 longitude/latitude to output grid",
+          "target_crs": "EPSG:25833"
+        },
+        {
+          "horizontal_resampling": "bilinear",
+          "operation": "ImageServer source project mosaic to requested output grid",
+          "source_crs": "EPSG:25832",
+          "target_crs": "EPSG:25833",
+          "vertical_transformation": "none; elevations retain the selected project's height reference"
+        }
+      ],
+      "validation_contract_v3_terrain_eligible": false
+    },
+    {
+      "blockers": [
+        "screening_10m_chip_is_not_native_solver_terrain",
+        "avalanche_day_snow_surface_mismatch_unquantified",
+        "vertical_accuracy_uncertainty_unavailable",
+        "horizontal_accuracy_uncertainty_unavailable"
+      ],
+      "candidate_id": "regobs-457182",
+      "event_surface_mismatch": {
+        "horizontal_accuracy_uncertainty_m": null,
+        "missing_uncertainties_remain_masked": true,
+        "quantitative_mismatch_treatment_available": false,
+        "signed_event_minus_flight_days": 3505.702083,
+        "snow_depth_uncertainty_m": null,
+        "surface_type": "bare-earth DTM, not avalanche-day snow surface",
+        "vegetation_or_classification_residual_uncertainty_m": null,
+        "vertical_accuracy_uncertainty_m": null
+      },
+      "event_time": "2026-03-23T17:51:00+01:00",
+      "normalized_candidate_sha256": "9c01189ace1edca390879c0e1591cce463859629606bc25c93e8588d3472a551",
+      "selected_project": {
+        "AARSTALL": 2016,
+        "CATEGORY": 1,
+        "DEKNINGSNUMMER": "42077",
+        "FKB_LASERSTANDARD": "10",
+        "FLYFIRMA": "Blom Geomatics AS",
+        "HOYDESYSTEM": "5941",
+        "KOORDINATSYSTEM": "25832",
+        "LAS_PROJECT_ID": 484,
+        "LAS_PROJECT_NAME": "NDH Luster 2pkt 2016",
+        "NAME": "NDH Luster 2pkt 2016",
+        "OBJECTID": 25523,
+        "OBJEKTKATALOG": "FKB-Laser 2.0",
+        "OPPDRAGSGIVER": "Kartverket",
+        "OPPLOSNING": 0.5,
+        "PROSJEKTNR": null,
+        "PUBLISERT": "published",
+        "PUNKTTETTHET": 2,
+        "RAPPORT": null,
+        "SISTEFLYDATO": 1471392000000,
+        "TILGANG": "1",
+        "TYPE": "1"
+      },
+      "source_geometry_sha256": "6f4384262ec44fdd19cbf51809ebdba2fc7844a9445da1ff443e796d210d1520",
+      "source_project_count_returned": 13,
+      "source_project_lineage": {
+        "access": "anonymous public Høydedata ImageServer read",
+        "flight_time_utc": "2016-08-17T00:00:00Z",
+        "las_project_id": 484,
+        "name": "NDH Luster 2pkt 2016",
+        "objectid": 25523,
+        "point_density_m2": 2,
+        "project_report": null,
+        "provider": "Kartverket Høydedata DTM ImageServer",
+        "provider_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer",
+        "source_horizontal_crs": "EPSG:25832",
+        "source_horizontal_units": "metre",
+        "source_resolution_m": 0.5,
+        "vertical_reference": {
+          "epsg": 5941,
+          "name": "NN2000 height",
+          "resolved": true
+        },
+        "year": 2016
+      },
+      "source_project_query": {
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-457182/source-project-query.request.json",
+        "request_sha256": "4335d0f7e5fa43c724342973238c1536337fa83cde5e00585e2b470c70059993",
+        "response_metadata": {
+          "content_length_header": null,
+          "content_type": "application/json; charset=UTF-8",
+          "etag": "\"5920e04e\"",
+          "final_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer/query?f=json&geometry=7.1497200429%2C61.4404434784&geometryType=esriGeometryPoint&inSR=4326&outFields=OBJECTID%2CNAME%2CCATEGORY%2CLAS_PROJECT_ID%2CLAS_PROJECT_NAME%2COPPDRAGSGIVER%2CDEKNINGSNUMMER%2CFKB_LASERSTANDARD%2CFLYFIRMA%2CTYPE%2CTILGANG%2CPROSJEKTNR%2CKOORDINATSYSTEM%2CHOYDESYSTEM%2CPUNKTTETTHET%2CAARSTALL%2CSISTEFLYDATO%2CPUBLISERT%2CRAPPORT%2COPPLOSNING%2COBJEKTKATALOG&resultRecordCount=200&returnGeometry=false&spatialRel=esriSpatialRelIntersects&where=1%3D1",
+          "last_modified": null,
+          "status": 200
+        },
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-457182/source-project-query.response-metadata.json",
+        "response_metadata_sha256": "8410627da5152625b88f352844cb2002648273b161be4b2e9231960c7b871ed5",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-457182/source-project-query.response.json",
+        "response_sha256": "a647a0c301edb4aa449b51b97c5c9a7e4a5762320f9bd64a20e34e8cf8cda7c9"
+      },
+      "status": "acquired_screening_terrain_not_event_surface_eligible",
+      "terrain": {
+        "raster": {
+          "count": 1,
+          "crs": "EPSG:25833",
+          "driver": "GTiff",
+          "dtype": "float32",
+          "height": 107,
+          "maximum_m": 1420.8990478515625,
+          "minimum_m": 1148.1358642578125,
+          "missing_pixels": 706,
+          "nodata": -9999.0,
+          "transform": [
+            10.0,
+            0.0,
+            81510.0,
+            0.0,
+            -10.0,
+            6837590.0
+          ],
+          "valid_pixels": 10315,
+          "width": 103
+        },
+        "raster_bytes": 66689,
+        "raster_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-457182/terrain-screening-10m.metadata.json",
+        "raster_metadata_sha256": "b07111a7d2626e489a302e8f8fa18d69b8b4accf61585df3d030d067cb4e2d7d",
+        "raster_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-457182/terrain-screening-10m.tif",
+        "raster_sha256": "0f1ed83d8344b9a4200f1f17f8395c7083330804a406e5b99edd3b7828cdfb13",
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-457182/export.request.json",
+        "request_sha256": "58278254f46c077448aa55a36a75dfd3cae4043e802eab29d258282667a26944",
+        "requested_bounds": [
+          81510.0,
+          6836520.0,
+          82540.0,
+          6837590.0
+        ],
+        "requested_crs": "EPSG:25833",
+        "requested_resolution_m": 10.0,
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-457182/export.response-metadata.json",
+        "response_metadata_sha256": "5cb7793c977cc9ec9fc7360f99815b72d513f1d0d249d2ea98b66ab143e501de",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-457182/export.response.json",
+        "response_sha256": "6c9c18c760efbf17b7a57830293f255b2617337b8689b078509de142498b3445"
+      },
+      "terrain_acquired": true,
+      "transformations": [
+        {
+          "coordinate_order": "always_xy",
+          "library": "PROJ via pyproj",
+          "operation": "candidate EPSG:4326 longitude/latitude to output grid",
+          "target_crs": "EPSG:25833"
+        },
+        {
+          "horizontal_resampling": "bilinear",
+          "operation": "ImageServer source project mosaic to requested output grid",
+          "source_crs": "EPSG:25832",
+          "target_crs": "EPSG:25833",
+          "vertical_transformation": "none; elevations retain the selected project's height reference"
+        }
+      ],
+      "validation_contract_v3_terrain_eligible": false
+    },
+    {
+      "blockers": [
+        "screening_10m_chip_is_not_native_solver_terrain",
+        "avalanche_day_snow_surface_mismatch_unquantified",
+        "vertical_accuracy_uncertainty_unavailable",
+        "horizontal_accuracy_uncertainty_unavailable"
+      ],
+      "candidate_id": "regobs-458220",
+      "event_surface_mismatch": {
+        "horizontal_accuracy_uncertainty_m": null,
+        "missing_uncertainties_remain_masked": true,
+        "quantitative_mismatch_treatment_available": false,
+        "signed_event_minus_flight_days": 2406.488194,
+        "snow_depth_uncertainty_m": null,
+        "surface_type": "bare-earth DTM, not avalanche-day snow surface",
+        "vegetation_or_classification_residual_uncertainty_m": null,
+        "vertical_accuracy_uncertainty_m": null
+      },
+      "event_time": "2026-03-28T12:43:00+01:00",
+      "normalized_candidate_sha256": "2b2a7bc547ff09593d504a951f54d914accec606d728ae7b354afcc3562e1a24",
+      "selected_project": {
+        "AARSTALL": 2019,
+        "CATEGORY": 1,
+        "DEKNINGSNUMMER": "42288",
+        "FKB_LASERSTANDARD": "FKB-Laser-C-DTM10",
+        "FLYFIRMA": "Terratec AS",
+        "HOYDESYSTEM": "5941",
+        "KOORDINATSYSTEM": "25832",
+        "LAS_PROJECT_ID": 1128,
+        "LAS_PROJECT_NAME": "NDH Vågå-Lom-Skjåk 2pkt 2019",
+        "NAME": "NDH Vågå-Lom-Skjåk 2pkt 2019",
+        "OBJECTID": 113148,
+        "OBJEKTKATALOG": "FKB-Laser 3.0",
+        "OPPDRAGSGIVER": "Kartverket",
+        "OPPLOSNING": 0.5,
+        "PROSJEKTNR": null,
+        "PUBLISERT": "published",
+        "PUNKTTETTHET": 2,
+        "RAPPORT": null,
+        "SISTEFLYDATO": 1566777600000,
+        "TILGANG": "1",
+        "TYPE": "1"
+      },
+      "source_geometry_sha256": "f50b41f1c6298caae13e4f65bdb5d4b47f4725a6b4b70b474156a84630fea209",
+      "source_project_count_returned": 13,
+      "source_project_lineage": {
+        "access": "anonymous public Høydedata ImageServer read",
+        "flight_time_utc": "2019-08-26T00:00:00Z",
+        "las_project_id": 1128,
+        "name": "NDH Vågå-Lom-Skjåk 2pkt 2019",
+        "objectid": 113148,
+        "point_density_m2": 2,
+        "project_report": null,
+        "provider": "Kartverket Høydedata DTM ImageServer",
+        "provider_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer",
+        "source_horizontal_crs": "EPSG:25832",
+        "source_horizontal_units": "metre",
+        "source_resolution_m": 0.5,
+        "vertical_reference": {
+          "epsg": 5941,
+          "name": "NN2000 height",
+          "resolved": true
+        },
+        "year": 2019
+      },
+      "source_project_query": {
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-458220/source-project-query.request.json",
+        "request_sha256": "3565e96626c5ef60103d492ae3dae5700267d6b6026a219699adcbdffa7cd9cf",
+        "response_metadata": {
+          "content_length_header": null,
+          "content_type": "application/json; charset=UTF-8",
+          "etag": "\"97eb14f\"",
+          "final_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer/query?f=json&geometry=7.3793929350%2C62.0285410541&geometryType=esriGeometryPoint&inSR=4326&outFields=OBJECTID%2CNAME%2CCATEGORY%2CLAS_PROJECT_ID%2CLAS_PROJECT_NAME%2COPPDRAGSGIVER%2CDEKNINGSNUMMER%2CFKB_LASERSTANDARD%2CFLYFIRMA%2CTYPE%2CTILGANG%2CPROSJEKTNR%2CKOORDINATSYSTEM%2CHOYDESYSTEM%2CPUNKTTETTHET%2CAARSTALL%2CSISTEFLYDATO%2CPUBLISERT%2CRAPPORT%2COPPLOSNING%2COBJEKTKATALOG&resultRecordCount=200&returnGeometry=false&spatialRel=esriSpatialRelIntersects&where=1%3D1",
+          "last_modified": null,
+          "status": 200
+        },
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-458220/source-project-query.response-metadata.json",
+        "response_metadata_sha256": "11aad99940c4da2c4019444ff3b8d6b7255bbdbd6083f99d469570c4a1b66fe4",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-458220/source-project-query.response.json",
+        "response_sha256": "f550fc87f04457d1e0f404d8a3f2fa74c6c6c4a83bbcc1c97c7aee729b09153e"
+      },
+      "status": "acquired_screening_terrain_not_event_surface_eligible",
+      "terrain": {
+        "raster": {
+          "count": 1,
+          "crs": "EPSG:25833",
+          "driver": "GTiff",
+          "dtype": "float32",
+          "height": 103,
+          "maximum_m": 1545.533935546875,
+          "minimum_m": 1237.7381591796875,
+          "missing_pixels": 636,
+          "nodata": -9999.0,
+          "transform": [
+            10.0,
+            0.0,
+            101380.0,
+            0.0,
+            -10.0,
+            6901310.0
+          ],
+          "valid_pixels": 10385,
+          "width": 107
+        },
+        "raster_bytes": 66689,
+        "raster_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-458220/terrain-screening-10m.metadata.json",
+        "raster_metadata_sha256": "92a0436d13eb3a7bf4508ffe1e5cbb2a00ce2b3c921e7382bad9a70609649fc1",
+        "raster_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-458220/terrain-screening-10m.tif",
+        "raster_sha256": "7a1472f7ec8d79a219d6d1d1f2551dabe8ac8382fbfdcdfa2ee8e4a5be34618c",
+        "request_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-458220/export.request.json",
+        "request_sha256": "73c0cbd8bbab96a99309b6b2645e2a1562905b3ba38cb74f8157210b43b52cd8",
+        "requested_bounds": [
+          101380.0,
+          6900280.0,
+          102450.0,
+          6901310.0
+        ],
+        "requested_crs": "EPSG:25833",
+        "requested_resolution_m": 10.0,
+        "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-458220/export.response-metadata.json",
+        "response_metadata_sha256": "34d6b2824bc4938032d45dc42dcb239c19987550625f3146a360a3a625a3a8f4",
+        "response_path": ".validation-cache/public-event-terrain-acquisition-v1/regobs-458220/export.response.json",
+        "response_sha256": "a8e6f2da693d24c6595cd1332738c62722eda652a304104452285b38490e8dee"
+      },
+      "terrain_acquired": true,
+      "transformations": [
+        {
+          "coordinate_order": "always_xy",
+          "library": "PROJ via pyproj",
+          "operation": "candidate EPSG:4326 longitude/latitude to output grid",
+          "target_crs": "EPSG:25833"
+        },
+        {
+          "horizontal_resampling": "bilinear",
+          "operation": "ImageServer source project mosaic to requested output grid",
+          "source_crs": "EPSG:25832",
+          "target_crs": "EPSG:25833",
+          "vertical_transformation": "none; elevations retain the selected project's height reference"
+        }
+      ],
+      "validation_contract_v3_terrain_eligible": false
+    }
+  ],
+  "claim_boundary": "Archived public terrain lineage does not establish an avalanche-day surface. Unquantified snow, epoch, classification, and accuracy terms keep all events ineligible.",
+  "counts": {
+    "candidates": 26,
+    "event_surface_mismatch_quantified": 0,
+    "no_dated_pre_event_project": 1,
+    "terrain_chips_acquired": 25,
+    "validation_contract_v3_terrain_eligible": 0
+  },
+  "frozen_at_utc": "2026-08-13T00:00:00Z",
+  "model_code_imported": false,
+  "normalized_artifact_sha256": "4469bd9e499d114a55c809cb4ba9a0c4f308507974881339e3bec8dc1847cb46",
+  "predictions_generated": false,
+  "prototype_disclaimer": "Experimental research prototype only. It does not replace Avalanche Canada guidance or field assessment. Scores are relative indices, not probabilities.",
+  "public_service": {
+    "provider": "Kartverket Høydedata",
+    "service_crs": "EPSG:25833",
+    "service_data_type": "esriImageServiceDataTypeElevation",
+    "service_metadata_lineage": {
+      "request_path": ".validation-cache/public-event-terrain-acquisition-v1/service-metadata.request.json",
+      "request_sha256": "9aa61d08fbf0f79892ce7107522057c8fd2b3074b112d3cb511b255df348ba67",
+      "response_metadata": {
+        "content_length_header": null,
+        "content_type": "text/plain; charset=UTF-8",
+        "etag": "\"53581d25\"",
+        "final_url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer?f=pjson",
+        "last_modified": null,
+        "status": 200
+      },
+      "response_metadata_path": ".validation-cache/public-event-terrain-acquisition-v1/service-metadata.response-metadata.json",
+      "response_metadata_sha256": "954afb343ca0b2b427b4affec68cd2900268d61f8ffaa48116c67a79e6e26196",
+      "response_path": ".validation-cache/public-event-terrain-acquisition-v1/service-metadata.response.json",
+      "response_sha256": "7e4f283ad6817ca8054288734429a199818207db28da07ccccf2db411df14fa8"
+    },
+    "service_pixel_type": "F32",
+    "url": "https://hoydedata.no/arcgis/rest/services/DTM/ImageServer"
+  },
+  "runtime_modified": false,
+  "schema": "avycore-public-event-terrain-acquisition-v1",
+  "selection_rule": "At the provider start point, choose the latest category-1 Høydedata project with a non-null LAS project identity and flight date not after the event; break ties by finer declared resolution then OBJECTID. No evaluated output is accessed.",
+  "source_regobs_evidence_manifest_sha256": "cb14787db2c40d5b043d9ac4a25afbbd92da48067d291599a4ebd2f9a27baaae"
+}

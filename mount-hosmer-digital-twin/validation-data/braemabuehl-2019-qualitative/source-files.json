@@ -1,0 +1,127 @@
+{
+  "source_record": "https://doi.org/10.5281/zenodo.15796703",
+  "collection_digest_definition": "SHA-256 of the UTF-8 canonical JSON encoding (sort_keys=true, separators comma/colon, ensure_ascii=false) of the files array only, in the order shown.",
+  "files": [
+    {
+      "file": "Wildi_RelArea.cpg",
+      "size_bytes": 5,
+      "md5": "ae3b3df9970b49b6523e608759bc957d",
+      "sha256": "3ad3031f5503a4404af825262ee8232cc04d4ea6683d42c5dd0a2f2a27ac9824"
+    },
+    {
+      "file": "Wildi_RelArea.dbf",
+      "size_bytes": 73,
+      "md5": "67f14ea1977ccb651666925e755c79cf",
+      "sha256": "6a8a9c72d65963ab396ca20901d24ba017f1f69b2a9f1be48dad47fe2914e0e0"
+    },
+    {
+      "file": "Wildi_RelArea.prj",
+      "size_bytes": 472,
+      "md5": "313304cd209164f8f1694217325cad38",
+      "sha256": "533b4abc8e751ef5831d87f2d8257e4cc3ec40da24e732b20d2721980afe3a4f"
+    },
+    {
+      "file": "Wildi_RelArea.shp",
+      "size_bytes": 684,
+      "md5": "7b325badf3b42f85186f918ccd442b1b",
+      "sha256": "14d4ae6a0bd4040296bfce66f20fda2781a266db0aeda2afb7486398433f2f17"
+    },
+    {
+      "file": "Wildi_RelArea.shx",
+      "size_bytes": 108,
+      "md5": "fb7de24cefab12c77530a1720d621512",
+      "sha256": "dd80f984d84106377484f601984f618fae06d8d75a9f93fa4b6fd345f1d1a700"
+    },
+    {
+      "file": "Wildi_DepoArea.CPG",
+      "size_bytes": 5,
+      "md5": "ae3b3df9970b49b6523e608759bc957d",
+      "sha256": "3ad3031f5503a4404af825262ee8232cc04d4ea6683d42c5dd0a2f2a27ac9824"
+    },
+    {
+      "file": "Wildi_DepoArea.dbf",
+      "size_bytes": 73,
+      "md5": "67f14ea1977ccb651666925e755c79cf",
+      "sha256": "6a8a9c72d65963ab396ca20901d24ba017f1f69b2a9f1be48dad47fe2914e0e0"
+    },
+    {
+      "file": "Wildi_DepoArea.prj",
+      "size_bytes": 472,
+      "md5": "313304cd209164f8f1694217325cad38",
+      "sha256": "533b4abc8e751ef5831d87f2d8257e4cc3ec40da24e732b20d2721980afe3a4f"
+    },
+    {
+      "file": "Wildi_DepoArea.shp",
+      "size_bytes": 4832,
+      "md5": "dac254ef86537e82bcc91a8995178b96",
+      "sha256": "66055f48882257819bb7ede468525c15f07d86577e8e32da4afd3f9980fb9da3"
+    },
+    {
+      "file": "Wildi_DepoArea.shx",
+      "size_bytes": 108,
+      "md5": "8820f939fa031a09441a61dbefce22a0",
+      "sha256": "3371893d4ab78e2603df3a88210f32e4fc43cc34d31d868381e2ac5dc8a09a4b"
+    },
+    {
+      "file": "Rüchi_RelArea.CPG",
+      "size_bytes": 5,
+      "md5": "ae3b3df9970b49b6523e608759bc957d",
+      "sha256": "3ad3031f5503a4404af825262ee8232cc04d4ea6683d42c5dd0a2f2a27ac9824"
+    },
+    {
+      "file": "Rüchi_RelArea.dbf",
+      "size_bytes": 73,
+      "md5": "76f402de1f98e50381666eb1100d2451",
+      "sha256": "aac2d0c1a11464214678c347dcfabb306a2cd54565c64608dc2a65616f84e974"
+    },
+    {
+      "file": "Rüchi_RelArea.prj",
+      "size_bytes": 472,
+      "md5": "313304cd209164f8f1694217325cad38",
+      "sha256": "533b4abc8e751ef5831d87f2d8257e4cc3ec40da24e732b20d2721980afe3a4f"
+    },
+    {
+      "file": "Rüchi_RelArea.shp",
+      "size_bytes": 1100,
+      "md5": "477372e3dcb74e85ae944b8e55099c19",
+      "sha256": "726abc3b2526d40d25a83631b8fe6052cd92b907221915e3f776d1215c85f9a4"
+    },
+    {
+      "file": "Rüchi_RelArea.shx",
+      "size_bytes": 108,
+      "md5": "8cfa180eed39595ef50aab9c90d9094c",
+      "sha256": "0d532049e7f092b25a3b3b93280253b164a8fdedba794a92aec2b3b80cfe38bc"
+    },
+    {
+      "file": "Rüchi_DepoArea.CPG",
+      "size_bytes": 5,
+      "md5": "ae3b3df9970b49b6523e608759bc957d",
+      "sha256": "3ad3031f5503a4404af825262ee8232cc04d4ea6683d42c5dd0a2f2a27ac9824"
+    },
+    {
+      "file": "Rüchi_DepoArea.dbf",
+      "size_bytes": 73,
+      "md5": "0c86ccbf25fdf2f770dfbf4f98577c62",
+      "sha256": "d989d9982f387e9641c9dce1608f7408a2945a354bc2cf899965f04612c86ab6"
+    },
+    {
+      "file": "Rüchi_DepoArea.prj",
+      "size_bytes": 472,
+      "md5": "313304cd209164f8f1694217325cad38",
+      "sha256": "533b4abc8e751ef5831d87f2d8257e4cc3ec40da24e732b20d2721980afe3a4f"
+    },
+    {
+      "file": "Rüchi_DepoArea.shp",
+      "size_bytes": 7660,
+      "md5": "6f3bad727dc7b1b5e8049555c9887097",
+      "sha256": "9600682d6a43acd514668bdf2abc102222d02d7d989a135aa2e1c9bae6bd6fb1"
+    },
+    {
+      "file": "Rüchi_DepoArea.shx",
+      "size_bytes": 108,
+      "md5": "0bb6753c1c967da08a114006af4e5e76",
+      "sha256": "9e4ad5547c979c4fb69eb19586f1f6ebfa1d53f2d82bb1ae5a90edc0059a305d"
+    }
+  ],
+  "source_collection_sha256": "92a7f7165f47eee88274f8c48f9d8a44e27610d5af358c539e275cb2071edc8d"
+}

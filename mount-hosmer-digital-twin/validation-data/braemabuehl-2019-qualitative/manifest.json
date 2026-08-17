@@ -1,0 +1,61 @@
+{
+  "schema_version": "avycore-validation-dataset-v2",
+  "dataset_id": "braemabuehl-2019-qualitative-v1",
+  "title": "Brämabühl 15 January 2019 interpreted release and deposit outlines",
+  "source": {
+    "provider": "WSL Institute for Snow and Avalanche Research SLF / Zenodo",
+    "citation": "Glaus, Julia (2025), Brämabühl_Avalanche_Jan2019_Dataset, Zenodo, doi:10.5281/zenodo.15796703",
+    "source_uri": "https://doi.org/10.5281/zenodo.15796703",
+    "licence": "CC BY 4.0",
+    "permitted_use": "Reuse with attribution under Creative Commons Attribution 4.0 International."
+  },
+  "acquisition": {
+    "status": "bounded",
+    "start_date": "2019-01-15",
+    "end_date": "2019-01-16",
+    "temporal_precision": "day",
+    "basis": "The registered evidence spans the 15 January avalanche occurrence and drone orthophotography acquired one day later; polygon acquisition itself was on 16 January."
+  },
+  "evidence_type": "remote_sensing_interpretation",
+  "scientific_use": "qualitative_comparison",
+  "independent_of_model": true,
+  "observation_types": [
+    "release_polygon",
+    "deposit_polygon"
+  ],
+  "original_crs": "EPSG:2056",
+  "crs": "EPSG:2056",
+  "horizontal_units": "metre",
+  "axis_order": "easting_northing",
+  "coordinate_dimensions": 2,
+  "normalization_type": "identity",
+  "normalization_method": "Source polygon coordinates copied without reprojection, rounding, simplification, or topology repair.",
+  "normalization_software": "GeoPandas 1.1.4, Pyogrio 0.13.0, and Shapely 2.1.2 used only for lossless Shapefile-to-GeoJSON serialization.",
+  "original_source_sha256": "92a7f7165f47eee88274f8c48f9d8a44e27610d5af358c539e275cb2071edc8d",
+  "spatial_coverage": {
+    "west": 2783897.030034609,
+    "south": 1184125.1414804496,
+    "east": 2784922.347284578,
+    "north": 1185611.8829778098,
+    "description": "Exact aggregate bounds of the registered Wildi and Rüchi source polygons; this is not a surveyed-domain boundary."
+  },
+  "coverage_semantics": "positive_observations_only",
+  "survey_completeness": "unknown",
+  "detection_limitations": "Only positive release and deposition outlines interpreted from a post-event drone orthophoto are registered. The report does not declare a complete survey domain, a detection threshold, or false-negative characterization. Powder-cloud outlines are deliberately excluded.",
+  "absence_semantics": "unknown_unless_explicitly_observed",
+  "positional_uncertainty": {
+    "status": "unknown",
+    "horizontal_m": null,
+    "confidence_level": null,
+    "method": "The source report gives no quantified horizontal positional uncertainty for the interpreted outlines."
+  },
+  "observations_file": "observations.geojson",
+  "observations_sha256": "c0b0e6bcc2183ea4a1b1d1f1c0d9e92285413d03493dc5528fc2023f44269fd7",
+  "limitations": [
+    "Remote-sensing interpretation is qualitative evidence under the avycore contract, not field-validation ground truth.",
+    "No quantified horizontal uncertainty or complete surveyed domain is published, so strict IoU and within-uncertainty endpoint metrics are ineligible.",
+    "The mapped deposit is the dense-deposition outline; the source also documents a powder component that this engine does not model.",
+    "A modern or summer DTM is not the 15 January event-day snow surface; event-day terrain error is unquantified by this dataset.",
+    "The scenario records approximate regional new snow and the control trigger, but no event-specific wind vector, release depth, or release-size class."
+  ]
+}

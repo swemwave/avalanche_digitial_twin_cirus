@@ -1,0 +1,29 @@
+{
+  "schema": "synthetic-public-event-candidate-funnel-v1",
+  "candidate_funnel_id": "public-event-candidates-v1",
+  "candidates": [
+    {
+      "candidate_id": "regobs-synthetic-1",
+      "source_collection": "RegObs public API v5",
+      "source_record_id": "synthetic-1",
+      "source_record_url": "https://example.invalid/regobs/synthetic-1",
+      "source_record_canonical_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "geographic_discovery": {
+        "observation_location_latitude": 60.0,
+        "observation_location_longitude": 10.0
+      },
+      "event_time": {
+        "provider_earliest": "2024-01-02T01:00:00+01:00",
+        "provider_latest": "2024-01-02T03:00:00+01:00",
+        "provider_observation_time": "2024-01-02T04:00:00+01:00"
+      },
+      "release_initial_condition_evidence": {
+        "fracture_height_value": 75
+      },
+      "geometry_availability": {
+        "stop_point_present": true,
+        "stop_extent_present": false
+      }
+    }
+  ]
+}

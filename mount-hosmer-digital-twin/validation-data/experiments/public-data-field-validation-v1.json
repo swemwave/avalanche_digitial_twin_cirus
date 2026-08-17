@@ -1,0 +1,215 @@
+{
+  "schema": "avycore-public-data-field-validation-experiment-v1",
+  "experiment_id": "public-data-field-validation-v1",
+  "protocol_status": "frozen_for_candidate_discovery_only",
+  "frozen_at_utc": "2026-08-13T00:00:00Z",
+  "validation_contract": "avycore-validation-dataset-v3",
+  "predictions_generated": false,
+  "holdout_targets_accessed": false,
+  "prototype_disclaimer": "Experimental research prototype only. It does not replace Avalanche Canada guidance or field assessment. Model scores are relative indices, not probabilities.",
+  "scientific_scope": {
+    "cohort": "dry dense-slab avalanches",
+    "included_regime": "dry_dense_slab",
+    "excluded_regimes": [
+      "wet slab",
+      "wet loose",
+      "dry loose",
+      "slush flow",
+      "glide avalanche",
+      "cornice fall without a separately documented dry dense-slab event",
+      "unknown avalanche type"
+    ],
+    "negative_label_rule": "An unreported avalanche, an unobserved location, or an area outside an explicit complete-search mask is unknown, never a negative label.",
+    "missing_data_rule": "Missing terrain, forcing, release, coverage, and observation data remain masked and visible; they are never converted to a safe-looking zero."
+  },
+  "component_profiles": {
+    "R": {
+      "component": "release",
+      "prediction_target": "release polygon or release-cell mask",
+      "required_observations": [
+        "independent release polygon or release-cell mask",
+        "mapped-validity mask",
+        "explicit complete-search/detection mask for metrics that require negatives"
+      ],
+      "forbidden_target_use": "Observed release geometry may be opened only by the scorer after a prediction and all identities have been frozen."
+    },
+    "C": {
+      "component": "conditional_runout",
+      "prediction_target": "terminal dense-flow deposit polygon and/or terminal dense-flow endpoint, conditional on an observed release state",
+      "required_observations": [
+        "release geometry independent of the evaluated deposit or endpoint target",
+        "release thickness evidence with metres as the canonical unit",
+        "release density evidence with kilograms per cubic metre as the canonical unit",
+        "terminal dense-flow deposit or endpoint with component attribution",
+        "mapped-validity mask",
+        "explicit complete-search/detection mask for metrics that require negatives"
+      ],
+      "release_state_rule": "Release geometry, thickness, density, and derived initial-condition hash are frozen before any runout target is opened.",
+      "weather_rule": "Weather is recorded for provenance but is not required unless it is an input to the named runout engine."
+    },
+    "E": {
+      "component": "end_to_end",
+      "prediction_target": "release plus terminal dense-flow deposit and/or terminal dense-flow endpoint",
+      "required_observations": [
+        "independent release observation",
+        "terminal dense-flow deposit or endpoint with component attribution",
+        "all deterministic release-model inputs with acquisition intervals, units, uncertainty, and spatial representativeness",
+        "a predeclared rule linking a release prediction to a runout initial state",
+        "mapped-validity mask",
+        "explicit complete-search/detection mask for metrics that require negatives"
+      ],
+      "observed_release_input_forbidden": true
+    }
+  },
+  "observation_quality_tiers": {
+    "A": {
+      "description": "Surveyed field mapping or reviewed remote sensing with independent interpretation, documented method, complete target coverage, explicit uncertainty, component attribution, and blind annotation.",
+      "quantitative_use": "Eligible only for the component whose target and coverage requirements are met."
+    },
+    "B": {
+      "description": "Independently documented terminal dense-flow endpoint or partial component geometry with quantified position uncertainty, but without a complete-search polygon mask.",
+      "quantitative_use": "Endpoint-distance or positive-only metrics only; never binary false-positive or IoU claims."
+    },
+    "C": {
+      "description": "Positive avalanche report or geometry lacking sufficient mapping method, blindness, coverage, independence, component attribution, or uncertainty.",
+      "quantitative_use": "Candidate discovery and positive-only characterization only; absence is unlabelled."
+    }
+  },
+  "remote_sensing_acceptance": {
+    "quantitative_only_if_all_true": [
+      "mapping method and source resolution are documented",
+      "annotation is independent of the evaluated prediction",
+      "annotator was blind to model output",
+      "target-component attribution is explicit",
+      "survey footprint and detection limitations are recorded",
+      "horizontal uncertainty and confidence are recorded per feature",
+      "an annotation-protocol artifact is SHA-256 identified"
+    ],
+    "otherwise": "Qualitative development evidence or positive-unlabelled candidate evidence only."
+  },
+  "dense_flow_footprint_definition": {
+    "quantity": "peak flow thickness normal to the local slope",
+    "canonical_unit": "m",
+    "primary_threshold_m": 0.1,
+    "threshold_status": "Project-defined evaluation threshold, not a universal physical boundary and not evidence of improved accuracy.",
+    "development_only_sensitivity_thresholds_m": [
+      0.05,
+      0.1,
+      0.2
+    ],
+    "holdout_rule": "The primary threshold and any permitted sensitivity reporting are frozen before a final holdout target is opened and may not be selected from holdout performance.",
+    "quantity_semantics_source": "https://docs.avaframe.org/en/latest/DFAnormal.html"
+  },
+  "metrics": {
+    "release": {
+      "positive_and_negative": [
+        "intersection_over_union",
+        "precision",
+        "recall",
+        "false_positive_area"
+      ],
+      "positive_unlabelled": [
+        "observed_positive_capture_fraction",
+        "observed_positive_missed_area"
+      ],
+      "negative_required": true
+    },
+    "conditional_runout": {
+      "positive_and_negative": [
+        "deposit_intersection_over_union",
+        "deposit_precision",
+        "deposit_recall",
+        "false_positive_area"
+      ],
+      "positive_or_endpoint": [
+        "terminal_endpoint_absolute_error_m",
+        "terminal_endpoint_signed_error_m"
+      ],
+      "negative_required_for_polygon_false_positive_metrics": true
+    },
+    "end_to_end": {
+      "metrics": "Release and runout metrics are reported separately and jointly; a joint result never hides a failed component.",
+      "negative_required_for_binary_metrics": true
+    },
+    "cohort_reporting": {
+      "aggregation": "event-level metrics with median, interquartile range, and bootstrap confidence interval",
+      "bootstrap_seed": 20260813,
+      "minimum_final_events": 12,
+      "minimum_independent_paths": 6,
+      "all_predeclared_holdout_events_must_be_reported": true
+    }
+  },
+  "named_baselines": {
+    "release": "Current deterministic release model in avycore.hazard.risk",
+    "conditional_runout_routing": "Current alpha-angle routing baseline in avycore.hazard.runout",
+    "conditional_runout_dynamic": "Current deterministic particle solver in avycore.hazard.runout",
+    "comparison_rule": "Additional complexity is a candidate, not an accuracy improvement, until it outperforms the named baseline on a protected holdout under this protocol."
+  },
+  "uncertainty_ensemble": {
+    "seed": 20260814,
+    "variables": [
+      "release thickness",
+      "release density",
+      "terrain horizontal and vertical uncertainty",
+      "friction parameters",
+      "entrainment parameters",
+      "dense-flow footprint threshold"
+    ],
+    "sampling_rule": "Use only predeclared measured bounds or source-supported distributions; missing values are not silently imputed.",
+    "holdout_tuning_forbidden": true
+  },
+  "grouping_and_partitioning": {
+    "group_ids_required": [
+      "event_group_id",
+      "path_group_id",
+      "storm_group_id"
+    ],
+    "split_seed": 20260815,
+    "anti_leakage": "No path_group_id or storm_group_id may occur in more than one partition. Mountain grouping is recorded and is kept together when event independence cannot be justified.",
+    "partition_assignment_status": "not_started",
+    "holdout_target_access_before_assignment": false
+  },
+  "inclusion_rules": [
+    "The event is a dry dense-slab avalanche or can be supported as such by primary evidence.",
+    "The source record and every acquired byte are identified by stable URL or DOI, version or acquisition time, size, and SHA-256.",
+    "The event time is an explicit UTC instant or bounded UTC interval; unresolved local time-zone semantics make the event ineligible until resolved.",
+    "Terrain CRS, units, vertical datum, epoch, transformations, and event-surface mismatch are documented.",
+    "Each observation states its mapping method, independence, coverage semantics, resolution, detection limitations, uncertainty, and confidence basis.",
+    "Each event satisfies every component-specific input and observation requirement for the profile being scored."
+  ],
+  "exclusion_rules": [
+    "Avalanche type or dense-flow component cannot be established.",
+    "Source licence does not permit the intended validation use or required attribution cannot be preserved.",
+    "Event time, coordinate reference system, units, or coordinate order cannot be resolved.",
+    "The candidate depends on an unreported avalanche being treated as a negative.",
+    "Required release thickness, density, terrain, forcing, coverage, uncertainty, or component-attribution evidence is missing.",
+    "Release evidence is derived from or selected after viewing the evaluated runout target.",
+    "The observation was annotated with access to the evaluated model prediction.",
+    "The event shares a path or storm group across development and holdout partitions."
+  ],
+  "acceptance_criteria": {
+    "release": "Report against the current deterministic release baseline; no claim of validation or improvement unless the full protected cohort and uncertainty intervals are reported.",
+    "conditional_runout": "Report alpha routing and the particle solver as named baselines using the same frozen observed release state; a candidate must be compared event-for-event.",
+    "end_to_end": "Release and runout must both pass their predeclared component checks; aggregate success cannot compensate for a failed component.",
+    "failed_results": "A failed result is retained and reported. Parameters and thresholds are never adjusted against a final holdout to force a pass."
+  },
+  "prior_evidence_policy": {
+    "development_only": [
+      "Swiss SPOT 2018 and 2019 outlines",
+      "Davos qualitative 2019 events",
+      "Swiss aerial 1999 avalanche inventory",
+      "AvaFrameData events and targets",
+      "GEODAR events"
+    ],
+    "final_holdout_allowed": false,
+    "reason": "These sources or events were viewed during development before this protocol was frozen."
+  },
+  "identity_freeze": {
+    "model_hash": "pending before prediction execution",
+    "configuration_hash": "pending before prediction execution",
+    "bake_hash": "pending before prediction execution",
+    "prediction_input_hash": "pending before prediction execution",
+    "observation_manifest_hash": "pending before any target is opened by a scorer",
+    "deterministic_replay_required": true
+  }
+}

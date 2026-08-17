@@ -1,0 +1,108 @@
+{
+  "schema": "avycore-geodar-along-thalweg-experiment-v1",
+  "experiment_id": "geodar-along-thalweg-v1",
+  "frozen_before_model_results": true,
+  "frozen_date": "2026-08-13",
+  "pre_score_implementation_corrections": [
+    {
+      "date": "2026-08-13",
+      "change": "The uniform horizontal grid now extends to the first 5 m cell edge at or beyond the final thalweg point, with endpoint elevation held for the sub-cell remainder.",
+      "reason": "The initial floor-to-cell reconstruction ended 0.12 m and 1.17 m of surface arc before two otherwise valid observed trajectories. This was detected by the frozen source-domain check before those events were scored.",
+      "unchanged": "Engine source, parameters, event selection, metrics, thresholds, pass rule, and all other event results.",
+      "model_score_informed": false
+    }
+  ],
+  "scientific_use": "field_kinematic_consistency",
+  "component_tested": "open_snow_voellmy_point_particle_along_observed_thalweg",
+  "engine_mode": "dynamics_only",
+  "claim_boundary": "This ablation compares the implemented open-snow point-particle dynamics with processed runout-defining GEODAR trajectories on their matched one-dimensional thalwegs. It is not release validation, deposit validation, occurrence prediction, a two-dimensional routing test, parameter calibration, or evidence of geographic generalization.",
+  "source": {
+    "record_url": "https://zenodo.org/records/1042108",
+    "doi": "10.5281/zenodo.1042108",
+    "version": "v1",
+    "license": "CC-BY-4.0",
+    "repository_guide": "geodar_repository.pdf",
+    "repository_guide_sha256": "1d6ba10c1eb34c5d23885aacbc95178832e61ad1d04c88c5b5fa85a368665724",
+    "crs": "CH03/LV03 (EPSG:21781); X=easting, Y=northing, Z=elevation",
+    "trajectory_semantics": "T is radar time; R is radar range; S is surface arc length along the matched thalweg; V is trajectory velocity projected onto the thalweg. The picked and smoothed feature is usually the front but may be a major surge.",
+    "measurement_limit": "The repository guide supplies 0.75 m radar range-bin spacing and processing lineage, but no per-trajectory positional or velocity uncertainty. No uncertainty-normalized residual is permitted.",
+    "geographic_scope": "One instrumented path at Vallee de la Sionne, Switzerland."
+  },
+  "selection_rule": {
+    "files": "Use every repository event that has both TRAJ-001.h5 and THALWEG-001.h5.",
+    "minimum_samples": 100,
+    "required_arrays": [
+      "trajectory/T",
+      "trajectory/S",
+      "trajectory/V",
+      "thalweg/X",
+      "thalweg/Y",
+      "thalweg/Z"
+    ],
+    "data_checks": "T and S must be strictly increasing after removal of exact duplicate samples; all required values must be finite; the observed S interval must fall inside the reconstructed thalweg surface-arc interval.",
+    "model_output_selection_forbidden": true
+  },
+  "fixed_model": {
+    "engine_source": "packages/avycore/src/avycore/hazard/runout.py",
+    "engine_source_sha256_at_freeze": "fa2c5e1c912bf9a5865494501bdb4e5d1c6da05e04b1b9aaf303afbffed0ab27",
+    "parameter_manifest": "backend/config/m0-baseline.json:model.parameter_manifest",
+    "parameter_file_sha256_at_freeze": "eb95b69fb31da6add188389547bfde6dd6a75c4495cfa07e18ea276c705e21b4",
+    "open_snow_mu": 0.2,
+    "open_snow_xi_m_per_s2": 1200.0,
+    "release_size": "medium",
+    "size_friction_factor": 1.0,
+    "flow_regime": "dry_slab",
+    "alpha_energy_line": "disabled",
+    "particles": 1,
+    "lateral_jitter": 0.0,
+    "random_seed": 20260713,
+    "time_step_s": 0.2,
+    "maximum_steps": 4000,
+    "stopping_velocity_ms": 1.0,
+    "parameter_tuning_permitted": false
+  },
+  "profile_reconstruction": {
+    "horizontal_grid_resolution_m": 5.0,
+    "strip_columns": 11,
+    "release_row_padding_cells": 2,
+    "cross_slope_rule": "Repeat the measured thalweg elevation across columns. This removes lateral routing and isolates along-path dynamics.",
+    "longitudinal_rule": "Compute cumulative horizontal distance from X/Y, interpolate Z to a 5 m horizontal grid extending to the first cell edge at or beyond the final source point, hold endpoint elevation over only that sub-cell remainder, and retain cumulative three-dimensional surface arc as the mapping to observed S.",
+    "timing_rule": "Reconstruct model elapsed time by integrating surface-distance increments divided by the adjacent-sample mean of the engine's along-path velocity, then align model and radar time at the first observed S.",
+    "forest": "unknown and therefore excluded from this ablation; all friction classes are fixed to the open-snow coefficient",
+    "plan_curvature": "not inferable from a one-dimensional thalweg and therefore held at zero with all friction classes equal",
+    "missing_data": "An event that leaves the reconstructed profile or reaches the step cutoff is a failed event, not silently excluded."
+  },
+  "metrics": [
+    {
+      "name": "velocity_nrmse",
+      "definition": "RMSE of model velocity interpolated at observed S versus observed V, divided by max(observed V)",
+      "threshold": 0.1
+    },
+    {
+      "name": "relative_travel_time_rmse",
+      "definition": "RMSE of model and observed elapsed time after aligning both at the first observed S, divided by the observed trajectory duration",
+      "threshold": 0.15
+    },
+    {
+      "name": "terminal_surface_distance_relative_error",
+      "definition": "absolute difference between the last modelled visited S and last observed S, divided by last observed S",
+      "threshold": 0.15
+    }
+  ],
+  "aggregate_acceptance": {
+    "minimum_scoreable_events": 8,
+    "event_pass_rule": "All three metric thresholds pass and the model neither leaves the profile nor reaches the step cutoff.",
+    "required_event_pass_fraction": 0.8,
+    "interpretation_if_passed": "Limited field consistency of the frozen open-snow along-thalweg dynamics ablation at one instrumented avalanche path.",
+    "interpretation_if_failed": "The frozen dynamics ablation does not reproduce the public GEODAR trajectories under the declared reconstruction and parameters; failure cannot be repaired by post-hoc tuning on these events."
+  },
+  "prohibited_claims": [
+    "field-validated avalanche predictor",
+    "validated on multiple mountains",
+    "release or occurrence accuracy",
+    "deposit or lateral-spread validation",
+    "calibrated dynamics",
+    "generalization to Mount Hosmer",
+    "measurement-uncertainty-normalized agreement"
+  ]
+}

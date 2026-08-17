@@ -1,0 +1,105 @@
+{
+  "schema": "avycore-public-data-field-validation-experiment-v2",
+  "experiment_id": "public-data-field-validation-v2",
+  "protocol_status": "frozen_no_eligible_public_dataset",
+  "frozen_at_utc": "2026-08-14T23:56:24Z",
+  "validation_contract": "avycore-validation-dataset-v3",
+  "predictions_generated": false,
+  "holdout_targets_accessed": false,
+  "prototype_disclaimer": "Experimental research prototype only. It does not replace Avalanche Canada guidance or field assessment. Model scores are relative indices, not probabilities.",
+  "supersedes": {
+    "path": "validation-data/experiments/public-data-field-validation-v1.json",
+    "sha256": "7e7bff60541d988f331d38055e9f96c179d407b111e433428d15356adc766b8d",
+    "reason": "Adds explicit metric formulas and false-negative area without relaxing the frozen eligibility, independence, anti-leakage, or cohort rules."
+  },
+  "evaluation_scope": {
+    "primary_component": "conditional_runout",
+    "avalanche_regime": "dry_dense_slab",
+    "release_state_rule": "Observed release geometry, thickness normal to slope, density, and their uncertainty and hashes must be frozen independently before the runout target is opened.",
+    "calibration_holdout_rule": "Calibration and final holdout are separate. No path_group_id or storm_group_id may cross partitions; mountain groups remain together when event independence cannot be justified.",
+    "minimum_final_events": 12,
+    "minimum_independent_paths": 6,
+    "minimum_mountains": 2,
+    "minimum_storm_cycles": 3,
+    "split_seed": 20260815,
+    "deterministic_replay_required": true
+  },
+  "preregistered_metrics": {
+    "runout_distance_error": {
+      "primary": "terminal_endpoint_euclidean_error_m",
+      "formula": "sqrt((predicted_x-observed_x)^2 + (predicted_y-observed_y)^2)",
+      "units": "m",
+      "implementation": "avycore.validation.paired_endpoint_metrics",
+      "uncertainty_reporting": "Report the observed endpoint horizontal uncertainty in metres beside every event error and at cohort level.",
+      "signed_along_path_status": "not_evaluated_without_an_independently_registered_thalweg_and_direction_convention"
+    },
+    "observed_area_overlap": {
+      "intersection_over_union": "intersection_cell_count / union_cell_count on the common valid evaluation mask",
+      "implementation": "avycore.validation.binary_mask_metrics"
+    },
+    "false_positive_area_m2": {
+      "formula": "count(predicted_positive and observed_negative and valid) * abs(pixel_width_m * pixel_height_m)",
+      "required_evidence": "A surveyed complete-search/detection mask; unknown or unmapped cells are excluded, never treated as observed negatives.",
+      "implementation": "avycore.validation.binary_mask_metrics"
+    },
+    "false_negative_area_m2": {
+      "formula": "count(observed_positive and predicted_negative and valid) * abs(pixel_width_m * pixel_height_m)",
+      "required_evidence": "An independently observed dense-flow target polygon and valid mapped-coverage mask.",
+      "implementation": "avycore.validation.binary_mask_metrics"
+    },
+    "depth_velocity_pressure": {
+      "status": "not_preregistered_for_scoring_because_no_eligible_observed_fields_were_found",
+      "activation_rule": "Add field-specific metrics and tolerances before any model run only after independent observations include quantity semantics, units, CRS/grid, masks, measurement method, time support, uncertainty, and component attribution."
+    },
+    "cohort_summary": {
+      "aggregation": "event-level values plus median, interquartile range, and bootstrap confidence interval",
+      "bootstrap_seed": 20260813,
+      "all_predeclared_holdout_events_must_be_reported": true,
+      "failed_results_are_retained": true
+    }
+  },
+  "public_data_audit": {
+    "strict_funnel": {
+      "path": "validation-data/candidates/public-event-strict-funnel-v5.json",
+      "sha256": "bf665aba57cf6167b19247a28a9a39e688b7e4105f7b4bbd87164200a2e038c1",
+      "candidates_evaluated": 26,
+      "eligible_any_profile": 0,
+      "independent_human_reviews": 0,
+      "terrain_evidence_eligible": 0,
+      "release_thickness_evidence_eligible": 0
+    },
+    "source_audit": {
+      "path": "validation-data/candidates/public-validation-source-audit-v2.json",
+      "sha256": "a4c1ef834d0f1da97f43d939c17da692f355a054066fa28ea85dc5c37e4b66ae",
+      "authoritative_sources_audited": 7,
+      "eligible_events_added": 0
+    },
+    "release_to_runout_rule": {
+      "path": "validation-data/protocols/public-event-release-to-runout-rule-v1.json",
+      "sha256": "56de2b5c1ffe6895add75def7084fad3884d69542b3438e940b3ac7c535754d0"
+    },
+    "licence_findings": {
+      "RegObs": "NLOD 2.0 metadata/API records were accessible, but the audited records did not contain the full independent release-state, event-surface terrain, component target, coverage, and uncertainty package.",
+      "EnviDat_1999_outlines": "CC BY-SA 4.0; previously viewed/development-only and lacks the full independently observed release-state and complete-search package required by this protocol.",
+      "other_authoritative_sources": "The source audit records provenance and access conditions. No source supplied a contract-complete, untouched final-holdout cohort."
+    }
+  },
+  "data_blocker": {
+    "status": "no_scientifically_eligible_dataset",
+    "missing_for_all_26_strict_candidates": [
+      "accepted quantitative component geometry",
+      "dense-flow component attribution",
+      "event-surface terrain",
+      "independent human review and independently reviewed release geometry",
+      "normal-to-slope release thickness and transferable release density evidence",
+      "frozen path, mountain, storm, projected CRS, and coordinate-transform identities",
+      "complete provenance-bearing model inputs",
+      "release mapping method, uncertainty, and confidence",
+      "resolved pixel-validity and survey coverage/detection masks",
+      "reviewed terminal dense-flow deposit polygon or terminal toe"
+    ],
+    "model_run_status": "not_run",
+    "reason": "Running or calibrating against incomplete targets would invent inputs, convert unknown coverage into negatives, or leak holdout information."
+  },
+  "single_next_requirement_before_field_validation_claim": "Acquire and independently code-review one licence-compatible, untouched cohort of at least 12 dry dense-slab events spanning at least 6 independent paths, 2 mountains, and 3 storm cycles, then freeze calibration/holdout groups before predictions; for every event preserve original bytes and hashes, licence, UTC interval, event-surface DEM with projected-metre CRS and datum lineage, an independently observed release polygon with normal-to-slope thickness and density uncertainty, a component-attributed terminal dense-flow deposit polygon or endpoint with positional uncertainty, and an explicit surveyed coverage/detection mask that distinguishes observed negatives from unknown cells."
+}

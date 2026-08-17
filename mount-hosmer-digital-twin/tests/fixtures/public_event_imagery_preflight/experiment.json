@@ -1,0 +1,6 @@
+{
+  "schema": "synthetic-public-data-field-validation-experiment-v1",
+  "experiment_id": "public-data-field-validation-v1",
+  "predictions_generated": false,
+  "holdout_targets_accessed": false
+}

@@ -1,0 +1,62 @@
+{
+  "schema_version": "avycore-validation-dataset-v2",
+  "dataset_id": "davos-spot-2019-qualitative-v1",
+  "title": "Six exact slab-avalanche footprints interpreted from SPOT 6 near Davos",
+  "source": {
+    "provider": "WSL Institute for Snow and Avalanche Research SLF / EnviDat",
+    "citation": "Hafner, E.; Leinss, S.; Techel, F.; Bühler, Y. (2021), Satellite avalanche mapping validation data, EnviDat, doi:10.16904/envidat.202",
+    "source_uri": "https://doi.org/10.16904/envidat.202",
+    "licence": "ODbL 1.0",
+    "permitted_use": "Database reuse subject to Open Database License 1.0 attribution and share-alike requirements."
+  },
+  "acquisition": {
+    "status": "bounded",
+    "start_date": "2019-01-13",
+    "end_date": "2019-01-16",
+    "temporal_precision": "day",
+    "basis": "The data description bounds the avalanche period after snowfall began on 13 January and before the SPOT 6 acquisition on 16 January 2019."
+  },
+  "evidence_type": "remote_sensing_interpretation",
+  "scientific_use": "qualitative_comparison",
+  "independent_of_model": true,
+  "observation_types": [
+    "avalanche_footprint"
+  ],
+  "original_crs": "EPSG:2056",
+  "crs": "EPSG:2056",
+  "horizontal_units": "metre",
+  "axis_order": "easting_northing",
+  "coordinate_dimensions": 2,
+  "normalization_type": "identity",
+  "normalization_method": "Six source features were selected by immutable OBJECTID and copied without reprojection, rounding, simplification, or topology repair.",
+  "normalization_software": "GeoPandas 1.1.4, Pyogrio 0.13.0, and Shapely 2.1.2 used for attribute selection and lossless Shapefile-to-GeoJSON serialization.",
+  "original_source_sha256": "5529482a35823f4b3f2d870df7da52e2c73af151f6eb9c12d3869353379368bb",
+  "spatial_coverage": {
+    "west": 2780587.2201999985,
+    "south": 1181892.9831000008,
+    "east": 2784934.3114,
+    "north": 1191667.5989999995,
+    "description": "Exact aggregate bounds of the six registered source footprints; this is not a surveyed-domain boundary."
+  },
+  "coverage_semantics": "positive_observations_only",
+  "survey_completeness": "unknown",
+  "detection_limitations": "Only six positive SPOT 6 outlines classified SLAB with aval_shape=1 are registered. Exact means the mapped start-to-deposit outline was clearly and entirely visible; it does not quantify geolocation error, guarantee detection of all avalanches, or establish absence outside an outline.",
+  "absence_semantics": "unknown_unless_explicitly_observed",
+  "positional_uncertainty": {
+    "status": "unknown",
+    "horizontal_m": null,
+    "confidence_level": null,
+    "method": "The supplied data description gives no per-outline quantified horizontal uncertainty for these six polygons."
+  },
+  "observations_file": "observations.geojson",
+  "observations_sha256": "1e6f9c48109c4832e0d54c549cf0716ceb672799a70c5bc7dbc2ee9808101745",
+  "limitations": [
+    "Satellite-image interpretations are qualitative evidence under the avycore contract, not field-validation ground truth.",
+    "Each polygon is a whole-avalanche footprint; it must not be scored as a deposit polygon and provides no independent release polygon for an engine run.",
+    "No quantified horizontal uncertainty or complete surveyed domain is published for these selected positives, so strict IoU and within-uncertainty endpoint metrics are ineligible.",
+    "The event time is bounded to a multi-day avalanche period, not known per feature.",
+    "Humidity is UNKNOWN in every selected source record; dry-slab regime is therefore not established by this inventory.",
+    "The regional new-snow total is not an event-specific release depth, and no wind vector is registered.",
+    "No event-day DEM is supplied; any later terrain used for modelling would carry unquantified temporal surface error."
+  ]
+}

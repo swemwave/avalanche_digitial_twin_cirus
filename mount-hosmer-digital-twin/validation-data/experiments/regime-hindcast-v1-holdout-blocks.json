@@ -1,0 +1,1170 @@
+{
+  "acquisition_footprint_rationale": "The footprint records where the camera looked, not where avalanches are. Restricting the evaluated domain to it is the stricter choice: unphotographed terrain is unobserved, and leaving it in the eligible-terrain denominator would shrink the model's flagged fraction and make the frozen area budget easier to pass.",
+  "blocks": [
+    {
+      "acquisition_coverage_fraction": 0.9235742958096829,
+      "avalanche_terrain_fraction": 0.15226999331699712,
+      "block_id": "holdout_1999_c04r04",
+      "core_grid": {
+        "bounds": [
+          2620400.0,
+          1160400.0,
+          2640500.0,
+          1180500.0
+        ],
+        "crs": "EPSG:2056",
+        "resolution_m": 30.0,
+        "shape": [
+          670,
+          670
+        ]
+      },
+      "core_window_rowcol": [
+        170,
+        840,
+        170,
+        840
+      ],
+      "dem_source_ids": [
+        "Copernicus_DSM_COG_10_N46_00_E007_00_DEM",
+        "Copernicus_DSM_COG_10_N46_00_E008_00_DEM"
+      ],
+      "lattice_column": 4,
+      "lattice_row": 4,
+      "mean_elevation_m": 1246.7293701171875,
+      "mountain_group": "Grimsel and Haslital",
+      "simulation_grid": {
+        "bounds": [
+          2615300.0,
+          1155300.0,
+          2645600.0,
+          1185600.0
+        ],
+        "crs": "EPSG:2056",
+        "resolution_m": 30.0,
+        "shape": [
+          1010,
+          1010
+        ]
+      },
+      "terrain_input_coverage_fraction": 1.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.8683172910322482,
+      "avalanche_terrain_fraction": 0.2847516150590332,
+      "block_id": "holdout_1999_c09r05",
+      "core_grid": {
+        "bounds": [
+          2720900.0,
+          1180500.0,
+          2741000.0,
+          1200600.0
+        ],
+        "crs": "EPSG:2056",
+        "resolution_m": 30.0,
+        "shape": [
+          670,
+          670
+        ]
+      },
+      "core_window_rowcol": [
+        170,
+        840,
+        170,
+        840
+      ],
+      "dem_source_ids": [
+        "Copernicus_DSM_COG_10_N46_00_E008_00_DEM",
+        "Copernicus_DSM_COG_10_N46_00_E009_00_DEM"
+      ],
+      "lattice_column": 9,
+      "lattice_row": 5,
+      "mean_elevation_m": 1849.30712890625,
+      "mountain_group": "Surselva east",
+      "simulation_grid": {
+        "bounds": [
+          2715800.0,
+          1175400.0,
+          2746100.0,
+          1205700.0
+        ],
+        "crs": "EPSG:2056",
+        "resolution_m": 30.0,
+        "shape": [
+          1010,
+          1010
+        ]
+      },
+      "terrain_input_coverage_fraction": 1.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.8502029015370802,
+      "avalanche_terrain_fraction": 0.2624415237246603,
+      "block_id": "holdout_1999_c05r04",
+      "core_grid": {
+        "bounds": [
+          2640500.0,
+          1160400.0,
+          2660600.0,
+          1180500.0
+        ],
+        "crs": "EPSG:2056",
+        "resolution_m": 30.0,
+        "shape": [
+          670,
+          670
+        ]
+      },
+      "core_window_rowcol": [
+        170,
+        840,
+        170,
+        840
+      ],
+      "dem_source_ids": [
+        "Copernicus_DSM_COG_10_N46_00_E007_00_DEM",
+        "Copernicus_DSM_COG_10_N46_00_E008_00_DEM"
+      ],
+      "lattice_column": 5,
+      "lattice_row": 4,
+      "mean_elevation_m": 1697.0634765625,
+      "mountain_group": "Grimsel and Haslital",
+      "simulation_grid": {
+        "bounds": [
+          2635400.0,
+          1155300.0,
+          2665700.0,
+          1185600.0
+        ],
+        "crs": "EPSG:2056",
+        "resolution_m": 30.0,
+        "shape": [
+          1010,
+          1010
+        ]
+      },
+      "terrain_input_coverage_fraction": 1.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.8038981615039327,
+      "avalanche_terrain_fraction": 0.44165738471820004,
+      "block_id": "holdout_1999_c03r01",
+      "core_grid": {
+        "bounds": [
+          2600300.0,
+          1100100.0,
+          2620400.0,
+          1120200.0
+        ],
+        "crs": "EPSG:2056",
+        "resolution_m": 30.0,
+        "shape": [
+          670,
+          670
+        ]
+      },
+      "core_window_rowcol": [
+        170,
+        840,
+        170,
+        840
+      ],
+      "dem_source_ids": [
+        "Copernicus_DSM_COG_10_N46_00_E007_00_DEM"
+      ],
+      "lattice_column": 3,
+      "lattice_row": 1,
+      "mean_elevation_m": 2372.238037109375,
+      "mountain_group": "Lotschental and upper Valais",
+      "simulation_grid": {
+        "bounds": [
+          2595200.0,
+          1095000.0,
+          2625500.0,
+          1125300.0
+        ],
+        "crs": "EPSG:2056",
+        "resolution_m": 30.0,
+        "shape": [
+          1010,
+          1010
+        ]
+      },
+      "terrain_input_coverage_fraction": 1.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.8003803890992927,
+      "avalanche_terrain_fraction": 0.4848184450879929,
+      "block_id": "holdout_1999_c04r03",
+      "core_grid": {
+        "bounds": [
+          2620400.0,
+          1140300.0,
+          2640500.0,
+          1160400.0
+        ],
+        "crs": "EPSG:2056",
+        "resolution_m": 30.0,
+        "shape": [
+          670,
+          670
+        ]
+      },
+      "core_window_rowcol": [
+        170,
+        840,
+        170,
+        840
+      ],
+      "dem_source_ids": [
+        "Copernicus_DSM_COG_10_N46_00_E007_00_DEM",
+        "Copernicus_DSM_COG_10_N46_00_E008_00_DEM"
+      ],
+      "lattice_column": 4,
+      "lattice_row": 3,
+      "mean_elevation_m": 2359.120849609375,
+      "mountain_group": "Grimsel and Haslital",
+      "simulation_grid": {
+        "bounds": [
+          2615300.0,
+          1135200.0,
+          2645600.0,
+          1165500.0
+        ],
+        "crs": "EPSG:2056",
+        "resolution_m": 30.0,
+        "shape": [
+          1010,
+          1010
+        ]
+      },
+      "terrain_input_coverage_fraction": 1.0
+    }
+  ],
+  "candidate_count": 128,
+  "candidates": [
+    {
+      "acquisition_coverage_fraction": 0.04835892552165209,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2560100.0,
+      "core_north_m": 1140300.0,
+      "core_south_m": 1120200.0,
+      "core_west_m": 2540000.0,
+      "lattice_column": 0,
+      "lattice_row": 2,
+      "mean_elevation_m": null,
+      "rejected_reason": "acquisition coverage 0.048 below 0.6",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.0832105653324699,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2560100.0,
+      "core_north_m": 1160400.0,
+      "core_south_m": 1140300.0,
+      "core_west_m": 2540000.0,
+      "lattice_column": 0,
+      "lattice_row": 3,
+      "mean_elevation_m": null,
+      "rejected_reason": "acquisition coverage 0.083 below 0.6",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.006039962552052392,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2580200.0,
+      "core_north_m": 1100100.0,
+      "core_south_m": 1080000.0,
+      "core_west_m": 2560100.0,
+      "lattice_column": 1,
+      "lattice_row": 0,
+      "mean_elevation_m": null,
+      "rejected_reason": "acquisition coverage 0.006 below 0.6",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.06654602573400668,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2580200.0,
+      "core_north_m": 1120200.0,
+      "core_south_m": 1100100.0,
+      "core_west_m": 2560100.0,
+      "lattice_column": 1,
+      "lattice_row": 1,
+      "mean_elevation_m": null,
+      "rejected_reason": "acquisition coverage 0.067 below 0.6",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.14941133635288795,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2580200.0,
+      "core_north_m": 1140300.0,
+      "core_south_m": 1120200.0,
+      "core_west_m": 2560100.0,
+      "lattice_column": 1,
+      "lattice_row": 2,
+      "mean_elevation_m": null,
+      "rejected_reason": "acquisition coverage 0.149 below 0.6",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.6294293606594621,
+      "avalanche_terrain_fraction": 0.14952327912675428,
+      "core_east_m": 2580200.0,
+      "core_north_m": 1160400.0,
+      "core_south_m": 1140300.0,
+      "core_west_m": 2560100.0,
+      "lattice_column": 1,
+      "lattice_row": 3,
+      "mean_elevation_m": 1292.4095458984375,
+      "rejected_reason": "avalanche-terrain fraction 0.150 below 0.15",
+      "selected": false,
+      "terrain_input_coverage_fraction": 1.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.15847687371593971,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2580200.0,
+      "core_north_m": 1180500.0,
+      "core_south_m": 1160400.0,
+      "core_west_m": 2560100.0,
+      "lattice_column": 1,
+      "lattice_row": 4,
+      "mean_elevation_m": null,
+      "rejected_reason": "acquisition coverage 0.158 below 0.6",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.34295794627008735,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2600300.0,
+      "core_north_m": 1100100.0,
+      "core_south_m": 1080000.0,
+      "core_west_m": 2580200.0,
+      "lattice_column": 2,
+      "lattice_row": 0,
+      "mean_elevation_m": null,
+      "rejected_reason": "acquisition coverage 0.343 below 0.6",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.5138852172089471,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2600300.0,
+      "core_north_m": 1120200.0,
+      "core_south_m": 1100100.0,
+      "core_west_m": 2580200.0,
+      "lattice_column": 2,
+      "lattice_row": 1,
+      "mean_elevation_m": null,
+      "rejected_reason": "acquisition coverage 0.514 below 0.6",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.1513874842205088,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2600300.0,
+      "core_north_m": 1140300.0,
+      "core_south_m": 1120200.0,
+      "core_west_m": 2580200.0,
+      "lattice_column": 2,
+      "lattice_row": 2,
+      "mean_elevation_m": null,
+      "rejected_reason": "overlaps a previously scored 2018/2019 core",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.9814419061409276,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2600300.0,
+      "core_north_m": 1160400.0,
+      "core_south_m": 1140300.0,
+      "core_west_m": 2580200.0,
+      "lattice_column": 2,
+      "lattice_row": 3,
+      "mean_elevation_m": null,
+      "rejected_reason": "overlaps a previously scored 2018/2019 core",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.7527505915696646,
+      "avalanche_terrain_fraction": 0.1132924927600802,
+      "core_east_m": 2600300.0,
+      "core_north_m": 1180500.0,
+      "core_south_m": 1160400.0,
+      "core_west_m": 2580200.0,
+      "lattice_column": 2,
+      "lattice_row": 4,
+      "mean_elevation_m": 1283.5234375,
+      "rejected_reason": "avalanche-terrain fraction 0.113 below 0.15",
+      "selected": false,
+      "terrain_input_coverage_fraction": 1.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.3467697878763599,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2620400.0,
+      "core_north_m": 1100100.0,
+      "core_south_m": 1080000.0,
+      "core_west_m": 2600300.0,
+      "lattice_column": 3,
+      "lattice_row": 0,
+      "mean_elevation_m": null,
+      "rejected_reason": "acquisition coverage 0.347 below 0.6",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.8038981615039327,
+      "avalanche_terrain_fraction": 0.44165738471820004,
+      "core_east_m": 2620400.0,
+      "core_north_m": 1120200.0,
+      "core_south_m": 1100100.0,
+      "core_west_m": 2600300.0,
+      "lattice_column": 3,
+      "lattice_row": 1,
+      "mean_elevation_m": 2372.238037109375,
+      "rejected_reason": null,
+      "selected": false,
+      "terrain_input_coverage_fraction": 1.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.44367807170595114,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2620400.0,
+      "core_north_m": 1140300.0,
+      "core_south_m": 1120200.0,
+      "core_west_m": 2600300.0,
+      "lattice_column": 3,
+      "lattice_row": 2,
+      "mean_elevation_m": null,
+      "rejected_reason": "overlaps a previously scored 2018/2019 core",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.9941004752357727,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2620400.0,
+      "core_north_m": 1160400.0,
+      "core_south_m": 1140300.0,
+      "core_west_m": 2600300.0,
+      "lattice_column": 3,
+      "lattice_row": 3,
+      "mean_elevation_m": null,
+      "rejected_reason": "overlaps a previously scored 2018/2019 core",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.9485039349275262,
+      "avalanche_terrain_fraction": 0.11502784584539986,
+      "core_east_m": 2620400.0,
+      "core_north_m": 1180500.0,
+      "core_south_m": 1160400.0,
+      "core_west_m": 2600300.0,
+      "lattice_column": 3,
+      "lattice_row": 4,
+      "mean_elevation_m": 1072.73681640625,
+      "rejected_reason": "avalanche-terrain fraction 0.115 below 0.15",
+      "selected": false,
+      "terrain_input_coverage_fraction": 1.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.1148502004899875,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2640500.0,
+      "core_north_m": 1100100.0,
+      "core_south_m": 1080000.0,
+      "core_west_m": 2620400.0,
+      "lattice_column": 4,
+      "lattice_row": 0,
+      "mean_elevation_m": null,
+      "rejected_reason": "acquisition coverage 0.115 below 0.6",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.7910112379650979,
+      "avalanche_terrain_fraction": 0.537072844731566,
+      "core_east_m": 2640500.0,
+      "core_north_m": 1120200.0,
+      "core_south_m": 1100100.0,
+      "core_west_m": 2620400.0,
+      "lattice_column": 4,
+      "lattice_row": 1,
+      "mean_elevation_m": 2509.3046875,
+      "rejected_reason": null,
+      "selected": false,
+      "terrain_input_coverage_fraction": 1.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.7695881736426518,
+      "avalanche_terrain_fraction": 0.3744709289374025,
+      "core_east_m": 2640500.0,
+      "core_north_m": 1140300.0,
+      "core_south_m": 1120200.0,
+      "core_west_m": 2620400.0,
+      "lattice_column": 4,
+      "lattice_row": 2,
+      "mean_elevation_m": 1865.2066650390625,
+      "rejected_reason": null,
+      "selected": false,
+      "terrain_input_coverage_fraction": 1.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.8003803890992927,
+      "avalanche_terrain_fraction": 0.4848184450879929,
+      "core_east_m": 2640500.0,
+      "core_north_m": 1160400.0,
+      "core_south_m": 1140300.0,
+      "core_west_m": 2620400.0,
+      "lattice_column": 4,
+      "lattice_row": 3,
+      "mean_elevation_m": 2359.120849609375,
+      "rejected_reason": null,
+      "selected": false,
+      "terrain_input_coverage_fraction": 1.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.9235742958096829,
+      "avalanche_terrain_fraction": 0.15226999331699712,
+      "core_east_m": 2640500.0,
+      "core_north_m": 1180500.0,
+      "core_south_m": 1160400.0,
+      "core_west_m": 2620400.0,
+      "lattice_column": 4,
+      "lattice_row": 4,
+      "mean_elevation_m": 1246.7293701171875,
+      "rejected_reason": null,
+      "selected": false,
+      "terrain_input_coverage_fraction": 1.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.036824214747165816,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2660600.0,
+      "core_north_m": 1120200.0,
+      "core_south_m": 1100100.0,
+      "core_west_m": 2640500.0,
+      "lattice_column": 5,
+      "lattice_row": 1,
+      "mean_elevation_m": null,
+      "rejected_reason": "acquisition coverage 0.037 below 0.6",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.521392072597124,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2660600.0,
+      "core_north_m": 1140300.0,
+      "core_south_m": 1120200.0,
+      "core_west_m": 2640500.0,
+      "lattice_column": 5,
+      "lattice_row": 2,
+      "mean_elevation_m": null,
+      "rejected_reason": "acquisition coverage 0.521 below 0.6",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.14011218224802968,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2660600.0,
+      "core_north_m": 1160400.0,
+      "core_south_m": 1140300.0,
+      "core_west_m": 2640500.0,
+      "lattice_column": 5,
+      "lattice_row": 3,
+      "mean_elevation_m": null,
+      "rejected_reason": "acquisition coverage 0.140 below 0.6",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.8502029015370802,
+      "avalanche_terrain_fraction": 0.2624415237246603,
+      "core_east_m": 2660600.0,
+      "core_north_m": 1180500.0,
+      "core_south_m": 1160400.0,
+      "core_west_m": 2640500.0,
+      "lattice_column": 5,
+      "lattice_row": 4,
+      "mean_elevation_m": 1697.0634765625,
+      "rejected_reason": null,
+      "selected": false,
+      "terrain_input_coverage_fraction": 1.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.07904896227826412,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2660600.0,
+      "core_north_m": 1200600.0,
+      "core_south_m": 1180500.0,
+      "core_west_m": 2640500.0,
+      "lattice_column": 5,
+      "lattice_row": 5,
+      "mean_elevation_m": null,
+      "rejected_reason": "acquisition coverage 0.079 below 0.6",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.03537182990519144,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2680700.0,
+      "core_north_m": 1140300.0,
+      "core_south_m": 1120200.0,
+      "core_west_m": 2660600.0,
+      "lattice_column": 6,
+      "lattice_row": 2,
+      "mean_elevation_m": null,
+      "rejected_reason": "acquisition coverage 0.035 below 0.6",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.021836047993912297,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2680700.0,
+      "core_north_m": 1160400.0,
+      "core_south_m": 1140300.0,
+      "core_west_m": 2660600.0,
+      "lattice_column": 6,
+      "lattice_row": 3,
+      "mean_elevation_m": null,
+      "rejected_reason": "overlaps a previously scored 2018/2019 core",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.5735468249546847,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2680700.0,
+      "core_north_m": 1180500.0,
+      "core_south_m": 1160400.0,
+      "core_west_m": 2660600.0,
+      "lattice_column": 6,
+      "lattice_row": 4,
+      "mean_elevation_m": null,
+      "rejected_reason": "overlaps a previously scored 2018/2019 core",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.2539519516845237,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2680700.0,
+      "core_north_m": 1200600.0,
+      "core_south_m": 1180500.0,
+      "core_west_m": 2660600.0,
+      "lattice_column": 6,
+      "lattice_row": 5,
+      "mean_elevation_m": null,
+      "rejected_reason": "acquisition coverage 0.254 below 0.6",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.2380527629265812,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2700800.0,
+      "core_north_m": 1180500.0,
+      "core_south_m": 1160400.0,
+      "core_west_m": 2680700.0,
+      "lattice_column": 7,
+      "lattice_row": 4,
+      "mean_elevation_m": null,
+      "rejected_reason": "overlaps a previously scored 2018/2019 core",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.6010168052770557,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2700800.0,
+      "core_north_m": 1200600.0,
+      "core_south_m": 1180500.0,
+      "core_west_m": 2680700.0,
+      "lattice_column": 7,
+      "lattice_row": 5,
+      "mean_elevation_m": null,
+      "rejected_reason": "overlaps a previously scored 2018/2019 core",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.16755761924215926,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2700800.0,
+      "core_north_m": 1220700.0,
+      "core_south_m": 1200600.0,
+      "core_west_m": 2680700.0,
+      "lattice_column": 7,
+      "lattice_row": 6,
+      "mean_elevation_m": null,
+      "rejected_reason": "overlaps a previously scored 2018/2019 core",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.8111723057595717,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2720900.0,
+      "core_north_m": 1200600.0,
+      "core_south_m": 1180500.0,
+      "core_west_m": 2700800.0,
+      "lattice_column": 8,
+      "lattice_row": 5,
+      "mean_elevation_m": null,
+      "rejected_reason": "overlaps a previously scored 2018/2019 core",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.6149569088636861,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2720900.0,
+      "core_north_m": 1220700.0,
+      "core_south_m": 1200600.0,
+      "core_west_m": 2700800.0,
+      "lattice_column": 8,
+      "lattice_row": 6,
+      "mean_elevation_m": null,
+      "rejected_reason": "overlaps a previously scored 2018/2019 core",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.05380975904068309,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2720900.0,
+      "core_north_m": 1240800.0,
+      "core_south_m": 1220700.0,
+      "core_west_m": 2700800.0,
+      "lattice_column": 8,
+      "lattice_row": 7,
+      "mean_elevation_m": null,
+      "rejected_reason": "acquisition coverage 0.054 below 0.6",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.8683172910322482,
+      "avalanche_terrain_fraction": 0.2847516150590332,
+      "core_east_m": 2741000.0,
+      "core_north_m": 1200600.0,
+      "core_south_m": 1180500.0,
+      "core_west_m": 2720900.0,
+      "lattice_column": 9,
+      "lattice_row": 5,
+      "mean_elevation_m": 1849.30712890625,
+      "rejected_reason": null,
+      "selected": false,
+      "terrain_input_coverage_fraction": 1.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.7280411573972411,
+      "avalanche_terrain_fraction": 0.23297616395633772,
+      "core_east_m": 2741000.0,
+      "core_north_m": 1220700.0,
+      "core_south_m": 1200600.0,
+      "core_west_m": 2720900.0,
+      "lattice_column": 9,
+      "lattice_row": 6,
+      "mean_elevation_m": 1411.7379150390625,
+      "rejected_reason": null,
+      "selected": false,
+      "terrain_input_coverage_fraction": 1.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.055444953095309155,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2741000.0,
+      "core_north_m": 1240800.0,
+      "core_south_m": 1220700.0,
+      "core_west_m": 2720900.0,
+      "lattice_column": 9,
+      "lattice_row": 7,
+      "mean_elevation_m": null,
+      "rejected_reason": "acquisition coverage 0.055 below 0.6",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.6075949277243875,
+      "avalanche_terrain_fraction": 0.23813766985965695,
+      "core_east_m": 2761100.0,
+      "core_north_m": 1200600.0,
+      "core_south_m": 1180500.0,
+      "core_west_m": 2741000.0,
+      "lattice_column": 10,
+      "lattice_row": 5,
+      "mean_elevation_m": 1453.2584228515625,
+      "rejected_reason": null,
+      "selected": false,
+      "terrain_input_coverage_fraction": 1.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.3447930428703953,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2761100.0,
+      "core_north_m": 1220700.0,
+      "core_south_m": 1200600.0,
+      "core_west_m": 2741000.0,
+      "lattice_column": 10,
+      "lattice_row": 6,
+      "mean_elevation_m": null,
+      "rejected_reason": "acquisition coverage 0.345 below 0.6",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.30852492982565977,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2781200.0,
+      "core_north_m": 1180500.0,
+      "core_south_m": 1160400.0,
+      "core_west_m": 2761100.0,
+      "lattice_column": 11,
+      "lattice_row": 4,
+      "mean_elevation_m": null,
+      "rejected_reason": "overlaps a previously scored 2018/2019 core",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.5231322881858805,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2781200.0,
+      "core_north_m": 1200600.0,
+      "core_south_m": 1180500.0,
+      "core_west_m": 2761100.0,
+      "lattice_column": 11,
+      "lattice_row": 5,
+      "mean_elevation_m": null,
+      "rejected_reason": "acquisition coverage 0.523 below 0.6",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.2784245012500771,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2781200.0,
+      "core_north_m": 1220700.0,
+      "core_south_m": 1200600.0,
+      "core_west_m": 2761100.0,
+      "lattice_column": 11,
+      "lattice_row": 6,
+      "mean_elevation_m": null,
+      "rejected_reason": "acquisition coverage 0.278 below 0.6",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.8230261280659511,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2801300.0,
+      "core_north_m": 1180500.0,
+      "core_south_m": 1160400.0,
+      "core_west_m": 2781200.0,
+      "lattice_column": 12,
+      "lattice_row": 4,
+      "mean_elevation_m": null,
+      "rejected_reason": "overlaps a previously scored 2018/2019 core",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.9846835845648146,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2801300.0,
+      "core_north_m": 1200600.0,
+      "core_south_m": 1180500.0,
+      "core_west_m": 2781200.0,
+      "lattice_column": 12,
+      "lattice_row": 5,
+      "mean_elevation_m": null,
+      "rejected_reason": "overlaps a previously scored 2018/2019 core",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.5485637484222097,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2801300.0,
+      "core_north_m": 1220700.0,
+      "core_south_m": 1200600.0,
+      "core_west_m": 2781200.0,
+      "lattice_column": 12,
+      "lattice_row": 6,
+      "mean_elevation_m": null,
+      "rejected_reason": "acquisition coverage 0.549 below 0.6",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.507065937724293,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2821400.0,
+      "core_north_m": 1180500.0,
+      "core_south_m": 1160400.0,
+      "core_west_m": 2801300.0,
+      "lattice_column": 13,
+      "lattice_row": 4,
+      "mean_elevation_m": null,
+      "rejected_reason": "overlaps a previously scored 2018/2019 core",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.7548063018242546,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2821400.0,
+      "core_north_m": 1200600.0,
+      "core_south_m": 1180500.0,
+      "core_west_m": 2801300.0,
+      "lattice_column": 13,
+      "lattice_row": 5,
+      "mean_elevation_m": null,
+      "rejected_reason": "overlaps a previously scored 2018/2019 core",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.5123570932650581,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2821400.0,
+      "core_north_m": 1220700.0,
+      "core_south_m": 1200600.0,
+      "core_west_m": 2801300.0,
+      "lattice_column": 13,
+      "lattice_row": 6,
+      "mean_elevation_m": null,
+      "rejected_reason": "acquisition coverage 0.512 below 0.6",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.5399281020270995,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2841500.0,
+      "core_north_m": 1200600.0,
+      "core_south_m": 1180500.0,
+      "core_west_m": 2821400.0,
+      "lattice_column": 14,
+      "lattice_row": 5,
+      "mean_elevation_m": null,
+      "rejected_reason": "acquisition coverage 0.540 below 0.6",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    },
+    {
+      "acquisition_coverage_fraction": 0.421756592039994,
+      "avalanche_terrain_fraction": 0.0,
+      "core_east_m": 2841500.0,
+      "core_north_m": 1220700.0,
+      "core_south_m": 1200600.0,
+      "core_west_m": 2821400.0,
+      "lattice_column": 14,
+      "lattice_row": 6,
+      "mean_elevation_m": null,
+      "rejected_reason": "acquisition coverage 0.422 below 0.6",
+      "selected": false,
+      "terrain_input_coverage_fraction": 0.0
+    }
+  ],
+  "eligible_count": 9,
+  "rule": {
+    "avalanche_terrain_definition": "slope in [28.0, 55.0] degrees and elevation at or above 1500.0 m",
+    "block_count": 5,
+    "core_side_m": 20100.0,
+    "halo_m": 5100.0,
+    "lattice_origin_m": [
+      2540000.0,
+      1080000.0
+    ],
+    "lattice_shape": [
+      16,
+      8
+    ],
+    "minimum_avalanche_terrain_fraction": 0.15,
+    "minimum_block_separation_m": 20100.0,
+    "minimum_coverage_fraction": 0.6,
+    "minimum_terrain_input_coverage_fraction": 0.999,
+    "ordering": "coverage fraction descending, then easting, then northing",
+    "previously_scored_cores": [
+      [
+        2600000.0,
+        1140000.0,
+        2620100.0,
+        1160100.0
+      ],
+      [
+        2680000.0,
+        1158000.0,
+        2700100.0,
+        1178100.0
+      ],
+      [
+        2700000.0,
+        1190000.0,
+        2720100.0,
+        1210100.0
+      ],
+      [
+        2760000.0,
+        1158000.0,
+        2780100.0,
+        1178100.0
+      ],
+      [
+        2800000.0,
+        1180000.0,
+        2820100.0,
+        1200100.0
+      ]
+    ],
+    "resolution_m": 30.0
+  },
+  "schema": "avycore-regime-holdout-block-selection-v1",
+  "selection_identity_sha256": "1df58fc0aa7908baa30bd327722af92136480b4e2cbcdabe6e680461e387b1cb",
+  "selection_inputs": [
+    "fixed LV95 lattice",
+    "previously scored 2018/2019 cores",
+    "aerial-image acquisition footprint",
+    "cloud mask",
+    "Copernicus DEM GLO-30"
+  ],
+  "selection_used_avalanche_outlines": false,
+  "source_files": {
+    "cloud_shapefile_family": [
+      {
+        "bytes": 5,
+        "name": "Clouds_1999.cpg",
+        "sha256": "3ad3031f5503a4404af825262ee8232cc04d4ea6683d42c5dd0a2f2a27ac9824"
+      },
+      {
+        "bytes": 5474,
+        "name": "Clouds_1999.dbf",
+        "sha256": "027a4d2d99ef85f6b31706719b3ac71e2c8833afa57d9fac9eb08587082391e9"
+      },
+      {
+        "bytes": 472,
+        "name": "Clouds_1999.prj",
+        "sha256": "533b4abc8e751ef5831d87f2d8257e4cc3ec40da24e732b20d2721980afe3a4f"
+      },
+      {
+        "bytes": 564,
+        "name": "Clouds_1999.sbn",
+        "sha256": "7b03c61cdeb6a0c1d2a62a45b3f402b61b03bd3b6ecc4d852a0c4e4356dd6a84"
+      },
+      {
+        "bytes": 124,
+        "name": "Clouds_1999.sbx",
+        "sha256": "7d0b9a132791c797e37aa4191e65f7011cffa6f7008ee49610a787b46acc3838"
+      },
+      {
+        "bytes": 7158800,
+        "name": "Clouds_1999.shp",
+        "sha256": "53ecca6ed199d83b85b7d1a2c7496f4dcbda1d30a13b2e31c5a9ca8aca3e9075"
+      },
+      {
+        "bytes": 11408,
+        "name": "Clouds_1999.shp.xml",
+        "sha256": "7b1abd37207a34b519845e311d43e38d9659c84499494d7b571ec067238f08b4"
+      },
+      {
+        "bytes": 484,
+        "name": "Clouds_1999.shx",
+        "sha256": "8a32bb912b3222611632f49d16aceff8867266dfd9a0e749aef487c4bddb3536"
+      }
+    ],
+    "coverage_shapefile_family": [
+      {
+        "bytes": 5,
+        "name": "area_images_1999_all.cpg",
+        "sha256": "3ad3031f5503a4404af825262ee8232cc04d4ea6683d42c5dd0a2f2a27ac9824"
+      },
+      {
+        "bytes": 5342,
+        "name": "area_images_1999_all.dbf",
+        "sha256": "916e1ecfc50ce48af4f3f86207507cb17e8095a49b9cac2f0e1ace952f48ebc3"
+      },
+      {
+        "bytes": 472,
+        "name": "area_images_1999_all.prj",
+        "sha256": "533b4abc8e751ef5831d87f2d8257e4cc3ec40da24e732b20d2721980afe3a4f"
+      },
+      {
+        "bytes": 820,
+        "name": "area_images_1999_all.sbn",
+        "sha256": "fbdfe4e7a6d0574c2b37787091be7dcba7a97a8ecd86f78d77f5d4d9f5c9d85f"
+      },
+      {
+        "bytes": 172,
+        "name": "area_images_1999_all.sbx",
+        "sha256": "4155aebd2f1a12e71e6b2fa2bac31a8af26d4f824a2038e76a5b917bbe6e4f5a"
+      },
+      {
+        "bytes": 32718008,
+        "name": "area_images_1999_all.shp",
+        "sha256": "ec09a902b4239b5f8275315b3f561c3a065b3ffe08480a4a128c25a720a7ae07"
+      },
+      {
+        "bytes": 12249,
+        "name": "area_images_1999_all.shp.xml",
+        "sha256": "4e2cff6ee8c0ae6ebdac1f539b9f71695c8cc9f2edec1016c43019495a64ca88"
+      },
+      {
+        "bytes": 628,
+        "name": "area_images_1999_all.shx",
+        "sha256": "e38b42b9d5c94c600cf347a22de8e2dda72cc1f1ca40d281ee7132bc02230966"
+      }
+    ],
+    "dem_tiles_consulted": [
+      {
+        "bytes": 38504837,
+        "name": "Copernicus_DSM_COG_10_N46_00_E006_00_DEM.tif",
+        "sha256": "43372378d9fdbcba2d8acd6a2b58c8a0d19ba7d2d49e16297bc48d9365f26493"
+      },
+      {
+        "bytes": 41776750,
+        "name": "Copernicus_DSM_COG_10_N46_00_E007_00_DEM.tif",
+        "sha256": "426e3d1492d94e4f23d444843f852ff5be675da5c4c14e661b5642006864047d"
+      },
+      {
+        "bytes": 42038015,
+        "name": "Copernicus_DSM_COG_10_N46_00_E008_00_DEM.tif",
+        "sha256": "47769664394ee1ff3b51f5c1b43a3441d7f7bce8d086d0ed2f3a892b895fae3e"
+      },
+      {
+        "bytes": 42078066,
+        "name": "Copernicus_DSM_COG_10_N46_00_E009_00_DEM.tif",
+        "sha256": "6a7eccb6d198f01a1fdfcca0e1cef837ef294456fb7243ec4d0966e089b1e7fc"
+      },
+      {
+        "bytes": 39943901,
+        "name": "Copernicus_DSM_COG_10_N47_00_E009_00_DEM.tif",
+        "sha256": "ca0b7567f5e12b8c814500bcf434855fb2a1084248bb80d3c80a91169887817c"
+      }
+    ],
+    "selection_script": {
+      "bytes": 20044,
+      "name": "select_regime_holdout_blocks.py",
+      "sha256": "18fd0a2f272cc54d80b1fe2a4554b5c88d355617f370994de5bb083c2ed3d54f"
+    }
+  }
+}

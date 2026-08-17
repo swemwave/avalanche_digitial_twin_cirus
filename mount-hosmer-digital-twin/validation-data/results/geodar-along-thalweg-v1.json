@@ -1,0 +1,2808 @@
+{
+  "schema": "avycore-geodar-along-thalweg-results-v1",
+  "experiment_id": "geodar-along-thalweg-v1",
+  "spec_path": "validation-data/experiments/geodar-along-thalweg-v1.json",
+  "spec_sha256": "e2da88c742646692c4bc53c86cfb6d35fa5c333b4cabf2e9831bba48852cf376",
+  "scientific_use": "field_kinematic_consistency",
+  "component_tested": "open_snow_voellmy_point_particle_along_observed_thalweg",
+  "engine_mode": "dynamics_only",
+  "claim_boundary": "This ablation compares the implemented open-snow point-particle dynamics with processed runout-defining GEODAR trajectories on their matched one-dimensional thalwegs. It is not release validation, deposit validation, occurrence prediction, a two-dimensional routing test, parameter calibration, or evidence of geographic generalization.",
+  "source": {
+    "record_url": "https://zenodo.org/records/1042108",
+    "doi": "10.5281/zenodo.1042108",
+    "version": "v1",
+    "license": "CC-BY-4.0",
+    "repository_guide": "geodar_repository.pdf",
+    "repository_guide_sha256": "1d6ba10c1eb34c5d23885aacbc95178832e61ad1d04c88c5b5fa85a368665724",
+    "crs": "CH03/LV03 (EPSG:21781); X=easting, Y=northing, Z=elevation",
+    "trajectory_semantics": "T is radar time; R is radar range; S is surface arc length along the matched thalweg; V is trajectory velocity projected onto the thalweg. The picked and smoothed feature is usually the front but may be a major surge.",
+    "measurement_limit": "The repository guide supplies 0.75 m radar range-bin spacing and processing lineage, but no per-trajectory positional or velocity uncertainty. No uncertainty-normalized residual is permitted.",
+    "geographic_scope": "One instrumented path at Vallee de la Sionne, Switzerland.",
+    "source_directory_not_committed": true,
+    "zenodo_api_record": {
+      "file": "zenodo-record-1042108.json",
+      "bytes": 111974,
+      "sha256": "e466a66f67015e2150d0e019c7afb8793b08a879ee45b20d119941e2ef56dbe9",
+      "record_id": 1042108,
+      "repository_files_verified": 150,
+      "repository_total_files": 382
+    },
+    "data_table": {
+      "file": "data_table.csv",
+      "bytes": 10161,
+      "md5": "0e262b7b66de5bd3752f02b6eeb8922b",
+      "sha256": "31300be21792b8975efc5e18880fb28419bc970439a77459868f619aba95111b"
+    }
+  },
+  "implementation": {
+    "engine_source": "packages/avycore/src/avycore/hazard/runout.py",
+    "engine_source_sha256": "fa2c5e1c912bf9a5865494501bdb4e5d1c6da05e04b1b9aaf303afbffed0ab27",
+    "parameter_file": "backend/config/m0-baseline.json",
+    "parameter_file_sha256": "eb95b69fb31da6add188389547bfde6dd6a75c4495cfa07e18ea276c705e21b4",
+    "runner": "scripts/validation/run_geodar_along_thalweg_experiment.py",
+    "runner_sha256": "0935be0d56173fde4c74b2246cb95f28b89968dbd56549111b60389577a8cb6f",
+    "fixed_model": {
+      "engine_source": "packages/avycore/src/avycore/hazard/runout.py",
+      "engine_source_sha256_at_freeze": "fa2c5e1c912bf9a5865494501bdb4e5d1c6da05e04b1b9aaf303afbffed0ab27",
+      "parameter_manifest": "backend/config/m0-baseline.json:model.parameter_manifest",
+      "parameter_file_sha256_at_freeze": "eb95b69fb31da6add188389547bfde6dd6a75c4495cfa07e18ea276c705e21b4",
+      "open_snow_mu": 0.2,
+      "open_snow_xi_m_per_s2": 1200.0,
+      "release_size": "medium",
+      "size_friction_factor": 1.0,
+      "flow_regime": "dry_slab",
+      "alpha_energy_line": "disabled",
+      "particles": 1,
+      "lateral_jitter": 0.0,
+      "random_seed": 20260713,
+      "time_step_s": 0.2,
+      "maximum_steps": 4000,
+      "stopping_velocity_ms": 1.0,
+      "parameter_tuning_permitted": false
+    },
+    "profile_reconstruction": {
+      "horizontal_grid_resolution_m": 5.0,
+      "strip_columns": 11,
+      "release_row_padding_cells": 2,
+      "cross_slope_rule": "Repeat the measured thalweg elevation across columns. This removes lateral routing and isolates along-path dynamics.",
+      "longitudinal_rule": "Compute cumulative horizontal distance from X/Y, interpolate Z to a 5 m horizontal grid extending to the first cell edge at or beyond the final source point, hold endpoint elevation over only that sub-cell remainder, and retain cumulative three-dimensional surface arc as the mapping to observed S.",
+      "timing_rule": "Reconstruct model elapsed time by integrating surface-distance increments divided by the adjacent-sample mean of the engine's along-path velocity, then align model and radar time at the first observed S.",
+      "forest": "unknown and therefore excluded from this ablation; all friction classes are fixed to the open-snow coefficient",
+      "plan_curvature": "not inferable from a one-dimensional thalweg and therefore held at zero with all friction classes equal",
+      "missing_data": "An event that leaves the reconstructed profile or reaches the step cutoff is a failed event, not silently excluded."
+    }
+  },
+  "selection": {
+    "paired_events_evaluated": 71,
+    "rejected_before_scoring": []
+  },
+  "aggregate": {
+    "events_passed": 0,
+    "events_evaluated": 71,
+    "event_pass_fraction": 0.0,
+    "required_event_pass_fraction": 0.8,
+    "minimum_scoreable_events": 8,
+    "median_metrics_over_available_values": {
+      "velocity_nrmse": 0.360606639,
+      "relative_travel_time_rmse": 0.294471793,
+      "terminal_surface_distance_relative_error": 0.695451056
+    },
+    "aggregate_pass": false,
+    "interpretation": "The frozen dynamics ablation does not reproduce the public GEODAR trajectories under the declared reconstruction and parameters; failure cannot be repaired by post-hoc tuning on these events."
+  },
+  "events": [
+    {
+      "event_id": "2010-12-06-07-46-21",
+      "trajectory_file": "GEODAR-2010-12-06-07-46-21-TRAJ-001.h5",
+      "trajectory_bytes": 158208,
+      "trajectory_md5": "48a10ede3e5e8c39935d6c92552ab811",
+      "trajectory_sha256": "409a019757d2ecbc8e098a1f4fcce5172c41229df4a68ddcd7ffb8fe33d978f7",
+      "thalweg_file": "GEODAR-2010-12-06-07-46-21-THALWEG-001.h5",
+      "thalweg_bytes": 108168,
+      "thalweg_md5": "9ce3d51e0c09f8c479f66e1c9814f014",
+      "thalweg_sha256": "abbbcee519dc2cb0c06d7a5b89c01e60f5259fe98f891fe57a6551a25195b4f8",
+      "observation_samples": 3886,
+      "observed_surface_interval_m": [
+        712.610642,
+        2344.812455
+      ],
+      "observed_duration_s": 77.7,
+      "observed_peak_velocity_ms": 34.147253,
+      "model_surface_interval_m": [
+        0.0,
+        2640.917493
+      ],
+      "model_peak_velocity_ms": 25.115295,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.199545293,
+        "relative_travel_time_rmse": 0.145610078,
+        "terminal_surface_distance_relative_error": 0.126280905
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": true,
+        "terminal_surface_distance_relative_error": true
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2010-12-06-18-36-18",
+      "trajectory_file": "GEODAR-2010-12-06-18-36-18-TRAJ-001.h5",
+      "trajectory_bytes": 101288,
+      "trajectory_md5": "fde28a3324f4351cc9d61db47f7e61b1",
+      "trajectory_sha256": "a333839dce8899f727259c0a4082417e4857a3c8535cba30ecd9ae2a5bad7f9d",
+      "thalweg_file": "GEODAR-2010-12-06-18-36-18-THALWEG-001.h5",
+      "thalweg_bytes": 95088,
+      "thalweg_md5": "0bb4f70daf05e849260e1d1931204b48",
+      "thalweg_sha256": "794b5ed8474525b43a811a0629b197c2ae7eb9bd6a377fad171c6a41d6ef8cb6",
+      "observation_samples": 2463,
+      "observed_surface_interval_m": [
+        521.705993,
+        1884.829838
+      ],
+      "observed_duration_s": 49.24,
+      "observed_peak_velocity_ms": 46.469361,
+      "model_surface_interval_m": [
+        0.0,
+        2313.909115
+      ],
+      "model_peak_velocity_ms": 21.960875,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.31779727,
+        "relative_travel_time_rmse": 0.441095093,
+        "terminal_surface_distance_relative_error": 0.227648814
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2010-12-07-03-36-43",
+      "trajectory_file": "GEODAR-2010-12-07-03-36-43-TRAJ-001.h5",
+      "trajectory_bytes": 170408,
+      "trajectory_md5": "ee60cc6705673881b8ce1e7fd2428c6d",
+      "trajectory_sha256": "d802a088d0537c870bbb6ac088dda8748c43fb1c643c3a9ebaa63002a87d18a8",
+      "thalweg_file": "GEODAR-2010-12-07-03-36-43-THALWEG-001.h5",
+      "thalweg_bytes": 102048,
+      "thalweg_md5": "7e5e2b61faf989a49ea9d8a9cfc5850b",
+      "thalweg_sha256": "a0d48ccb9bef41d726eb35cdc412e46c88b1559bcb579356fc7a937b223b09ec",
+      "observation_samples": 4191,
+      "observed_surface_interval_m": [
+        116.679157,
+        1916.654478
+      ],
+      "observed_duration_s": 83.8,
+      "observed_peak_velocity_ms": 46.187278,
+      "model_surface_interval_m": [
+        0.0,
+        2487.849862
+      ],
+      "model_peak_velocity_ms": 25.101318,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.246235428,
+        "relative_travel_time_rmse": 0.173704797,
+        "terminal_surface_distance_relative_error": 0.298016878
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2011-12-19-15-16-02",
+      "trajectory_file": "GEODAR-2011-12-19-15-16-02-TRAJ-001.h5",
+      "trajectory_bytes": 99848,
+      "trajectory_md5": "9539c402d23d5eb0eab5e6621158fdd7",
+      "trajectory_sha256": "e1d41d117b696d93b7d03be98c29d070611b3850e4987bf3adf6ea602c88da61",
+      "thalweg_file": "GEODAR-2011-12-19-15-16-02-THALWEG-001.h5",
+      "thalweg_bytes": 102048,
+      "thalweg_md5": "4912c546e018d006eb754da9bc29e532",
+      "thalweg_sha256": "75a6970f36c2a3995352f57a6210c1d85e91556a9ff20fdbcd1bfe69a450a153",
+      "observation_samples": 2427,
+      "observed_surface_interval_m": [
+        243.119002,
+        969.584387
+      ],
+      "observed_duration_s": 48.52,
+      "observed_peak_velocity_ms": 22.946735,
+      "model_surface_interval_m": [
+        0.0,
+        2487.849862
+      ],
+      "model_peak_velocity_ms": 25.101318,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.253256224,
+        "relative_travel_time_rmse": 0.137329325,
+        "terminal_surface_distance_relative_error": 1.565893074
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": true,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2011-12-30-23-55-22",
+      "trajectory_file": "GEODAR-2011-12-30-23-55-22-TRAJ-001.h5",
+      "trajectory_bytes": 60968,
+      "trajectory_md5": "6f30e2fa2262f2f39fed459e1ebaf1fb",
+      "trajectory_sha256": "939921e9a2ec62797c5ebfbad5a4252dd931405425d43194a6dd08f353cf7982",
+      "thalweg_file": "GEODAR-2011-12-30-23-55-22-THALWEG-001.h5",
+      "thalweg_bytes": 102048,
+      "thalweg_md5": "0c5b6ecd3cb76da5d1e2ec08b6594ad1",
+      "thalweg_sha256": "8077c42db83174011509720c5afee02f48754eff0bda9cfb5f1cd61f46f45928",
+      "observation_samples": 1455,
+      "observed_surface_interval_m": [
+        1342.822314,
+        1877.71103
+      ],
+      "observed_duration_s": 29.08,
+      "observed_peak_velocity_ms": 37.848817,
+      "model_surface_interval_m": [
+        0.0,
+        2487.849862
+      ],
+      "model_peak_velocity_ms": 25.101318,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.207907879,
+        "relative_travel_time_rmse": 0.195536033,
+        "terminal_surface_distance_relative_error": 0.324937556
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2011-12-31-07-44-25",
+      "trajectory_file": "GEODAR-2011-12-31-07-44-25-TRAJ-001.h5",
+      "trajectory_bytes": 102368,
+      "trajectory_md5": "93e0a8a3c9d3f3d52e4948da9f56d610",
+      "trajectory_sha256": "ed497196f5f09c034f36c8592f95352d600285948d4f144e52406ff6dfc526c4",
+      "thalweg_file": "GEODAR-2011-12-31-07-44-25-THALWEG-001.h5",
+      "thalweg_bytes": 101528,
+      "thalweg_md5": "92d7ce289f5e591b9408020a174cd755",
+      "thalweg_sha256": "cb1ba1b777720018549566d80f6adf0ecf266e36b2da7faa1a8935fa04340058",
+      "observation_samples": 2490,
+      "observed_surface_interval_m": [
+        570.601118,
+        1680.78573
+      ],
+      "observed_duration_s": 49.78,
+      "observed_peak_velocity_ms": 36.969694,
+      "model_surface_interval_m": [
+        0.0,
+        2474.886961
+      ],
+      "model_peak_velocity_ms": 24.317339,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.233355274,
+        "relative_travel_time_rmse": 0.206365842,
+        "terminal_surface_distance_relative_error": 0.472458337
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2012-01-02-21-22-15",
+      "trajectory_file": "GEODAR-2012-01-02-21-22-15-TRAJ-001.h5",
+      "trajectory_bytes": 263848,
+      "trajectory_md5": "c3293c728491cd34596c11ddb2c44826",
+      "trajectory_sha256": "79e4bc12c8f271fc707c52a4014c023bb0bf6c7fc791f47d4aff6cdb71c831a7",
+      "thalweg_file": "GEODAR-2012-01-02-21-22-15-THALWEG-001.h5",
+      "thalweg_bytes": 52528,
+      "thalweg_md5": "a6a41e02edef57bbe8c9a3757cd0dca4",
+      "thalweg_sha256": "8c63e9e75a7baca969e92b821a641821959a9e87b8a54a0b18612925cded33e3",
+      "observation_samples": 6527,
+      "observed_surface_interval_m": [
+        91.106468,
+        300.896708
+      ],
+      "observed_duration_s": 130.52,
+      "observed_peak_velocity_ms": 6.264275,
+      "model_surface_interval_m": [
+        0.0,
+        1249.930212
+      ],
+      "model_peak_velocity_ms": 18.076502,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 2.576203226,
+        "relative_travel_time_rmse": 0.514326448,
+        "terminal_surface_distance_relative_error": 3.154017578
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2012-01-04-07-21-42",
+      "trajectory_file": "GEODAR-2012-01-04-07-21-42-TRAJ-001.h5",
+      "trajectory_bytes": 87088,
+      "trajectory_md5": "862027498ed1b82440e902d0824751a2",
+      "trajectory_sha256": "ed67a7974b66704f66cf8bb50ebb180dbcbd711cc7e54aafd8cad872c6325b28",
+      "thalweg_file": "GEODAR-2012-01-04-07-21-42-THALWEG-001.h5",
+      "thalweg_bytes": 101528,
+      "thalweg_md5": "d2d5c088006d66eb4bb2883457e61818",
+      "thalweg_sha256": "80887dbe48be22e86a2bac0957efe5ac44266cfe5e35307bc4bc7197ad69a9d7",
+      "observation_samples": 2108,
+      "observed_surface_interval_m": [
+        817.05641,
+        1560.790284
+      ],
+      "observed_duration_s": 42.14,
+      "observed_peak_velocity_ms": 26.252009,
+      "model_surface_interval_m": [
+        0.0,
+        2474.886961
+      ],
+      "model_peak_velocity_ms": 24.317339,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.228178811,
+        "relative_travel_time_rmse": 0.029300155,
+        "terminal_surface_distance_relative_error": 0.585662716
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": true,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2012-01-04-07-42-50",
+      "trajectory_file": "GEODAR-2012-01-04-07-42-50-TRAJ-001.h5",
+      "trajectory_bytes": 106408,
+      "trajectory_md5": "168e4ce640fa0aa9a6fd06709f8b518e",
+      "trajectory_sha256": "e05ca458cd70d7e97c75319d5e7d78990a842c26f4b6ab61ef5bee505a010dd0",
+      "thalweg_file": "GEODAR-2012-01-04-07-42-50-THALWEG-001.h5",
+      "thalweg_bytes": 102048,
+      "thalweg_md5": "ae70fca8dc980ccb41fa1cfc77651986",
+      "thalweg_sha256": "195432c196f6da3412a76706b4160e0e5576fcf77d3fcfb67284b86d1d54b1b8",
+      "observation_samples": 2591,
+      "observed_surface_interval_m": [
+        613.388527,
+        1574.718487
+      ],
+      "observed_duration_s": 51.8,
+      "observed_peak_velocity_ms": 31.693259,
+      "model_surface_interval_m": [
+        0.0,
+        2487.849862
+      ],
+      "model_peak_velocity_ms": 25.101318,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.251850781,
+        "relative_travel_time_rmse": 0.103259289,
+        "terminal_surface_distance_relative_error": 0.579869598
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": true,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2012-01-05-16-45-21",
+      "trajectory_file": "GEODAR-2012-01-05-16-45-21-TRAJ-001.h5",
+      "trajectory_bytes": 135648,
+      "trajectory_md5": "463522eff8e032e0dfdb436c6b295b98",
+      "trajectory_sha256": "fcffbe60f7fe8ab185f8c6f57b6717abe051ec2c03b8d4e9c09947d80b3863cb",
+      "thalweg_file": "GEODAR-2012-01-05-16-45-21-THALWEG-001.h5",
+      "thalweg_bytes": 102048,
+      "thalweg_md5": "3a3729f370027f38fe08448cfd0ed42c",
+      "thalweg_sha256": "a27e990ba88959ecb33408423b9deae9e2a000ef2ff1c86898349fa2f1cbc6b4",
+      "observation_samples": 3322,
+      "observed_surface_interval_m": [
+        336.475415,
+        2485.782476
+      ],
+      "observed_duration_s": 66.42,
+      "observed_peak_velocity_ms": 43.523914,
+      "model_surface_interval_m": [
+        0.0,
+        2487.849862
+      ],
+      "model_peak_velocity_ms": 25.101318,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.369359471,
+        "relative_travel_time_rmse": 0.488599428,
+        "terminal_surface_distance_relative_error": 0.000831684
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": true
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2012-01-10-00-03-06",
+      "trajectory_file": "GEODAR-2012-01-10-00-03-06-TRAJ-001.h5",
+      "trajectory_bytes": 56408,
+      "trajectory_md5": "1def091a57995c914f594d2823da677e",
+      "trajectory_sha256": "25a3ce116efc09280f80eb92f3db01869d0af108649ea1bf52cfc718be910344",
+      "thalweg_file": "GEODAR-2012-01-10-00-03-06-THALWEG-001.h5",
+      "thalweg_bytes": 79208,
+      "thalweg_md5": "00560cfb990d21f1fe714795f27073e2",
+      "thalweg_sha256": "90b3cb1cb833a6411a60ae8b494b55219732e9f24ce14e2713e0c71332984f42",
+      "observation_samples": 1341,
+      "observed_surface_interval_m": [
+        781.302874,
+        1301.911203
+      ],
+      "observed_duration_s": 26.8,
+      "observed_peak_velocity_ms": 33.535846,
+      "model_surface_interval_m": [
+        0.0,
+        1916.951897
+      ],
+      "model_peak_velocity_ms": 22.409822,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.301686828,
+        "relative_travel_time_rmse": 0.281459503,
+        "terminal_surface_distance_relative_error": 0.472413704
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2012-01-12-17-19-07",
+      "trajectory_file": "GEODAR-2012-01-12-17-19-07-TRAJ-001.h5",
+      "trajectory_bytes": 114888,
+      "trajectory_md5": "6f3acb52805a9a20988d06dd401a4252",
+      "trajectory_sha256": "06c3f1ede7759810b67569aaf9acad197307ffe6be45c6f04303b337ae7c78e4",
+      "thalweg_file": "GEODAR-2012-01-12-17-19-07-THALWEG-001.h5",
+      "thalweg_bytes": 96848,
+      "thalweg_md5": "37e2611e10ceafb020414e0f506f3857",
+      "thalweg_sha256": "ed56f19c8262b405400470cb82739cd740c7efe80b7a35576ac16cc4af3669f4",
+      "observation_samples": 2803,
+      "observed_surface_interval_m": [
+        388.485251,
+        1146.698767
+      ],
+      "observed_duration_s": 56.04,
+      "observed_peak_velocity_ms": 28.444478,
+      "model_surface_interval_m": [
+        0.0,
+        2357.811681
+      ],
+      "model_peak_velocity_ms": 24.066137,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.358775815,
+        "relative_travel_time_rmse": 0.120845429,
+        "terminal_surface_distance_relative_error": 1.056173556
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": true,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2012-01-13-02-42-41",
+      "trajectory_file": "GEODAR-2012-01-13-02-42-41-TRAJ-001.h5",
+      "trajectory_bytes": 274168,
+      "trajectory_md5": "a77722dfbba75a54229d8d47f7fa6ea5",
+      "trajectory_sha256": "abb50180ff43a077360f2615cc304d70054861dbfa41235f1193925a39d077ad",
+      "thalweg_file": "GEODAR-2012-01-13-02-42-41-THALWEG-001.h5",
+      "thalweg_bytes": 60088,
+      "thalweg_md5": "a4e1ad66797bf5c2a3d211e462600404",
+      "thalweg_sha256": "a78a12d5f96b172acd0ac1af071c45f6403d33868d0807a1d843c7af57263fed",
+      "observation_samples": 6785,
+      "observed_surface_interval_m": [
+        242.37903,
+        473.860743
+      ],
+      "observed_duration_s": 135.68,
+      "observed_peak_velocity_ms": 10.539893,
+      "model_surface_interval_m": [
+        0.0,
+        1438.908061
+      ],
+      "model_peak_velocity_ms": 22.342373,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 1.576704682,
+        "relative_travel_time_rmse": 0.515524493,
+        "terminal_surface_distance_relative_error": 2.036563128
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2012-02-03-16-25-32",
+      "trajectory_file": "GEODAR-2012-02-03-16-25-32-TRAJ-001.h5",
+      "trajectory_bytes": 56728,
+      "trajectory_md5": "139e7462820769b956dca2f8842535aa",
+      "trajectory_sha256": "6657caf3538803108052e6b3ee31d963ff609d0375ca57236cf0f49144ad37ba",
+      "thalweg_file": "GEODAR-2012-02-03-16-25-32-THALWEG-001.h5",
+      "thalweg_bytes": 62968,
+      "thalweg_md5": "b91b79563e2ed49c0ffb9811527a7310",
+      "thalweg_sha256": "af534e21049382125fa8e85d0a19cce14c4f7baa111366ec8d7cf8c80d7281b3",
+      "observation_samples": 1349,
+      "observed_surface_interval_m": [
+        339.525091,
+        688.921129
+      ],
+      "observed_duration_s": 26.96,
+      "observed_peak_velocity_ms": 23.188499,
+      "model_surface_interval_m": [
+        0.0,
+        1510.951371
+      ],
+      "model_peak_velocity_ms": 21.559088,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.285756683,
+        "relative_travel_time_rmse": 0.104272369,
+        "terminal_surface_distance_relative_error": 1.193213863
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": true,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2012-02-24-12-24-47",
+      "trajectory_file": "GEODAR-2012-02-24-12-24-47-TRAJ-001.h5",
+      "trajectory_bytes": 165848,
+      "trajectory_md5": "ca5d8f392a4cc5fa2ed2bf398df137d8",
+      "trajectory_sha256": "8508951eebbc23e9ce955984af07be622f342833568481c8c5c7448c237bad36",
+      "thalweg_file": "GEODAR-2012-02-24-12-24-47-THALWEG-001.h5",
+      "thalweg_bytes": 101928,
+      "thalweg_md5": "3e435cf7b51bace199c9a93a513aaa04",
+      "thalweg_sha256": "94fa9907ad8532f677591dbc738cbcd79d71e634a1bec5494e29438cfba006e0",
+      "observation_samples": 4077,
+      "observed_surface_interval_m": [
+        579.617948,
+        1123.780381
+      ],
+      "observed_duration_s": 81.52,
+      "observed_peak_velocity_ms": 11.714669,
+      "model_surface_interval_m": [
+        0.0,
+        2484.847712
+      ],
+      "model_peak_velocity_ms": 25.320475,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 1.100953947,
+        "relative_travel_time_rmse": 0.370997276,
+        "terminal_surface_distance_relative_error": 1.211150644
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2012-02-29-16-48-02",
+      "trajectory_file": "GEODAR-2012-02-29-16-48-02-TRAJ-001.h5",
+      "trajectory_bytes": 56848,
+      "trajectory_md5": "f123b71463d92aafdcb9f4360afc7a9c",
+      "trajectory_sha256": "88cb314725fb92be1add8c900919522ef61f7ecab8a0474653b48edd1ebf48b0",
+      "thalweg_file": "GEODAR-2012-02-29-16-48-02-THALWEG-001.h5",
+      "thalweg_bytes": 88408,
+      "thalweg_md5": "cfa4753aa5c6891c279a810557c08c31",
+      "thalweg_sha256": "b5a0d2e4605e14236f7a613d56f85576d036314e8bddb21d921c7cf4af7fc4be",
+      "observation_samples": 1352,
+      "observed_surface_interval_m": [
+        965.643999,
+        1250.777353
+      ],
+      "observed_duration_s": 27.02,
+      "observed_peak_velocity_ms": 21.863585,
+      "model_surface_interval_m": [
+        0.0,
+        2146.876039
+      ],
+      "model_peak_velocity_ms": 25.645042,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.433040018,
+        "relative_travel_time_rmse": 0.165765974,
+        "terminal_surface_distance_relative_error": 0.716433411
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2012-03-01-14-44-36",
+      "trajectory_file": "GEODAR-2012-03-01-14-44-36-TRAJ-001.h5",
+      "trajectory_bytes": 68448,
+      "trajectory_md5": "fb266f5b8bacfb520fe55a37f545ecfc",
+      "trajectory_sha256": "030d78eda9ff324bcd82cbded32c727a73789fc3411966362b0624f5d715da9d",
+      "thalweg_file": "GEODAR-2012-03-01-14-44-36-THALWEG-001.h5",
+      "thalweg_bytes": 98848,
+      "thalweg_md5": "3214102744d0385cb12df7f5aee11e2a",
+      "thalweg_sha256": "b9071af8a026c5b631021b12d44fd790afdb67cdb9babd86f72da300627fa391",
+      "observation_samples": 1642,
+      "observed_surface_interval_m": [
+        1220.503833,
+        1519.842535
+      ],
+      "observed_duration_s": 32.82,
+      "observed_peak_velocity_ms": 23.152754,
+      "model_surface_interval_m": [
+        0.0,
+        2407.912782
+      ],
+      "model_peak_velocity_ms": 23.669588,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.415097479,
+        "relative_travel_time_rmse": 0.231691462,
+        "terminal_surface_distance_relative_error": 0.584317274
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2012-03-15-10-56-28",
+      "trajectory_file": "GEODAR-2012-03-15-10-56-28-TRAJ-001.h5",
+      "trajectory_bytes": 77048,
+      "trajectory_md5": "7d7ec35e36aa2c75168152840782438b",
+      "trajectory_sha256": "6e6e96812ce9221ed83d8c845cf52a9b6204b8f629d92b487d55b41db37ef652",
+      "thalweg_file": "GEODAR-2012-03-15-10-56-28-THALWEG-001.h5",
+      "thalweg_bytes": 93128,
+      "thalweg_md5": "3cfa7738001e741deca59a47117a6b0d",
+      "thalweg_sha256": "d7af81b90a24a9d5691fd52334d67e431fff152499be2d81988de7912ab61842",
+      "observation_samples": 1857,
+      "observed_surface_interval_m": [
+        735.736526,
+        1335.884141
+      ],
+      "observed_duration_s": 37.12,
+      "observed_peak_velocity_ms": 28.018513,
+      "model_surface_interval_m": [
+        0.0,
+        2264.926177
+      ],
+      "model_peak_velocity_ms": 22.882145,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.287135803,
+        "relative_travel_time_rmse": 0.058129326,
+        "terminal_surface_distance_relative_error": 0.695451056
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": true,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2012-12-04-04-46-05",
+      "trajectory_file": "GEODAR-2012-12-04-04-46-05-TRAJ-001.h5",
+      "trajectory_bytes": 49968,
+      "trajectory_md5": "6275c12c53eb7eeb540cf905906968b8",
+      "trajectory_sha256": "4cdd8e904f4e2eddf43911f9f30e18ba69b745a0e898b7a1ff36257868344f83",
+      "thalweg_file": "GEODAR-2012-12-04-04-46-05-THALWEG-001.h5",
+      "thalweg_bytes": 101528,
+      "thalweg_md5": "9a82b4095cf5ebb0938abc95b5e5b5c9",
+      "thalweg_sha256": "d460de4730b76bbc304fccfb29d7299090a6294a3d58bc5b88e98181095742dd",
+      "observation_samples": 1180,
+      "observed_surface_interval_m": [
+        1410.497746,
+        1975.798882
+      ],
+      "observed_duration_s": 23.58,
+      "observed_peak_velocity_ms": 34.504979,
+      "model_surface_interval_m": [
+        0.0,
+        2474.886961
+      ],
+      "model_peak_velocity_ms": 24.317339,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.372400136,
+        "relative_travel_time_rmse": 0.461604853,
+        "terminal_surface_distance_relative_error": 0.252600648
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2012-12-06-01-54-50",
+      "trajectory_file": "GEODAR-2012-12-06-01-54-50-TRAJ-001.h5",
+      "trajectory_bytes": 103208,
+      "trajectory_md5": "fdfc8c9e4671469a0974707b3156bdbc",
+      "trajectory_sha256": "187cf069043c52fd095bdf023f85bd1b05bc03e411fcefb98c8f08df174b5165",
+      "thalweg_file": "GEODAR-2012-12-06-01-54-50-THALWEG-001.h5",
+      "thalweg_bytes": 101528,
+      "thalweg_md5": "139eecdcba580a00569a1b93dbbf946a",
+      "thalweg_sha256": "90b3635a628f427140f0a365fc91b5b61a510e8f6210f95fba1c700f8b3c3182",
+      "observation_samples": 2511,
+      "observed_surface_interval_m": [
+        774.562466,
+        1633.790283
+      ],
+      "observed_duration_s": 50.2,
+      "observed_peak_velocity_ms": 20.968869,
+      "model_surface_interval_m": [
+        0.0,
+        2474.886961
+      ],
+      "model_peak_velocity_ms": 24.317339,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.166731982,
+        "relative_travel_time_rmse": 0.031806251,
+        "terminal_surface_distance_relative_error": 0.514813123
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": true,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2012-12-10-08-12-49",
+      "trajectory_file": "GEODAR-2012-12-10-08-12-49-TRAJ-001.h5",
+      "trajectory_bytes": 53248,
+      "trajectory_md5": "87bd1918d6b6f870ca8ab36c1e42c89b",
+      "trajectory_sha256": "916fedd6c2ae23c7c8c71409975aec81950f3eb324736d6c00042777232e989f",
+      "thalweg_file": "GEODAR-2012-12-10-08-12-49-THALWEG-001.h5",
+      "thalweg_bytes": 102048,
+      "thalweg_md5": "ab656e12e9cced9a29f96c31dca1d7d5",
+      "thalweg_sha256": "533163abdbbd4fd0ecb5e1204ce088bf959acf6e32cfbcdefddf90494a0dabc2",
+      "observation_samples": 1262,
+      "observed_surface_interval_m": [
+        1215.855616,
+        1703.699753
+      ],
+      "observed_duration_s": 25.22,
+      "observed_peak_velocity_ms": 28.233387,
+      "model_surface_interval_m": [
+        0.0,
+        2487.849862
+      ],
+      "model_peak_velocity_ms": 25.101318,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.165993921,
+        "relative_travel_time_rmse": 0.113108645,
+        "terminal_surface_distance_relative_error": 0.460263088
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": true,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2013-02-01-16-52-45",
+      "trajectory_file": "GEODAR-2013-02-01-16-52-45-TRAJ-001.h5",
+      "trajectory_bytes": 155528,
+      "trajectory_md5": "57eedaad434b751dc97adf6a907712e5",
+      "trajectory_sha256": "6488a1713adab349d25625d8f3e508952a9e51ebb64789f4ff8fe5fa19aed055",
+      "thalweg_file": "GEODAR-2013-02-01-16-52-45-THALWEG-001.h5",
+      "thalweg_bytes": 102048,
+      "thalweg_md5": "447ec78f2cb7cf03921bd2d19dbfa0fb",
+      "thalweg_sha256": "20a211aa3b831ce624a6cdecd8ec3033e084008407bca585642649df10405e17",
+      "observation_samples": 3819,
+      "observed_surface_interval_m": [
+        634.265842,
+        1647.71479
+      ],
+      "observed_duration_s": 76.36,
+      "observed_peak_velocity_ms": 30.572552,
+      "model_surface_interval_m": [
+        0.0,
+        2487.849862
+      ],
+      "model_peak_velocity_ms": 25.101318,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.263802549,
+        "relative_travel_time_rmse": 0.111641812,
+        "terminal_surface_distance_relative_error": 0.509878941
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": true,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2013-02-01-17-14-50",
+      "trajectory_file": "GEODAR-2013-02-01-17-14-50-TRAJ-001.h5",
+      "trajectory_bytes": 779128,
+      "trajectory_md5": "3dbc6913aa55d089099fe765dba63efc",
+      "trajectory_sha256": "856fa2da19c4210b6a291450d2e3f7f0ca6a5d7128509445d6b0f933c9172487",
+      "thalweg_file": "GEODAR-2013-02-01-17-14-50-THALWEG-001.h5",
+      "thalweg_bytes": 102048,
+      "thalweg_md5": "9ad3d2c1a3a2ae4695ce5c39c307a859",
+      "thalweg_sha256": "18c522bbc301073b7c923ab96395940b3c8c1d0d3835da7ba8a47c377f0c20fa",
+      "observation_samples": 19409,
+      "observed_surface_interval_m": [
+        573.019543,
+        2368.690891
+      ],
+      "observed_duration_s": 388.16,
+      "observed_peak_velocity_ms": 34.985213,
+      "model_surface_interval_m": [
+        0.0,
+        2487.849862
+      ],
+      "model_peak_velocity_ms": 25.101318,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.323537272,
+        "relative_travel_time_rmse": 0.37756908,
+        "terminal_surface_distance_relative_error": 0.050305834
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": true
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2013-02-01-20-18-46",
+      "trajectory_file": "GEODAR-2013-02-01-20-18-46-TRAJ-001.h5",
+      "trajectory_bytes": 695688,
+      "trajectory_md5": "3b43d33412b7947b12c2fd1fc90c5d54",
+      "trajectory_sha256": "63ffa98bc8bdc8a2b3adf1374658cb5fe29a7d149b6743f17892825a38ad018e",
+      "thalweg_file": "GEODAR-2013-02-01-20-18-46-THALWEG-001.h5",
+      "thalweg_bytes": 108168,
+      "thalweg_md5": "f7a038822232a79a202b31155d2d0c87",
+      "thalweg_sha256": "8640526f8be872718ae68536a054e171fee09dcb9f3ad1e3ad9aead6fa3bdb9f",
+      "observation_samples": 17323,
+      "observed_surface_interval_m": [
+        1385.320509,
+        2578.790535
+      ],
+      "observed_duration_s": 346.44,
+      "observed_peak_velocity_ms": 28.710727,
+      "model_surface_interval_m": [
+        0.0,
+        2640.917493
+      ],
+      "model_peak_velocity_ms": 25.115295,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.364309987,
+        "relative_travel_time_rmse": 0.413532667,
+        "terminal_surface_distance_relative_error": 0.02409151
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": true
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2013-02-02-05-27-31",
+      "trajectory_file": "GEODAR-2013-02-02-05-27-31-TRAJ-001.h5",
+      "trajectory_bytes": 384088,
+      "trajectory_md5": "4979c4aedf66a096623efb855382ba9d",
+      "trajectory_sha256": "96512f57edc70be3126f538a74aca191c92557d8fee11523b4675fa9acfce002",
+      "thalweg_file": "GEODAR-2013-02-02-05-27-31-THALWEG-001.h5",
+      "thalweg_bytes": 95088,
+      "thalweg_md5": "00e60b5b8a429fb629e85d2a2989efae",
+      "thalweg_sha256": "34dc0fdfe309e62a0dbae26e758febec8e91459fd3ebd87d72ce1a613a1cc86f",
+      "observation_samples": 9533,
+      "observed_surface_interval_m": [
+        966.202208,
+        2233.785313
+      ],
+      "observed_duration_s": 190.64,
+      "observed_peak_velocity_ms": 39.053447,
+      "model_surface_interval_m": [
+        0.0,
+        2313.909115
+      ],
+      "model_peak_velocity_ms": 21.960875,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.256936304,
+        "relative_travel_time_rmse": 0.294471793,
+        "terminal_surface_distance_relative_error": 0.03586907
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": true
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2013-02-02-15-38-13",
+      "trajectory_file": "GEODAR-2013-02-02-15-38-13-TRAJ-001.h5",
+      "trajectory_bytes": 73728,
+      "trajectory_md5": "14967a75779a373207fc572dd9514112",
+      "trajectory_sha256": "8d4a6ca24c5457d8fb72f57d7f27ba2230aa39d67069ad47176c3bf3643a1b7b",
+      "thalweg_file": "GEODAR-2013-02-02-15-38-13-THALWEG-001.h5",
+      "thalweg_bytes": 64848,
+      "thalweg_md5": "67ce7011426eec2845d2a7340deaa9e3",
+      "thalweg_sha256": "f060d8536cad4925095ae2935cc99a7f88af7b2c6e031330d1a2479c50773875",
+      "observation_samples": 1774,
+      "observed_surface_interval_m": [
+        356.082249,
+        640.925026
+      ],
+      "observed_duration_s": 35.46,
+      "observed_peak_velocity_ms": 12.261059,
+      "model_surface_interval_m": [
+        0.0,
+        1557.947455
+      ],
+      "model_peak_velocity_ms": 21.651157,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.845257529,
+        "relative_travel_time_rmse": 0.293579353,
+        "terminal_surface_distance_relative_error": 1.430779564
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2013-02-05-21-13-35",
+      "trajectory_file": "GEODAR-2013-02-05-21-13-35-TRAJ-001.h5",
+      "trajectory_bytes": 98248,
+      "trajectory_md5": "75fcc81a0d895f505dab8d25a7770087",
+      "trajectory_sha256": "133fecfc17bba52100169a7a90349db4ed3dc3cbc89d85cd9be2ef6bae619be6",
+      "thalweg_file": "GEODAR-2013-02-05-21-13-35-THALWEG-001.h5",
+      "thalweg_bytes": 101528,
+      "thalweg_md5": "8da8f14456b916d6c88d0def9caf5bf9",
+      "thalweg_sha256": "f7637fd2ce0d8615469449218880f64b584079051540baf65964ff06d2f67545",
+      "observation_samples": 2387,
+      "observed_surface_interval_m": [
+        562.603438,
+        1316.829959
+      ],
+      "observed_duration_s": 47.72,
+      "observed_peak_velocity_ms": 20.452247,
+      "model_surface_interval_m": [
+        0.0,
+        2474.886961
+      ],
+      "model_peak_velocity_ms": 24.317339,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.271422579,
+        "relative_travel_time_rmse": 0.088443368,
+        "terminal_surface_distance_relative_error": 0.879427897
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": true,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2013-02-05-23-31-53",
+      "trajectory_file": "GEODAR-2013-02-05-23-31-53-TRAJ-001.h5",
+      "trajectory_bytes": 110608,
+      "trajectory_md5": "cf5fbccfe604ee411ec3372cfd776f20",
+      "trajectory_sha256": "96e4a340794d2cba04f313f429c6435b917f64e3e14851167a62038d4c4648b1",
+      "thalweg_file": "GEODAR-2013-02-05-23-31-53-THALWEG-001.h5",
+      "thalweg_bytes": 102048,
+      "thalweg_md5": "b40ac04836dd5bb6c4b5df60403cd289",
+      "thalweg_sha256": "1f3b59bc005d06cfa3b04b037e381fa5deb57cc4ac811ed51729540613ebb679",
+      "observation_samples": 2696,
+      "observed_surface_interval_m": [
+        640.436756,
+        2081.706515
+      ],
+      "observed_duration_s": 53.9,
+      "observed_peak_velocity_ms": 37.080977,
+      "model_surface_interval_m": [
+        0.0,
+        2487.849862
+      ],
+      "model_peak_velocity_ms": 25.101318,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.308997203,
+        "relative_travel_time_rmse": 0.372511605,
+        "terminal_surface_distance_relative_error": 0.195101156
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2013-02-19-13-13-31",
+      "trajectory_file": "GEODAR-2013-02-19-13-13-31-TRAJ-001.h5",
+      "trajectory_bytes": 42248,
+      "trajectory_md5": "2c99d24d1923456f39c7a2fce74e759f",
+      "trajectory_sha256": "2df10dfec36c3c70a755203844ce47bd62f004ad4c97689e3631945d17016c28",
+      "thalweg_file": "GEODAR-2013-02-19-13-13-31-THALWEG-001.h5",
+      "thalweg_bytes": 97128,
+      "thalweg_md5": "47cbd62be4a6e00d41368987076f16ba",
+      "thalweg_sha256": "cd0118b852596cfde6963cfebd1b2d8ee38b7b70eafd921c4efb34247e47a112",
+      "observation_samples": 987,
+      "observed_surface_interval_m": [
+        491.3439,
+        614.796528
+      ],
+      "observed_duration_s": 19.72,
+      "observed_peak_velocity_ms": 8.546473,
+      "model_surface_interval_m": [
+        0.0,
+        2364.86978
+      ],
+      "model_peak_velocity_ms": 24.170168,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 1.557023148,
+        "relative_travel_time_rmse": 0.366272385,
+        "terminal_surface_distance_relative_error": 2.846589355
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2013-03-02-11-46-45",
+      "trajectory_file": "GEODAR-2013-03-02-11-46-45-TRAJ-001.h5",
+      "trajectory_bytes": 92928,
+      "trajectory_md5": "b7be4e606b34c2223565555ce20658f4",
+      "trajectory_sha256": "1c15700f5e58b36b6bdad4d8c46b709930e5ad7fbb540adca2d967381e653fcc",
+      "thalweg_file": "GEODAR-2013-03-02-11-46-45-THALWEG-001.h5",
+      "thalweg_bytes": 60968,
+      "thalweg_md5": "d44e24e7aa05e990a9fc1f4c1283dabe",
+      "thalweg_sha256": "8cc3a7124f565757252629add95d07b6b7b3c86f8232447eb9713e02a6b57dff",
+      "observation_samples": 2254,
+      "observed_surface_interval_m": [
+        300.078345,
+        559.847762
+      ],
+      "observed_duration_s": 45.06,
+      "observed_peak_velocity_ms": 15.131983,
+      "model_surface_interval_m": [
+        0.0,
+        1460.909744
+      ],
+      "model_peak_velocity_ms": 22.824299,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.82629262,
+        "relative_travel_time_rmse": 0.331975101,
+        "terminal_surface_distance_relative_error": 1.609476794
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2013-03-03-11-29-11",
+      "trajectory_file": "GEODAR-2013-03-03-11-29-11-TRAJ-001.h5",
+      "trajectory_bytes": 79048,
+      "trajectory_md5": "69e5db167b99ba89722eaef3c097672c",
+      "trajectory_sha256": "704dc892da8450e7c47cbc661c699d978dc1be4e39d69c1c3009a366ea33be98",
+      "thalweg_file": "GEODAR-2013-03-03-11-29-11-THALWEG-001.h5",
+      "thalweg_bytes": 104928,
+      "thalweg_md5": "a4c22666b918e3a9f66fe51f01c59e47",
+      "thalweg_sha256": "0e456957a6e7ee2d602e8f5d939395f843eaa747a70219c842fc72e89defee16",
+      "observation_samples": 1907,
+      "observed_surface_interval_m": [
+        322.985363,
+        633.948737
+      ],
+      "observed_duration_s": 38.12,
+      "observed_peak_velocity_ms": 14.750346,
+      "model_surface_interval_m": [
+        0.0,
+        2559.932731
+      ],
+      "model_peak_velocity_ms": 23.305279,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 1.002282196,
+        "relative_travel_time_rmse": 0.331298875,
+        "terminal_surface_distance_relative_error": 3.038075292
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2013-03-03-12-23-33",
+      "trajectory_file": "GEODAR-2013-03-03-12-23-33-TRAJ-001.h5",
+      "trajectory_bytes": 161448,
+      "trajectory_md5": "d3c1232edf39b89f8b0a8aa44a547489",
+      "trajectory_sha256": "126f4eaa33a312afdbff23f3787a85914c16d0462231472ade80f9bcb6164d85",
+      "thalweg_file": "GEODAR-2013-03-03-12-23-33-THALWEG-001.h5",
+      "thalweg_bytes": 102688,
+      "thalweg_md5": "9785c6b7e4404c75804816553dc6ba70",
+      "thalweg_sha256": "ac911d9b47b73ad1abbeb3535557de2ba4b1a016a4ab2da82dde0b905f5f8479",
+      "observation_samples": 3967,
+      "observed_surface_interval_m": [
+        236.916025,
+        624.797557
+      ],
+      "observed_duration_s": 79.32,
+      "observed_peak_velocity_ms": 16.259511,
+      "model_surface_interval_m": [
+        0.0,
+        2503.852885
+      ],
+      "model_peak_velocity_ms": 25.400127,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 1.039416537,
+        "relative_travel_time_rmse": 0.410572014,
+        "terminal_surface_distance_relative_error": 3.007462666
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2013-03-18-23-50-57",
+      "trajectory_file": "GEODAR-2013-03-18-23-50-57-TRAJ-001.h5",
+      "trajectory_bytes": 30968,
+      "trajectory_md5": "90478c3e5767fce55b7d926185510bbb",
+      "trajectory_sha256": "8ce646544625b21366b477bd0160064844ddb1718d3dedc1f9d4f2ac7351952b",
+      "thalweg_file": "GEODAR-2013-03-18-23-50-57-THALWEG-001.h5",
+      "thalweg_bytes": 102048,
+      "thalweg_md5": "a768c08639652afa840d8d7475e0abba",
+      "thalweg_sha256": "a3d927c95a8790dcf06936e8c12d7ebe2f8227a53284bfe2533218ac27fa0d05",
+      "observation_samples": 705,
+      "observed_surface_interval_m": [
+        583.665791,
+        782.732214
+      ],
+      "observed_duration_s": 14.08,
+      "observed_peak_velocity_ms": 20.341552,
+      "model_surface_interval_m": [
+        0.0,
+        2487.849862
+      ],
+      "model_peak_velocity_ms": 25.101318,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.311753425,
+        "relative_travel_time_rmse": 0.115524603,
+        "terminal_surface_distance_relative_error": 2.178417622
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": true,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2013-03-19-04-21-42",
+      "trajectory_file": "GEODAR-2013-03-19-04-21-42-TRAJ-001.h5",
+      "trajectory_bytes": 34408,
+      "trajectory_md5": "57a68a06655ebe5b89ec73d397912738",
+      "trajectory_sha256": "d2f90895a01d4b9d6b7c3fe17068beb08738b43f1aaf9e908c965df844ba64c5",
+      "thalweg_file": "GEODAR-2013-03-19-04-21-42-THALWEG-001.h5",
+      "thalweg_bytes": 101528,
+      "thalweg_md5": "4d3edbfd2ad7be4cad9073bb23c2d8eb",
+      "thalweg_sha256": "e10ac51aaf7a4be5ec264b45e7bb7912233be78ae79952b2dcde5ff377cf70d6",
+      "observation_samples": 791,
+      "observed_surface_interval_m": [
+        1210.564701,
+        1463.794894
+      ],
+      "observed_duration_s": 15.8,
+      "observed_peak_velocity_ms": 24.307102,
+      "model_surface_interval_m": [
+        0.0,
+        2474.886961
+      ],
+      "model_peak_velocity_ms": 24.317339,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.26588189,
+        "relative_travel_time_rmse": 0.054232626,
+        "terminal_surface_distance_relative_error": 0.690733429
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": true,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2013-03-22-10-03-29",
+      "trajectory_file": "GEODAR-2013-03-22-10-03-29-TRAJ-001.h5",
+      "trajectory_bytes": 103568,
+      "trajectory_md5": "c851d393975f6f21fbfa0524bb0c5218",
+      "trajectory_sha256": "aad8f09943dea1c70842c3a50b478faf31385ba9929472958da80cbd87ed29bf",
+      "thalweg_file": "GEODAR-2013-03-22-10-03-29-THALWEG-001.h5",
+      "thalweg_bytes": 99968,
+      "thalweg_md5": "a8683d70d643455c0b1591f49abaac02",
+      "thalweg_sha256": "aadfa9eb948654573e032f78a60c2f6576f98879bbaf97867d459f9b28046126",
+      "observation_samples": 2520,
+      "observed_surface_interval_m": [
+        536.350568,
+        940.797842
+      ],
+      "observed_duration_s": 50.38,
+      "observed_peak_velocity_ms": 18.154472,
+      "model_surface_interval_m": [
+        0.0,
+        2435.857372
+      ],
+      "model_peak_velocity_ms": 24.19664,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.653580114,
+        "relative_travel_time_rmse": 0.285198307,
+        "terminal_surface_distance_relative_error": 1.58914005
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2013-04-06-18-35-09",
+      "trajectory_file": "GEODAR-2013-04-06-18-35-09-TRAJ-001.h5",
+      "trajectory_bytes": 280288,
+      "trajectory_md5": "0e537921d80f00ebe5f1b4b691da1533",
+      "trajectory_sha256": "e428856ad63d0b5b1469e75e3c3c5c4191612cde44e6d47f827c37eb0fcde8b2",
+      "thalweg_file": "GEODAR-2013-04-06-18-35-09-THALWEG-001.h5",
+      "thalweg_bytes": 96208,
+      "thalweg_md5": "dbac4506602b686d829dbbe83a6f3216",
+      "thalweg_sha256": "d12a13f2690b35100f1ec89a4c15fe0677ea7b64171f386309efbe8a5973e517",
+      "observation_samples": 6938,
+      "observed_surface_interval_m": [
+        419.432305,
+        639.718459
+      ],
+      "observed_duration_s": 138.74,
+      "observed_peak_velocity_ms": 10.732377,
+      "model_surface_interval_m": [
+        0.0,
+        2341.824405
+      ],
+      "model_peak_velocity_ms": 23.783728,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 1.631373681,
+        "relative_travel_time_rmse": 0.518726497,
+        "terminal_surface_distance_relative_error": 2.66071101
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2013-04-06-19-23-47",
+      "trajectory_file": "GEODAR-2013-04-06-19-23-47-TRAJ-001.h5",
+      "trajectory_bytes": 143408,
+      "trajectory_md5": "c3c07136daae34b05d13e789ba14df01",
+      "trajectory_sha256": "9071fbde82f9e26e78cdc6076842d0c6697917a913259984d4743f3b7ced2f75",
+      "thalweg_file": "GEODAR-2013-04-06-19-23-47-THALWEG-001.h5",
+      "thalweg_bytes": 96368,
+      "thalweg_md5": "29c4896d49e54f5c017d8727cc37396b",
+      "thalweg_sha256": "958a42e3d6edf33180c86fb1fdcf6d3378dce4936bc45805a2b0c903f94eb672",
+      "observation_samples": 3516,
+      "observed_surface_interval_m": [
+        414.923285,
+        1375.669615
+      ],
+      "observed_duration_s": 70.3,
+      "observed_peak_velocity_ms": 24.319479,
+      "model_surface_interval_m": [
+        0.0,
+        2345.818811
+      ],
+      "model_peak_velocity_ms": 23.864332,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.306608943,
+        "relative_travel_time_rmse": 0.1790419,
+        "terminal_surface_distance_relative_error": 0.705219614
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2013-04-10-15-07-55",
+      "trajectory_file": "GEODAR-2013-04-10-15-07-55-TRAJ-001.h5",
+      "trajectory_bytes": 125248,
+      "trajectory_md5": "040b48c5af5ffbd55dbef464b20b2e93",
+      "trajectory_sha256": "df157bbc81a1df3077ae0c367b56a87ec922a14186d2f333409f5cf5582144a9",
+      "thalweg_file": "GEODAR-2013-04-10-15-07-55-THALWEG-001.h5",
+      "thalweg_bytes": 85608,
+      "thalweg_md5": "8fecb28500952a5bf9520a6d9e022754",
+      "thalweg_sha256": "fc439c0e4b42cbbc64607d61f1ad81521b76cadef32ce0e985b3288556efc22a",
+      "observation_samples": 3062,
+      "observed_surface_interval_m": [
+        863.077549,
+        1123.90073
+      ],
+      "observed_duration_s": 61.22,
+      "observed_peak_velocity_ms": 15.677736,
+      "model_surface_interval_m": [
+        0.0,
+        2076.929868
+      ],
+      "model_peak_velocity_ms": 22.099539,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.910793171,
+        "relative_travel_time_rmse": 0.404631246,
+        "terminal_surface_distance_relative_error": 0.847965583
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2013-04-12-13-33-47",
+      "trajectory_file": "GEODAR-2013-04-12-13-33-47-TRAJ-001.h5",
+      "trajectory_bytes": 48928,
+      "trajectory_md5": "b04ba7a1e6ab945a68aaf54aa42695d6",
+      "trajectory_sha256": "9abad0dd56a7dc9ac0f946a423ba9bca9c6b50d7ca9ba4aad2b8f0673d6a0c08",
+      "thalweg_file": "GEODAR-2013-04-12-13-33-47-THALWEG-001.h5",
+      "thalweg_bytes": 83328,
+      "thalweg_md5": "59f2da3ee4abdc4927eea9ce2d394ec5",
+      "thalweg_sha256": "b0c118e811a41657f60123145a25bd65892ce983f88449ccb5f895c7bb0b20c3",
+      "observation_samples": 1154,
+      "observed_surface_interval_m": [
+        974.406927,
+        1275.845453
+      ],
+      "observed_duration_s": 23.06,
+      "observed_peak_velocity_ms": 30.310518,
+      "model_surface_interval_m": [
+        0.0,
+        2019.918636
+      ],
+      "model_peak_velocity_ms": 22.206034,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.245950863,
+        "relative_travel_time_rmse": 0.069145902,
+        "terminal_surface_distance_relative_error": 0.583200091
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": true,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2013-04-13-04-06-44",
+      "trajectory_file": "GEODAR-2013-04-13-04-06-44-TRAJ-001.h5",
+      "trajectory_bytes": 283368,
+      "trajectory_md5": "8b14dc7516da4fc9255cb99eac6e0248",
+      "trajectory_sha256": "b1f976a7ffa52a4fdc070a307a6e1a2be56558e0982c6201f82c8526f2078fb6",
+      "thalweg_file": "GEODAR-2013-04-13-04-06-44-THALWEG-001.h5",
+      "thalweg_bytes": 91248,
+      "thalweg_md5": "6dcb9127550c99606e0b6d4501abf186",
+      "thalweg_sha256": "d661f2b5dfb2c95ec1ff945533c8e8979e920bb02ae471969728c1d9807d47ea",
+      "observation_samples": 7015,
+      "observed_surface_interval_m": [
+        1002.524225,
+        1483.790318
+      ],
+      "observed_duration_s": 140.28,
+      "observed_peak_velocity_ms": 27.001805,
+      "model_surface_interval_m": [
+        0.0,
+        2217.885293
+      ],
+      "model_peak_velocity_ms": 25.385386,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.481107031,
+        "relative_travel_time_rmse": 0.426830783,
+        "terminal_surface_distance_relative_error": 0.494743069
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2013-04-13-12-37-24",
+      "trajectory_file": "GEODAR-2013-04-13-12-37-24-TRAJ-001.h5",
+      "trajectory_bytes": 96328,
+      "trajectory_md5": "1223026637fb8d90ce1189364cd497a1",
+      "trajectory_sha256": "7df18513bc32a412e63eeabc87b8ee92921b4de6d6c4cc0a60b086abc6f36c51",
+      "thalweg_file": "GEODAR-2013-04-13-12-37-24-THALWEG-001.h5",
+      "thalweg_bytes": 81888,
+      "thalweg_md5": "867df4abea18ff2f3c8fbeec7c18a747",
+      "thalweg_sha256": "6cbfe921d24ad2a6b2db1fa4c1d4e9ee12b9cd0ce0c9eb8989c7dfcfc19cb352",
+      "observation_samples": 2339,
+      "observed_surface_interval_m": [
+        848.797086,
+        1060.819302
+      ],
+      "observed_duration_s": 46.76,
+      "observed_peak_velocity_ms": 13.755233,
+      "model_surface_interval_m": [
+        0.0,
+        1983.892582
+      ],
+      "model_peak_velocity_ms": 22.234985,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.974888198,
+        "relative_travel_time_rmse": 0.394847329,
+        "terminal_surface_distance_relative_error": 0.870151287
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2013-04-13-14-19-46",
+      "trajectory_file": "GEODAR-2013-04-13-14-19-46-TRAJ-001.h5",
+      "trajectory_bytes": 157488,
+      "trajectory_md5": "de0503c4c6cceb0da220244a3103fab8",
+      "trajectory_sha256": "12518c9b8ee86c774dccbfe08583650aada8444e5dde1f2394644cc1c7f59724",
+      "thalweg_file": "GEODAR-2013-04-13-14-19-46-THALWEG-001.h5",
+      "thalweg_bytes": 89528,
+      "thalweg_md5": "0979f3a2888cab575692b3901711906f",
+      "thalweg_sha256": "5c11d18fd241f49cdc357bbd9f5c52f4bac898ada03cbdd07921980660ee899d",
+      "observation_samples": 3868,
+      "observed_surface_interval_m": [
+        312.162832,
+        1219.772455
+      ],
+      "observed_duration_s": 77.34,
+      "observed_peak_velocity_ms": 29.249281,
+      "model_surface_interval_m": [
+        0.0,
+        2174.864586
+      ],
+      "model_peak_velocity_ms": 21.926338,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.34604421,
+        "relative_travel_time_rmse": 0.155336611,
+        "terminal_surface_distance_relative_error": 0.783008444
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2013-04-13-23-59-42",
+      "trajectory_file": "GEODAR-2013-04-13-23-59-42-TRAJ-001.h5",
+      "trajectory_bytes": 159888,
+      "trajectory_md5": "5b314cb350f431d0a378d89554554468",
+      "trajectory_sha256": "3ff8bea1d97daf5bfa09e62f71d8ffe9dda1d0b3c5702eed32e7bf9947677548",
+      "thalweg_file": "GEODAR-2013-04-13-23-59-42-THALWEG-001.h5",
+      "thalweg_bytes": 76608,
+      "thalweg_md5": "f8dd093cc742265caeffdd02d5c21cf8",
+      "thalweg_sha256": "4ff8be740ab51bcafedbceba10063cbb7972a7556601cdd42eeb5ddd8fe96be8",
+      "observation_samples": 3928,
+      "observed_surface_interval_m": [
+        692.826379,
+        916.877427
+      ],
+      "observed_duration_s": 78.54,
+      "observed_peak_velocity_ms": 9.894541,
+      "model_surface_interval_m": [
+        0.0,
+        1851.919472
+      ],
+      "model_peak_velocity_ms": 22.258892,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 1.519732793,
+        "relative_travel_time_rmse": 0.462562295,
+        "terminal_surface_distance_relative_error": 1.019811391
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2013-04-14-11-25-56",
+      "trajectory_file": "GEODAR-2013-04-14-11-25-56-TRAJ-001.h5",
+      "trajectory_bytes": 40208,
+      "trajectory_md5": "ba4ad54987064020392e65d12932a1f7",
+      "trajectory_sha256": "86a7a8796dc72464f0226a771b5d1c00d21426a4e94968052295fb119b2371da",
+      "thalweg_file": "GEODAR-2013-04-14-11-25-56-THALWEG-001.h5",
+      "thalweg_bytes": 96848,
+      "thalweg_md5": "020624686027fce0d3a3c2d0e31cf66b",
+      "thalweg_sha256": "3a3329a1a5ff1e245b0e98e3f84e14a2fc5949394bf28c726c8cd0ef02ed9437",
+      "observation_samples": 936,
+      "observed_surface_interval_m": [
+        436.23275,
+        587.68431
+      ],
+      "observed_duration_s": 18.7,
+      "observed_peak_velocity_ms": 18.539134,
+      "model_surface_interval_m": [
+        0.0,
+        2357.814485
+      ],
+      "model_peak_velocity_ms": 24.076654,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.695477211,
+        "relative_travel_time_rmse": 0.285184518,
+        "terminal_surface_distance_relative_error": 3.012042597
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2013-04-14-22-49-51",
+      "trajectory_file": "GEODAR-2013-04-14-22-49-51-TRAJ-001.h5",
+      "trajectory_bytes": 254488,
+      "trajectory_md5": "b704c2c367d4cfcd239ca26f36db46d6",
+      "trajectory_sha256": "8dcd663d249106c9e73430c4bd677cdfe86e5264cb480cbdaf6103ca35f61b48",
+      "thalweg_file": "GEODAR-2013-04-14-22-49-51-THALWEG-001.h5",
+      "thalweg_bytes": 92568,
+      "thalweg_md5": "1e2df3b99b117952b7d9aba362e29232",
+      "thalweg_sha256": "c9e0fe799acfd9e38b81b5e65cdf309a669616553a55d901965f47e6db3a1ac5",
+      "observation_samples": 6293,
+      "observed_surface_interval_m": [
+        437.817587,
+        1333.809229
+      ],
+      "observed_duration_s": 125.84,
+      "observed_peak_velocity_ms": 25.764677,
+      "model_surface_interval_m": [
+        0.0,
+        2250.888185
+      ],
+      "model_peak_velocity_ms": 21.926121,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.505979613,
+        "relative_travel_time_rmse": 0.29630325,
+        "terminal_surface_distance_relative_error": 0.68756381
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2014-02-13-17-37-30",
+      "trajectory_file": "GEODAR-2014-02-13-17-37-30-TRAJ-001.h5",
+      "trajectory_bytes": 93528,
+      "trajectory_md5": "fa2718f7471c92991e56691a11d897b2",
+      "trajectory_sha256": "233dedfdfa35774097898814bb6484582e8b75d9f42ce26617a78d06b31a2305",
+      "thalweg_file": "GEODAR-2014-02-13-17-37-30-THALWEG-001.h5",
+      "thalweg_bytes": 102048,
+      "thalweg_md5": "5e0f512091649a8578d08b1fb2eac2af",
+      "thalweg_sha256": "4c473c6bcf513f18c66f3574e891cbc5fd4df74e7181647a72cd599fa43f48eb",
+      "observation_samples": 2269,
+      "observed_surface_interval_m": [
+        570.742074,
+        1372.77179
+      ],
+      "observed_duration_s": 45.36,
+      "observed_peak_velocity_ms": 24.882151,
+      "model_surface_interval_m": [
+        0.0,
+        2487.849862
+      ],
+      "model_peak_velocity_ms": 25.101318,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.187363013,
+        "relative_travel_time_rmse": 0.024425963,
+        "terminal_surface_distance_relative_error": 0.812282187
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": true,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2014-02-13-19-21-32",
+      "trajectory_file": "GEODAR-2014-02-13-19-21-32-TRAJ-001.h5",
+      "trajectory_bytes": 147888,
+      "trajectory_md5": "8e491320cf7d6ed063ebab30e5a3a891",
+      "trajectory_sha256": "367c7ae162cf6c3d1a0f0750d27b163750be81119c396503a7003540fa643ec5",
+      "thalweg_file": "GEODAR-2014-02-13-19-21-32-THALWEG-001.h5",
+      "thalweg_bytes": 102048,
+      "thalweg_md5": "4a5649dc5e352eccf056079925320a0f",
+      "thalweg_sha256": "73702d84f1d07626350c5b8d6ad3a700c0c3e7dd6a4ef427d8f6a4a61b5ec09c",
+      "observation_samples": 3628,
+      "observed_surface_interval_m": [
+        327.474098,
+        2462.682915
+      ],
+      "observed_duration_s": 72.54,
+      "observed_peak_velocity_ms": 46.289991,
+      "model_surface_interval_m": [
+        0.0,
+        2487.849862
+      ],
+      "model_peak_velocity_ms": 25.101318,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.298033463,
+        "relative_travel_time_rmse": 0.413738396,
+        "terminal_surface_distance_relative_error": 0.010219321
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": true
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2014-02-20-11-15-05",
+      "trajectory_file": "GEODAR-2014-02-20-11-15-05-TRAJ-001.h5",
+      "trajectory_bytes": 138448,
+      "trajectory_md5": "76df6c6d338b7eac4dd403dee4b1a6e9",
+      "trajectory_sha256": "02f7481cb01464f4d0ebd753686c968ab4717f3b3c7893c00d094f52a4b01332",
+      "thalweg_file": "GEODAR-2014-02-20-11-15-05-THALWEG-001.h5",
+      "thalweg_bytes": 102448,
+      "thalweg_md5": "a4698e702c89502ddfc236ab21a03f12",
+      "thalweg_sha256": "b074ecb0a6b6fc5034d59ab4f137a43c9b585b0f5ed02854ff7768334795dfd3",
+      "observation_samples": 3392,
+      "observed_surface_interval_m": [
+        58.422465,
+        633.773093
+      ],
+      "observed_duration_s": 67.82,
+      "observed_peak_velocity_ms": 10.603849,
+      "model_surface_interval_m": [
+        0.0,
+        2497.851257
+      ],
+      "model_peak_velocity_ms": 25.485481,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 1.346206696,
+        "relative_travel_time_rmse": 0.3571034,
+        "terminal_surface_distance_relative_error": 2.941239039
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2014-02-21-14-53-19",
+      "trajectory_file": "GEODAR-2014-02-21-14-53-19-TRAJ-001.h5",
+      "trajectory_bytes": 346128,
+      "trajectory_md5": "aa1ac7ea700c485675622f7ae5995d2a",
+      "trajectory_sha256": "24c5d0ef0933039a64f6d56c82883e26a984fccc7a37580224ddd092bb19409b",
+      "thalweg_file": "GEODAR-2014-02-21-14-53-19-THALWEG-001.h5",
+      "thalweg_bytes": 76288,
+      "thalweg_md5": "ca68c73b228bc7016c7cfc5702057e1a",
+      "thalweg_sha256": "bc89e4eedb8ca0018843fc8e893ac1fc378d450a36ab64aede7a8fa5efc1c6e0",
+      "observation_samples": 8584,
+      "observed_surface_interval_m": [
+        675.708117,
+        1115.893308
+      ],
+      "observed_duration_s": 171.66,
+      "observed_peak_velocity_ms": 17.031758,
+      "model_surface_interval_m": [
+        0.0,
+        1843.937408
+      ],
+      "model_peak_velocity_ms": 21.992302,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.766843168,
+        "relative_travel_time_rmse": 0.463961147,
+        "terminal_surface_distance_relative_error": 0.65243164
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2014-03-11-11-54-57",
+      "trajectory_file": "GEODAR-2014-03-11-11-54-57-TRAJ-001.h5",
+      "trajectory_bytes": 230288,
+      "trajectory_md5": "a2f7f6d167e84a2b0a57ffe3c5669211",
+      "trajectory_sha256": "1904d5005ea22e2afdba0815100fa6a2baa1bd318a5b0d449dff5d2906848ee7",
+      "thalweg_file": "GEODAR-2014-03-11-11-54-57-THALWEG-001.h5",
+      "thalweg_bytes": 62568,
+      "thalweg_md5": "0157a46980d73af5f5bb4070d2516cae",
+      "thalweg_sha256": "93f39e0656ae12ab689df5f70e4bb7ee3640c28703dc6cc28b5b7399a21ef130",
+      "observation_samples": 5688,
+      "observed_surface_interval_m": [
+        326.015883,
+        536.910462
+      ],
+      "observed_duration_s": 113.74,
+      "observed_peak_velocity_ms": 11.247151,
+      "model_surface_interval_m": [
+        0.0,
+        1500.934015
+      ],
+      "model_peak_velocity_ms": 21.233027,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 1.442511109,
+        "relative_travel_time_rmse": 0.501818207,
+        "terminal_surface_distance_relative_error": 1.795501527
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2014-03-12-13-09-43",
+      "trajectory_file": "GEODAR-2014-03-12-13-09-43-TRAJ-001.h5",
+      "trajectory_bytes": 179448,
+      "trajectory_md5": "88c1f994e10d402a392790e2f05ecbbf",
+      "trajectory_sha256": "e1960bb4bf8ca06c93fe6b1858d98a6bbdd59f65861ef14cf5dc05523fcc1944",
+      "thalweg_file": "GEODAR-2014-03-12-13-09-43-THALWEG-001.h5",
+      "thalweg_bytes": 95088,
+      "thalweg_md5": "145d320388fa1fb25c697713f747de61",
+      "thalweg_sha256": "580cd7ee1cc9419967537e059ae9bd6fbf0642237fc7ec8e89707a52f5eae2ea",
+      "observation_samples": 4417,
+      "observed_surface_interval_m": [
+        362.390338,
+        1190.900074
+      ],
+      "observed_duration_s": 88.32,
+      "observed_peak_velocity_ms": 14.179869,
+      "model_surface_interval_m": [
+        0.0,
+        2313.909115
+      ],
+      "model_peak_velocity_ms": 21.960875,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.860706127,
+        "relative_travel_time_rmse": 0.291567405,
+        "terminal_surface_distance_relative_error": 0.942991831
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2014-03-13-14-30-06",
+      "trajectory_file": "GEODAR-2014-03-13-14-30-06-TRAJ-001.h5",
+      "trajectory_bytes": 132888,
+      "trajectory_md5": "1132b09d9ca7988ccabac5c20f52cd0a",
+      "trajectory_sha256": "9f1fb608ac6aa641377d15cb18a093fceca38afe80480225dab4d84d38c92a85",
+      "thalweg_file": "GEODAR-2014-03-13-14-30-06-THALWEG-001.h5",
+      "thalweg_bytes": 96128,
+      "thalweg_md5": "97683b6d24cda536647f4305cdd7952d",
+      "thalweg_sha256": "7c3ea7e9e8fb66e58afe87d907ad95b4599d5bcf39b8a3d4e3c3b603416aef63",
+      "observation_samples": 3253,
+      "observed_surface_interval_m": [
+        394.71799,
+        756.743981
+      ],
+      "observed_duration_s": 65.04,
+      "observed_peak_velocity_ms": 8.641831,
+      "model_surface_interval_m": [
+        0.0,
+        2339.827302
+      ],
+      "model_peak_velocity_ms": 23.656836,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 1.60119048,
+        "relative_travel_time_rmse": 0.380964167,
+        "terminal_surface_distance_relative_error": 2.091966848
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2014-12-27-20-18-49",
+      "trajectory_file": "GEODAR-2014-12-27-20-18-49-TRAJ-001.h5",
+      "trajectory_bytes": 168648,
+      "trajectory_md5": "6c49c3f5ad832cdc89fe9fa7613ba669",
+      "trajectory_sha256": "e649c188d143a6b4445b103b29d02e8b4af0687fbc8b99116a11f84bec6d510e",
+      "thalweg_file": "GEODAR-2014-12-27-20-18-49-THALWEG-001.h5",
+      "thalweg_bytes": 101528,
+      "thalweg_md5": "e235c6907c44ef2d40812aad17c8ca65",
+      "thalweg_sha256": "ba884a6032d1b1c4f31c1d225e28e9b20786451b6631bf120faedf8887034c94",
+      "observation_samples": 4147,
+      "observed_surface_interval_m": [
+        67.711847,
+        1922.803799
+      ],
+      "observed_duration_s": 82.92,
+      "observed_peak_velocity_ms": 35.045262,
+      "model_surface_interval_m": [
+        0.0,
+        2474.886961
+      ],
+      "model_peak_velocity_ms": 24.317339,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.227975738,
+        "relative_travel_time_rmse": 0.103353087,
+        "terminal_surface_distance_relative_error": 0.287124023
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": true,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2015-01-29-05-18-08",
+      "trajectory_file": "GEODAR-2015-01-29-05-18-08-TRAJ-001.h5",
+      "trajectory_bytes": 183168,
+      "trajectory_md5": "39029670ad309431bc67f19d6670138a",
+      "trajectory_sha256": "acc7114d280d27377d11cab077fb2000f8af2dd652552131c9ae629f8b95bcf9",
+      "thalweg_file": "GEODAR-2015-01-29-05-18-08-THALWEG-001.h5",
+      "thalweg_bytes": 108168,
+      "thalweg_md5": "f492ade73b61ccb8b3104400195a56e7",
+      "thalweg_sha256": "4362015eaef71aaa183f41cdf5a14048060858cd98fc443375ddc219e182a338",
+      "observation_samples": 4510,
+      "observed_surface_interval_m": [
+        175.51038,
+        1974.791643
+      ],
+      "observed_duration_s": 90.18,
+      "observed_peak_velocity_ms": 27.63475,
+      "model_surface_interval_m": [
+        0.0,
+        2640.917493
+      ],
+      "model_peak_velocity_ms": 25.115295,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.200381148,
+        "relative_travel_time_rmse": 0.037658738,
+        "terminal_surface_distance_relative_error": 0.337314497
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": true,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2015-01-29-06-22-02",
+      "trajectory_file": "GEODAR-2015-01-29-06-22-02-TRAJ-001.h5",
+      "trajectory_bytes": 120968,
+      "trajectory_md5": "4116360c2149a63a10869ce5c22e4d6b",
+      "trajectory_sha256": "a590e81d16fde3c39ea0a00a4226d66c82b2f5a3a1a31c082dcc5bf455604458",
+      "thalweg_file": "GEODAR-2015-01-29-06-22-02-THALWEG-001.h5",
+      "thalweg_bytes": 102048,
+      "thalweg_md5": "ba809e5e6f8bb5a43b8e2e4faee789e5",
+      "thalweg_sha256": "d488acd4a775e25da05213d5305df3d066cdef325481c2267d245fc15ddb5039",
+      "observation_samples": 2955,
+      "observed_surface_interval_m": [
+        702.208296,
+        1669.709703
+      ],
+      "observed_duration_s": 59.08,
+      "observed_peak_velocity_ms": 39.836429,
+      "model_surface_interval_m": [
+        0.0,
+        2487.849862
+      ],
+      "model_peak_velocity_ms": 25.101318,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.256110825,
+        "relative_travel_time_rmse": 0.117099263,
+        "terminal_surface_distance_relative_error": 0.489989462
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": true,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2015-01-30-02-12-22",
+      "trajectory_file": "GEODAR-2015-01-30-02-12-22-TRAJ-001.h5",
+      "trajectory_bytes": 159888,
+      "trajectory_md5": "2261227e948e58b4b271ff47b9bdee03",
+      "trajectory_sha256": "a8dbd8ee5cdfc91332a0e79217d6e0c2d2bc6e586d5c55486522439ebc273619",
+      "thalweg_file": "GEODAR-2015-01-30-02-12-22-THALWEG-001.h5",
+      "thalweg_bytes": 108168,
+      "thalweg_md5": "36b7254c334ef6205c4b0cb11babe76d",
+      "thalweg_sha256": "929627c6f93fa2573dbbbfc3cb5c9364df17829525e3d0a13f8702c329a7751b",
+      "observation_samples": 3928,
+      "observed_surface_interval_m": [
+        360.153306,
+        2640.70194
+      ],
+      "observed_duration_s": 78.54,
+      "observed_peak_velocity_ms": 37.852801,
+      "model_surface_interval_m": [
+        0.0,
+        2640.917493
+      ],
+      "model_peak_velocity_ms": 25.115295,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.348604669,
+        "relative_travel_time_rmse": 0.292900816,
+        "terminal_surface_distance_relative_error": 8.1627e-05
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": true
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2015-01-30-20-58-55",
+      "trajectory_file": "GEODAR-2015-01-30-20-58-55-TRAJ-001.h5",
+      "trajectory_bytes": 196448,
+      "trajectory_md5": "83faf92038ff40a944c0f3871112ceea",
+      "trajectory_sha256": "096c624153dbc50d8a4f38347ab2734230bdfe63db7f79dc0ecc66a697d2c243",
+      "thalweg_file": "GEODAR-2015-01-30-20-58-55-THALWEG-001.h5",
+      "thalweg_bytes": 102048,
+      "thalweg_md5": "f7252660c906f9cc8c71283b2c375f63",
+      "thalweg_sha256": "9c5763595af9b5a2c03c99b4401a33b4cbf0d99761f89ed3b5e8ad1e0c13065f",
+      "observation_samples": 4842,
+      "observed_surface_interval_m": [
+        182.915076,
+        1442.724121
+      ],
+      "observed_duration_s": 96.82,
+      "observed_peak_velocity_ms": 21.299352,
+      "model_surface_interval_m": [
+        0.0,
+        2487.849862
+      ],
+      "model_peak_velocity_ms": 25.101318,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.360606639,
+        "relative_travel_time_rmse": 0.208431175,
+        "terminal_surface_distance_relative_error": 0.724411359
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2015-02-03-10-20-16",
+      "trajectory_file": "GEODAR-2015-02-03-10-20-16-TRAJ-001.h5",
+      "trajectory_bytes": 146408,
+      "trajectory_md5": "37d6962325f8d02eda12c285686729a9",
+      "trajectory_sha256": "b098c35bd0b2967e5a581c514712eab54b211a2e22e0ce93333e7ec323ba1d42",
+      "thalweg_file": "GEODAR-2015-02-03-10-20-16-THALWEG-001.h5",
+      "thalweg_bytes": 95088,
+      "thalweg_md5": "f22e6db7c8751dc4c343dd1ffdb8c3dd",
+      "thalweg_sha256": "5e0437479bf901f05358561493eaeb8b9fc97b34f922f26af15fc5d501e1467c",
+      "observation_samples": 3591,
+      "observed_surface_interval_m": [
+        93.968943,
+        2307.538574
+      ],
+      "observed_duration_s": 71.8,
+      "observed_peak_velocity_ms": 52.154933,
+      "model_surface_interval_m": [
+        0.0,
+        2313.909115
+      ],
+      "model_peak_velocity_ms": 21.960875,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.313373287,
+        "relative_travel_time_rmse": 0.328680673,
+        "terminal_surface_distance_relative_error": 0.002760752
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": true
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2015-02-03-11-45-30",
+      "trajectory_file": "GEODAR-2015-02-03-11-45-30-TRAJ-001.h5",
+      "trajectory_bytes": 140528,
+      "trajectory_md5": "69b3f243781c9b5c4cbd048a39e267cb",
+      "trajectory_sha256": "9a176d21b2afabbc611d8d91ed81a9dd5b421b222488918b93de9854b088a802",
+      "thalweg_file": "GEODAR-2015-02-03-11-45-30-THALWEG-001.h5",
+      "thalweg_bytes": 101048,
+      "thalweg_md5": "f1e1634f00c28813fcc0b7bdfcc61aab",
+      "thalweg_sha256": "aea92d94e17668aecbdae7548b57d96c03b19710ce0371f1e849bdd3eb955f74",
+      "observation_samples": 3444,
+      "observed_surface_interval_m": [
+        163.599063,
+        2457.798371
+      ],
+      "observed_duration_s": 68.86,
+      "observed_peak_velocity_ms": 55.84233,
+      "model_surface_interval_m": [
+        0.0,
+        2462.8789
+      ],
+      "model_peak_velocity_ms": 24.435871,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.332606524,
+        "relative_travel_time_rmse": 0.401538176,
+        "terminal_surface_distance_relative_error": 0.002067106
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": true
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2015-02-03-11-54-44",
+      "trajectory_file": "GEODAR-2015-02-03-11-54-44-TRAJ-001.h5",
+      "trajectory_bytes": 187288,
+      "trajectory_md5": "06fdad6c7556262db77bd73684d5024d",
+      "trajectory_sha256": "b41ea935099987925d3dbad78cf4efe1ef9913a2905dd6f9449c7527855bea9e",
+      "thalweg_file": "GEODAR-2015-02-03-11-54-44-THALWEG-001.h5",
+      "thalweg_bytes": 102048,
+      "thalweg_md5": "cd6edec801b209f7a688f86b94660a77",
+      "thalweg_sha256": "a3e1fc00bf3dc91d39d810cba6464b225f543c2e193d3db7ed6d5ff73a7b3b1c",
+      "observation_samples": 4613,
+      "observed_surface_interval_m": [
+        17.845256,
+        1663.71261
+      ],
+      "observed_duration_s": 92.24,
+      "observed_peak_velocity_ms": 31.149174,
+      "model_surface_interval_m": [
+        0.0,
+        2487.859027
+      ],
+      "model_peak_velocity_ms": 24.63863,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.213402481,
+        "relative_travel_time_rmse": 0.041950492,
+        "terminal_surface_distance_relative_error": 0.495365854
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": true,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2015-02-03-12-04-39",
+      "trajectory_file": "GEODAR-2015-02-03-12-04-39-TRAJ-001.h5",
+      "trajectory_bytes": 175288,
+      "trajectory_md5": "0f9a5e14ad2dfff51e94f81342ce10b5",
+      "trajectory_sha256": "e8cd122cbae22913d74cff2dc2d8ae5d673455b03f9dd0832b370655aa868429",
+      "thalweg_file": "GEODAR-2015-02-03-12-04-39-THALWEG-001.h5",
+      "thalweg_bytes": 107408,
+      "thalweg_md5": "c93a7d103e2269e9aad1594021fedfcd",
+      "thalweg_sha256": "45b3b7e9d0411c08affd17150dbb940ed435b4efb1457c97ad810e7bd519325f",
+      "observation_samples": 4313,
+      "observed_surface_interval_m": [
+        142.424434,
+        2559.796596
+      ],
+      "observed_duration_s": 86.24,
+      "observed_peak_velocity_ms": 51.055944,
+      "model_surface_interval_m": [
+        0.0,
+        2621.912217
+      ],
+      "model_peak_velocity_ms": 25.19906,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.30709745,
+        "relative_travel_time_rmse": 0.394049954,
+        "terminal_surface_distance_relative_error": 0.024265843
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": true
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2015-02-03-12-14-47",
+      "trajectory_file": "GEODAR-2015-02-03-12-14-47-TRAJ-001.h5",
+      "trajectory_bytes": 152808,
+      "trajectory_md5": "7e996da35261f0ce836819ccf454182b",
+      "trajectory_sha256": "cf95b07550d6f0151ed93dd6d45a1dda0dc09587e7042e15a42b085a0ad468cb",
+      "thalweg_file": "GEODAR-2015-02-03-12-14-47-THALWEG-001.h5",
+      "thalweg_bytes": 103288,
+      "thalweg_md5": "505fb6a8d185de74535758fa0474b39c",
+      "thalweg_sha256": "9706e37095d5abcb07214cf602ea9f5d69554ce53748ee65650d03964c603ace",
+      "observation_samples": 3751,
+      "observed_surface_interval_m": [
+        127.732493,
+        1587.779597
+      ],
+      "observed_duration_s": 75.0,
+      "observed_peak_velocity_ms": 29.621118,
+      "model_surface_interval_m": [
+        0.0,
+        2518.873685
+      ],
+      "model_peak_velocity_ms": 24.896904,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.228223572,
+        "relative_travel_time_rmse": 0.051753549,
+        "terminal_surface_distance_relative_error": 0.58641268
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": true,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2015-03-11-12-16-07",
+      "trajectory_file": "GEODAR-2015-03-11-12-16-07-TRAJ-001.h5",
+      "trajectory_bytes": 199568,
+      "trajectory_md5": "5d825626425454a6e45df7c2abcf573f",
+      "trajectory_sha256": "982756f2d33ebfcfd1acae917e3366e8df0f688027e4ecad5168c20d549ae73d",
+      "thalweg_file": "GEODAR-2015-03-11-12-16-07-THALWEG-001.h5",
+      "thalweg_bytes": 95168,
+      "thalweg_md5": "3288227c9a85c356e47b4f20dc8aee7c",
+      "thalweg_sha256": "9856e05f7a589f0d200fe5e0c68be1b2f0bcb4e84f9116a43aba63caf9a58ace",
+      "observation_samples": 4920,
+      "observed_surface_interval_m": [
+        386.963673,
+        505.790311
+      ],
+      "observed_duration_s": 98.38,
+      "observed_peak_velocity_ms": 5.421022,
+      "model_surface_interval_m": [
+        0.0,
+        2315.854637
+      ],
+      "model_peak_velocity_ms": 23.628517,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 3.443820185,
+        "relative_travel_time_rmse": 0.534908197,
+        "terminal_surface_distance_relative_error": 3.578685255
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2015-04-03-11-42-26",
+      "trajectory_file": "GEODAR-2015-04-03-11-42-26-TRAJ-001.h5",
+      "trajectory_bytes": 686928,
+      "trajectory_md5": "435db27907847672d47b68e60ad20f13",
+      "trajectory_sha256": "4a1493254ead5fc8503e76f84ebf0475a237f6ceebaf440ba11abf3096431175",
+      "thalweg_file": "GEODAR-2015-04-03-11-42-26-THALWEG-001.h5",
+      "thalweg_bytes": 101528,
+      "thalweg_md5": "72a9c95371f20fa0431a0c1b30eea29d",
+      "thalweg_sha256": "f7c165f4cec890e0934ce3c9640a7f3bb5a9b15fb759196313e3bbc72dad7e22",
+      "observation_samples": 17104,
+      "observed_surface_interval_m": [
+        522.797392,
+        1572.802408
+      ],
+      "observed_duration_s": 342.06,
+      "observed_peak_velocity_ms": 12.580362,
+      "model_surface_interval_m": [
+        0.0,
+        2474.886961
+      ],
+      "model_peak_velocity_ms": 24.317339,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 1.232849695,
+        "relative_travel_time_rmse": 0.464583035,
+        "terminal_surface_distance_relative_error": 0.573552373
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2015-04-03-12-39-00",
+      "trajectory_file": "GEODAR-2015-04-03-12-39-00-TRAJ-001.h5",
+      "trajectory_bytes": 564648,
+      "trajectory_md5": "58fc8010caf5c59acd5567ede8777f25",
+      "trajectory_sha256": "53a11da5f80de5815b2741429779cee4f0866baf6dbdb2eed8e1a9e39a7fcc4d",
+      "thalweg_file": "GEODAR-2015-04-03-12-39-00-THALWEG-001.h5",
+      "thalweg_bytes": 102048,
+      "thalweg_md5": "dca03f8d9a437071b53e3d6c84c8a552",
+      "thalweg_sha256": "7247707b48082f1a4113a6852ad4675d0d662b3a9daa83562013ef4c58ce69a4",
+      "observation_samples": 14047,
+      "observed_surface_interval_m": [
+        544.727871,
+        1305.773392
+      ],
+      "observed_duration_s": 280.92,
+      "observed_peak_velocity_ms": 6.33104,
+      "model_surface_interval_m": [
+        0.0,
+        2487.849862
+      ],
+      "model_peak_velocity_ms": 25.101318,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 2.72749868,
+        "relative_travel_time_rmse": 0.48231863,
+        "terminal_surface_distance_relative_error": 0.905269228
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2015-04-08-22-35-13",
+      "trajectory_file": "GEODAR-2015-04-08-22-35-13-TRAJ-001.h5",
+      "trajectory_bytes": 718328,
+      "trajectory_md5": "e3deaff04a717a1bf3fbece06522dad8",
+      "trajectory_sha256": "e52ea52e845e6f85a13a5072980fca9a67a0937adf62f83f079c7be35d35d349",
+      "thalweg_file": "GEODAR-2015-04-08-22-35-13-THALWEG-001.h5",
+      "thalweg_bytes": 96728,
+      "thalweg_md5": "ed18e31999538890a05d0636ca1d455c",
+      "thalweg_sha256": "1ab216772adcbcf23cf6716599ce74c4cf4da2577f122c66b1438b1c871f9fc6",
+      "observation_samples": 17889,
+      "observed_surface_interval_m": [
+        408.82605,
+        1636.641105
+      ],
+      "observed_duration_s": 357.76,
+      "observed_peak_velocity_ms": 21.499276,
+      "model_surface_interval_m": [
+        0.0,
+        2354.809638
+      ],
+      "model_peak_velocity_ms": 23.951143,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.614848968,
+        "relative_travel_time_rmse": 0.436072493,
+        "terminal_surface_distance_relative_error": 0.438806365
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2015-04-09-17-21-45",
+      "trajectory_file": "GEODAR-2015-04-09-17-21-45-TRAJ-001.h5",
+      "trajectory_bytes": 204528,
+      "trajectory_md5": "3c9ec13a418120a97575ac87ab3aec05",
+      "trajectory_sha256": "bc169146d6e091182e3640533e86e18f61dc81d76c9d7bb5b2a11138eef73fc5",
+      "thalweg_file": "GEODAR-2015-04-09-17-21-45-THALWEG-001.h5",
+      "thalweg_bytes": 76408,
+      "thalweg_md5": "169e58374b71b65b9396b815c646b2ea",
+      "thalweg_sha256": "95eb46415b798f68b87c5fabe46cbd4c7084b9ba9f8743ac551ff42797e00b1c",
+      "observation_samples": 5044,
+      "observed_surface_interval_m": [
+        659.425249,
+        933.871876
+      ],
+      "observed_duration_s": 100.86,
+      "observed_peak_velocity_ms": 16.404602,
+      "model_surface_interval_m": [
+        0.0,
+        1846.920298
+      ],
+      "model_peak_velocity_ms": 22.270746,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.923803801,
+        "relative_travel_time_rmse": 0.47152758,
+        "terminal_surface_distance_relative_error": 0.977702023
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2015-04-10-16-11-33",
+      "trajectory_file": "GEODAR-2015-04-10-16-11-33-TRAJ-001.h5",
+      "trajectory_bytes": 213008,
+      "trajectory_md5": "78a7126164b7465eb0b023162d2d6dee",
+      "trajectory_sha256": "57d9f9fb5d37d2c601730d8166e797e6d31a1bc18b6cb879533e7245d315f465",
+      "thalweg_file": "GEODAR-2015-04-10-16-11-33-THALWEG-001.h5",
+      "thalweg_bytes": 102048,
+      "thalweg_md5": "f98486f87d199f606dc2478147740d19",
+      "thalweg_sha256": "c8ad63a4b794ce98d48d5d9dbd828b37cabfbbe91fcd9ecc16987180b0b4b9b6",
+      "observation_samples": 5256,
+      "observed_surface_interval_m": [
+        331.273899,
+        1360.772394
+      ],
+      "observed_duration_s": 105.1,
+      "observed_peak_velocity_ms": 25.989603,
+      "model_surface_interval_m": [
+        0.0,
+        2487.849862
+      ],
+      "model_peak_velocity_ms": 25.101318,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.448413987,
+        "relative_travel_time_rmse": 0.269721837,
+        "terminal_surface_distance_relative_error": 0.828263031
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2015-04-11-10-05-55",
+      "trajectory_file": "GEODAR-2015-04-11-10-05-55-TRAJ-001.h5",
+      "trajectory_bytes": 85288,
+      "trajectory_md5": "b37040b04e5ecbab3bd4941205a280ef",
+      "trajectory_sha256": "b9f2012fa05b99229f034686a22b91f8fa0ab6a90e92ffa82cbd5a553e254ba5",
+      "thalweg_file": "GEODAR-2015-04-11-10-05-55-THALWEG-001.h5",
+      "thalweg_bytes": 95808,
+      "thalweg_md5": "3dbcdf62e02a2970a9ec5099a2af5071",
+      "thalweg_sha256": "aacdd5f8eb1fcdfb352bf96711219cc374b50e91b6802a9ce5e1e0363761aaef",
+      "observation_samples": 2063,
+      "observed_surface_interval_m": [
+        340.558583,
+        468.746648
+      ],
+      "observed_duration_s": 41.24,
+      "observed_peak_velocity_ms": 5.01107,
+      "model_surface_interval_m": [
+        0.0,
+        2331.831036
+      ],
+      "model_peak_velocity_ms": 23.780251,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 3.464290237,
+        "relative_travel_time_rmse": 0.473734991,
+        "terminal_surface_distance_relative_error": 3.97460845
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2015-04-11-14-37-05",
+      "trajectory_file": "GEODAR-2015-04-11-14-37-05-TRAJ-001.h5",
+      "trajectory_bytes": 41808,
+      "trajectory_md5": "3437fe5046af8164dbf2b31106cb3e1d",
+      "trajectory_sha256": "6dd2782c017d31f8fa58bdd05fa05790346a971ebf23361aa67a6dbcaed28f8b",
+      "thalweg_file": "GEODAR-2015-04-11-14-37-05-THALWEG-001.h5",
+      "thalweg_bytes": 75608,
+      "thalweg_md5": "1f9d26089f324a3f19504364df740bf3",
+      "thalweg_sha256": "805fa3fc07782fd1cdda349cf1e8f6a67eaca83cae87bd30c55f02f7ed884c72",
+      "observation_samples": 976,
+      "observed_surface_interval_m": [
+        653.506106,
+        766.832935
+      ],
+      "observed_duration_s": 19.5,
+      "observed_peak_velocity_ms": 14.009625,
+      "model_surface_interval_m": [
+        0.0,
+        1826.886595
+      ],
+      "model_peak_velocity_ms": 22.402254,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 0.95561552,
+        "relative_travel_time_rmse": 0.361117751,
+        "terminal_surface_distance_relative_error": 1.382378888
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    },
+    {
+      "event_id": "2015-04-12-00-08-39",
+      "trajectory_file": "GEODAR-2015-04-12-00-08-39-TRAJ-001.h5",
+      "trajectory_bytes": 140608,
+      "trajectory_md5": "5ba523218f6abcb89bcd448d1f79021d",
+      "trajectory_sha256": "9c7c1fd77e2a48d1ffc896b48d81952a6b0b97043ce19f0805adbfd1aa9f4dbf",
+      "thalweg_file": "GEODAR-2015-04-12-00-08-39-THALWEG-001.h5",
+      "thalweg_bytes": 87928,
+      "thalweg_md5": "9cec75a94672a2d83171253ecad2bd77",
+      "thalweg_sha256": "193974bec2b769ed255ce5e76c4b852e92ffab80c9cc94dca9ffd3beb990724b",
+      "observation_samples": 3446,
+      "observed_surface_interval_m": [
+        503.200332,
+        855.85631
+      ],
+      "observed_duration_s": 68.9,
+      "observed_peak_velocity_ms": 8.622278,
+      "model_surface_interval_m": [
+        0.0,
+        2134.881872
+      ],
+      "model_peak_velocity_ms": 22.519346,
+      "observed_interval_covered": true,
+      "observed_sample_overlap_fraction": 1.0,
+      "particles_left_profile": 1,
+      "particles_still_moving_at_cutoff": 0,
+      "metrics": {
+        "velocity_nrmse": 1.784458509,
+        "relative_travel_time_rmse": 0.41826732,
+        "terminal_surface_distance_relative_error": 1.494439601
+      },
+      "metric_pass": {
+        "velocity_nrmse": false,
+        "relative_travel_time_rmse": false,
+        "terminal_surface_distance_relative_error": false
+      },
+      "event_pass": false
+    }
+  ],
+  "strict_field_validation_effect": {
+    "eligible_holdout_events_added": 0,
+    "is_validated": false,
+    "trusted_registry_changed": false,
+    "reason": "The source is one mountain and lacks the complete event inputs, raw-calibration uncertainty, release/deposit geometry, surveyed absence, and surface contract required by the strict holdout."
+  },
+  "prohibited_claims": [
+    "field-validated avalanche predictor",
+    "validated on multiple mountains",
+    "release or occurrence accuracy",
+    "deposit or lateral-spread validation",
+    "calibrated dynamics",
+    "generalization to Mount Hosmer",
+    "measurement-uncertainty-normalized agreement"
+  ]
+}
