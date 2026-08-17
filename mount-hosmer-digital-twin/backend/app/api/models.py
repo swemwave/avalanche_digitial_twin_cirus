@@ -474,6 +474,21 @@ class CalibrationStatus(ApiModel):
     reason: str
 
 
+class ComponentFieldValidationEntry(ApiModel):
+    component_tested: Literal["release", "conditional_runout", "end_to_end"]
+    evidence_profile: Literal["R", "C", "E"]
+    status: Literal["unavailable"]
+    eligible_observation_count: Literal[0]
+    trusted_dataset_count: Literal[0]
+    reason: str
+
+
+class ComponentFieldValidationStatus(ApiModel):
+    release: ComponentFieldValidationEntry
+    conditional_runout: ComponentFieldValidationEntry
+    end_to_end: ComponentFieldValidationEntry
+
+
 class SoftwareVerificationStatus(ApiModel):
     status: Literal["characterized_benchmarks"]
     benchmark_version: str
@@ -484,18 +499,25 @@ class SoftwareVerificationStatus(ApiModel):
 class ValidationDataContractStatus(ApiModel):
     status: Literal["ingestion_scaffolding"]
     schema_version: str
+    legacy_read_versions: list[str]
     normalized_projected_coordinates_required: Literal[True]
     explicit_calibration_holdout_partitions: Literal[True]
     canonical_geometry_rasterization: Literal[True]
     prediction_identity_required: Literal[True]
     code_reviewed_dataset_registry_required: Literal[True]
     trusted_dataset_count: int
+    trusted_dataset_count_by_component: dict[
+        Literal["release", "conditional_runout", "end_to_end"], int
+    ]
+    component_specific_evidence_profiles: Literal[True]
+    positive_unlabelled_state_is_explicit: Literal[True]
     end_to_end_field_validation_ready: Literal[False]
 
 
 class AssessmentValidation(ApiModel):
     field_validation: FieldValidationStatus
     calibration: CalibrationStatus
+    component_field_validation: ComponentFieldValidationStatus
     software_verification: SoftwareVerificationStatus
     validation_data_contract: ValidationDataContractStatus
 
