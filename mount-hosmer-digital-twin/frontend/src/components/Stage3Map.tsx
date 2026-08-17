@@ -35,10 +35,15 @@ const BASE_STYLE = {
 };
 const DEFAULT_CENTER: [number, number] = [-115.0113, 49.6136];
 
-/** A zone whose index could not be computed is grey, never the lowest band. */
+/** A zone whose index could not be computed is grey, never the lowest band. The
+    ramp is light throughout now, which leaves a mid grey closer to it than it was
+    to the old one, so these also take a dashed outline no band carries. */
 const UNKNOWN_COLOR = "#8a8f93";
-/** Band-ordinal secondary encodings, so separation does not rest on hue alone. */
-const BAND_FILL_OPACITY = [0.34, 0.43, 0.52, 0.61, 0.7];
+/** Band-ordinal secondary encodings, so separation does not rest on hue alone.
+    These carry more weight than they used to: ending the ramp on a vivid red
+    rather than a pale yellow costs lightness range, so the bands sit closer
+    together in greyscale and under deuteranopia than the colours alone suggest. */
+const BAND_FILL_OPACITY = [0.34, 0.44, 0.54, 0.64, 0.74];
 const BAND_LINE_WIDTH = [0.6, 0.9, 1.3, 1.7, 2.2];
 
 type Band = { upper: number; band: string; color: string };
@@ -93,9 +98,9 @@ export function Stage3Map({
   // The bands come from the API, colours and thresholds together, so the map,
   // the legend and the number in the result card can never drift apart.
   const bands = (result?.hazard_components?.band_thresholds ?? []) as Band[];
-  const indices = (result?.zones ?? [])
-    .map((zone) => zone.hazard_index)
-    .filter((value): value is number => typeof value === "number");
+  const allIndices = (result?.zones ?? []).map((zone) => zone.hazard_index);
+  const indices = allIndices.filter((value): value is number => typeof value === "number");
+  const hasUnknown = indices.length < allIndices.length;
   const spread =
     indices.length > 1
       ? { low: Math.min(...indices), high: Math.max(...indices) }
@@ -210,9 +215,21 @@ export function Stage3Map({
             <Layer
               id="zones-line"
               type="line"
+              filter={["==", ["typeof", ["get", "hazard_index"]], "number"]}
               paint={{
                 "line-color": "#f4f7f4",
                 "line-width": bandScale(bands, BAND_LINE_WIDTH, 0.6),
+                "line-opacity": dimmed(0.85, selectedZone, 0.25),
+              }}
+            />
+            <Layer
+              id="zones-unknown-line"
+              type="line"
+              filter={["!=", ["typeof", ["get", "hazard_index"]], "number"]}
+              paint={{
+                "line-color": "#f4f7f4",
+                "line-width": 1,
+                "line-dasharray": [3, 2],
                 "line-opacity": dimmed(0.85, selectedZone, 0.25),
               }}
             />
@@ -284,7 +301,12 @@ export function Stage3Map({
       ) : null}
 
       {bands.length > 0 ? (
-        <HazardLegend bands={bands} stretched={stretchable} spread={stretchable ? spread : null} />
+        <HazardLegend
+          bands={bands}
+          stretched={stretchable}
+          spread={stretchable ? spread : null}
+          hasUnknown={hasUnknown}
+        />
       ) : null}
 
       {exposureVisible ? (
@@ -334,10 +356,12 @@ function HazardLegend({
   bands,
   stretched,
   spread,
+  hasUnknown,
 }: {
   bands: Band[];
   stretched: boolean;
   spread: { low: number; high: number } | null;
+  hasUnknown: boolean;
 }) {
   return (
     <div className="pointer-events-none absolute bottom-2 left-2 z-10 rounded-md border border-[var(--border)] bg-[var(--background)]/88 px-2 py-1.5 text-[10px] leading-tight shadow-lg backdrop-blur">
@@ -347,6 +371,12 @@ function HazardLegend({
           ? `Stretched to this run · ${spread.low.toFixed(0)}–${spread.high.toFixed(0)}`
           : "Absolute bands · comparable between runs"}
       </p>
+      {/* The bar is the fill ramp itself, so the legend shows the same continuous
+          climb the map draws; the rows below name where the bands fall on it. */}
+      <div
+        className="mt-1 h-2 w-full rounded-[2px] border border-[#0b0f10]"
+        style={{ background: legendGradient(bands, stretched && spread ? spread : null) }}
+      />
       <ul className="mt-1 space-y-0.5">
         {bands.map((band, index) => (
           <li key={band.band} className="flex items-center gap-1.5">
@@ -371,29 +401,69 @@ function HazardLegend({
             )}
           </li>
         ))}
+        {hasUnknown ? (
+          <li className="flex items-center gap-1.5">
+            <span
+              className="inline-block h-2.5 w-4 rounded-[2px] border border-dashed border-[#f4f7f4]"
+              style={{ background: UNKNOWN_COLOR }}
+            />
+            <span className="text-[var(--muted)]">No index — not a low one</span>
+          </li>
+        ) : null}
       </ul>
       <p className="mt-1 max-w-[13rem] text-[var(--muted)]">
         {stretched
           ? "Rescaled to this run only — a colour here is not a severity band and is not comparable with another run."
-          : "Brighter is higher. Uncalibrated relative index, not a danger rating."}
+          : "Cooler and lighter is lower; bright red is highest. Uncalibrated relative index, not a danger rating."}
       </p>
     </div>
   );
 }
 
-/** Absolute mode takes the colour the API already assigned to each zone. */
+/**
+ * Both modes interpolate the API's band colours rather than stepping between
+ * them, so a zone at 58 and a zone at 62 look almost the same instead of
+ * snapping across a hard edge — the index is continuous, and five flat blocks
+ * implied a precision the model does not have. Absolute mode anchors each band
+ * colour at its midpoint on the fixed 0–100 scale; stretched mode spreads the
+ * same five colours across this run's own range.
+ */
 function fillColor(bands: Band[], spread: { low: number; high: number } | null): never {
-  if (!spread || bands.length < 2) {
+  if (bands.length < 2) {
     return ["coalesce", ["get", "hazard_color"], UNKNOWN_COLOR] as never;
   }
-  const step = (spread.high - spread.low) / (bands.length - 1);
-  const stops = bands.flatMap((band, index) => [spread.low + index * step, band.color]);
   return [
     "case",
     ["==", ["typeof", ["get", "hazard_index"]], "number"],
-    ["interpolate", ["linear"], ["get", "hazard_index"], ...stops],
+    ["interpolate", ["linear"], ["get", "hazard_index"], ...rampStops(bands, spread)],
     UNKNOWN_COLOR,
   ] as never;
+}
+
+/** Value/colour pairs for the fill ramp, and for the legend gradient beside it. */
+function rampStops(bands: Band[], spread: { low: number; high: number } | null): (number | string)[] {
+  if (spread) {
+    const step = (spread.high - spread.low) / (bands.length - 1);
+    return bands.flatMap((band, index) => [spread.low + index * step, band.color]);
+  }
+  return bands.flatMap((band, index) => [
+    ((index === 0 ? 0 : bands[index - 1].upper) + band.upper) / 2,
+    band.color,
+  ]);
+}
+
+/** The fill ramp as CSS, built from the same stops, so the two cannot drift. */
+function legendGradient(bands: Band[], spread: { low: number; high: number } | null): string {
+  if (bands.length < 2) return UNKNOWN_COLOR;
+  const stops = rampStops(bands, spread);
+  const low = spread ? spread.low : 0;
+  const high = spread ? spread.high : 100;
+  const parts: string[] = [];
+  for (let index = 0; index < stops.length; index += 2) {
+    const position = ((Number(stops[index]) - low) / (high - low)) * 100;
+    parts.push(`${stops[index + 1]} ${position.toFixed(1)}%`);
+  }
+  return `linear-gradient(to right, ${parts.join(", ")})`;
 }
 
 /** Map each band to an ordinal-scaled value by matching the API's own colours. */
