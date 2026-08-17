@@ -148,6 +148,35 @@ Passing Profile C does not imply passing Profile R or E. Every result and API
 status must name the component, regime, region, model version, and evidence
 profile that it actually tested.
 
+### Pre-intake triage of partial deliveries
+
+The owner request instructs data owners to leave an unavailable observation
+missing rather than infer, substitute, back-calculate, or model-derive it. An
+owner who complies produces a delivery that `FieldValidationOwnerEvent` rejects,
+because every evidence block on that model is required. The only thing the
+strict contract can return is one validation dump for the whole file, which does
+not tell the owner which event to fix.
+
+`avycore.validation.intake_triage` closes that gap without touching the gate. It
+runs the unmodified strict contract and attributes each rejection to an event,
+the evidence profile it blocks, the exact schema path, and one of the existing
+`ExclusionReason` literals. `scripts/validation/triage_field_validation_owner_delivery.py`
+writes the report as an immutable artifact and renders the per-event list to
+return to the owner.
+
+Triage is advisory and assigns nothing: no eligibility, no trust, no partition
+membership, and no permission to predict. A profile reported as supported means
+only that the evidence has the required shape; it is not an accepted component,
+and eligibility still requires the complete strict contract, two independent
+blinded human reviews, adjudication of every event including exclusions, a
+frozen grouped split, and a sealed holdout. Triage never relaxes a validator,
+and it hands the real cohort gate only deliveries the strict contract accepted.
+
+Profile E is reported as unsupported for every delivery, because the
+owner-delivery schema carries no field for event forcing, snow state, or the
+release-to-solver conversion rule. That is a scope statement about the schema
+rather than a shortfall in any owner's data, and the report says so.
+
 ## Ordered execution
 
 ### 1. Freeze the protocol before acquiring the final cohort
@@ -422,6 +451,8 @@ not “validated at Mount Hosmer.”
 The completed work must produce:
 
 - a candidate and exclusion inventory with exact reasons;
+- per-delivery intake triage reports naming, for every event, the profile it
+  could support and the exact evidence still missing;
 - immutable source manifests, licences, hashes, and transformation lineage;
 - blinded reference release/deposit/endpoint geometries and uncertainty;
 - component-specific trusted dataset registrations;

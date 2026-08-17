@@ -589,6 +589,26 @@ model-derived are rejected. It also checks the
 scientific review only. It does not register trust, assign a split, authorize a
 prediction, or establish validation.
 
+The request tells owners to leave an unavailable observation missing rather than
+infer or substitute it, so a partial delivery is expected and the strict contract
+rejects it as one opaque error. To answer the owner per event instead:
+
+```powershell
+python scripts/validation/triage_field_validation_owner_delivery.py `
+  <owner-delivery-1.json> <owner-delivery-2.json> `
+  --output <immutable-triage.json> --client-request <what-we-still-need.md>
+```
+
+Triage runs the same unmodified contract and attributes every rejection to an
+event, the evidence profile it blocks, the exact schema path, and one of the
+existing `ExclusionReason` literals, then rolls the result up against the same
+cohort minimum. It is advisory: it assigns no eligibility, trust, partition
+membership, or permission to predict, a profile reported as supported is not an
+accepted component, and only deliveries the strict contract accepted are handed
+to the real cohort gate. Profile E is reported unsupported for every delivery
+because this schema carries no forcing, snow-state, or release-to-solver
+conversion evidence at all.
+
 Eligibility then requires at least two isolated, identity-verified human reviews
 per event. Reviewers are blind to predictions, other reviews and any holdout
 assignment; AI output cannot satisfy the human-review schema. Disagreements bind
