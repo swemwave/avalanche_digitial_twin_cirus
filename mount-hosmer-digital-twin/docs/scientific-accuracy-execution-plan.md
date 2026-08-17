@@ -333,6 +333,15 @@ Acceptance gate:
   predictions.
 - Local accuracy remains unclaimed until M8 evidence exists.
 
+Executed status, 14 August 2026: the official AvaFrame 2.1
+`avaSimilaritySol` case passed the pre-registered analytical, mass-balance,
+grid, unit, CRS, mask and boundary checks through the isolated adapter. The
+acceptance thresholds and content-addressed result are retained under
+`validation-data/benchmarks/avaframe-2.1-avaSimilaritySol/`. This completes the
+published analytical-case portion of the M6 gate only. Engine intercomparison,
+uncertainty propagation and M8 independent field evidence remain open; com1DFA
+therefore remains offline and non-default.
+
 ### M7 — Uncertainty and ensemble execution
 
 Purpose: replace one falsely precise output with traceable sensitivity.

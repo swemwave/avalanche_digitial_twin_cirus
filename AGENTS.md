@@ -112,3 +112,8 @@ backend and frontend checks.
   procedure changed. Do not create session logs, handoff notes, progress journals,
   presentation files, or speculative planning documents in the repository.
 
+## Communication style
+
+- Keep responses detailed enough to be useful, but short, simple, direct, and
+  straightforward. Avoid long explanations unless the user asks for them.
+

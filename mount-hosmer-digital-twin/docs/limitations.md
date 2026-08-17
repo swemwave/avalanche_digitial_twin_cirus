@@ -10,8 +10,9 @@ operational tool.
   never a forecast**, and carries a disclaimer attached in code (`app/core/model_config.py::DISCLAIMER`).
 - **Nothing is calibrated.** The risk model, the release threshold, and the runout alpha angles are
   UNCALIBRATED values from the avalanche-terrain literature and Canadian Rockies practice. **None** is
-  fitted to an observed Mount Hosmer avalanche, because **no eligible local avalanche-observation dataset
-  is currently available to this project** — so the model has not been field-validated against ground truth.
+  fitted to an eligible field-observation cohort. Eight reviewed Davos-area events provide qualitative
+  mapped-positive comparisons only; the strict independent holdout remains N=0, so the model is not
+  field-validated against ground truth.
 
 ## Validation evidence
 
@@ -26,9 +27,10 @@ operational tool.
   imagery, synthetic data, and model output when labelled as field validation, inconsistent event dates or
   scenarios, and any event that leaks across calibration and holdout partitions.
 - The accompanying overlap evaluator rasterizes the registered target, survey-coverage, and positional-
-  uncertainty geometries itself on an exact bake-bound EPSG:26911 grid; callers cannot substitute arbitrary
-  observation or survey masks. It requires the complete compatible holdout cohort and binds predictions to
-  model/config/bake/engine/seed/scenario identities and deterministic artifact hashes. Endpoint metrics bind
+  uncertainty geometries itself on an exact bake-bound, metre-based projected grid matching the evidence;
+  callers cannot substitute arbitrary observation or survey masks. It requires the complete compatible
+  holdout cohort and binds predictions to model/config/bake/engine/seed/scenario identities and
+  deterministic artifact hashes. Endpoint metrics bind
   predictions to every registered observation ID, require characterized field uncertainty, and report
   missing predictions to prevent survivorship bias. Missing model inputs remain excluded and visible.
 - Contract-valid field data still cannot claim independent validation until its exact immutable dataset
@@ -36,6 +38,25 @@ operational tool.
   ingestion/evaluation scaffolding, not a claim of end-to-end field-validation readiness. Until eligible
   observations are obtained and reviewed, API results label the available evidence as **software
   verification only**, with field validation unavailable and zero eligible events.
+- The anonymous-public RegObs/Sentinel/Høydedata route was executed through its frozen gate 8 and failed:
+  26 candidates were evaluated, zero passed complete observation QA, zero received independent human review,
+  zero had eligible normal-to-slope release thickness, and zero had an event-surface-eligible DEM. Twenty-five
+  immutable source packets are released for external annotation, but packet release is not evidence acceptance.
+  The resulting Profile R/C/E counts remain 0/0/0. Because the required 12 events across six paths, two
+  mountains, and three storms were unavailable, no split, AvaFrame integration, calibration, or holdout run
+  was performed. See `docs/validation-report.md`, `docs/public-event-human-review-procedure.md`, and
+  `validation-data/candidates/public-event-strict-funnel-v5.json`.
+- Owner-data intake now has a strict immutable-file/licence schema, byte/hash preflight, two-human blinded
+  adjudication with third-human conflict resolution, complete-candidate decision gate, and a preregistered
+  leakage-safe path/mountain/storm split. The split artifact contains no event assignments, and prediction
+  and field-metric modules remain sealed while the eligible cohort is 0 events, 0 paths, 0 mountains and
+  0 storm cycles. These controls improve reproducibility and prevent selection leakage; they are not field
+  evidence and do not improve or establish model accuracy.
+- A separate positive-only evaluator accepts qualitative or calibration evidence whose unmapped space is
+  explicitly unknown. It reports mapped-positive coverage but deliberately has no IoU, precision, F1, or
+  independent-validation flag. The frozen 32-run Davos-area comparison shows both misses and strong
+  sensitivity/overprediction signals; see `docs/validation-report.md`. Those results do not change the
+  field-validation status or populate the trust registry.
 
 ## The risk model
 
@@ -236,21 +257,105 @@ operational tool.
   independent snow-depth/SWE comparison exists. No Hosmer SNOWPACK output or physical-improvement claim
   exists.
 
+## Research-only hourly snow and release-regime hindcast
+
+- `avycore.snowpack` is a deterministic, runtime-safe research library used by
+  the frozen Swiss hindcast. It is not connected to `/api/assess`, the Mount
+  Hosmer bake, sliders, or operational conditions. Its addition does not make
+  the serving model more accurate.
+- CERRA input is hourly regional reanalysis at 5.5 km. Nearest-sample
+  assignment makes its coarse footprint explicit; the 30 m output grid contains
+  no 30 m meteorological information. The API-reported elevation used for
+  lapse transfer is not exposed model orography, and the lapse rate is fixed
+  rather than observed for each storm.
+- Recent-snow settlement, excess-wind drift potential, wetting thresholds,
+  degree-hour scales and regime score curves are deterministic,
+  literature-informed but uncalibrated relative indices. Drift potential is
+  not transported mass. Provider snowfall remains diagnostic and cannot be
+  added to temperature-partitioned precipitation.
+- The buried-interface field is only a weather proxy. It observes no grain
+  type, weak layer, snow profile or stability test and has no numerical effect
+  on release. The wet-snow field is a surface-wetting susceptibility proxy; it
+  has no internal snow liquid-water state and cannot distinguish wet slab from
+  wet loose.
+- Full-depth/glide release is explicitly unsupported because basal liquid
+  water, smooth-ground class and glide cracks are absent. Other regimes can
+  spatially intersect a mapped full-depth outline; such an intersection is not
+  evidence that glide physics was represented.
+- The frozen 1999 result captured 24.81% of positive mapped events and failed
+  its capture, completeness and same-budget baseline rules. Positive-only
+  outlines provide no verified negatives. The library is therefore neither
+  calibrated nor field validated for any regime; see `validation-report.md`.
+
 ## Runout simulation
 
-- Two engines (fast alpha-angle routing; advanced particle ensemble). Neither is field-validated against an
-  observed Mount Hosmer runout. Alpha angles are published Canadian Rockies ranges, not local
-  back-analysis. Every runout carries an explicit sensitivity envelope. Its reported area includes the
-  central footprint and is not a band-only area or a statistical confidence interval; a line drawn with
-  false precision is worse than no line. Advanced runout treats missing elevation, forest, or plan-curvature
-  friction inputs as barriers rather than silently assuming open/neutral terrain.
+- A version-bound offline adapter now runs AvaFrame 2.1 `com1DFA` for declared
+  `dense_dry` scenarios only. The current slice supports one release collection,
+  projected metre-based input, explicit positive release thickness/density,
+  explicit Voellmy `mu`/`xi`, a fixed timestep and `entrainment_enabled=false`.
+  These positivity checks are execution constraints, not physically validated
+  parameter ranges. No missing thickness, density, friction or entrainment value
+  is synthesized.
+- The synthetic PRA-style release-to-com1DFA case verifies process isolation,
+  unit mapping, output normalization, mask/CRS preservation and same-machine
+  deterministic replay. Its synthetic values and outputs provide no evidence of
+  accuracy, calibration or end-to-end field validity. No bounded sensitivity
+  ensemble has been run, so normalized output reports no propagated uncertainty
+  bounds and says so explicitly.
+- AvaFrame [`com4FlowPy`](https://docs.avaframe.org/en/latest/moduleCom4FlowPy.html)
+  is catalogued through the AvaFrame distribution, but its
+  adapter deliberately returns `unavailable`: upstream documentation describes
+  the module as under heavy development and it is not in AvaFrame's automatic
+  test coverage. r.avaflow also returns `unavailable` until a version-bound
+  image/executable, exact redistribution licence record, configuration mapping
+  and normalized output parser are reviewed. Neither returns placeholder
+  physics.
+- The published BC PRA [paper](https://nhess.copernicus.org/articles/22/3247/2022/)
+  and [OSF project](https://doi.org/10.17605/OSF.IO/YQ5S3) (`yq5s3`) were located.
+  The OSF
+  project declares GPL-3.0, but its principal grid-search bundle is about 1.52 GB
+  and the contained source files/file-level notices have not been inspected. No
+  published PRA code was copied; the current AvyCore relative-index release model
+  remains the explicit uncalibrated baseline.
+- The AvaFrame 2.1 `avaSimilaritySol` analytical case now passes the locked
+  software-verification gate through the isolated adapter. At 20.04 s on the
+  upstream 3 m local Cartesian grid, downstream-front error was 0 m, relative
+  L2/L-infinity errors were 0.04435/0.07951 for thickness and
+  0.04182/0.06700 for momentum, solver mass-balance error was 0, and initial
+  volume error was 0.000933. All were below the pre-run limits of 6 m,
+  0.5/0.75, 0.5/0.75, 1e-12 and 0.05 respectively. Units, grid, undefined local
+  CRS, masks and no-boundary-touch invariants also passed. The frozen acceptance
+  record and immutable run are under
+  `validation-data/benchmarks/avaframe-2.1-avaSimilaritySol/`. This verifies one
+  idealized analytical case, not Mount Hosmer accuracy. Direct scalar speed is
+  diagnostic because the upstream reference evaluates momentum at the
+  zero-thickness front; pressure has no analytical target in this case.
+- com1DFA must not replace the default assessment engine or support a field-
+  accuracy claim. The exact next evidence requirement is the independently
+  reviewed, licence-compatible 12-event cohort frozen in
+  `validation-data/experiments/public-data-field-validation-v2.json`: at least
+  six paths, two mountains and three storms, with separate calibration and
+  untouched holdout groups and complete release-state, event-surface, target,
+  uncertainty, CRS, lineage and surveyed-coverage evidence for every event.
+
+- The runout library exposes three scientific component modes: `alpha_only` fast routing,
+  `dynamics_only` particle integration without the alpha stop, and the serving application's `hybrid`
+  particle mode with its alpha energy line. Extent from `alpha_only` and `hybrid` primarily tests the
+  empirical alpha angle; velocity and path shape test particle dynamics. None is field-validated.
+  Alpha angles are published Canadian Rockies ranges, not local back-analysis. Every runout carries an
+  explicit sensitivity envelope. Its reported area includes the central footprint and is not a band-only
+  area or a statistical confidence interval; a line drawn with false precision is worse than no line.
+  Advanced runout treats missing elevation, forest, or plan-curvature friction inputs as barriers rather
+  than silently assuming open/neutral terrain.
 - For interactivity, a synchronous assessment simulates runout only for the highest-scoring zones
   (top-12 fast / top-6 advanced). All release zones are still shown; the others are simply not run out.
 
 ## Terrain and the bake
 
-- The 3D mesh and all terrain layers are **baked once, offline**, from 5 m BC-LiDAR (mosaicked to ~99.9 %
-  AOI coverage), with Copernicus GLO-30 as gap-fill only. The running service reads no source data.
+- The default Mount Hosmer 3D mesh and terrain layers are **baked once, offline**, from 5 m BC-LiDAR
+  (mosaicked to ~99.9 % AOI coverage), with Copernicus GLO-30 as gap-fill only. An alternate Mountain Pack
+  may instead declare a provider-neutral `single_raster` primary DEM and its own generated runtime root.
+  The running service reads no source data.
 - The 171 `.laz` point clouds are not used (the DEM rasters are already derived from them). Re-deriving a
   finer-than-1 m surface is out of scope.
 - Baked layers load as masked arrays, so a masked/NaN pixel stays missing, not zero. Terrain and forest

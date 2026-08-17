@@ -77,6 +77,14 @@ The analysis grid, CRS, asset allow-list, units and source statements come from
 identity is bound into every new bake. `metadata/grid_and_aoi.json` remains
 preserved source metadata but is no longer interpreted by the bake.
 
+This allow-list describes the default Mount Hosmer pack. A separate mountain uses
+its own reviewed pack and read-only data root, selected explicitly with
+`python -m app.bake --pack ... --data-root ... --runtime-root ...`. Its generated
+surface belongs under a separate runtime root (for example
+`runtime\mountains\mountain-id\baked\`), never under either source tree. A portable
+plain DEM is declared as `elevation_primary` with `adapter: single_raster`; the
+legacy `elevation_lidar` role remains specific to GeoBC year tiles.
+
 **Writes (outputs) — all under `runtime\`, never `DATA\` (invariant I1):**
 
 ```
@@ -90,6 +98,15 @@ runtime\reports\terrain\reference-elevations\... # inactive bake-bound elevation
 runtime\verification\bake-preservation\...       # complete pre-rebuild inventory/copy
 runtime\snow-state-packs\...                      # inactive offline M3 outputs, when eligible
 ```
+
+High-fidelity engine runs are also offline products, but they are not part of the
+serving surface unless a future reviewed bake step explicitly promotes a stable
+schema into `runtime/baked/`. The AvaFrame synthetic example writes only to the
+operator-supplied output directory. Its isolated environment comes from
+`backend/requirements-avaframe.txt`; AvaFrame, rasterio, GDAL/pyproj and external
+engine executables are absent from the serving dependency closure. Every engine
+input is copied from a hash/size-verified artifact into a disposable work
+directory. No engine adapter reads from or writes to `DATA/` implicitly.
 
 The runtime app loads the `.npy` layers with plain **numpy** and serves the static tiles — so `rasterio`,
 `pyproj`, and the other geospatial libraries become **bake-time-only dependencies** and drop out of the
