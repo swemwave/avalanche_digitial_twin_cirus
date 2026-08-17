@@ -15,13 +15,18 @@ import numpy as np
 import pytest
 
 from avycore.validation import (
+    LEGACY_VALIDATION_CONTRACT_VERSIONS,
     VALIDATION_CONTRACT_VERSION,
+    BinaryMaskEvaluationCase,
     EvaluationGrid,
+    QualitativePredictionContext,
     PredictionContext,
     PredictionScenario,
+    binary_mask_cohort_metrics,
     binary_mask_metrics,
     load_validation_dataset,
     paired_endpoint_metrics,
+    positive_only_polygon_metrics,
 )
 from avycore.validation.trust import TRUSTED_DATASET_IDENTITIES_SHA256
 
@@ -131,10 +136,14 @@ def _write_dataset(
     features: list[dict],
     *,
     field_validation: bool = False,
+    calibration_only: bool = False,
+    qualitative_comparison: bool = False,
     surveyed_domain: bool = True,
     bounds: tuple[float, float, float, float] = (0.0, 0.0, 60.0, 60.0),
     positional_uncertainty_m: float = 0.0,
 ):
+    if sum((field_validation, calibration_only, qualitative_comparison)) > 1:
+        raise ValueError("A fixture must select at most one field-evidence use.")
     root.mkdir(parents=True, exist_ok=True)
     collection = {"type": "FeatureCollection", "features": features}
     observation_payload = json.dumps(collection, separators=(",", ":"))
@@ -146,8 +155,16 @@ def _write_dataset(
     )
     west, south, east, north = bounds
     manifest = {
-        "schema_version": VALIDATION_CONTRACT_VERSION,
-        "dataset_id": "field-contract-fixture" if field_validation else "software-grid-fixture",
+        "schema_version": LEGACY_VALIDATION_CONTRACT_VERSIONS[-1],
+        "dataset_id": (
+            "field-contract-fixture"
+            if field_validation
+            else "calibration-contract-fixture"
+            if calibration_only
+            else "qualitative-grid-fixture"
+            if qualitative_comparison
+            else "software-grid-fixture"
+        ),
         "title": "Contract and numerical verification fixture",
         "source": {
             "provider": "Synthetic pytest fixture",
@@ -163,8 +180,22 @@ def _write_dataset(
             "temporal_precision": "day",
             "basis": "Synthetic fixture bounds",
         },
-        "evidence_type": "field_observation" if field_validation else "synthetic",
-        "scientific_use": "field_validation" if field_validation else "software_verification",
+        "evidence_type": (
+            "field_observation"
+            if field_validation or calibration_only
+            else "remote_sensing_interpretation"
+            if qualitative_comparison
+            else "synthetic"
+        ),
+        "scientific_use": (
+            "field_validation"
+            if field_validation
+            else "calibration_only"
+            if calibration_only
+            else "qualitative_comparison"
+            if qualitative_comparison
+            else "software_verification"
+        ),
         "independent_of_model": True,
         "observation_types": observation_types,
         "original_crs": "EPSG:26911",
@@ -239,6 +270,7 @@ def _context(
     event_id: str,
     *,
     scenario: dict | None = None,
+    aoi_boundary_contact: bool = False,
 ) -> PredictionContext:
     values = scenario or _scenario_dict()
     return PredictionContext(
@@ -247,7 +279,10 @@ def _context(
         config_sha256=_sha256("synthetic-model-config"),
         bake_sha256=grid.source_artifact_sha256,
         engine="fast_routing_alpha",
+        engine_mode="alpha_only",
         random_seed=None,
+        particles_left_the_aoi=0,
+        aoi_boundary_contact=aoi_boundary_contact,
         scenario=PredictionScenario(
             new_snow_cm=values["new_snow_cm"],
             wind_speed_kmh=values["wind_speed_kmh"],
@@ -276,6 +311,8 @@ def test_evaluation_grid_identity_is_internal_and_binds_the_source_artifact() ->
     assert first.cell_area_m2 == 100.0
     with pytest.raises(ValueError, match="real artifact"):
         EvaluationGrid("EPSG:26911", 0.0, 60.0, 10.0, (6, 6), "0" * 64)
+    with pytest.raises(ValueError, match="code-reviewed projected metre CRS"):
+        EvaluationGrid("EPSG:4326", 0.0, 60.0, 10.0, (6, 6), _sha256("grid"))
 
 
 def test_prediction_context_preserves_engine_seed_semantics() -> None:
@@ -286,6 +323,7 @@ def test_prediction_context_preserves_engine_seed_semantics() -> None:
         "model_version": "software-verification-model-v1",
         "config_sha256": _sha256("synthetic-model-config"),
         "bake_sha256": grid.source_artifact_sha256,
+        "aoi_boundary_contact": False,
         "scenario": scenario,
     }
 
@@ -293,26 +331,86 @@ def test_prediction_context_preserves_engine_seed_semantics() -> None:
         PredictionContext(
             **common,
             engine="fast_routing_alpha",
+            engine_mode="alpha_only",
             random_seed=1,
+            particles_left_the_aoi=0,
+        )
+    with pytest.raises(ValueError, match="requires engine_mode='alpha_only'"):
+        PredictionContext(
+            **common,
+            engine="fast_routing_alpha",
+            engine_mode="hybrid",
+            random_seed=None,
+            particles_left_the_aoi=0,
         )
     with pytest.raises(ValueError, match="require a random_seed"):
         PredictionContext(
             **common,
             engine="particle_ensemble_voellmy",
+            engine_mode="hybrid",
             random_seed=None,
+            particles_left_the_aoi=0,
+        )
+    with pytest.raises(TypeError, match="aoi_boundary_contact must be a boolean"):
+        PredictionContext(
+            **{**common, "aoi_boundary_contact": 1},
+            engine="fast_routing_alpha",
+            engine_mode="alpha_only",
+            random_seed=None,
+            particles_left_the_aoi=0,
         )
 
     first = PredictionContext(
         **common,
         engine="particle_ensemble_voellmy",
+        engine_mode="hybrid",
         random_seed=1,
+        particles_left_the_aoi=0,
     )
     second = PredictionContext(
         **common,
         engine="particle_ensemble_voellmy",
+        engine_mode="hybrid",
         random_seed=2,
+        particles_left_the_aoi=0,
+    )
+    dynamics = PredictionContext(
+        **common,
+        engine="particle_ensemble_voellmy",
+        engine_mode="dynamics_only",
+        random_seed=1,
+        particles_left_the_aoi=0,
     )
     assert first.context_identity_sha256 != second.context_identity_sha256
+    assert first.context_identity_sha256 != dynamics.context_identity_sha256
+
+
+def _qualitative_context(
+    grid: EvaluationGrid,
+    event_id: str,
+    *,
+    particle: bool = False,
+    particles_left_the_aoi: int = 0,
+    aoi_boundary_contact: bool = False,
+) -> QualitativePredictionContext:
+    return QualitativePredictionContext(
+        event_id=event_id,
+        model_version="software-verification-model-v1",
+        config_sha256=_sha256("synthetic-model-config"),
+        bake_sha256=grid.source_artifact_sha256,
+        engine=("particle_ensemble_voellmy" if particle else "fast_routing_alpha"),
+        engine_mode="hybrid" if particle else "alpha_only",
+        random_seed=123 if particle else None,
+        particles_left_the_aoi=particles_left_the_aoi,
+        aoi_boundary_contact=aoi_boundary_contact,
+        run_configuration_sha256=_sha256("qualitative-run-configuration"),
+    )
+
+
+def test_qualitative_prediction_context_rejects_non_boolean_boundary_status() -> None:
+    grid = _grid()
+    with pytest.raises(TypeError, match="aoi_boundary_contact must be a boolean"):
+        _qualitative_context(grid, "EVENT-1", aoi_boundary_contact=1)  # type: ignore[arg-type]
 
 
 def test_polygon_evidence_is_rasterized_at_north_up_cell_centres(tmp_path: Path) -> None:
@@ -344,7 +442,286 @@ def test_polygon_evidence_is_rasterized_at_north_up_cell_centres(tmp_path: Path)
     assert metrics.true_positive_cell_count == 1
     assert metrics.false_positive_cell_count == 0
     assert metrics.false_negative_cell_count == 0
+    assert metrics.false_positive_area_m2 == 0.0
+    assert metrics.false_negative_area_m2 == 0.0
     assert metrics.intersection_over_union == 1.0
+    assert metrics.engine == "fast_routing_alpha"
+    assert metrics.engine_mode == "alpha_only"
+    assert metrics.component_tested == "empirical_alpha_angle_plus_routing"
+    assert metrics.aoi_coverage_status == "complete"
+    assert metrics.particles_left_the_aoi == 0
+    assert metrics.aoi_boundary_contact is False
+
+    missed = binary_mask_metrics(
+        np.zeros(grid.shape, dtype=bool),
+        valid_mask=np.ones(grid.shape, dtype=bool),
+        evaluation_grid=grid,
+        prediction_context=_context(grid, "EVENT-1"),
+        dataset=dataset,
+        partition="verification",
+        observation_type="release_polygon",
+        observation_ids=["TARGET"],
+        coverage_observation_ids=["COVERAGE"],
+    )
+    assert missed.false_positive_area_m2 == 0.0
+    assert missed.false_negative_area_m2 == 100.0
+
+
+def test_positive_only_polygon_path_never_invents_negatives_or_iou(tmp_path: Path) -> None:
+    target = _polygon(
+        "TARGET",
+        "EVENT-1",
+        "deposit_polygon",
+        (10.0, 10.0, 30.0, 30.0),
+        partition="qualitative",
+    )
+    target["properties"].update(
+        {
+            "observation_method": "Unverified interpretation of a mapped deposit outline",
+            "observation_method_class": "remote_sensing_interpretation",
+            "verification_status": "unverified",
+        }
+    )
+    dataset = _write_dataset(
+        tmp_path,
+        [target],
+        qualitative_comparison=True,
+        surveyed_domain=False,
+        bounds=(0.0, 0.0, 40.0, 40.0),
+    )
+    grid = _grid(shape=(4, 4), north=40.0)
+    predicted = np.zeros(grid.shape, dtype=bool)
+    predicted[1:3, 1:3] = True
+    predicted[0, 0] = True  # unmapped is unknown, not a false positive
+
+    result = positive_only_polygon_metrics(
+        predicted,
+        valid_mask=np.ones(grid.shape, dtype=bool),
+        evaluation_grid=grid,
+        prediction_context=_qualitative_context(grid, "EVENT-1"),
+        dataset=dataset,
+        partition="qualitative",
+        observation_type="deposit_polygon",
+        observation_ids=["TARGET"],
+    )
+
+    assert result.engine_mode == "alpha_only"
+    assert result.component_tested == "empirical_alpha_angle_plus_routing"
+    assert result.prediction_context_kind == "qualitative_missingness_aware"
+    assert result.run_configuration_sha256 == _sha256(
+        "qualitative-run-configuration"
+    )
+    assert result.historical_scenario_complete is False
+    assert result.aoi_boundary_contact is False
+    assert result.scenario_documentation_by_observation[0].status == "unknown"
+    assert result.scenario_documentation_by_observation[0].documented_fields == ()
+    assert result.scenario_documentation_by_observation[0].missing_fields == (
+        "new_snow_cm",
+        "wind_speed_kmh",
+        "wind_direction_deg",
+        "release_size",
+    )
+    assert result.metric_scope == "mapped_positive_coverage_only"
+    assert result.supports_independent_validation_claim is False
+    assert result.negative_evidence_used is False
+    assert result.unmapped_cells_treated_as_negative is False
+    assert result.mapped_positive_cell_count == 4
+    assert result.intersecting_mapped_positive_cell_count == 4
+    assert result.predicted_positive_unmapped_cell_count == 1
+    assert result.mapped_positive_coverage_fraction == 1.0
+    assert "intersection_over_union" not in result.to_dict()
+    assert "false_positive_cell_count" not in result.to_dict()
+
+    with pytest.raises(TypeError, match="QualitativePredictionContext"):
+        positive_only_polygon_metrics(
+            predicted,
+            valid_mask=np.ones(grid.shape, dtype=bool),
+            evaluation_grid=grid,
+            prediction_context=_context(grid, "EVENT-1"),
+            dataset=dataset,
+            partition="qualitative",
+            observation_type="deposit_polygon",
+            observation_ids=["TARGET"],
+        )
+
+    # The strict evaluator remains strict: qualitative positive-only evidence is
+    # not silently promoted to a surveyed known-absence domain.
+    with pytest.raises(ValueError, match="does not permit quantitative"):
+        binary_mask_metrics(
+            predicted,
+            valid_mask=np.ones(grid.shape, dtype=bool),
+            evaluation_grid=grid,
+            prediction_context=_context(grid, "EVENT-1"),
+            dataset=dataset,
+            partition="qualitative",
+            observation_type="deposit_polygon",
+            observation_ids=["TARGET"],
+            coverage_observation_ids=[],
+        )
+
+
+def test_positive_only_calibration_keeps_complete_registered_scenario_requirement(
+    tmp_path: Path,
+) -> None:
+    scenario = _scenario_dict()
+    target = _polygon(
+        "TARGET",
+        "EVENT-1",
+        "deposit_polygon",
+        (10.0, 10.0, 30.0, 30.0),
+        partition="calibration",
+        field_evidence=True,
+        scenario=scenario,
+    )
+    dataset = _write_dataset(
+        tmp_path,
+        [target],
+        calibration_only=True,
+        surveyed_domain=False,
+        bounds=(0.0, 0.0, 40.0, 40.0),
+    )
+    grid = _grid(shape=(4, 4), north=40.0)
+    predicted = np.ones(grid.shape, dtype=bool)
+
+    with pytest.raises(TypeError, match="calibration_only requires a PredictionContext"):
+        positive_only_polygon_metrics(
+            predicted,
+            valid_mask=np.ones(grid.shape, dtype=bool),
+            evaluation_grid=grid,
+            prediction_context=_qualitative_context(grid, "EVENT-1"),
+            dataset=dataset,
+            partition="calibration",
+            observation_type="deposit_polygon",
+            observation_ids=["TARGET"],
+        )
+
+    result = positive_only_polygon_metrics(
+        predicted,
+        valid_mask=np.ones(grid.shape, dtype=bool),
+        evaluation_grid=grid,
+        prediction_context=_context(grid, "EVENT-1", scenario=scenario),
+        dataset=dataset,
+        partition="calibration",
+        observation_type="deposit_polygon",
+        observation_ids=["TARGET"],
+    )
+    assert result.prediction_context_kind == "complete_documented_scenario"
+    assert result.historical_scenario_complete is True
+    assert result.run_configuration_sha256 is None
+
+
+def test_every_spatial_metric_rejects_aoi_escape_or_boundary_contact(
+    tmp_path: Path,
+) -> None:
+    dataset = _write_dataset(
+        tmp_path,
+        [
+            _polygon("TARGET", "EVENT-1", "release_polygon", (10.0, 10.0, 20.0, 20.0)),
+            _polygon(
+                "COVERAGE",
+                "EVENT-1",
+                "survey_coverage_polygon",
+                (0.0, 0.0, 40.0, 40.0),
+            ),
+        ],
+        bounds=(0.0, 0.0, 40.0, 40.0),
+    )
+    grid = _grid(shape=(4, 4), north=40.0)
+    scenario = PredictionScenario(30.0, 40.0, 225.0, "medium")
+    escaped = PredictionContext(
+        event_id="EVENT-1",
+        model_version="software-verification-model-v1",
+        config_sha256=_sha256("synthetic-model-config"),
+        bake_sha256=grid.source_artifact_sha256,
+        engine="particle_ensemble_voellmy",
+        engine_mode="hybrid",
+        random_seed=123,
+        particles_left_the_aoi=1,
+        aoi_boundary_contact=False,
+        scenario=scenario,
+    )
+
+    with pytest.raises(ValueError, match="unscoreable.*particles_left_the_aoi"):
+        binary_mask_metrics(
+            np.zeros(grid.shape, dtype=bool),
+            valid_mask=np.ones(grid.shape, dtype=bool),
+            evaluation_grid=grid,
+            prediction_context=escaped,
+            dataset=dataset,
+            partition="verification",
+            observation_type="release_polygon",
+            observation_ids=["TARGET"],
+            coverage_observation_ids=["COVERAGE"],
+        )
+
+    qualitative_target = _polygon(
+        "QUALITATIVE-TARGET",
+        "EVENT-1",
+        "deposit_polygon",
+        (10.0, 10.0, 20.0, 20.0),
+        partition="qualitative",
+    )
+    qualitative_target["properties"].update(
+        observation_method="Unverified remote-sensing interpretation",
+        observation_method_class="remote_sensing_interpretation",
+        verification_status="unverified",
+    )
+    qualitative_dataset = _write_dataset(
+        tmp_path / "qualitative",
+        [qualitative_target],
+        qualitative_comparison=True,
+        surveyed_domain=False,
+        bounds=(0.0, 0.0, 40.0, 40.0),
+    )
+    with pytest.raises(ValueError, match="unscoreable.*particles_left_the_aoi"):
+        positive_only_polygon_metrics(
+            np.zeros(grid.shape, dtype=bool),
+            valid_mask=np.ones(grid.shape, dtype=bool),
+            evaluation_grid=grid,
+            prediction_context=_qualitative_context(
+                grid,
+                "EVENT-1",
+                particle=True,
+                particles_left_the_aoi=1,
+            ),
+            dataset=qualitative_dataset,
+            partition="qualitative",
+            observation_type="deposit_polygon",
+            observation_ids=["QUALITATIVE-TARGET"],
+        )
+
+    boundary_contact = _context(
+        grid,
+        "EVENT-1",
+        aoi_boundary_contact=True,
+    )
+    with pytest.raises(ValueError, match="unscoreable.*aoi_boundary_contact"):
+        binary_mask_metrics(
+            np.zeros(grid.shape, dtype=bool),
+            valid_mask=np.ones(grid.shape, dtype=bool),
+            evaluation_grid=grid,
+            prediction_context=boundary_contact,
+            dataset=dataset,
+            partition="verification",
+            observation_type="release_polygon",
+            observation_ids=["TARGET"],
+            coverage_observation_ids=["COVERAGE"],
+        )
+    with pytest.raises(ValueError, match="unscoreable.*aoi_boundary_contact"):
+        positive_only_polygon_metrics(
+            np.zeros(grid.shape, dtype=bool),
+            valid_mask=np.ones(grid.shape, dtype=bool),
+            evaluation_grid=grid,
+            prediction_context=_qualitative_context(
+                grid,
+                "EVENT-1",
+                aoi_boundary_contact=True,
+            ),
+            dataset=qualitative_dataset,
+            partition="qualitative",
+            observation_type="deposit_polygon",
+            observation_ids=["QUALITATIVE-TARGET"],
+        )
 
 
 def test_polygon_uncertainty_and_missing_inputs_are_derived_not_caller_supplied(
@@ -406,6 +783,7 @@ def test_polygon_uncertainty_and_missing_inputs_are_derived_not_caller_supplied(
     assert metrics.contract_eligible_for_independent_holdout_validation is False
     assert metrics.dataset_trust_status == "not_applicable"
     assert metrics.is_independent_holdout_validation is False
+    assert metrics.aoi_boundary_contact is False
 
 
 @pytest.mark.parametrize(
@@ -535,6 +913,126 @@ def test_field_holdout_requires_complete_cohort_and_stays_untrusted_by_default(
     assert metrics.is_independent_holdout_validation is False
 
 
+def test_strict_polygon_cohort_requires_and_scores_every_holdout_event_without_pooling(
+    tmp_path: Path,
+) -> None:
+    scenario = _scenario_dict()
+    dataset = _write_dataset(
+        tmp_path,
+        [
+            _polygon(
+                "TARGET-A",
+                "EVENT-A",
+                "deposit_polygon",
+                (10.0, 10.0, 20.0, 20.0),
+                partition="holdout",
+                field_evidence=True,
+                uncertainty_m=2.0,
+                scenario=scenario,
+            ),
+            _polygon(
+                "COVERAGE-A",
+                "EVENT-A",
+                "survey_coverage_polygon",
+                (0.0, 0.0, 60.0, 60.0),
+                partition="holdout",
+                field_evidence=True,
+                uncertainty_m=2.0,
+                target_observation_types=("deposit_polygon",),
+                scenario=scenario,
+            ),
+            _polygon(
+                "TARGET-B",
+                "EVENT-B",
+                "deposit_polygon",
+                (30.0, 30.0, 40.0, 40.0),
+                partition="holdout",
+                field_evidence=True,
+                uncertainty_m=2.0,
+                scenario=scenario,
+            ),
+            _polygon(
+                "COVERAGE-B",
+                "EVENT-B",
+                "survey_coverage_polygon",
+                (0.0, 0.0, 60.0, 60.0),
+                partition="holdout",
+                field_evidence=True,
+                uncertainty_m=2.0,
+                target_observation_types=("deposit_polygon",),
+                scenario=scenario,
+            ),
+        ],
+        field_validation=True,
+        positional_uncertainty_m=2.0,
+    )
+    grid = _grid()
+    predicted_a = np.zeros(grid.shape, dtype=bool)
+    predicted_a[4, 1] = True
+    predicted_b = np.zeros(grid.shape, dtype=bool)
+    predicted_b[2, 3] = True
+    valid = np.ones(grid.shape, dtype=bool)
+    case_a = BinaryMaskEvaluationCase(
+        predicted=predicted_a,
+        valid_mask=valid,
+        evaluation_grid=grid,
+        prediction_context=_context(grid, "EVENT-A", scenario=scenario),
+        observation_ids=("TARGET-A",),
+        coverage_observation_ids=("COVERAGE-A",),
+    )
+    case_b = BinaryMaskEvaluationCase(
+        predicted=predicted_b,
+        valid_mask=valid,
+        evaluation_grid=grid,
+        prediction_context=_context(grid, "EVENT-B", scenario=scenario),
+        observation_ids=("TARGET-B",),
+        coverage_observation_ids=("COVERAGE-B",),
+    )
+
+    # The original one-event API stays fail-closed for a multi-event dataset.
+    with pytest.raises(ValueError, match="complete registered target cohort"):
+        binary_mask_metrics(
+            predicted_a,
+            valid_mask=valid,
+            evaluation_grid=grid,
+            prediction_context=case_a.prediction_context,
+            dataset=dataset,
+            partition="holdout",
+            observation_type="deposit_polygon",
+            observation_ids=["TARGET-A"],
+            coverage_observation_ids=["COVERAGE-A"],
+        )
+    with pytest.raises(ValueError, match="every registered holdout event"):
+        binary_mask_cohort_metrics(
+            [case_a],
+            dataset=dataset,
+            partition="holdout",
+            observation_type="deposit_polygon",
+        )
+
+    metrics = binary_mask_cohort_metrics(
+        [case_b, case_a],
+        dataset=dataset,
+        partition="holdout",
+        observation_type="deposit_polygon",
+    )
+
+    assert metrics.complete_registered_target_cohort is True
+    assert metrics.complete_cohort_event_count == 2
+    assert metrics.independent_holdout_event_count == 0
+    assert metrics.observation_count == 2
+    assert metrics.event_ids == ("EVENT-A", "EVENT-B")
+    assert metrics.engine_mode == "alpha_only"
+    assert metrics.component_tested == "empirical_alpha_angle_plus_routing"
+    assert metrics.aoi_coverage_status == "complete"
+    assert metrics.dataset_trust_status == "unregistered"
+    assert metrics.is_independent_holdout_validation is False
+    assert metrics.metric_aggregation == "per_event_only_no_pooled_iou"
+    assert len(metrics.prediction_set_sha256) == 64
+    assert [item.intersection_over_union for item in metrics.event_metrics] == [1.0, 1.0]
+    assert "intersection_over_union" not in vars(metrics)
+
+
 def test_prediction_context_must_match_the_grid_bake_and_registered_scenario(
     tmp_path: Path,
 ) -> None:
@@ -567,7 +1065,10 @@ def test_prediction_context_must_match_the_grid_bake_and_registered_scenario(
         config_sha256=_sha256("synthetic-model-config"),
         bake_sha256=_sha256("different-bake"),
         engine="fast_routing_alpha",
+        engine_mode="alpha_only",
         random_seed=None,
+        particles_left_the_aoi=0,
+        aoi_boundary_contact=False,
         scenario=_context(grid, "EVENT-1").scenario,
     )
     with pytest.raises(ValueError, match="does not match.*source artifact"):
@@ -589,7 +1090,10 @@ def test_prediction_context_must_match_the_grid_bake_and_registered_scenario(
         config_sha256=_sha256("synthetic-model-config"),
         bake_sha256=grid.source_artifact_sha256,
         engine="fast_routing_alpha",
+        engine_mode="alpha_only",
         random_seed=None,
+        particles_left_the_aoi=0,
+        aoi_boundary_contact=False,
         scenario=PredictionScenario(31.0, 40.0, 225.0, "medium"),
     )
     with pytest.raises(ValueError, match="does not match registered scenario"):
@@ -641,6 +1145,8 @@ def test_endpoint_predictions_are_context_bound_hashed_and_report_missing(
     assert len(metrics.prediction_set_sha256) == 64
     assert metrics.dataset_trust_status == "not_applicable"
     assert metrics.is_independent_holdout_validation is False
+    assert metrics.aoi_coverage_status == "complete"
+    assert metrics.aoi_boundary_contact is False
 
     with pytest.raises(ValueError, match="does not match observation event"):
         paired_endpoint_metrics(
@@ -658,6 +1164,43 @@ def test_endpoint_predictions_are_context_bound_hashed_and_report_missing(
             [[18.0, 19.0], [0.0, 0.0]],
             predicted_valid=np.asarray([True, False]),
             prediction_contexts=contexts,
+            evaluation_grid=grid,
+            observation_ids=["END-A", "END-B"],
+            dataset=dataset,
+            partition="verification",
+        )
+
+    escaped = PredictionContext(
+        event_id="EVENT-A",
+        model_version="software-verification-model-v1",
+        config_sha256=_sha256("synthetic-model-config"),
+        bake_sha256=grid.source_artifact_sha256,
+        engine="particle_ensemble_voellmy",
+        engine_mode="hybrid",
+        random_seed=123,
+        particles_left_the_aoi=1,
+        aoi_boundary_contact=False,
+        scenario=PredictionScenario(30.0, 40.0, 225.0, "medium"),
+    )
+    with pytest.raises(ValueError, match="unscoreable.*particles_left_the_aoi"):
+        paired_endpoint_metrics(
+            predictions,
+            predicted_valid=np.asarray([True, False]),
+            prediction_contexts=[escaped, contexts[1]],
+            evaluation_grid=grid,
+            observation_ids=["END-A", "END-B"],
+            dataset=dataset,
+            partition="verification",
+        )
+
+    with pytest.raises(ValueError, match="unscoreable.*aoi_boundary_contact"):
+        paired_endpoint_metrics(
+            predictions,
+            predicted_valid=np.asarray([True, False]),
+            prediction_contexts=[
+                _context(grid, "EVENT-A", aoi_boundary_contact=True),
+                contexts[1],
+            ],
             evaluation_grid=grid,
             observation_ids=["END-A", "END-B"],
             dataset=dataset,
@@ -700,6 +1243,23 @@ def test_field_endpoint_holdout_requires_every_registered_target(tmp_path: Path)
             prediction_contexts=[_context(grid, "EVENT-A", scenario=scenario)],
             evaluation_grid=grid,
             observation_ids=["END-A"],
+            dataset=dataset,
+            partition="holdout",
+        )
+
+    with pytest.raises(
+        ValueError,
+        match="valid prediction for every registered endpoint.*END-B",
+    ):
+        paired_endpoint_metrics(
+            [[15.0, 15.0], [np.nan, np.nan]],
+            predicted_valid=np.asarray([True, False]),
+            prediction_contexts=[
+                _context(grid, "EVENT-A", scenario=scenario),
+                _context(grid, "EVENT-B", scenario=scenario),
+            ],
+            evaluation_grid=grid,
+            observation_ids=["END-A", "END-B"],
             dataset=dataset,
             partition="holdout",
         )

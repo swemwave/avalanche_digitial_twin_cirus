@@ -11,6 +11,7 @@ import pytest
 from pydantic import ValidationError
 
 from avycore.validation import (
+    LEGACY_VALIDATION_CONTRACT_VERSIONS,
     VALIDATION_CONTRACT_VERSION,
     EvaluationGrid,
     PredictionContext,
@@ -119,7 +120,7 @@ def _polygon_feature(
 
 def _manifest(observations_sha256: str, **updates) -> dict:
     manifest = {
-        "schema_version": VALIDATION_CONTRACT_VERSION,
+        "schema_version": LEGACY_VALIDATION_CONTRACT_VERSIONS[-1],
         "dataset_id": "verified-events-v1",
         "title": "Independent surveyed avalanche endpoints",
         "source": {
@@ -213,7 +214,10 @@ def _prediction_context(grid: EvaluationGrid, event_id: str) -> PredictionContex
         config_sha256=hashlib.sha256(b"validation-fixture-config").hexdigest(),
         bake_sha256=grid.source_artifact_sha256,
         engine="fast_routing_alpha",
+        engine_mode="alpha_only",
         random_seed=None,
+        particles_left_the_aoi=0,
+        aoi_boundary_contact=False,
         scenario=PredictionScenario(30.0, 40.0, 225.0, "medium"),
     )
 
@@ -229,10 +233,84 @@ def test_contract_loads_lineage_and_event_level_calibration_holdout(tmp_path: Pa
 
     dataset = load_validation_dataset(manifest_path)
 
-    assert dataset.manifest.schema_version == VALIDATION_CONTRACT_VERSION
+    assert dataset.manifest.schema_version == LEGACY_VALIDATION_CONTRACT_VERSIONS[-1]
+    assert VALIDATION_CONTRACT_VERSION == "avycore-validation-dataset-v3"
     assert dataset.manifest.crs == "EPSG:26911"
     assert dataset.partition_counts == {"calibration": 1, "holdout": 1}
     assert [item.observation_id for item in dataset.observations] == ["OBS-1", "OBS-2"]
+
+
+def test_contract_accepts_declared_non_bc_projected_crs() -> None:
+    payload = _manifest(
+        "1" * 64,
+        original_crs="EPSG:2056",
+        crs="EPSG:2056",
+        normalization_method="Identity transform; source used CH1903+ / LV95",
+    )
+
+    manifest = ValidationDatasetManifest.model_validate(payload)
+
+    assert manifest.crs == "EPSG:2056"
+    colorado = ValidationDatasetManifest.model_validate(
+        {
+            **payload,
+            "original_crs": "EPSG:32613",
+            "crs": "EPSG:32613",
+            "normalization_method": "Identity transform; source used WGS 84 / UTM zone 13N",
+        }
+    )
+    assert colorado.crs == "EPSG:32613"
+    with pytest.raises(ValueError, match="crs"):
+        ValidationDatasetManifest.model_validate({**payload, "crs": "epsg:2056"})
+    with pytest.raises(ValueError, match="code-reviewed projected metre CRS"):
+        ValidationDatasetManifest.model_validate({**payload, "crs": "EPSG:4326"})
+
+
+def test_contract_preserves_qualitative_whole_footprint_and_partial_scenario(
+    tmp_path: Path,
+) -> None:
+    feature = _polygon_feature(
+        "FOOTPRINT-1",
+        "EVENT-1",
+        "qualitative",
+        "avalanche_footprint",
+        (2_784_000.0, 1_184_000.0, 2_784_100.0, 1_184_100.0),
+    )
+    feature["properties"].update(
+        observation_method="Manual interpretation of a post-event orthophoto",
+        observation_method_class="remote_sensing_interpretation",
+        verification_status="unverified",
+        scenario_status="partially_documented",
+        scenario_inputs={
+            "new_snow_cm": 60.0,
+            "source": "Campaign report",
+            "uncertainty_statement": "Wind speed and direction were not quantified.",
+        },
+    )
+    dataset = load_validation_dataset(
+        _write_dataset(
+            tmp_path,
+            [feature],
+            evidence_type="remote_sensing_interpretation",
+            scientific_use="qualitative_comparison",
+            observation_types=["avalanche_footprint"],
+            original_crs="EPSG:2056",
+            crs="EPSG:2056",
+            normalization_method="Identity transform; source used CH1903+ / LV95",
+            spatial_coverage={
+                "west": 2_783_000.0,
+                "south": 1_183_000.0,
+                "east": 2_786_000.0,
+                "north": 1_186_000.0,
+                "description": "Positive-observation holding extent",
+            },
+        )
+    )
+
+    observation = dataset.observations[0]
+    assert observation.observation_type == "avalanche_footprint"
+    assert observation.properties["scenario_status"] == "partially_documented"
+    assert observation.properties["scenario_inputs"]["new_snow_cm"] == 60.0
 
 
 def test_contract_rejects_calibration_holdout_event_leakage(tmp_path: Path) -> None:
@@ -519,6 +597,8 @@ def test_binary_metrics_derive_evidence_geometry_and_report_missing_model_covera
     assert metrics.true_positive_cell_count == 1
     assert metrics.false_positive_cell_count == 1
     assert metrics.false_negative_cell_count == 0
+    assert metrics.false_positive_area_m2 == 10_000.0
+    assert metrics.false_negative_area_m2 == 0.0
     assert metrics.precision == pytest.approx(0.5)
     assert metrics.recall == 1.0
     assert metrics.f1 == pytest.approx(2 / 3)
@@ -529,6 +609,8 @@ def test_binary_metrics_derive_evidence_geometry_and_report_missing_model_covera
     assert metrics.union_area_m2 == 20_000.0
     assert metrics.excluded_observed_area_m2 == 0.0
     assert metrics.dataset_trust_status == "not_applicable"
+    assert metrics.engine_mode == "alpha_only"
+    assert metrics.component_tested == "empirical_alpha_angle_plus_routing"
 
 
 def test_endpoint_metrics_bind_ids_and_report_missing_predictions(tmp_path: Path) -> None:
@@ -566,6 +648,9 @@ def test_endpoint_metrics_bind_ids_and_report_missing_predictions(tmp_path: Path
     assert metrics.within_uncertainty_fraction == 1.0
     assert metrics.uses_field_evidence is False
     assert metrics.dataset_trust_status == "not_applicable"
+    assert metrics.engine_mode == "alpha_only"
+    assert metrics.component_tested == "empirical_alpha_angle_plus_routing"
+    assert metrics.aoi_coverage_status == "complete"
 
 
 def test_endpoint_metrics_reject_qualitative_evidence(tmp_path: Path) -> None:
