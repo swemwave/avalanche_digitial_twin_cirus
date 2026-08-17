@@ -1,0 +1,106 @@
+{
+  "claim_boundary": "Hashes establish deterministic artifact identity only. They do not make an event eligible or establish field accuracy.",
+  "current_counts": {
+    "eligible_events": 0,
+    "eligible_mountains": 0,
+    "eligible_paths": 0,
+    "eligible_storm_cycles": 0
+  },
+  "derived_acquisition_artifacts": [
+    {
+      "bytes": 45001,
+      "path": "validation-data/acquisition/field-validation-owner-request-v1.json",
+      "sha256": "9090b7f66e067bf4161c70b3b7edf0519cdea51909432f3c322f33b7f90eb4b4"
+    },
+    {
+      "bytes": 23004,
+      "path": "validation-data/acquisition/field-validation-owner-delivery-v1.schema.json",
+      "sha256": "b0fe1994b3909c89ee07391dc200047f7c7ee38506b51db65f36998267395e9f"
+    },
+    {
+      "bytes": 26484,
+      "path": "validation-data/acquisition/field-validation-owner-requests-v1.md",
+      "sha256": "59df9bb69b00b77c00934da4a746014f3cdc688eebba37c9085157d0fd9cb890"
+    },
+    {
+      "bytes": 7492,
+      "path": "validation-data/acquisition/field-validation-eligibility-conflict-v1.schema.json",
+      "sha256": "f7366f38f3d187f46563010313bffe1daa944453b5346befa4a6443c75c9f448"
+    },
+    {
+      "bytes": 7187,
+      "path": "validation-data/acquisition/field-validation-eligibility-decision-v1.schema.json",
+      "sha256": "b2046467a95f3104e6206d250c534743fb724d2aef0bc17a896993b07413e171"
+    },
+    {
+      "bytes": 8095,
+      "path": "validation-data/acquisition/field-validation-eligibility-review-v1.schema.json",
+      "sha256": "b5e27afd77a453d8a3dea85346aa005603de612ea884f85035f784c1c87f3326"
+    },
+    {
+      "bytes": 2065,
+      "path": "validation-data/acquisition/field-validation-group-split-preregistration-v1.json",
+      "sha256": "83ca9bd3d14ba722f9b9c4bc2a4f8b5de438d8e106fdffe6e896460f47f5a4b1"
+    }
+  ],
+  "frozen_source_artifacts": [
+    {
+      "bytes": 6956,
+      "path": "validation-data/experiments/public-data-field-validation-v2.json",
+      "sha256": "91586bd87f057222268dacfb3651f5dc22c02cd8fc0a26e5cd98f8f7228c2cb9"
+    },
+    {
+      "bytes": 30889,
+      "path": "validation-data/candidates/public-validation-source-audit-v2.json",
+      "sha256": "a4c1ef834d0f1da97f43d939c17da692f355a054066fa28ea85dc5c37e4b66ae"
+    },
+    {
+      "bytes": 441703,
+      "path": "validation-data/candidates/public-event-strict-funnel-v5.json",
+      "sha256": "bf665aba57cf6167b19247a28a9a39e688b7e4105f7b4bbd87164200a2e038c1"
+    }
+  ],
+  "implementation_artifacts": [
+    {
+      "bytes": 21016,
+      "path": "packages/avycore/src/avycore/validation/acquisition.py",
+      "sha256": "dbf1dc9be307ffb3d781d021387e09695cf3bd83050e1dd3f1f4e0c9ccab89a3"
+    },
+    {
+      "bytes": 41465,
+      "path": "packages/avycore/src/avycore/validation/field_workflow.py",
+      "sha256": "fbe55f77ce5ded57e8013faf4f3fa95fceba9b08339c6d17713c9097386ebff3"
+    },
+    {
+      "bytes": 46336,
+      "path": "scripts/validation/build_field_validation_owner_request.py",
+      "sha256": "1f7d9a1694848e037db7e4888dec5136f3802742f3650b259977792b20c9d388"
+    },
+    {
+      "bytes": 7029,
+      "path": "scripts/validation/validate_field_validation_owner_delivery.py",
+      "sha256": "76bb6d36d49faf1cb8e7123707d7fc72fe1851c804ee1901e979a10855bf399e"
+    },
+    {
+      "bytes": 3634,
+      "path": "scripts/validation/adjudicate_field_validation_eligibility.py",
+      "sha256": "b3f402aca669e727db6fdc7bc08bc12c01d3fe7c6567c3c200e15d0ac8b572dc"
+    },
+    {
+      "bytes": 10018,
+      "path": "scripts/validation/build_field_validation_workflow_preregistration.py",
+      "sha256": "aa19ab450f58376455f6be9fd48bf7d4f22e85c1f45287fd7f33a8c8a67fa409"
+    },
+    {
+      "bytes": 4667,
+      "path": "scripts/validation/freeze_field_validation_cohort_split.py",
+      "sha256": "c9f9f3ad34193c64b9b646dcad478e310b68a8f34317d4b35bc7802de879b19d"
+    }
+  ],
+  "metrics_authorized": false,
+  "normalized_artifact_sha256": "271e6dee5f72a52b7b71a9691e6794fdad12046d2e07973465317df0359548bd",
+  "prediction_authorized": false,
+  "recalculated_at_utc": "2026-08-15T04:20:00Z",
+  "schema": "avycore-field-validation-acquisition-integrity-v1",
+  "status": "zero_eligible_events_prediction_and_metrics_blocked"
+}

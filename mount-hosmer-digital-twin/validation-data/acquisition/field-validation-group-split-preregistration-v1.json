@@ -1,0 +1,52 @@
+{
+  "algorithm": "connected-group-components-balanced-dp-v1",
+  "event_assignments": [],
+  "frozen_at_utc": "2026-08-15T04:20:00Z",
+  "group_leakage_permitted": false,
+  "grouping_keys": [
+    "path_id",
+    "mountain_id",
+    "storm_cycle_id"
+  ],
+  "holdout_targets_accessed": false,
+  "implementation": {
+    "bytes": 41465,
+    "path": "packages/avycore/src/avycore/validation/field_workflow.py",
+    "sha256": "fbe55f77ce5ded57e8013faf4f3fa95fceba9b08339c6d17713c9097386ebff3"
+  },
+  "minimum_calibration_events": 6,
+  "minimum_holdout_events": 6,
+  "minimum_mountains_per_partition": 1,
+  "minimum_paths_per_partition": 3,
+  "minimum_storm_cycles_per_partition": 1,
+  "normalized_artifact_sha256": "ef4a5a89d45dd8f82cc79de0e2507d068e60e2c8220b30dd94b1200abe998caa",
+  "optimization_order": [
+    "minimize_absolute_event_count_distance_from_half",
+    "maximize_smaller_partition_independent_path_count",
+    "maximize_smaller_partition_storm_cycle_count",
+    "maximize_smaller_partition_mountain_count",
+    "break_remaining_ties_by_sha256_of_seed_binding_and_holdout_components"
+  ],
+  "predictions_generated": false,
+  "protocol": {
+    "bytes": 6956,
+    "path": "validation-data/experiments/public-data-field-validation-v2.json",
+    "sha256": "91586bd87f057222268dacfb3651f5dc22c02cd8fc0a26e5cd98f8f7228c2cb9"
+  },
+  "real_event_ids_exposed": false,
+  "schema_version": "avycore-field-group-split-preregistration-v1",
+  "seed": 20260815,
+  "seed_binding_sha256": "d350266ecce87aab926787f1f33f8c8e81f790745e0494aed39ee60ce619ea1f",
+  "source_audit": {
+    "bytes": 30889,
+    "path": "validation-data/candidates/public-validation-source-audit-v2.json",
+    "sha256": "a4c1ef834d0f1da97f43d939c17da692f355a054066fa28ea85dc5c37e4b66ae"
+  },
+  "status": "frozen_before_predictions_no_real_event_assignments",
+  "strict_public_funnel": {
+    "bytes": 441703,
+    "path": "validation-data/candidates/public-event-strict-funnel-v5.json",
+    "sha256": "bf665aba57cf6167b19247a28a9a39e688b7e4105f7b4bbd87164200a2e038c1"
+  },
+  "target_holdout_fraction": 0.5
+}

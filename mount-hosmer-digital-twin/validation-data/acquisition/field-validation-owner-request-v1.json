@@ -1,0 +1,427 @@
+{
+  "after_delivery": [
+    "Verify every byte count and SHA-256 without altering source files.",
+    "Obtain two isolated, identity-verified human eligibility reviews bound to the same source bytes; AI output never counts as a review.",
+    "Resolve any disagreement through a third independent human and retain both reviews, the resolution, exclusion reasons, and record hashes.",
+    "Adjudicate every event in the verified delivery cohort, including exclusions; do not silently select or omit candidates.",
+    "Independently review licence, source independence, component attribution, uncertainties, CRS/datum/units, surface validity, coverage and grouping.",
+    "Reject incomplete events; never infer missing physical or observation values.",
+    "Normalize accepted evidence into validation-contract v3 and code-review its exact trust identity.",
+    "Only if the full 12/6/2/3 eligible cohort gate passes, apply the already frozen connected-group split procedure; do not expose real assignments earlier.",
+    "Keep holdout observation files sealed and inaccessible throughout calibration; freeze model/configuration and complete holdout predictions before opening them for metrics.",
+    "Run all preregistered metrics once on the complete untouched holdout and retain failures."
+  ],
+  "authoritative_public_search_update": [
+    {
+      "blocking_fields": [
+        "original_event_geometry_and_hashes",
+        "event_surface_dem_with_datum_lineage",
+        "component_terminal_geometry",
+        "survey_coverage_and_detection_masks",
+        "feature_uncertainty",
+        "data_reuse_licence_for_underlying_measurements"
+      ],
+      "eligible_events_added": 0,
+      "primary_urls": [
+        "https://doi.org/10.1029/2005JF000391",
+        "https://doi.org/10.3929/ethz-a-004784844"
+      ],
+      "provider": "WSL Institute for Snow and Avalanche Research SLF / ETH Zurich",
+      "public_download_status": "no_complete_event_delivery_published",
+      "public_evidence": "The paper describes 18 field-investigated avalanches and explicitly defines slope-normal fracture depth, release density, release/deposit mass, photogrammetry, and field measurements.",
+      "source_id": "slf-sovilla-mass-balance-18-events"
+    },
+    {
+      "blocking_fields": [
+        "versioned_event_inventory",
+        "original_release_and_terminal_geometry",
+        "event_specific_thickness_density_and_uncertainty",
+        "event_surface_dem_and_crs_datum_lineage",
+        "complete_search_detection_masks",
+        "reuse_permission_and_sha256"
+      ],
+      "eligible_events_added": 0,
+      "primary_urls": [
+        "https://doi.org/10.1016/j.coldregions.2015.03.005",
+        "https://www.inrae.fr/en/reports/understanding-avalanche-risk/multi-faceted-research"
+      ],
+      "provider": "INRAE Lautaret avalanche test site",
+      "public_download_status": "described_holdings_not_a_versioned_event_package",
+      "public_evidence": "The primary site description reports roughly 50 release operations, mostly dry cold avalanches, two principal paths, snow-pit density, pre/post laser scanning, photogrammetric fronts, and runout records.",
+      "source_id": "inrae-lautaret-field-archive"
+    },
+    {
+      "blocking_fields": [
+        "original_event_geometries",
+        "event_release_state_and_uncertainty",
+        "event_surface_dem",
+        "coverage_masks",
+        "licence_and_immutable_hashes",
+        "multi_path_cohort_diversity"
+      ],
+      "eligible_events_added": 0,
+      "primary_urls": [
+        "https://doi.org/10.1016/j.coldregions.2016.02.009"
+      ],
+      "provider": "Norwegian Geotechnical Institute Ryggfonn",
+      "public_download_status": "summary_public_source_event_files_not_publicly_complete",
+      "public_evidence": "The primary summary describes four decades of full-scale avalanche observations, including runout, velocity, impact and mass-balance data.",
+      "source_id": "ngi-ryggfonn-field-archive"
+    },
+    {
+      "blocking_fields": [
+        "at_least_12_eligible_events",
+        "original_gis_and_surface_files",
+        "release_thickness_density_uncertainty",
+        "terminal_component_attribution",
+        "coverage_detection_masks",
+        "event_file_licence_and_hashes"
+      ],
+      "eligible_events_added": 0,
+      "primary_urls": [
+        "https://doi.org/10.1016/j.coldregions.2012.09.006",
+        "https://doi.org/10.3390/geosciences9110471"
+      ],
+      "provider": "University of Turin / Polytechnic University of Turin / Aosta Valley partners",
+      "public_download_status": "papers_and_supplements_not_a_complete_owner_delivery",
+      "public_evidence": "The site papers describe original release/deposit surveys, snow properties, GPS, laser scanning, imagery, and five reported impact events.",
+      "source_id": "seehore-field-archive"
+    }
+  ],
+  "claim_boundary": "This is an acquisition and pre-ingestion package, not validation evidence. A returned delivery remains untrusted until independent scientific and code review, normalization, grouped split freeze, and the complete untouched holdout.",
+  "cohort_request": {
+    "avalanche_regime": "dry_dense_slab",
+    "candidate_target_before_attrition": "24-40",
+    "grouping_rule": "No path_id or storm_cycle_id may cross calibration and holdout; keep mountain groups together when event independence cannot be justified.",
+    "minimum_eligible_events": 12,
+    "minimum_independent_paths": 6,
+    "minimum_mountains": 2,
+    "minimum_storm_cycles": 3,
+    "split_seed_after_eligibility_review": 20260815,
+    "split_status": "not_permitted_until_the_complete_cohort_passes_review"
+  },
+  "current_evidence_state": {
+    "calibration_holdout_partition_assigned": false,
+    "eligible_events": 0,
+    "eligible_independent_paths": 0,
+    "eligible_mountains": 0,
+    "eligible_new_downloads": 0,
+    "eligible_storm_cycles": 0,
+    "field_metrics_run": false,
+    "field_validation_available": false,
+    "holdout_targets_accessed": false,
+    "new_source_payloads_downloaded": 0,
+    "predictions_generated": false,
+    "public_candidates_audited": 26
+  },
+  "delivery_contract": {
+    "cohort_gate": "avycore.validation.acquisition.owner_delivery_cohort_gate",
+    "important_limit": "Structural acceptance permits independent review only; it does not make the data eligible, trusted, calibrated, or validated.",
+    "json_schema_path": "validation-data/acquisition/field-validation-owner-delivery-v1.schema.json",
+    "python_model": "avycore.validation.acquisition.FieldValidationOwnerDelivery",
+    "schema": "avycore-field-validation-owner-delivery-v1"
+  },
+  "eligibility_and_split_workflow": {
+    "adjudication_command": "python scripts/validation/adjudicate_field_validation_eligibility.py",
+    "ai_counts_as_independent_review": false,
+    "conflict_schema_path": "validation-data/acquisition/field-validation-eligibility-conflict-v1.schema.json",
+    "decision_schema_path": "validation-data/acquisition/field-validation-eligibility-decision-v1.schema.json",
+    "group_split_preregistration_path": "validation-data/acquisition/field-validation-group-split-preregistration-v1.json",
+    "minimum_independent_human_reviews_per_event": 2,
+    "predictions_authorized": false,
+    "real_event_assignments_exposed": false,
+    "review_schema_path": "validation-data/acquisition/field-validation-eligibility-review-v1.schema.json"
+  },
+  "forbidden_substitutions": [
+    "Do not estimate missing release thickness from crown height without measured direction and uncertainty.",
+    "Do not substitute a literature density prior for an event-specific owner measurement in this request.",
+    "Do not back-calculate release state or friction from the observed runout.",
+    "Do not treat a bare-earth DEM as an event snow surface without a quantitative, reviewed mismatch model.",
+    "Do not treat an imagery footprint, mapped positives, or non-reporting as a known-absence survey mask.",
+    "Do not digitize a paper figure when the original survey geometry exists.",
+    "Do not assign calibration or holdout membership in an owner delivery.",
+    "Do not replace an original licence/permission record with an informal citation or assumed public-data status."
+  ],
+  "frozen_at_utc": "2026-08-15T00:39:57Z",
+  "frozen_inputs": {
+    "protocol": {
+      "bytes": 6956,
+      "path": "validation-data/experiments/public-data-field-validation-v2.json",
+      "sha256": "91586bd87f057222268dacfb3651f5dc22c02cd8fc0a26e5cd98f8f7228c2cb9"
+    },
+    "public_source_audit": {
+      "bytes": 30889,
+      "path": "validation-data/candidates/public-validation-source-audit-v2.json",
+      "sha256": "a4c1ef834d0f1da97f43d939c17da692f355a054066fa28ea85dc5c37e4b66ae"
+    },
+    "strict_public_funnel": {
+      "bytes": 441703,
+      "path": "validation-data/candidates/public-event-strict-funnel-v5.json",
+      "sha256": "bf665aba57cf6167b19247a28a9a39e688b7e4105f7b4bbd87164200a2e038c1"
+    }
+  },
+  "normalized_artifact_sha256": "75c6ac8e3ebc05b7d6a957631ccc3ee3d3cd6d208b7a1bb87fa4b7cfd74c1403",
+  "owner_routes": [
+    {
+      "candidate_request": "All retainable dry dense-slab source events behind the Sovilla Monte Pizzac 18-event mass-balance study, GEODAR archive, and later Vallée de la Sionne records; preferably 24 or more candidates before QA attrition.",
+      "contact_verification": [
+        {
+          "basis": "Official SLF data-service page names data@slf.ch for data delivery questions and states the service's CC BY 4.0 terms.",
+          "url": "https://www.slf.ch/fr/services-et-produits/service-de-donnees-du-slf/"
+        }
+      ],
+      "contacts": [
+        "data@slf.ch"
+      ],
+      "contacts_verified_date_utc": "2026-08-15",
+      "owner_id": "wsl-slf",
+      "send_ready_message": {
+        "body": "Hello,\n\nI am requesting original field-observation files from WSL Institute for Snow and Avalanche Research SLF for a non-operational research validation of dry dense-slab avalanche runout. The prototype does not replace public avalanche guidance or field assessment, and its scores are relative indices, not probabilities. Please provide all retainable candidate events behind the Sovilla Monte Pizzac 18-event mass-balance study and compatible Vallée de la Sionne/GEODAR campaigns, preferably at least 24 candidates. Please do not select events based on agreement with any model.\n\nFor every candidate event, please include the original owner files and a manifest conforming to field-validation-owner-delivery-v1.schema.json. The required files are: (1) the permission/licence record; (2) UTC event-time and dry dense-slab classification evidence; (3) pre-event snow-surface DEM plus CRS, horizontal/vertical datum realization, epoch and transformation record; (4) independently observed release geometry; (5) event-specific slope-normal release-thickness measurement; (6) event-specific release-density measurement; (7) component-attributed terminal dense-flow deposit polygon or endpoint; and (8) survey-coverage and detection/occlusion masks that distinguish observed negatives from unknown areas. Each physical observation needs its method and quantified uncertainty. Missing values must remain missing: please do not infer, substitute, back-calculate, or derive any required observation from a model.\n\nOwner-specific originals requested:\n- original event-level Monte Pizzac and Vallée de la Sionne photogrammetric/field release and deposit geometries, not digitized figures\n- slope-normal crown/fracture-depth and release-density measurement sheets with sampling layout and uncertainty\n- pre-event snow surfaces, post-event surveys, control points, calibration and coordinate-operation records\n- survey footprints, occlusion/detection masks, terminal dense-flow attribution, event clocks and any clock-alignment residuals\n\nFor every delivered file, please give the unchanged relative path, byte count, lowercase SHA-256, stable source URI, copyright holder, licence name/URI, permitted use, redistribution status, and the path/hash of the licence or written-permission record covering that file. The official SLF data-service page states CC BY 4.0 for its service data; please confirm in writing whether that licence covers every underlying file in this special delivery and provide any additional or different terms file-by-file. The requested permission should explicitly cover private research storage, verification, format-preserving normalization, independent human review, deterministic calibration/holdout evaluation, publication of derived aggregate metrics/figures, reproducibility archiving, and whether original bytes may be redistributed. If redistribution is not permitted, we will keep originals private and publish only permitted metadata, hashes, and derived results.\n\nWe need at least 12 eligible events after two independent human reviews, spanning at least six paths, two mountains, and three storm cycles; 24–40 candidates are preferred because incomplete events will be excluded. Every event in the verified delivery cohort will be adjudicated, including exclusions, so none can be silently selected or omitted. Reviewer identity-verification records will be hashed; AI output never counts as a review, and disagreements require a separately verified third human. Please provide owner-proposed path/mountain/storm grouping evidence but no calibration or holdout labels. Holdout observations will remain sealed during calibration.\n\nThank you.",
+        "cc": [],
+        "subject": "Research data request: dry dense-slab release/runout field cohort",
+        "to": [
+          "data@slf.ch"
+        ]
+      },
+      "specific_originals": [
+        "Event-level photogrammetric and field release/deposit geometry rather than paper figures",
+        "Slope-normal crown/fracture-depth and release-density measurement sheets with uncertainty",
+        "Pre-event snow surfaces and post-event surveys with CRS/datum/calibration lineage",
+        "Survey footprints, occlusion/detection masks, terminal dense-flow attribution, and timing"
+      ]
+    },
+    {
+      "candidate_request": "All dry dense-slab events with paired snow pits, laser scans, release volume/geometry, terminal runout, and photogrammetry across the site's paths; preferably 24 or more candidates before QA attrition.",
+      "contact_verification": [
+        {
+          "basis": "Official INRAE monitoring portal directs snow-site data requests to Florence Naaim and Herve Bellot.",
+          "url": "https://monitoring-stations.ara.inrae.fr/"
+        },
+        {
+          "basis": "Official INRAE description identifies the Lautaret avalanche archive and measurements.",
+          "url": "https://www.inrae.fr/en/reports/understanding-avalanche-risk/multi-faceted-research"
+        }
+      ],
+      "contacts": [
+        "florence.naaim@inrae.fr",
+        "herve.bellot@inrae.fr"
+      ],
+      "contacts_verified_date_utc": "2026-08-15",
+      "owner_id": "inrae-lautaret",
+      "send_ready_message": {
+        "body": "Hello,\n\nI am requesting original field-observation files from INRAE/IGE Lautaret avalanche test site for a non-operational research validation of dry dense-slab avalanche runout. The prototype does not replace public avalanche guidance or field assessment, and its scores are relative indices, not probabilities. Please provide all dry dense-slab Lautaret events with paired snow pits, release-state surveys, pre/post laser products and terminal runout observations, preferably at least 24 candidates across the site's distinct paths and storm cycles. Please do not select events based on agreement with any model.\n\nFor every candidate event, please include the original owner files and a manifest conforming to field-validation-owner-delivery-v1.schema.json. The required files are: (1) the permission/licence record; (2) UTC event-time and dry dense-slab classification evidence; (3) pre-event snow-surface DEM plus CRS, horizontal/vertical datum realization, epoch and transformation record; (4) independently observed release geometry; (5) event-specific slope-normal release-thickness measurement; (6) event-specific release-density measurement; (7) component-attributed terminal dense-flow deposit polygon or endpoint; and (8) survey-coverage and detection/occlusion masks that distinguish observed negatives from unknown areas. Each physical observation needs its method and quantified uncertainty. Missing values must remain missing: please do not infer, substitute, back-calculate, or derive any required observation from a model.\n\nOwner-specific originals requested:\n- raw and processed pre/post-event laser scans, snow-surface DEMs, control networks and transformation/calibration records\n- original release, terminal deposit and endpoint mappings plus the complete searched survey domain\n- event snow-pit slope-normal release thickness and density sheets with uncertainty and sampling times\n- exact UTC trigger/release logs, path and storm-cycle evidence, imagery/photogrammetry products and detection/occlusion masks\n\nFor every delivered file, please give the unchanged relative path, byte count, lowercase SHA-256, stable source URI, copyright holder, licence name/URI, permitted use, redistribution status, and the path/hash of the licence or written-permission record covering that file. Please state the applicable INRAE licence for the underlying event files or include signed written research permission; a publication's licence will not be assumed to cover unpublished measurements. The requested permission should explicitly cover private research storage, verification, format-preserving normalization, independent human review, deterministic calibration/holdout evaluation, publication of derived aggregate metrics/figures, reproducibility archiving, and whether original bytes may be redistributed. If redistribution is not permitted, we will keep originals private and publish only permitted metadata, hashes, and derived results.\n\nWe need at least 12 eligible events after two independent human reviews, spanning at least six paths, two mountains, and three storm cycles; 24–40 candidates are preferred because incomplete events will be excluded. Every event in the verified delivery cohort will be adjudicated, including exclusions, so none can be silently selected or omitted. Reviewer identity-verification records will be hashed; AI output never counts as a review, and disagreements require a separately verified third human. Please provide owner-proposed path/mountain/storm grouping evidence but no calibration or holdout labels. Holdout observations will remain sealed during calibration.\n\nThank you.",
+        "cc": [],
+        "subject": "Research data request: dry dense-slab release/runout field cohort",
+        "to": [
+          "florence.naaim@inrae.fr",
+          "herve.bellot@inrae.fr"
+        ]
+      },
+      "specific_originals": [
+        "Raw and processed pre/post event laser scans plus transformation/control records",
+        "Original release and terminal/deposit mappings with survey coverage",
+        "Event snow-pit thickness/density measurements and their uncertainty",
+        "Exact UTC release records, path grouping, licence, and immutable file inventory"
+      ]
+    },
+    {
+      "candidate_request": "All strongest dry dense-slab candidates from the full-scale archive, including recent campaigns; preferably 24 or more before QA attrition.",
+      "contact_verification": [
+        {
+          "basis": "Official NGI Ryggfonn page names Heidi Hefre and Peter Gauer and describes the current instrumented archive.",
+          "url": "https://www.ngi.no/en/research-and-consulting/natural-hazards-container/avalanches-and-slides/avalanches-and-slush-flows/ryggfonn/"
+        }
+      ],
+      "contacts": [
+        "heidi.hefre@ngi.no",
+        "peter.gauer@ngi.no",
+        "ngi@ngi.no"
+      ],
+      "contacts_verified_date_utc": "2026-08-15",
+      "owner_id": "ngi-ryggfonn",
+      "send_ready_message": {
+        "body": "Hello,\n\nI am requesting original field-observation files from Norwegian Geotechnical Institute Ryggfonn programme for a non-operational research validation of dry dense-slab avalanche runout. The prototype does not replace public avalanche guidance or field assessment, and its scores are relative indices, not probabilities. Please provide the strongest complete dry dense-slab candidates from the full Ryggfonn archive, including the 2023/24 and 2024/25 campaigns, preferably 24 candidates before eligibility attrition. Please do not select events based on agreement with any model.\n\nFor every candidate event, please include the original owner files and a manifest conforming to field-validation-owner-delivery-v1.schema.json. The required files are: (1) the permission/licence record; (2) UTC event-time and dry dense-slab classification evidence; (3) pre-event snow-surface DEM plus CRS, horizontal/vertical datum realization, epoch and transformation record; (4) independently observed release geometry; (5) event-specific slope-normal release-thickness measurement; (6) event-specific release-density measurement; (7) component-attributed terminal dense-flow deposit polygon or endpoint; and (8) survey-coverage and detection/occlusion masks that distinguish observed negatives from unknown areas. Each physical observation needs its method and quantified uncertainty. Missing values must remain missing: please do not infer, substitute, back-calculate, or derive any required observation from a model.\n\nOwner-specific originals requested:\n- source GIS, pre-event laser snow surfaces, post-event deposit surveys and field notes behind report figures\n- release geometry, slope-normal release thickness, release density and their sampling/uncertainty records\n- survey footprints and known-absence/detection/occlusion masks with terminal dense-flow component attribution\n- raw radar, pressure and velocity files with sensor coordinates, calibration, clock synchronization, valid intervals and uncertainty\n\nFor every delivered file, please give the unchanged relative path, byte count, lowercase SHA-256, stable source URI, copyright holder, licence name/URI, permitted use, redistribution status, and the path/hash of the licence or written-permission record covering that file. The public annual reports do not establish reusable rights for the underlying measurements; please include the exact licence or written research permission covering every delivered source file. The requested permission should explicitly cover private research storage, verification, format-preserving normalization, independent human review, deterministic calibration/holdout evaluation, publication of derived aggregate metrics/figures, reproducibility archiving, and whether original bytes may be redistributed. If redistribution is not permitted, we will keep originals private and publish only permitted metadata, hashes, and derived results.\n\nWe need at least 12 eligible events after two independent human reviews, spanning at least six paths, two mountains, and three storm cycles; 24–40 candidates are preferred because incomplete events will be excluded. Every event in the verified delivery cohort will be adjudicated, including exclusions, so none can be silently selected or omitted. Reviewer identity-verification records will be hashed; AI output never counts as a review, and disagreements require a separately verified third human. Please provide owner-proposed path/mountain/storm grouping evidence but no calibration or holdout labels. Holdout observations will remain sealed during calibration.\n\nThank you.",
+        "cc": [
+          "ngi@ngi.no"
+        ],
+        "subject": "Research data request: dry dense-slab release/runout field cohort",
+        "to": [
+          "heidi.hefre@ngi.no",
+          "peter.gauer@ngi.no"
+        ]
+      },
+      "specific_originals": [
+        "Original release/deposit surveys and event-surface laser products",
+        "Survey coverage and known-absence semantics rather than report figures",
+        "Release thickness/density, uncertainty, radar/pressure calibration, and clocks",
+        "Reuse permission, original CRS/datum lineage, and per-file SHA-256"
+      ]
+    },
+    {
+      "candidate_request": "Every dry dense-slab event for which original release, snow-property, laser/GPS, and terminal-deposit records survive; do not preselect on model fit.",
+      "contact_verification": [
+        {
+          "basis": "Current official Universita di Torino profile for Michele Freppaz.",
+          "url": "https://unifind.unito.it/individual?uri=http%3A%2F%2Firises.unito.it%2Fresource%2Fperson%2F9997"
+        },
+        {
+          "basis": "Current official Politecnico di Torino profile for Monica Barbero.",
+          "url": "https://www.polito.it/personale?p=monica.barbero"
+        },
+        {
+          "basis": "Official institutional record for the five-event Seehore measurements paper.",
+          "url": "https://iris.polito.it/handle/11583/2765872"
+        }
+      ],
+      "contacts": [
+        "michele.freppaz@unito.it",
+        "monica.barbero@polito.it"
+      ],
+      "contacts_verified_date_utc": "2026-08-15",
+      "owner_id": "seehore-partners",
+      "send_ready_message": {
+        "body": "Hello,\n\nI am requesting original field-observation files from Universita di Torino / Politecnico di Torino Seehore partners for a non-operational research validation of dry dense-slab avalanche runout. The prototype does not replace public avalanche guidance or field assessment, and its scores are relative indices, not probabilities. Please provide every dry dense-slab Seehore event for which original release, snow-property, laser/GPS and terminal-deposit records survive; please do not limit the delivery to the five published impact events. Please do not select events based on agreement with any model.\n\nFor every candidate event, please include the original owner files and a manifest conforming to field-validation-owner-delivery-v1.schema.json. The required files are: (1) the permission/licence record; (2) UTC event-time and dry dense-slab classification evidence; (3) pre-event snow-surface DEM plus CRS, horizontal/vertical datum realization, epoch and transformation record; (4) independently observed release geometry; (5) event-specific slope-normal release-thickness measurement; (6) event-specific release-density measurement; (7) component-attributed terminal dense-flow deposit polygon or endpoint; and (8) survey-coverage and detection/occlusion masks that distinguish observed negatives from unknown areas. Each physical observation needs its method and quantified uncertainty. Missing values must remain missing: please do not infer, substitute, back-calculate, or derive any required observation from a model.\n\nOwner-specific originals requested:\n- original GPS/RTK release and terminal-deposit perimeters, benchmarks and transformations\n- pre/post laser scans, event snow-surface products, raw imagery and instrument calibration/accuracy records\n- normal-to-slope release depth and event-specific release density with sampling locations and uncertainty\n- UTC event/trigger logs, pressure records, survey domain and detection/occlusion masks with dense-flow attribution\n\nFor every delivered file, please give the unchanged relative path, byte count, lowercase SHA-256, stable source URI, copyright holder, licence name/URI, permitted use, redistribution status, and the path/hash of the licence or written-permission record covering that file. The open-access article licence does not by itself license the underlying event measurements; please identify the owner of each file and provide an applicable data licence or written research permission. The requested permission should explicitly cover private research storage, verification, format-preserving normalization, independent human review, deterministic calibration/holdout evaluation, publication of derived aggregate metrics/figures, reproducibility archiving, and whether original bytes may be redistributed. If redistribution is not permitted, we will keep originals private and publish only permitted metadata, hashes, and derived results.\n\nWe need at least 12 eligible events after two independent human reviews, spanning at least six paths, two mountains, and three storm cycles; 24–40 candidates are preferred because incomplete events will be excluded. Every event in the verified delivery cohort will be adjudicated, including exclusions, so none can be silently selected or omitted. Reviewer identity-verification records will be hashed; AI output never counts as a review, and disagreements require a separately verified third human. Please provide owner-proposed path/mountain/storm grouping evidence but no calibration or holdout labels. Holdout observations will remain sealed during calibration.\n\nThank you.",
+        "cc": [],
+        "subject": "Research data request: dry dense-slab release/runout field cohort",
+        "to": [
+          "michele.freppaz@unito.it",
+          "monica.barbero@polito.it"
+        ]
+      },
+      "specific_originals": [
+        "GPS/RTK release and deposit perimeters, benchmarks and transformations",
+        "Pre/post laser scans, snow-surface products, and calibration/accuracy records",
+        "Normal-to-slope release depth and event release density with uncertainty",
+        "Event timing, survey domain/detection masks, licence, and hashes"
+      ]
+    },
+    {
+      "candidate_request": "Original, pre-conversion records for AvaFrameData events and additional fully documented events on independent mountains; preferably 24 or more candidates before QA attrition.",
+      "contact_verification": [
+        {
+          "basis": "Current official BFW Snow & Avalanches directory lists Felix Oesterle, Anna Wirbel, and Frank Perzl.",
+          "url": "https://www.bfw.gv.at/en/departments-en/natural-hazards/snow-avalanches/"
+        },
+        {
+          "basis": "Official WLV avalanche centre lists schneelawine@die-wildbach.at and describes its documented-event data pool.",
+          "url": "https://www.bmluk.gv.at/themen/wald/wald-und-naturgefahren/wildbach--und-lawinenverbauung/organisation-kontakt/fz_geologie_lawinen.html"
+        }
+      ],
+      "contacts": [
+        "felix.oesterle@bfw.gv.at",
+        "anna.wirbel@bfw.gv.at",
+        "frank.perzl@bfw.gv.at",
+        "schneelawine@die-wildbach.at"
+      ],
+      "contacts_verified_date_utc": "2026-08-15",
+      "owner_id": "bfw-wlv-avaframedata",
+      "send_ready_message": {
+        "body": "Hello,\n\nI am requesting original field-observation files from BFW Snow & Avalanches and WLV Fachbereich Lawinen for a non-operational research validation of dry dense-slab avalanche runout. The prototype does not replace public avalanche guidance or field assessment, and its scores are relative indices, not probabilities. Please provide original pre-conversion records for the six AvaFrameData v1.0 events and additional complete events from independent mountains, preferably 24 candidates before review attrition. Please do not select events based on agreement with any model.\n\nFor every candidate event, please include the original owner files and a manifest conforming to field-validation-owner-delivery-v1.schema.json. The required files are: (1) the permission/licence record; (2) UTC event-time and dry dense-slab classification evidence; (3) pre-event snow-surface DEM plus CRS, horizontal/vertical datum realization, epoch and transformation record; (4) independently observed release geometry; (5) event-specific slope-normal release-thickness measurement; (6) event-specific release-density measurement; (7) component-attributed terminal dense-flow deposit polygon or endpoint; and (8) survey-coverage and detection/occlusion masks that distinguish observed negatives from unknown areas. Each physical observation needs its method and quantified uncertainty. Missing values must remain missing: please do not infer, substitute, back-calculate, or derive any required observation from a model.\n\nOwner-specific originals requested:\n- source GIS and exact CRS operations, especially the Filisur EPSG:21781-to-EPSG:2056 operation\n- original WLV event records 6534 and 6591, Eiskar drone/laser products, and Arzl UAS imagery, point cloud, orthophoto, surface model and deposit geometry\n- event-specific slope-normal release thickness, density, uncertainty, UTC timing and pre-event snow surfaces\n- survey known-absence domains, detection/occlusion masks and source-to-AvaFrameData derivation records\n\nFor every delivered file, please give the unchanged relative path, byte count, lowercase SHA-256, stable source URI, copyright holder, licence name/URI, permitted use, redistribution status, and the path/hash of the licence or written-permission record covering that file. The public AvaFrameData record states CC BY 4.0; please confirm whether that licence covers each original pre-conversion BFW/WLV source file and supply different owner permissions where it does not. The requested permission should explicitly cover private research storage, verification, format-preserving normalization, independent human review, deterministic calibration/holdout evaluation, publication of derived aggregate metrics/figures, reproducibility archiving, and whether original bytes may be redistributed. If redistribution is not permitted, we will keep originals private and publish only permitted metadata, hashes, and derived results.\n\nWe need at least 12 eligible events after two independent human reviews, spanning at least six paths, two mountains, and three storm cycles; 24–40 candidates are preferred because incomplete events will be excluded. Every event in the verified delivery cohort will be adjudicated, including exclusions, so none can be silently selected or omitted. Reviewer identity-verification records will be hashed; AI output never counts as a review, and disagreements require a separately verified third human. Please provide owner-proposed path/mountain/storm grouping evidence but no calibration or holdout labels. Holdout observations will remain sealed during calibration.\n\nThank you.",
+        "cc": [
+          "anna.wirbel@bfw.gv.at",
+          "frank.perzl@bfw.gv.at"
+        ],
+        "subject": "Research data request: dry dense-slab release/runout field cohort",
+        "to": [
+          "felix.oesterle@bfw.gv.at",
+          "schneelawine@die-wildbach.at"
+        ]
+      },
+      "specific_originals": [
+        "Source GIS and exact CRS operations, especially Filisur EPSG:21781 to EPSG:2056",
+        "Original WLV event records 6534 and 6591 and Eiskar/Arzl UAS-laser products",
+        "Event-specific thickness, density, uncertainty and survey known-absence domain",
+        "Pre-event snow surface, timing, permission, stable version, and file hashes"
+      ]
+    },
+    {
+      "candidate_request": "A de-identified research cohort across independent named paths and storm cycles, preferably 24-40 candidates before QA attrition.",
+      "contact_verification": [
+        {
+          "basis": "Current official Glacier National Park contact page lists mrg.information@pc.gc.ca and the Revelstoke office.",
+          "url": "https://www.parks.canada.ca/pn-np/bc/glacier/info/contact"
+        },
+        {
+          "basis": "Official Parks Canada page describes the Rogers Pass highway programme and 135 avalanche paths.",
+          "url": "https://parks.canada.ca/pn-np/mtn/securiteenmontagne-mountainsafety/avalanche/routes-highways.aspx"
+        }
+      ],
+      "contacts": [
+        "mrg.information@pc.gc.ca"
+      ],
+      "contacts_verified_date_utc": "2026-08-15",
+      "owner_id": "parks-canada-rogers-pass",
+      "send_ready_message": {
+        "body": "Hello,\n\nI am requesting original field-observation files from Parks Canada Glacier National Park / Rogers Pass avalanche programme for a non-operational research validation of dry dense-slab avalanche runout. The prototype does not replace public avalanche guidance or field assessment, and its scores are relative indices, not probabilities. Please refer this request to the Rogers Pass avalanche-program data steward and provide a de-identified cohort across independent named paths and storm cycles, preferably 24–40 candidates. Please do not select events based on agreement with any model.\n\nFor every candidate event, please include the original owner files and a manifest conforming to field-validation-owner-delivery-v1.schema.json. The required files are: (1) the permission/licence record; (2) UTC event-time and dry dense-slab classification evidence; (3) pre-event snow-surface DEM plus CRS, horizontal/vertical datum realization, epoch and transformation record; (4) independently observed release geometry; (5) event-specific slope-normal release-thickness measurement; (6) event-specific release-density measurement; (7) component-attributed terminal dense-flow deposit polygon or endpoint; and (8) survey-coverage and detection/occlusion masks that distinguish observed negatives from unknown areas. Each physical observation needs its method and quantified uncertainty. Missing values must remain missing: please do not infer, substitute, back-calculate, or derive any required observation from a model.\n\nOwner-specific originals requested:\n- original event-level field release/deposit polygons or surveyed terminal endpoints and explicit searched survey coverage\n- pre-event snow-surface terrain, slope-normal release thickness, release density, UTC control/event timing and uncertainty\n- path, mountain and storm-cycle grouping evidence without personal information\n- detection/occlusion masks, observation methods, control records and immutable source-file inventory\n\nFor every delivered file, please give the unchanged relative path, byte count, lowercase SHA-256, stable source URI, copyright holder, licence name/URI, permitted use, redistribution status, and the path/hash of the licence or written-permission record covering that file. Please provide the applicable Government of Canada/Parks Canada data licence or written research permission for these non-public operational records, including any confidentiality, attribution and redistribution restrictions. The requested permission should explicitly cover private research storage, verification, format-preserving normalization, independent human review, deterministic calibration/holdout evaluation, publication of derived aggregate metrics/figures, reproducibility archiving, and whether original bytes may be redistributed. If redistribution is not permitted, we will keep originals private and publish only permitted metadata, hashes, and derived results.\n\nWe need at least 12 eligible events after two independent human reviews, spanning at least six paths, two mountains, and three storm cycles; 24–40 candidates are preferred because incomplete events will be excluded. Every event in the verified delivery cohort will be adjudicated, including exclusions, so none can be silently selected or omitted. Reviewer identity-verification records will be hashed; AI output never counts as a review, and disagreements require a separately verified third human. Please provide owner-proposed path/mountain/storm grouping evidence but no calibration or holdout labels. Holdout observations will remain sealed during calibration.\n\nThank you.",
+        "cc": [],
+        "subject": "Research data request: dry dense-slab release/runout field cohort",
+        "to": [
+          "mrg.information@pc.gc.ca"
+        ]
+      },
+      "specific_originals": [
+        "Field release/deposit/endpoint surveys and explicit survey coverage",
+        "Event snow-surface terrain, release thickness/density, timing and uncertainty",
+        "Path/mountain/storm grouping evidence without personal information",
+        "Research reuse terms and immutable file inventory"
+      ]
+    }
+  ],
+  "preregistered_metrics_after_a_complete_frozen_split": {
+    "execution_status": "not_run_no_eligible_frozen_cohort",
+    "false_negative_area_m2": "count(observed_positive and predicted_negative and valid) * cell_area_m2",
+    "false_positive_area_m2": "count(predicted_positive and observed_negative and valid) * cell_area_m2",
+    "intersection_over_union": "intersection_cell_count / union_cell_count on the common valid evaluation mask",
+    "terminal_endpoint_euclidean_error_m": "sqrt((predicted_x-observed_x)^2 + (predicted_y-observed_y)^2)"
+  },
+  "prototype_disclaimer": "Experimental research prototype only. It does not replace Avalanche Canada guidance or field assessment. Model scores are relative indices, not probabilities.",
+  "public_search_claim_boundary": "The following primary URLs support discovery and owner-holdings triage only. No new source payload was downloaded or promoted to immutable validation evidence, and publication descriptions do not prove that the required event files, licence, masks, or uncertainties are publicly available.",
+  "request_id": "dry-dense-slab-field-validation-owner-request-v1",
+  "request_message": {
+    "blindness_request": "Do not include calibration/holdout labels. We will freeze grouped assignments only after independent eligibility review and before generating any predictions.",
+    "licence_request": "Please identify the owner, licence or written research permission, citation, stable version/URI, and original byte count and SHA-256 for every delivered file.",
+    "opening": "We are requesting original field-observation data for a non-operational, experimental avalanche-model validation study. We will not treat model scores as probabilities or replace public avalanche guidance or field assessment.",
+    "scope": "Please provide all candidate events meeting, or potentially meeting, the attached per-event delivery contract. We need at least 12 eligible events after independent review across six paths, two mountains and three storm cycles, so 24-40 candidates are preferred. Please do not select events based on model fit.",
+    "subject": "Research data request: dry dense-slab avalanche release/runout validation cohort"
+  },
+  "required_per_event_delivery": [
+    {
+      "item": "licence_and_immutable_identity",
+      "requirement": "Original bytes for every source file, byte count, lowercase SHA-256, stable source URI, copyright holder, licence name/URI, explicit permitted scientific use, redistribution status, and a path/hash binding to the immutable licence or written-permission record."
+    },
+    {
+      "item": "event_identity_and_time",
+      "requirement": "Unique event, path, mountain, and storm-cycle IDs; dry dense-slab classification evidence; grouping evidence; UTC start/end and confidence evidence. All are direct owner observations or records, not model output."
+    },
+    {
+      "item": "event_surface_dem",
+      "requirement": "Pre-event snow-surface DEM valid for the event, acquisition UTC, original/delivery CRS, horizontal and vertical datum realization/epoch, height type, metre units, axis order, immutable transformation-lineage record, and quantified horizontal/vertical uncertainty."
+    },
+    {
+      "item": "observed_release_geometry",
+      "requirement": "Original independent release geometry, observation time and method, CRS lineage, and quantified horizontal uncertainty; no model-derived geometry."
+    },
+    {
+      "item": "normal_to_slope_release_thickness",
+      "requirement": "Event-specific measurement explicitly normal to slope, with estimate, lower/upper uncertainty bounds, confidence level, method, time, and source."
+    },
+    {
+      "item": "release_density",
+      "requirement": "Event-specific kg/m3 measurement with estimate, lower/upper uncertainty bounds, confidence level, method, time, and source."
+    },
+    {
+      "item": "terminal_dense_flow_observation",
+      "requirement": "Original terminal deposit polygon or endpoint, explicit dense-flow and terminal attribution, observation method/time, CRS lineage, and quantified horizontal uncertainty."
+    },
+    {
+      "item": "survey_coverage_and_detection",
+      "requirement": "Coverage geometry plus detection/occlusion mask; explicit complete-search method, mapping UTC, positional uncertainty, detection limit, units and confidence; non-detections inside valid coverage are observed negatives, while outside/masked cells remain unknown."
+    },
+    {
+      "item": "direct_observation_declaration",
+      "requirement": "Every required physical observation explicitly declares direct owner origin, availability of the original measurement, measurement-preserving processing, independence from prediction, and false for missing-value supply, inference, substitution, and model derivation."
+    }
+  ],
+  "schema": "avycore-field-validation-owner-request-v1",
+  "status": "no_eligible_public_cohort_owner_request_ready"
+}
