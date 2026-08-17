@@ -508,6 +508,45 @@ def test_particle_runout_replays_exactly_with_a_seed_and_reports_aoi_escape() ->
     assert any("ran off the edge of the study area" in warning for warning in first.warnings)
 
 
+def test_runout_component_modes_make_the_particle_energy_line_an_explicit_ablation() -> None:
+    terrain, zone = _planar_runout_case(
+        shape=(100, 21), grade_deg=25.0, one_cell_zone=True
+    )
+    config = _runout_config(particles=16, max_steps=500, jitter=0.0)
+
+    def simulate(engine_mode: runout.RunoutEngineMode) -> runout.RunoutResult:
+        return runout.get_engine_by_mode(engine_mode).simulate(
+            zone=zone,
+            grid=terrain.grid,
+            elevation=terrain.layer("elevation"),
+            slope=terrain.layer("slope"),
+            forest_mask=terrain.layer("forest_mask"),
+            plan_curvature=terrain.layer("plan_curvature"),
+            config=config,
+            release_size="small",
+            seed=1234,
+        )
+
+    alpha_only = simulate("alpha_only")
+    dynamics_only = simulate("dynamics_only")
+    hybrid = simulate("hybrid")
+
+    assert alpha_only.mode == "alpha_only"
+    assert alpha_only.metadata["engine_mode"] == "alpha_only"
+    assert dynamics_only.mode == "dynamics_only"
+    assert dynamics_only.metadata["engine_mode"] == "dynamics_only"
+    assert hybrid.mode == "hybrid"
+    assert hybrid.metadata["engine_mode"] == "hybrid"
+
+    assert dynamics_only.metadata["alpha_angle_expected_deg"] is None
+    assert dynamics_only.metadata["alpha_envelope_deg"] is None
+    assert dynamics_only.metadata["alpha_source"] == "not_used_dynamics_only"
+    assert dynamics_only.metadata["particles_stopped_on_energy_line"] == 0
+    assert hybrid.metadata["particles_stopped_on_energy_line"] > 0
+    assert dynamics_only.metadata["runout_length_m"] > hybrid.metadata["runout_length_m"]
+    assert "current travel direction" in dynamics_only.metadata["position_integration"]
+
+
 def test_particle_density_accumulates_every_duplicate_particle_visit() -> None:
     """Ensemble density counts particles, not merely unique occupied cells."""
     terrain, zone = _planar_runout_case(
