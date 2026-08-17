@@ -498,6 +498,6 @@ source packets are released for external annotation, but zero has an independent
 human review or accepted component. The immediate next actions are to obtain the
 missing public primary event-surface/release-state evidence and complete the two-
 reviewer procedure in `public-event-human-review-procedure.md`. Do not partition
-the cohort, integrate or calibrate AvaFrame, or open holdout predictions unless
+the cohort, calibrate AvaFrame against field events or promote it into serving behaviour, or open holdout predictions unless
 at least 12 events across six independent paths, two mountains, and three storms
 subsequently pass every frozen evidence gate.
