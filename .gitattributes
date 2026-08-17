@@ -1,0 +1,5 @@
+mount-hosmer-digital-twin/tests/fixtures/conditions/**/*.csv text eol=lf
+mount-hosmer-digital-twin/validation-data/**/*.geojson text eol=lf
+mount-hosmer-digital-twin/validation-data/**/*.json text eol=lf
+mount-hosmer-digital-twin/packages/avycore/src/avycore/hazard/runout.py text eol=lf
+mount-hosmer-digital-twin/scripts/validation/run_qualitative_alpha_experiment.py text eol=lf

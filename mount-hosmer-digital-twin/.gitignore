@@ -20,3 +20,11 @@ runtime/logs/*.log
 # Local pytest run artifacts (-o cache_dir=... / --basetemp=...).
 .test-cache/
 .test-tmp/
+
+# Immutable public-validation acquisition cache. Checked-in manifests/scripts
+# carry hashes and lineage; raw external payloads stay outside DATA/ and runtime/.
+.validation-cache/
+
+# Scratch working area for source-document renders during manual review. Nothing
+# here carries lineage, so it is never evidence and never an input to a script.
+tmp/
