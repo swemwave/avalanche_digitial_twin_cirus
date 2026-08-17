@@ -96,17 +96,17 @@ class Settings(BaseSettings):
                     warnings.append(
                         f"Source data root is missing the '{required}/' folder: {self.data_root}"
                     )
+        if self.runtime_root == self.data_root or self.runtime_root.is_relative_to(self.data_root):
+            raise ConfigurationError(
+                f"The runtime root ({self.runtime_root}) must not live inside the source data "
+                f"root ({self.data_root}). Source data is strictly read-only."
+            )
         try:
             self.runtime_root.mkdir(parents=True, exist_ok=True)
         except OSError as exc:
             raise ConfigurationError(
                 f"Cannot create the runtime directory {self.runtime_root}: {exc}"
             ) from exc
-        if self.runtime_root == self.data_root or self.runtime_root.is_relative_to(self.data_root):
-            raise ConfigurationError(
-                f"The runtime root ({self.runtime_root}) must not live inside the source data "
-                f"root ({self.data_root}). Source data is strictly read-only."
-            )
         return warnings
 
 

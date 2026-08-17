@@ -33,14 +33,23 @@ import numpy as np
 from app.core.settings import Settings
 from app.processing.harmonization.grids import NODATA, AnalysisGrid
 from app.processing.harmonization.raster_io import Semantics, read_aligned
-from app.processing.mountain_pack import MountainPackError, load_mountain_pack
+from app.processing.mountain_pack import (
+    MountainPack,
+    MountainPackError,
+    PackAsset,
+    load_mountain_pack,
+)
 
 #: Codes written into the provenance raster. Ascending code = descending
 #: preference, so "lowest code wins" is the merge rule.
 SOURCE_CODES = {
     "lidar_2022": 1,
     "lidar_2016": 2,
+    # Compatibility name for the default Mount Hosmer pack. New packs use the
+    # provider-neutral name; both intentionally encode the same fallback tier.
     "copernicus_glo30": 3,
+    "fallback_dem": 3,
+    "single_raster_dem": 4,
     "none": 0,
 }
 
@@ -48,10 +57,11 @@ SOURCE_LABELS = {
     1: "BC LiDAR 1 m, 2022 acquisition",
     2: "BC LiDAR 1 m, 2016 acquisition",
     3: "Copernicus GLO-30 30 m (no LiDAR coverage at this pixel)",
+    4: "Pack-declared single-raster primary DEM",
     0: "No elevation data",
 }
 
-SOURCE_RESOLUTION_M = {1: 1.0, 2: 1.0, 3: 30.0, 0: None}
+SOURCE_RESOLUTION_M = {1: 1.0, 2: 1.0, 3: 30.0, 4: None, 0: None}
 
 YEAR_RE = re.compile(r"_(\d{4})(?:_dsm)?\.tif$", re.IGNORECASE)
 
@@ -65,18 +75,46 @@ class TerrainModel:
     grid: AnalysisGrid
     source_files: list[Path] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
+    source_labels: dict[int, str] = field(default_factory=lambda: dict(SOURCE_LABELS))
+    source_resolutions_m: dict[int, float | None] = field(
+        default_factory=lambda: dict(SOURCE_RESOLUTION_M)
+    )
+    lidar_codes: frozenset[int] | None = field(
+        default_factory=lambda: frozenset(
+            {SOURCE_CODES["lidar_2022"], SOURCE_CODES["lidar_2016"]}
+        )
+    )
 
     @property
     def coverage(self) -> dict[str, float]:
         total = float(self.provenance.size)
+        if self.lidar_codes is not None:
+            named_codes = {
+                "lidar_2022": SOURCE_CODES["lidar_2022"],
+                "lidar_2016": SOURCE_CODES["lidar_2016"],
+                "copernicus_glo30": SOURCE_CODES["fallback_dem"],
+                "none": SOURCE_CODES["none"],
+            }
+        else:
+            named_codes = {
+                "single_raster_dem": SOURCE_CODES["single_raster_dem"],
+                **(
+                    {"fallback_dem": SOURCE_CODES["fallback_dem"]}
+                    if SOURCE_CODES["fallback_dem"] in self.source_labels
+                    else {}
+                ),
+                "none": SOURCE_CODES["none"],
+            }
         return {
-            label: round(float((self.provenance == code).sum()) / total, 6)
-            for label, code in SOURCE_CODES.items()
+            name: round(float((self.provenance == code).sum()) / total, 6)
+            for name, code in named_codes.items()
         }
 
     @property
-    def lidar_fraction(self) -> float:
-        lidar = np.isin(self.provenance, [SOURCE_CODES["lidar_2022"], SOURCE_CODES["lidar_2016"]])
+    def lidar_fraction(self) -> float | None:
+        if self.lidar_codes is None:
+            return None
+        lidar = np.isin(self.provenance, tuple(self.lidar_codes))
         return round(float(lidar.sum()) / float(self.provenance.size), 6)
 
     @property
@@ -93,7 +131,10 @@ class TerrainModel:
         valid = self.provenance[self.provenance != 0]
         if valid.size == 0:
             return None
-        resolutions = np.array([SOURCE_RESOLUTION_M[int(code)] for code in valid], dtype="float64")
+        raw_resolutions = [self.source_resolutions_m.get(int(code)) for code in valid]
+        if any(value is None for value in raw_resolutions):
+            return None
+        resolutions = np.asarray(raw_resolutions, dtype="float64")
         return round(float(resolutions.mean()), 3)
 
     def describe(self) -> dict[str, object]:
@@ -101,10 +142,13 @@ class TerrainModel:
             "grid": self.grid.describe(),
             "coverage_by_source": self.coverage,
             "coverage_by_source_label": {
-                SOURCE_LABELS[code]: round(
+                self.source_labels[code]: round(
                     float((self.provenance == code).sum()) / float(self.provenance.size), 6
                 )
                 for code in sorted(set(int(value) for value in np.unique(self.provenance)))
+            },
+            "source_codes": {
+                str(code): label for code, label in sorted(self.source_labels.items())
             },
             "lidar_fraction": self.lidar_fraction,
             "valid_fraction": self.valid_fraction,
@@ -183,41 +227,65 @@ def _mosaic_lidar(
                 used.append(path)
 
 
-def _fill_from_copernicus(
+def _asset_source_label(asset: PackAsset, *, role: str) -> str:
+    """Name a provenance code from the pack instead of assuming one provider."""
+    resolution = (
+        f"{asset.native_resolution_m:g} m"
+        if asset.native_resolution_m is not None
+        else "unknown resolution"
+    )
+    return f"{asset.source.provider}: {asset.source.citation} ({role}, {resolution})"
+
+
+def _fill_from_fallback(
     settings: Settings,
+    pack: MountainPack,
     grid: AnalysisGrid,
     elevation: np.ndarray,
     provenance: np.ndarray,
     warnings: list[str],
     used: list[Path],
-) -> None:
-    pack, _ = load_mountain_pack(settings)
-    fallback = pack.assets["elevation_fallback"]
-    if fallback.adapter != "single_raster":
-        raise MountainPackError("elevation_fallback currently requires adapter='single_raster'.")
+) -> tuple[str | None, float | None]:
+    fallback = pack.assets.get("elevation_fallback")
+    if fallback is None:
+        remaining = int((provenance == 0).sum())
+        if remaining:
+            warnings.append(
+                f"{remaining} pixels ({remaining / provenance.size:.2%} of the AOI) are outside "
+                "the primary DEM coverage and no fallback DEM is declared; those pixels remain "
+                "NoData."
+            )
+        return None, None
     path = pack.asset_path(settings.data_root, "elevation_fallback")
     remaining = int((provenance == 0).sum())
     if remaining == 0:
-        return
+        return _asset_source_label(fallback, role="fallback DEM"), fallback.native_resolution_m
     if not path.exists():
         warnings.append(
-            f"{remaining} pixels have no LiDAR coverage and the Copernicus fallback DEM is "
-            f"missing; those pixels remain NoData."
+            f"{remaining} pixels are outside the primary DEM coverage and the declared fallback "
+            f"DEM is missing; those pixels remain NoData."
         )
-        return
-    # Upsampling 30 m to a 5 m grid does not create 5 m information. It is
-    # bilinear interpolation and is tagged as such in the provenance raster, so
-    # downstream confidence scoring can discount these pixels.
+        return _asset_source_label(fallback, role="fallback DEM"), fallback.native_resolution_m
+    # Upsampling a coarse source to the analysis grid does not create finer
+    # information. It is bilinear interpolation and carries its own provenance
+    # code so downstream reporting can retain that distinction.
     coarse = read_aligned(path, grid, Semantics.CONTINUOUS)
-    _merge(elevation, provenance, coarse, SOURCE_CODES["copernicus_glo30"])
+    _merge(elevation, provenance, coarse, SOURCE_CODES["fallback_dem"])
     used.append(path)
     filled = remaining - int((provenance == 0).sum())
     if filled:
+        source_resolution = (
+            f"{fallback.native_resolution_m:g} m"
+            if fallback.native_resolution_m is not None
+            else "unknown-resolution"
+        )
         warnings.append(
-            f"{filled} pixels ({filled / provenance.size:.2%} of the AOI) had no LiDAR coverage "
-            f"and were filled from the 30 m Copernicus DEM, then interpolated to the "
+            f"{filled} pixels ({filled / provenance.size:.2%} of the AOI) were outside the "
+            f"primary DEM coverage and filled from the declared {source_resolution} fallback "
+            f"DEM, then interpolated to the "
             f"{grid.resolution_m:g} m grid. Terrain derivatives there are less reliable."
         )
+    return _asset_source_label(fallback, role="fallback DEM"), fallback.native_resolution_m
 
 
 def build_dem(settings: Settings, grid: AnalysisGrid) -> TerrainModel:
@@ -228,22 +296,73 @@ def build_dem(settings: Settings, grid: AnalysisGrid) -> TerrainModel:
     used: list[Path] = []
 
     pack, _ = load_mountain_pack(settings)
-    primary = pack.assets["elevation_lidar"]
-    if primary.adapter != "geobc_lidar_year_tiles":
-        raise MountainPackError(
-            "elevation_lidar currently requires adapter='geobc_lidar_year_tiles'."
+    uses_lidar_tiles = "elevation_lidar" in pack.assets
+    if uses_lidar_tiles:
+        source_labels = {
+            SOURCE_CODES["none"]: SOURCE_LABELS[SOURCE_CODES["none"]],
+            SOURCE_CODES["lidar_2022"]: SOURCE_LABELS[SOURCE_CODES["lidar_2022"]],
+            SOURCE_CODES["lidar_2016"]: SOURCE_LABELS[SOURCE_CODES["lidar_2016"]],
+        }
+        source_resolutions_m = {
+            SOURCE_CODES["none"]: None,
+            SOURCE_CODES["lidar_2022"]: SOURCE_RESOLUTION_M[SOURCE_CODES["lidar_2022"]],
+            SOURCE_CODES["lidar_2016"]: SOURCE_RESOLUTION_M[SOURCE_CODES["lidar_2016"]],
+        }
+    else:
+        source_labels = {SOURCE_CODES["none"]: SOURCE_LABELS[SOURCE_CODES["none"]]}
+        source_resolutions_m = {SOURCE_CODES["none"]: None}
+
+    if uses_lidar_tiles:
+        folder = pack.asset_path(settings.data_root, "elevation_lidar")
+        _mosaic_lidar(folder, grid, elevation, provenance, warnings, used)
+    else:
+        primary = pack.assets["elevation_primary"]
+        path = pack.asset_path(settings.data_root, "elevation_primary")
+        if path.exists():
+            raster = read_aligned(path, grid, Semantics.CONTINUOUS)
+            before = int((provenance == 0).sum())
+            _merge(
+                elevation,
+                provenance,
+                raster,
+                SOURCE_CODES["single_raster_dem"],
+            )
+            if int((provenance == 0).sum()) < before:
+                used.append(path)
+        source_labels[SOURCE_CODES["single_raster_dem"]] = _asset_source_label(
+            primary, role="primary DEM"
         )
-    folder = pack.asset_path(settings.data_root, "elevation_lidar")
-    _mosaic_lidar(folder, grid, elevation, provenance, warnings, used)
-    _fill_from_copernicus(settings, grid, elevation, provenance, warnings, used)
+        source_resolutions_m[SOURCE_CODES["single_raster_dem"]] = (
+            primary.native_resolution_m
+        )
+
+    fallback_label, fallback_resolution = _fill_from_fallback(
+        settings, pack, grid, elevation, provenance, warnings, used
+    )
+    if fallback_label is not None:
+        source_labels[SOURCE_CODES["fallback_dem"]] = fallback_label
+        source_resolutions_m[SOURCE_CODES["fallback_dem"]] = fallback_resolution
 
     masked = np.ma.array(elevation, mask=(provenance == 0))
-    model = TerrainModel(masked, provenance, grid, used, warnings)
+    model = TerrainModel(
+        elevation=masked,
+        provenance=provenance,
+        grid=grid,
+        source_files=used,
+        warnings=warnings,
+        source_labels=source_labels,
+        source_resolutions_m=source_resolutions_m,
+        lidar_codes=(
+            frozenset({SOURCE_CODES["lidar_2022"], SOURCE_CODES["lidar_2016"]})
+            if uses_lidar_tiles
+            else None
+        ),
+    )
 
-    if model.lidar_fraction < 0.5:
+    if uses_lidar_tiles and model.lidar_fraction < 0.5:
         warnings.append(
             f"Only {model.lidar_fraction:.1%} of the AOI is backed by LiDAR. Terrain derivatives "
-            f"are dominated by the 30 m DEM and should be treated as coarse."
+            "are dominated by the fallback DEM and should be treated as coarse."
         )
     return model
 

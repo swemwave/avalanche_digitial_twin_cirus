@@ -7,7 +7,8 @@ it loads the ``.npy`` layers with plain numpy and serves the static PNG tiles.
 That is the whole point of the bake -- it takes runtime's ``DATA\`` dependency,
 and its dependency on rasterio/pyproj/GDAL, to zero.
 
-Inputs -- the allow-list from ``docs/data-footprint.md`` and *nothing else*:
+Default Mount Hosmer inputs -- the pack-bound allow-list from
+``docs/data-footprint.md`` and *nothing else*:
 
     metadata/grid_and_aoi.json            analysis grid + CRS + fixed extent
     metadata/mount_hosmer_aoi.geojson     AOI polygon
@@ -25,6 +26,10 @@ to bake a visual true-colour surface; no satellite value enters the risk model.
 The OpenStreetMap extract is exposure: it never enters the release model and acts
 only as the consequence term of the composite hazard index.
 
+Alternate mountains use their own explicit Mountain Pack plus read-only data root.
+The generic ``elevation_primary``/``single_raster`` route reads one declared DEM;
+provider-specific tiled layouts require a reviewed adapter.
+
 Outputs -- all under ``runtime/baked/`` (invariant I1: never ``DATA\``):
 
     runtime/baked/tiles/{z}/{x}/{y}.png   terrain-RGB tiles for the 3D MapLibre mesh
@@ -39,6 +44,8 @@ Run it with::
 
     python -m app.bake            # from the app root (or backend/)
     python -m app.bake --force    # ignore an existing bake and rebuild
+    python -m app.bake --pack path/to/mountain.pack.json \
+        --data-root path/to/read-only-sources --runtime-root runtime/mountains/example
 
 This module imports rasterio, pyproj and PIL. That is deliberate and permitted:
 ``bake.py`` is a **bake-time** tool. The runtime service must never import it.
@@ -83,7 +90,7 @@ from app.processing.mountain_pack import load_mountain_pack, validate_declared_s
 #:   plan_curvature      runout gully friction; convergence
 #:   general_curvature   risk convex-curvature term (slab tension)
 #:   forest_mask         risk forest damping; runout forest friction
-#:   terrain_source      DEM source code (2022 LiDAR / 2016 LiDAR / Copernicus)
+#:   terrain_source      pack-bound DEM source code (provider lineage in meta.json)
 #:   forest_source       canopy classification source (LiDAR / WorldCover)
 #:
 #: Each is stored as float32 with NaN in masked cells; the runtime rebuilds the
@@ -455,7 +462,7 @@ def bake(settings: Settings | None = None, *, force: bool = False) -> dict[str, 
 
     try:
         config = load_model_config(settings)
-        print("[bake] computing terrain products from the LiDAR mosaic (this is the slow part)...")
+        print("[bake] computing terrain products from the declared DEM source(s)...")
         products, terrain_meta = terrain_engine.compute(settings, config)
         grid = products.grid
         assert grid is not None, "terrain engine did not set a grid"
@@ -670,9 +677,43 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Validate the existing bake without reading the source-data tree.",
     )
+    parser.add_argument(
+        "--pack",
+        type=Path,
+        help=(
+            "Mountain Pack JSON to bake. Defaults to AVALANCHE_MOUNTAIN_PACK or the "
+            "Mount Hosmer pack."
+        ),
+    )
+    parser.add_argument(
+        "--data-root",
+        type=Path,
+        help=(
+            "Read-only source root for the selected pack. Defaults to "
+            "AVALANCHE_DATA_ROOT or DATA/mount_hosmer_data."
+        ),
+    )
+    parser.add_argument(
+        "--runtime-root",
+        type=Path,
+        help=(
+            "Generated runtime root; the bake is written beneath it as baked/. Use one "
+            "root per mountain so bakes coexist. Defaults to AVALANCHE_RUNTIME_ROOT or "
+            "runtime/."
+        ),
+    )
     args = parser.parse_args(argv)
 
     settings = get_settings()
+    updates: dict[str, Path] = {}
+    if args.pack is not None:
+        updates["mountain_pack_path"] = args.pack.resolve()
+    if args.data_root is not None:
+        updates["data_root"] = args.data_root.resolve()
+    if args.runtime_root is not None:
+        updates["runtime_root"] = args.runtime_root.resolve()
+    if updates:
+        settings = settings.model_copy(update=updates)
     settings.validate(require_data_root=not args.check)
     if args.check:
         check_bake(settings)

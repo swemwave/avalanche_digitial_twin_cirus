@@ -24,6 +24,7 @@ PACK_SCHEMA_VERSION = 1
 
 AssetRole = Literal[
     "aoi",
+    "elevation_primary",
     "elevation_lidar",
     "elevation_fallback",
     "surface_lidar",
@@ -141,10 +142,51 @@ class MountainPack(StrictModel):
 
     @model_validator(mode="after")
     def validate_asset_meaning(self) -> "MountainPack":
-        required_roles = {"aoi", "elevation_lidar", "elevation_fallback", "landcover"}
+        required_roles = {"aoi", "landcover"}
         missing = sorted(required_roles - set(self.assets))
         if missing:
             raise ValueError(f"Mountain pack is missing required asset roles: {missing}.")
+
+        elevation_roles = {"elevation_primary", "elevation_lidar"} & set(self.assets)
+        if len(elevation_roles) != 1:
+            raise ValueError(
+                "Mountain pack must declare exactly one primary elevation role: "
+                "'elevation_primary' for a portable single DEM, or the legacy "
+                "'elevation_lidar' role for GeoBC year tiles."
+            )
+        primary_elevation_role = next(iter(elevation_roles))
+        primary_elevation = self.assets[primary_elevation_role]
+        if not primary_elevation.required or primary_elevation.purpose != "model_input":
+            raise ValueError(
+                f"{primary_elevation_role} must be a required model_input; missing elevation "
+                "cannot be treated as an optional or display-only surface."
+            )
+
+        if "elevation_primary" in self.assets:
+            asset = self.assets["elevation_primary"]
+            if asset.adapter != "single_raster":
+                raise ValueError(
+                    "elevation_primary requires adapter='single_raster'; provider-specific "
+                    "tile layouts require their own reviewed adapter."
+                )
+        if "elevation_lidar" in self.assets:
+            asset = self.assets["elevation_lidar"]
+            if asset.adapter != "geobc_lidar_year_tiles":
+                raise ValueError(
+                    "The legacy elevation_lidar role requires "
+                    "adapter='geobc_lidar_year_tiles'. Use elevation_primary with "
+                    "adapter='single_raster' for a portable plain DEM."
+                )
+        if "elevation_fallback" in self.assets:
+            asset = self.assets["elevation_fallback"]
+            if asset.adapter != "single_raster":
+                raise ValueError("elevation_fallback requires adapter='single_raster'.")
+        if "surface_lidar" in self.assets:
+            asset = self.assets["surface_lidar"]
+            if asset.adapter != "geobc_lidar_year_tiles":
+                raise ValueError(
+                    "surface_lidar currently requires adapter='geobc_lidar_year_tiles'."
+                )
 
         imagery_roles = {"imagery_red", "imagery_green", "imagery_blue"}
         present_imagery = imagery_roles & set(self.assets)
@@ -252,7 +294,10 @@ def validate_declared_sources(pack: MountainPack, data_root: Path) -> list[str]:
         if not path.exists():
             if asset.required:
                 raise MountainPackError(f"Required {role!r} asset is missing: {path}")
-            warnings.append(f"Optional {role!r} asset is missing and will be unavailable: {path}")
+            warnings.append(
+                f"Optional {role!r} asset is missing and will be unavailable: "
+                f"{asset.href} (relative to the selected data root)"
+            )
             continue
         if asset.adapter == "geobc_lidar_year_tiles":
             if not path.is_dir() or not any(path.glob("*.tif")):

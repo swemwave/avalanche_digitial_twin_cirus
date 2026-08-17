@@ -6,6 +6,8 @@
 -r requirements.txt
 rasterio>=1.5
 pyproj>=3.7
+geopandas>=1.1,<2
+pyogrio>=0.11,<1
 pillow>=12.0
 pyyaml>=6.0
 xdem>=0.2.3,<0.3
