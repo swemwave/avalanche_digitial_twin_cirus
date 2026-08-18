@@ -164,10 +164,17 @@ def test_scheduled_browser_monitor_is_bound_to_the_reviewed_bake() -> None:
     # human deliberately reviewed and rolled. Bumping this constant is that act --
     # it is not something a rebuild should be able to do on its own.
     #
-    # 1b6524c4: adds the two optional exposure layers. Every one of the eight
-    # pre-existing terrain layers is byte-identical to 9204d5e4; only exposure and
-    # the metadata changed.
-    expected = "1b6524c462db40f2bbfb65aa27e3fbd73e2478829c427b80fc476ad9c4bf3cc3"
+    # 09de0a1c: metadata only. All ten baked layers -- elevation, slope, aspect,
+    # plan/general curvature, forest mask/source, terrain source, and the two
+    # exposure layers -- are byte-identical to 1b6524c4. What moved is the
+    # published description of the surface, not the surface: the model parameter
+    # manifest now names the rain/snow thresholds, the alpha override bounds and
+    # the flow regime it always used; the reprojection lattice is recorded; the
+    # gap-fill DEM is labelled by source ("Copernicus DEM GLO-30 gap-fill raster")
+    # instead of by consequence ("no LiDAR coverage at this pixel"), and the
+    # coverage warning is reworded to match. The same 4222 pixels (0.07% of the
+    # AOI) are gap-filled before and after.
+    expected = "09de0a1ccbcf5ec88a6c226bfc508b94040b4dff981a6387d3eae847a0528701"
     assert "cron:" in workflow
     assert f"EXPECTED_BAKE_SHA256: {expected}" in workflow
     assert "python deploy/verify_live.py" in workflow

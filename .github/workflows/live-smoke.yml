@@ -21,7 +21,7 @@ jobs:
         working-directory: mount-hosmer-digital-twin
     env:
       LIVE_URL: https://avalanche.gotlost.xyz
-      EXPECTED_BAKE_SHA256: 1b6524c462db40f2bbfb65aa27e3fbd73e2478829c427b80fc476ad9c4bf3cc3
+      EXPECTED_BAKE_SHA256: 09de0a1ccbcf5ec88a6c226bfc508b94040b4dff981a6387d3eae847a0528701
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
