@@ -38,7 +38,10 @@
     "engine_source": "packages/avycore/src/avycore/hazard/runout.py",
     "engine_source_sha256": "fa2c5e1c912bf9a5865494501bdb4e5d1c6da05e04b1b9aaf303afbffed0ab27",
     "parameter_file": "backend/config/m0-baseline.json",
-    "parameter_file_sha256": "eb95b69fb31da6add188389547bfde6dd6a75c4495cfa07e18ea276c705e21b4",
+    "parameter_manifest_pointer": "backend/config/m0-baseline.json:model.parameter_manifest",
+    "parameter_manifest_sha256": "aaafd6f9fc6e8d598cb56c479bcc072374ee94ba17613c0ac2df0594f8059628",
+    "parameter_file_sha256_at_run": "eb95b69fb31da6add188389547bfde6dd6a75c4495cfa07e18ea276c705e21b4",
+    "parameter_file_digest_note": "Historical record of the whole-file digest observed when this result was produced; retained as evidence and deliberately no longer re-asserted against the working tree. A whole-file digest is the wrong granularity for this binding: it also covers the file's separate results block, which 4edc0cf refroze after the particle coordinate-integration correction without changing model.parameter_manifest. That digest additionally matches no committed state of the file in any line-ending form, so it names a working-tree state that was never committed; see docs/validation-report.md. The binding that carries the science is parameter_manifest_sha256, taken over the subtree this result declares it consumed.",
     "runner": "scripts/validation/run_geodar_along_thalweg_experiment.py",
     "runner_sha256": "0935be0d56173fde4c74b2246cb95f28b89968dbd56549111b60389577a8cb6f",
     "fixed_model": {

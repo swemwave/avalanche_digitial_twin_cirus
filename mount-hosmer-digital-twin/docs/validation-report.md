@@ -1374,33 +1374,56 @@ operational claims. No parameter was tuned after observing the scores. The test
 adds zero eligible holdout events, leaves `is_validated=false`, and does not add
 any identity to the trusted registry.
 
-### Open defect: the parameter-file binding cannot be verified
+### Resolved: the parameter binding now names the subtree it consumed
 
-`implementation.parameter_file_sha256` and its `_at_freeze` twin record
+`implementation.parameter_file_sha256` recorded
 `eb95b69fb31da6add188389547bfde6dd6a75c4495cfa07e18ea276c705e21b4` for
 `backend/config/m0-baseline.json`. That digest matches **neither committed
 version of the file, in either line-ending form**: `d0cc6dd` hashes to
 `c136d4bf…` (LF) or `917521d8…` (CRLF), and `4edc0cf` to `f07f36d4…` (LF) or
-`b2c858…` (CRLF). It is therefore not the line-ending defect above; the digest
-names a working-tree state from before this repository's first commit, and no
-byte form of it survives. `tests/test_geodar_along_thalweg_artifact.py::test_geodar_result_is_bound_to_the_frozen_engine_and_spec`
-fails on exactly this assertion and is the repository's only failing test.
+`b2c858…` (CRLF). Hashing every object in the repository — including dangling
+blobs, in raw, LF, and CRLF form — returns no match either. It is therefore not
+the line-ending defect above; the digest names a working-tree state that was
+never committed, and no byte form of it survives.
 
 The binding that carries the science is intact and does check out. The result
 binds its parameters to `backend/config/m0-baseline.json:model.parameter_manifest`,
-and that object is **byte-identical across both committed revisions**, canonical
-digest `987c2f728233dd23978360d3f4c8ea22d5a58ff4f0b3d1809b26c9ad5de1e107`. The
-only thing `4edc0cf` changed was the file's separate `results` block, refrozen
-after the particle coordinate-integration correction. The declared open-snow
-`mu = 0.2` and `xi = 1200 m s-2` are unchanged.
+and that object is **byte-identical across both committed revisions**. Under the
+repository's established `parameter_manifest_sha256` encoding
+(`json.dumps(value, sort_keys=True)`, the helper in `backend/app/bake_identity.py`
+that every other frozen experiment uses) its digest is
+`aaafd6f9fc6e8d598cb56c479bcc072374ee94ba17613c0ac2df0594f8059628`, which is also
+the value the file itself declares as `model.sha256`. The only thing `4edc0cf`
+changed was the file's separate `results` block, refrozen after the particle
+coordinate-integration correction. The declared open-snow `mu = 0.2` and
+`xi = 1200 m s-2` are unchanged, as are every other scalar the spec drew from the
+manifest: `max_steps`, `time_step_s`, `stopping_velocity_ms`, and `random_seed`.
 
-The whole-file digest is the wrong granularity for this binding: it covers a
-baseline-results block that legitimately changes without any parameter changing.
-Rewriting it to today's file hash is not available — that would assert the
-71-event result was produced under the current M0 baseline, which it was not.
-Resolving this requires a human decision between rebinding the record to the
-parameter manifest it actually names and leaving the whole-file digest as an
-unverifiable historical note.
+The whole-file digest was the wrong granularity for this binding: it covers a
+baseline-results block that legitimately changes without any parameter changing,
+and it reported that output refreeze as parameter drift. The record has been
+rebound to the manifest subtree it actually names. `implementation` now carries
+`parameter_manifest_pointer`, `parameter_manifest_sha256`, and the superseded
+whole-file digest verbatim as `parameter_file_sha256_at_run`, alongside a note
+stating that it is history and is not re-asserted. The digest was **not** rewritten
+to today's file hash — that would assert the 71-event result was produced under
+the current M0 baseline, which it was not — and the frozen spec's
+`parameter_file_sha256_at_freeze` twin is untouched, so the original claim remains
+on the record exactly as made.
+
+`tests/test_geodar_along_thalweg_artifact.py` now checks the subtree digest
+against a recomputation from the working tree, cross-checks it against the file's
+own declared `model.sha256` so a doctored manifest cannot satisfy it, asserts the
+historical digest is still recorded and still does not match today's file, and
+verifies every manifest-sourced spec scalar against the live manifest.
+
+One consequence is deliberate and left alone: `run_geodar_along_thalweg_experiment.py`
+still guards on the whole-file digest and would refuse to re-run against today's
+baseline. The runner was not edited, because `implementation.runner_sha256` binds
+this result to the exact source that produced it; changing that source to fix the
+guard would break the record of what actually ran. The experiment is archival — it
+needs external Zenodo HDF5 inputs that are not in this repository — so the guard is
+not on any live path.
 
 ## DEM and event-day surface caveats
 

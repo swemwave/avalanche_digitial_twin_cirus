@@ -550,19 +550,23 @@ operational tool.
   rendering of a repository file. No committed blob in this repository has ever
   contained a CR byte, so no number changed; see
   [`validation-report.md`](validation-report.md) for the neutrality evidence.
-- **One frozen binding remains unverifiable, and it is not a line-ending
-  problem.** The GEODAR result records
+- **One frozen whole-file digest is unreproducible, and the binding has been
+  moved to the subtree it names.** The GEODAR result recorded
   `parameter_file_sha256 = eb95b69f…` for `backend/config/m0-baseline.json`, which
-  matches neither committed version of that file in either line-ending form. It
-  names a working-tree state from before this repository's first commit. The
-  parameter manifest the result actually binds to is byte-identical across both
-  revisions, so the declared friction parameters are intact; only the whole-file
-  digest — which also covers a baseline-results block that was legitimately
-  refrozen in `4edc0cf` — cannot be reproduced.
-  `test_geodar_along_thalweg_artifact.py::test_geodar_result_is_bound_to_the_frozen_engine_and_spec`
-  fails on this and is the repository's only failing test. Rewriting the digest to
-  today's file would assert the result was produced under the current M0 baseline,
-  which is false, so it awaits a human decision.
+  matches no committed state of that file in any line-ending form — nor any object
+  in the repository at all. It names a working tree that was never committed. That
+  digest was the wrong granularity: it also covers a baseline-results block that
+  `4edc0cf` legitimately refroze after the particle coordinate-integration
+  correction, changing no parameter. The result declares it consumed
+  `backend/config/m0-baseline.json:model.parameter_manifest`, and that subtree is
+  byte-identical across every committed revision, canonical digest `aaafd6f9…`
+  under the repository's established `parameter_manifest_sha256` encoding — the
+  same binding every other frozen experiment already uses. The result now records
+  `parameter_manifest_sha256` and is checked against it, the superseded whole-file
+  digest is retained verbatim as `parameter_file_sha256_at_run` and is explicitly
+  not re-asserted, and the spec's frozen `_at_freeze` twin is untouched. The
+  digest was not rewritten to today's file: that would assert the result was
+  produced under the current M0 baseline, which is false.
 
 - **What did reproduce is the science.** On the same runs, the release field and every published summary
   were identical — `release_valid_cells` 1302 and release min/max/mean 74.375 on both sides — with only
