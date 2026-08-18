@@ -25,9 +25,6 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
-import rasterio
-import rasterio.features
-from rasterio.transform import from_origin
 
 from avycore.engines import (
     ENGINE_CONTRACT_SCHEMA_VERSION,
@@ -101,6 +98,14 @@ class EnergyLineCase:
         return np.broadcast_to(profile[:, None], (self.rows, self.columns)).astype(np.float32).copy()
 
     def grid(self) -> tuple[GridContract, CRSContract, Any]:
+        # rasterio is a bake-time dependency (requirements-bake.txt), deliberately
+        # absent from the runtime and dev/test environments. Importing it at module
+        # scope made `import flowpy_benchmark` -- and therefore collecting
+        # tests/test_flowpy_runout.py -- fail wherever the geospatial stack is not
+        # installed, which is every CI runner. Only the two functions that actually
+        # rasterize need it, so they import it themselves.
+        from rasterio.transform import from_origin
+
         transform = from_origin(
             self.origin_easting_m, self.origin_northing_m, self.cell_size_m, self.cell_size_m
         )
@@ -143,6 +148,9 @@ def _inline_input(name: str, kind: InputKind, value: object, unit: str | None) -
 
 def build_energy_line_inputs(root: Path, case: EnergyLineCase) -> dict[str, Any]:
     """Write the synthetic DEM, masks, and single-cell release for the case."""
+
+    import rasterio
+    import rasterio.features
 
     root.mkdir(parents=True, exist_ok=False)
     grid, crs, transform = case.grid()
