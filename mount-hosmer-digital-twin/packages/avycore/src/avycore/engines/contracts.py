@@ -27,8 +27,8 @@ from avycore.hazard.constants import DISCLAIMER
 
 
 ENGINE_CONTRACT_SCHEMA_VERSION = "avycore-engine-contract-v1"
-NORMALIZED_RESULT_SCHEMA_VERSION = "avycore-normalized-result-v1"
-NORMALIZED_COMPARISON_SCHEMA_VERSION = "avycore-normalized-comparison-v1"
+NORMALIZED_RESULT_SCHEMA_VERSION = "avycore-normalized-result-v2"
+NORMALIZED_COMPARISON_SCHEMA_VERSION = "avycore-normalized-comparison-v2"
 SHA256_PATTERN = r"^[0-9a-f]{64}$"
 IDENTIFIER_PATTERN = r"^[a-z0-9][a-z0-9._-]*$"
 
@@ -105,6 +105,9 @@ class OutputQuantity(StrEnum):
     FLOW_DEPTH = "flow_depth"
     FLOW_VELOCITY = "flow_velocity"
     FLOW_PRESSURE = "flow_pressure"
+    ENERGY_LINE_HEIGHT = "energy_line_height"
+    TRAVEL_ANGLE = "travel_angle"
+    ARRIVAL_TIME = "arrival_time"
 
 
 CANONICAL_OUTPUT_UNITS: dict[OutputQuantity, str] = {
@@ -117,6 +120,9 @@ CANONICAL_OUTPUT_UNITS: dict[OutputQuantity, str] = {
     OutputQuantity.FLOW_DEPTH: "m",
     OutputQuantity.FLOW_VELOCITY: "m s-1",
     OutputQuantity.FLOW_PRESSURE: "kPa",
+    OutputQuantity.ENERGY_LINE_HEIGHT: "m",
+    OutputQuantity.TRAVEL_ANGLE: "degree",
+    OutputQuantity.ARRIVAL_TIME: "s",
 }
 
 
@@ -420,6 +426,11 @@ class EngineAvailability(StrictModel):
     reason: str = Field(min_length=1)
     detected_version: str | None = None
     executable_sha256: str | None = Field(default=None, pattern=SHA256_PATTERN)
+    # The same interpreter/package manifest digest a completed run records in its
+    # provenance.  Probing it *before* a run is what lets an input-keyed cache
+    # notice that the isolated environment changed under an unchanged engine
+    # version; without it the only honest answer is a cache miss.
+    environment_sha256: str | None = Field(default=None, pattern=SHA256_PATTERN)
 
     @model_validator(mode="after")
     def available_has_version(self) -> "EngineAvailability":
@@ -499,7 +510,7 @@ class RunProvenance(StrictModel):
 
 
 class _NormalizedResultBase(StrictModel):
-    schema_version: Literal["avycore-normalized-result-v1"]
+    schema_version: Literal["avycore-normalized-result-v2"]
     result_id: str
     site_id: str = Field(pattern=IDENTIFIER_PATTERN)
     disclaimer: str = Field(min_length=80)
@@ -558,6 +569,18 @@ class NormalizedReleaseResult(_NormalizedResultBase):
         return self
 
 
+class UnsupportedOutput(StrictModel):
+    """Machine-readable declaration that an engine cannot produce a quantity.
+
+    An unsupported quantity is published as unavailable with a reason.  It is
+    never emitted as a zero-filled raster, which a consumer could misread as a
+    measured absence of flow.
+    """
+
+    quantity: OutputQuantity
+    reason: str = Field(min_length=1)
+
+
 class NormalizedRunoutResult(_NormalizedResultBase):
     result_id: str = Field(pattern=r"^runout-result-[0-9a-f]{64}$")
     stage: Literal[EngineStage.RUNOUT]
@@ -566,8 +589,23 @@ class NormalizedRunoutResult(_NormalizedResultBase):
     flow_depth: RasterField | None
     flow_velocity: RasterField | None
     flow_pressure: RasterField | None
+    energy_line_height: RasterField | None = None
+    travel_angle: RasterField | None = None
+    arrival_time: RasterField | None = None
+    unsupported_outputs: tuple[UnsupportedOutput, ...] = ()
     runout_area_m2: float = Field(ge=0)
     aoi_status: Literal["complete_within_domain", "truncated_at_domain", "unknown"]
+
+    def field_for(self, quantity: OutputQuantity) -> RasterField | None:
+        return {
+            OutputQuantity.RUNOUT_EXTENT: self.runout_extent,
+            OutputQuantity.FLOW_DEPTH: self.flow_depth,
+            OutputQuantity.FLOW_VELOCITY: self.flow_velocity,
+            OutputQuantity.FLOW_PRESSURE: self.flow_pressure,
+            OutputQuantity.ENERGY_LINE_HEIGHT: self.energy_line_height,
+            OutputQuantity.TRAVEL_ANGLE: self.travel_angle,
+            OutputQuantity.ARRIVAL_TIME: self.arrival_time,
+        }.get(quantity)
 
     @model_validator(mode="after")
     def quantities_and_identity(self) -> "NormalizedRunoutResult":
@@ -576,10 +614,23 @@ class NormalizedRunoutResult(_NormalizedResultBase):
             (self.flow_depth, OutputQuantity.FLOW_DEPTH),
             (self.flow_velocity, OutputQuantity.FLOW_VELOCITY),
             (self.flow_pressure, OutputQuantity.FLOW_PRESSURE),
+            (self.energy_line_height, OutputQuantity.ENERGY_LINE_HEIGHT),
+            (self.travel_angle, OutputQuantity.TRAVEL_ANGLE),
+            (self.arrival_time, OutputQuantity.ARRIVAL_TIME),
         )
         for field, quantity in expected:
             if field is not None and field.quantity != quantity:
                 raise ValueError(f"{quantity.value} output has the wrong normalized quantity.")
+        declared_unsupported = [item.quantity for item in self.unsupported_outputs]
+        if len(declared_unsupported) != len(set(declared_unsupported)):
+            raise ValueError("Unsupported-output declarations must be unique.")
+        for quantity in declared_unsupported:
+            if quantity == OutputQuantity.RUNOUT_EXTENT:
+                raise ValueError("A runout result cannot declare its own extent unsupported.")
+            if self.field_for(quantity) is not None:
+                raise ValueError(
+                    f"{quantity.value} is declared unsupported but a normalized field was published."
+                )
         if self.aoi_status == "truncated_at_domain" and not self.warnings:
             raise ValueError("A domain-truncated run must carry a visible warning.")
         _check_result_identity(self, "runout-result")
@@ -611,7 +662,7 @@ class ComparisonMetric(StrictModel):
 
 
 class NormalizedComparisonResult(StrictModel):
-    schema_version: Literal["avycore-normalized-comparison-v1"]
+    schema_version: Literal["avycore-normalized-comparison-v2"]
     comparison_id: str = Field(pattern=r"^comparison-result-[0-9a-f]{64}$")
     site_id: str = Field(pattern=IDENTIFIER_PATTERN)
     disclaimer: str = Field(min_length=80)
@@ -665,6 +716,13 @@ def build_result(model: type[NormalizedResult], content: dict[str, Any]) -> Norm
         raise TypeError("Unsupported normalized result model.")
     without_identity = dict(content)
     without_identity.pop("result_id", None)
+    # The identity is hashed over the complete field set, so an optional field the
+    # caller left out has to be materialised here.  Otherwise omitting a default
+    # would produce a different hash from the one the model validator recomputes.
+    for name, field in model.model_fields.items():
+        if name == "result_id" or name in without_identity or field.is_required():
+            continue
+        without_identity[name] = field.get_default(call_default_factory=True)
     normalized = to_jsonable_python(without_identity)
     identity = hashlib.sha256(canonical_json_bytes(normalized)).hexdigest()
     return model.model_validate(
@@ -728,6 +786,7 @@ __all__ = [
     "RunProvenance",
     "SpatialApplicability",
     "UncertaintyBound",
+    "UnsupportedOutput",
     "ValidationLevel",
     "ValidationStatus",
     "VectorField",

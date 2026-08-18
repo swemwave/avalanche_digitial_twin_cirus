@@ -58,6 +58,31 @@ def verify_artifact(path: str | Path, expected_sha256: str, expected_size: int) 
     return requested
 
 
+# The probe reproduces, byte for byte, the environment manifest and canonical
+# hashing the isolated workers use when they record ``environment_sha256`` in a
+# result's provenance.  The duplication is forced: a worker runs under ``-I``, so
+# the script directory is not on ``sys.path`` and it cannot import a shared
+# helper.  ``test_the_environment_probe_matches_what_a_real_run_records`` pins the
+# two against each other using a real run, so drift fails a test rather than
+# silently poisoning a cache key.
+_PROBE_SOURCE = (
+    "import hashlib,importlib,importlib.metadata,json,platform;"
+    "importlib.import_module({import_name});"
+    "p=sorted(({{'name':str(d.metadata.get('Name','')).lower(),'version':str(d.version)}}"
+    " for d in importlib.metadata.distributions() if d.metadata.get('Name')),"
+    "key=lambda i:(i['name'],i['version']));"
+    "m={{'python_implementation':platform.python_implementation(),"
+    "'python_version':platform.python_version(),"
+    "'platform_system':platform.system(),"
+    "'platform_release':platform.release(),"
+    "'platform_machine':platform.machine(),'packages':p}};"
+    "b=json.dumps(m,sort_keys=True,separators=(',',':'),ensure_ascii=True,allow_nan=False)"
+    ".encode('utf-8');"
+    "print(json.dumps({{'version':importlib.metadata.version({distribution}),"
+    "'environment_sha256':hashlib.sha256(b).hexdigest()}}))"
+)
+
+
 def probe_python_distribution(
     python_executable: str | Path,
     *,
@@ -73,11 +98,7 @@ def probe_python_distribution(
             status=AvailabilityStatus.UNAVAILABLE,
             reason=f"Configured Python executable does not exist: {python}",
         )
-    probe = (
-        "import importlib,importlib.metadata,json;"
-        f"importlib.import_module({import_name!r});"
-        f"print(json.dumps({{'version':importlib.metadata.version({distribution!r})}}))"
-    )
+    probe = _PROBE_SOURCE.format(import_name=repr(import_name), distribution=repr(distribution))
     try:
         completed = subprocess.run(
             [str(python), "-I", "-c", probe],
@@ -107,7 +128,9 @@ def probe_python_distribution(
             reason=f"Could not import {import_name!r} in the isolated environment: {detail}",
         )
     try:
-        version = json.loads(completed.stdout.decode("utf-8"))["version"]
+        payload = json.loads(completed.stdout.decode("utf-8"))
+        version = payload["version"]
+        environment_sha256 = payload["environment_sha256"]
     except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError) as exc:
         return EngineAvailability(
             engine_id=engine_id,
@@ -120,6 +143,7 @@ def probe_python_distribution(
         reason=f"Imported {import_name!r} from the configured isolated Python environment.",
         detected_version=str(version),
         executable_sha256=file_sha256(python),
+        environment_sha256=str(environment_sha256),
     )
 
 

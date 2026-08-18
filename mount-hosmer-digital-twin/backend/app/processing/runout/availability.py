@@ -1,52 +1,16 @@
-"""Fail-closed availability adapters for runout engines not yet normalized."""
+"""Fail-closed availability adapter for runout engines not yet normalized.
+
+Flow-Py now has a real adapter in ``flowpy.py``; only r.avaflow remains here.
+"""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
 
-from avycore.engines import (
-    AVAFRAME_FLOWPY,
-    R_AVAFLOW,
-    AvailabilityStatus,
-    EngineAvailability,
-)
+from avycore.engines import R_AVAFLOW, AvailabilityStatus, EngineAvailability
 
-from .process import ExternalModelProcessError, file_sha256, probe_python_distribution
-
-
-@dataclass(frozen=True)
-class AvaFrameFlowPyAvailabilityAdapter:
-    """Detect com4FlowPy, but refuse physics until its outputs are characterized."""
-
-    python_executable: str | Path
-
-    @property
-    def descriptor(self):
-        return AVAFRAME_FLOWPY
-
-    def availability(self) -> EngineAvailability:
-        probe = probe_python_distribution(
-            self.python_executable,
-            engine_id=self.descriptor.engine_id,
-            distribution="avaframe",
-            import_name="avaframe.com4FlowPy.com4FlowPy",
-        )
-        if probe.status != AvailabilityStatus.AVAILABLE:
-            return probe
-        return EngineAvailability(
-            engine_id=self.descriptor.engine_id,
-            status=AvailabilityStatus.UNAVAILABLE,
-            reason=(
-                "AvaFrame com4FlowPy is installed, but this repository has no characterized, "
-                "unit-verified normalized output adapter; execution is disabled."
-            ),
-            detected_version=probe.detected_version,
-            executable_sha256=probe.executable_sha256,
-        )
-
-    def run_runout(self, *args, **kwargs):
-        raise ExternalModelProcessError("adapter_disabled", self.availability().reason)
+from .process import ExternalModelProcessError, file_sha256
 
 
 @dataclass(frozen=True)
@@ -87,4 +51,4 @@ class RAvaFlowAvailabilityAdapter:
         raise ExternalModelProcessError("adapter_disabled", self.availability().reason)
 
 
-__all__ = ["AvaFrameFlowPyAvailabilityAdapter", "RAvaFlowAvailabilityAdapter"]
+__all__ = ["RAvaFlowAvailabilityAdapter"]

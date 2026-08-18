@@ -31,12 +31,14 @@ from avycore.engines import (
     RasterField,
     RunProvenance,
     SelectionPolicy,
+    UnsupportedOutput,
     VectorField,
     build_result,
     canonical_json_bytes,
     sha256_of_manifest,
 )
 
+from . import process
 from .process import (
     ExternalModelProcessError,
     file_sha256,
@@ -48,6 +50,34 @@ from .process import (
 
 WORKER_SCHEMA_VERSION = "avycore-avaframe-worker-v1"
 SIMILARITY_WORKER_SCHEMA_VERSION = "avycore-avaframe-similarity-worker-v1"
+
+# com1DFA solves a depth-averaged dense-flow problem, so quantities belonging to
+# the energy-line family are absent by construction rather than merely not
+# requested.  Declaring them keeps a cross-engine comparison able to say *why* a
+# metric is missing instead of reporting a silent gap.
+UNSUPPORTED_COM1DFA_OUTPUTS = (
+    UnsupportedOutput(
+        quantity=OutputQuantity.ENERGY_LINE_HEIGHT,
+        reason="com1DFA integrates depth-averaged flow equations and publishes no energy-line height.",
+    ),
+    UnsupportedOutput(
+        quantity=OutputQuantity.TRAVEL_ANGLE,
+        reason=(
+            "com1DFA can export a peak travel angle (pta), and it is not the same quantity as "
+            "Flow-Py's fpTravelAngleMax. Both are arctan(drop / horizontal path length), but com1DFA "
+            "divides by each particle's own realized trajectory length integrated over the "
+            "simulation and takes a maximum over particles and over time, while com4FlowPy divides "
+            "by the shortest 8-connected raster path from the release cell and takes a maximum over "
+            "release cells with no time dimension. Publishing them as one quantity would compare a "
+            "time-peak of a dynamics-dependent trajectory against a static shortest-path minimum. "
+            "See docs/runout-engines.md section 2.1."
+        ),
+    ),
+    UnsupportedOutput(
+        quantity=OutputQuantity.ARRIVAL_TIME,
+        reason="com1DFA publishes no arrival-time raster in the result types this adapter requests.",
+    ),
+)
 
 
 @dataclass(frozen=True)
@@ -93,6 +123,24 @@ class AvaFrameCom1DFAAdapter:
     @property
     def descriptor(self):
         return AVAFRAME_COM1DFA
+
+
+    def replay_identity(self) -> dict[str, str]:
+        """Adapter-side identity an input-keyed cache needs *before* a run.
+
+        The first two are the fields every result of this adapter also records in
+        its provenance, so a restored bundle can be checked against them. The
+        third is not: ``process.py`` holds the subprocess launch, isolation flags
+        and environment this adapter executes through, and editing it can change
+        what the engine does. Including it only ever makes the key stricter, so a
+        cache cannot outlive a change to the plumbing it ran on.
+        """
+
+        return {
+            "adapter_version": self.descriptor.adapter_version,
+            "adapter_sha256": _adapter_sha256(),
+            "process_sha256": file_sha256(Path(process.__file__).resolve()),
+        }
 
     def availability(self) -> EngineAvailability:
         availability = probe_python_distribution(
@@ -650,6 +698,10 @@ class AvaFrameCom1DFAAdapter:
             "flow_depth": rasters["depth"],
             "flow_velocity": rasters["velocity"],
             "flow_pressure": rasters["pressure"],
+            "energy_line_height": None,
+            "travel_angle": None,
+            "arrival_time": None,
+            "unsupported_outputs": UNSUPPORTED_COM1DFA_OUTPUTS,
             "runout_area_m2": metadata["runout_area_m2"],
             "aoi_status": (
                 "truncated_at_domain" if metadata["boundary_touched"] else "complete_within_domain"
@@ -730,6 +782,7 @@ class AvaFrameCom1DFAAdapter:
 
 __all__ = [
     "AvaFrameCom1DFAAdapter",
+    "UNSUPPORTED_COM1DFA_OUTPUTS",
     "AvaFrameSimilarityBenchmarkRun",
     "SIMILARITY_WORKER_SCHEMA_VERSION",
     "WORKER_SCHEMA_VERSION",

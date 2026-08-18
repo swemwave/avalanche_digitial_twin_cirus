@@ -10,6 +10,7 @@ from .catalog import (
     ENGINE_DESCRIPTORS,
     R_AVAFLOW,
     SNOWPACK,
+    UPSTREAM_FLOWPY,
     canonical_engine_registry,
     descriptor_by_id,
 )
@@ -51,6 +52,7 @@ __all__ = [
     "SelectionReport",
     "SnowStateEngine",
     "StaticEnginePlugin",
+    "UPSTREAM_FLOWPY",
     "canonical_engine_registry",
     "compare_runout_results",
     "descriptor_by_id",

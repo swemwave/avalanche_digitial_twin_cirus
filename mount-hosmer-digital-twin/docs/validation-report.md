@@ -52,6 +52,95 @@ simulation label is retained but excluded from that ID. This is analytical
 software verification on idealized terrain, not calibration or evidence of
 field accuracy.
 
+## Flow-Py analytical energy-line verification
+
+Flow-Py was executed through AvaFrame 2.1's `com4FlowPy` port in the isolated
+offline adapter, against a closed-form solution rather than a stored snapshot.
+The model routes flux with
+`z_delta(next) = z_delta(current) + dz - ds*tan(alpha)`, clipped to `[0, max_z]`
+(Neuhauser et al., 2022, Geosci. Model Dev. 15, 2423-2442,
+doi:10.5194/gmd-15-2423-2022). Along a straight path from the release cell the
+intermediate terms telescope, so on a planar slope the energy-line height is
+exactly `(z_release - z) - s*tan(alpha)` and the flow stops at the last cell where
+that value is positive. Both quantities are analytic.
+
+The acceptance record was frozen before the graded run and carries its own content
+hash, `02fde08629dcd572a747be1dc5139666ec54799914f4eef8f5e3ccedad0b6097`, which the
+adapter verifies before launching the engine. It fixes the geometry (a 35 degree
+plane for 60 cells followed by a 5 degree runout plane, 5 m grid, 120 x 41 cells,
+EPSG:32611, single release cell at row 2), the parameters (`alpha` 25 degrees,
+`exp` 8, `flux_threshold` 3e-4, `max_z` 8848 m, chosen so the clip is not
+exercised), and the metric limits.
+
+| Metric or invariant | Frozen acceptance | Measured | Result |
+|---|---:|---:|---|
+| Energy-line height, maximum absolute error | <= 0.01 m | 3.3357e-06 m | Pass |
+| Stopping-cell difference from the analytical angle-of-reach intersection | 0 cells | 0 cells | Pass |
+| Straight-line travel angle, maximum absolute error | <= 0.01 degree | 1.8980e-06 degree | Pass |
+| Travel length, maximum absolute error | <= 0.01 m | 0 m | Pass |
+| Units / CRS / coordinate order / masks / domain boundary | extent 1, energy line m, travel angle degree; projected metre CRS; x,y order; unreached cells are a modelled zero rather than masked; no boundary touch | as specified | Pass |
+| Unsupported outputs declared | flow depth, flow velocity, flow pressure, arrival time | exactly those four, each with a reason | Pass |
+
+The analytic and modelled last reached rows were both 95. The immutable result ID
+is `flowpy-energy-line-28b1a18dc2e68aa36babddce8ebca52d7b7f1b77bb138b054a4adca11b367d91`
+and the normalized runout result ID is
+`runout-result-46b0eb589e227fd37cb0d87ea2ee87312696da091569878e3efd505f10c1d509`;
+a second execution reproduced both identities and byte-identical arrays. The
+bundle under `validation-data/benchmarks/flowpy-energy-line/` retains the effective
+configuration, the environment inventory, and the executed `com4FlowPy` module
+inventory, so the upstream implementation that produced the result is provable.
+
+The canonical standalone Flow-Py distribution
+([github.com/avaframe/FlowPy](https://github.com/avaframe/FlowPy), GPL-3.0-or-later)
+was verified from primary sources and is a **separate, fail-closed engine
+identity**: it is archived read-only since 2024-09-17, and its released `v1.0.3`
+(commit `7b061599355cef584491d69eae2686307d286901`) reassigns `argv` to a hardcoded
+example so the released command line ignores its arguments. Only the untagged
+master commit `27ad81d3e804e4e9d85a9773fca10ee7dc428183` comments that out. See
+`runout-engines.md`.
+
+This is analytical software verification on idealized terrain. It is not
+calibration and not evidence of field accuracy.
+
+## AvaFrame com1DFA versus Flow-Py intercomparison
+
+Both engines were driven from one normalized release and one terrain on the
+synthetic case: com1DFA received the release polygons, com4FlowPy the release
+raster, and neither consumed the other's output. Settings were the comparison
+script's defaults (com1DFA Voellmy `mu` 0.155, `xi` 4000 m s-2, release thickness
+0.8 m, density 200 kg m-3, 40 s simulation time, 0.1 s timestep, seed 12345;
+Flow-Py `alpha` 25 degrees, `exp` 8, `flux_threshold` 3e-4, `max_z` 270 m).
+
+| Metric | Value |
+|---|---:|
+| Extent intersection over union | 0.429 |
+| Symmetric-difference area | 52 100 m2 |
+| com1DFA-only area | 17 550 m2 |
+| Flow-Py-only area | 34 550 m2 |
+| Signed extent-area difference (com1DFA minus Flow-Py) | -17 000 m2 |
+| Maximum reach, com1DFA | 455.4 m |
+| Maximum reach, Flow-Py | 313.2 m |
+| Maximum reach difference | +142.2 m |
+| Common valid coverage | 1.00 |
+| Single-result unknown area | 0 m2 |
+
+Depth, velocity, pressure and arrival-time comparisons are reported `unsupported`
+with the producing engine's reason attached, not as zero differences.
+
+A bounded deterministic sensitivity sweep of one friction parameter per engine
+(Flow-Py `alpha` +/- 3 degrees, com1DFA `voellmy_mu` +/- 0.03, both assumed
+literature spans) gave, at 25 s simulation time: Flow-Py 58 050 / 73 700 /
+93 125 m2 across 22 / 25 / 28 degrees with a 93 500 m2 outer envelope, and com1DFA
+49 600 / 53 150 / 56 850 m2 across `mu` 0.185 / 0.155 / 0.125 with a 57 050 m2
+envelope. The dominant contributor by area spread is the Flow-Py angle of reach
+(35 075 m2 versus 7 250 m2).
+
+**These are disagreement and sensitivity measurements only.** They quantify how
+much the answer depends on the model and parameter choice. They are not accuracy,
+they do not identify which engine is correct, and member frequency across a
+deterministic sweep is model frequency, never a probability. Both engines remain
+uncalibrated and unvalidated for any real site.
+
 ## Executed anonymous-public field-evidence funnel
 
 The public-only route in `strict-field-validation-plan.md` was re-executed through
@@ -177,20 +266,20 @@ Key execution artifacts are byte-identical under offline replay where supported:
 
 | Artifact | SHA-256 |
 |---|---|
-| Imagery acquisition v2 | `aad1dd8bc60e26bf1b4b24ce2370e7353766bb58501ae09d36a3c86db8e30160` |
-| Sentinel-1 nearest-DN acquisition | `0ac4107cebbf78b59be3a61719f71740a7e0d40cd35261e8cf333566b538c79d` |
-| Sentinel-1 processing | `26832d27c6b17a3b8534df5b147cecf64f756dead4c69cb7f22be838d7ba4917` |
-| Pixel QA v3 | `3b37e59c93e5bddfa7e8b8f9e26b15f863f621f553653824030555b78324087a` |
+| Imagery acquisition v2 | `4a019bb04ff5b74766942a4b8376218597bd80b2c4b30e3fc5dbf8853da731a9` |
+| Sentinel-1 nearest-DN acquisition | `b9618818688ab54370707b477504d4e512ff248e0ef8e8956b2373d7d5a17c1b` |
+| Sentinel-1 processing | `7d1c9ea383302dbfde79e161d6c358335f3c624d7461f936c0ed7b0f6390b763` |
+| Pixel QA v3 | `b0f64381ea989eae06bf87e157e2b418110a92958641e2ee6fe0fba506ddc0cb` |
 | Public-source audit v2 | `a4c1ef834d0f1da97f43d939c17da692f355a054066fa28ea85dc5c37e4b66ae` |
-| AI annotation proposals | `2c4900900f415919fa3defbb2b317fd53d510b60143b116767b140708594dd43` |
-| Blinded packets v4 | `ccb998b55955a86100e5fba79c7f290b1325630eb67456a7ed128fe795974114` |
-| RegObs evidence | `cb14787db2c40d5b043d9ac4a25afbbd92da48067d291599a4ebd2f9a27baaae` |
-| Technical evidence freeze v2 | `f4ca07893f78959f1d77e131998d7d0daa38563aaef22fd725f4d6c0ce812da9` |
-| Human-review status v5 (zero reviews) | `f84144e5d63ff8a76ed8d14b75027c8c29667263d64a6b231edf8e190a93a3a2` |
+| AI annotation proposals | `43a1537d196ee4c64674c5ba8310fa15d847005692eddfd4731334fcda80bffc` |
+| Blinded packets v4 | `8a1b68091a23a6b53a9a4f33a2b7f7115088a5dcd4a62055d7606f0a7d73337d` |
+| RegObs evidence | `87ea8956f8d5340de7d9eb3dd82f3d674022f2c487e0462e5b0d964b24086fe5` |
+| Technical evidence freeze v2 | `74f792e62356c94f52580bb29849dc4d4dbb0eba7b6fcacfd0fcb71325a22647` |
+| Human-review status v5 (zero reviews) | `dd059056f6314ada22048b6fb9bdd978a077bf3bc81abece87f20a9dbf24086f` |
 | Release-to-runout rule | `56de2b5c1ffe6895add75def7084fad3884d69542b3438e940b3ac7c535754d0` |
-| Release-state evidence | `030d6386a215c1dc9a35f1da52ae22b0e21abcee9dcfd10d87df644c846c0d06` |
-| Terrain acquisition | `59b9e278637a9c889ff40e01d49512fe9c8870d26675c472e6fc62679c76ed68` |
-| Strict funnel v5 | `bf665aba57cf6167b19247a28a9a39e688b7e4105f7b4bbd87164200a2e038c1` |
+| Release-state evidence | `7525a802aefb02bc0159b551aa2b26c6a5b0cf5b9937967fd5455f0fd661c6f7` |
+| Terrain acquisition | `35b17fac59423e69e86aeb0a7e4e876d5f47f614633e5a10804fa620b835c692` |
+| Strict funnel v5 | `ecd03c92b6b6bc1e10da6d5833c31f15ab2610beb2dd9436482f697714bd0827` |
 
 ## Claim boundary
 
@@ -202,6 +291,13 @@ The component under test must travel with every result in the serialized fields
 | `alpha_only` | The empirical alpha angle together with downslope grid routing and the minimum-flux cutoff. There are no Voellmy velocity dynamics in this mode. |
 | `dynamics_only` | The particle integrator, Voellmy friction, terrain sampling, and seeded path spreading, without the empirical alpha stopping line. |
 | `hybrid` | The particle dynamics plus the empirical alpha energy-line stop. Extent is still bounded by alpha and is not an independent validation of Voellmy runout extent. |
+
+The external offline engines carry the same boundary in their own terms. A
+`runout.avaframe_com1dfa` result tests the depth-averaged dense-flow solver under
+the supplied Voellmy parameters; a `runout.avaframe_flowpy` result tests
+angle-of-reach routing and its spreading rule, and its energy-line height is not a
+flow depth or a simulated velocity. A comparison between the two tests neither: it
+measures how far apart two uncalibrated models are on the same input.
 
 Accordingly, the real-event extent comparisons below test the **empirical alpha
 angle plus fast routing**, not Voellmy dynamics. The separate GEODAR comparison
@@ -834,10 +930,10 @@ not available in the mapping packages. The frozen
 [development result](../validation-data/results/spot-blind-swiss-v1-development.json),
 and [holdout result](../validation-data/results/spot-blind-swiss-v1-holdout.json)
 record the complete machine-readable experiment. Their file SHA-256 values are,
-respectively, `d209e4fca6d04134139cf9f1965b576f6365769a1cf25180fa7b2079fb35398c`,
+respectively, `f208e81e7d6bd6dabe8f92c99859da272d5c3dda432e4e7fcfc5a9145bc18075`,
 `b73e6c7f84f46cc0fc3b6127dce88412ca666fd02f7f165ebd8289e66a63b6de`,
-`b52a9e4e26ba71ea09b5eeda37789e717574462f0b16c71c7e0d187e6844efc0`,
-and `2aed346700e0656facc797776adf6ed11fb5a07d955affb97380d5d650fe6791`.
+`8af542a4b89387937607956a67ec4a63cebba0eff9b96b93f88923a6332fc857`,
+and `e0a8b30c031a6b4a8aa58883310bb9de710c7caecaf0d20063490a894777dce5`.
 
 The 2018 campaign was assigned to development and the 2019 campaign to the
 one-time final holdout. Every core is a predeclared 670 × 670 cell, 30 m
@@ -1160,7 +1256,7 @@ committed result is
 Its canonical full-payload identity is
 `8594712eaec4d26e9d27b31270eb2f2d0402f0f8c10e2bb2fbfaf3d2c58276c0`;
 the committed file SHA-256 is
-`7f2ab1a8e3c7f8f1449f5b18217a45ca7b004f8d76d6c93814bf716d8a0e06b1`.
+`85ac2849fe38e83b3d745179893b9d597a785323cba36d3ec794dd5a0e564986`.
 The artifact also binds the experiment, parameter manifest, engine and runner
 source, terrain and observation inputs, valid/release/mapped masks, and every
 prediction mask. Dependency versions are regeneration provenance, not evidence
@@ -1278,6 +1374,34 @@ operational claims. No parameter was tuned after observing the scores. The test
 adds zero eligible holdout events, leaves `is_validated=false`, and does not add
 any identity to the trusted registry.
 
+### Open defect: the parameter-file binding cannot be verified
+
+`implementation.parameter_file_sha256` and its `_at_freeze` twin record
+`eb95b69fb31da6add188389547bfde6dd6a75c4495cfa07e18ea276c705e21b4` for
+`backend/config/m0-baseline.json`. That digest matches **neither committed
+version of the file, in either line-ending form**: `d0cc6dd` hashes to
+`c136d4bf…` (LF) or `917521d8…` (CRLF), and `4edc0cf` to `f07f36d4…` (LF) or
+`b2c858…` (CRLF). It is therefore not the line-ending defect above; the digest
+names a working-tree state from before this repository's first commit, and no
+byte form of it survives. `tests/test_geodar_along_thalweg_artifact.py::test_geodar_result_is_bound_to_the_frozen_engine_and_spec`
+fails on exactly this assertion and is the repository's only failing test.
+
+The binding that carries the science is intact and does check out. The result
+binds its parameters to `backend/config/m0-baseline.json:model.parameter_manifest`,
+and that object is **byte-identical across both committed revisions**, canonical
+digest `987c2f728233dd23978360d3f4c8ea22d5a58ff4f0b3d1809b26c9ad5de1e107`. The
+only thing `4edc0cf` changed was the file's separate `results` block, refrozen
+after the particle coordinate-integration correction. The declared open-snow
+`mu = 0.2` and `xi = 1200 m s-2` are unchanged.
+
+The whole-file digest is the wrong granularity for this binding: it covers a
+baseline-results block that legitimately changes without any parameter changing.
+Rewriting it to today's file hash is not available — that would assert the
+71-event result was produced under the current M0 baseline, which it was not.
+Resolving this requires a human decision between rebinding the record to the
+parameter manifest it actually names and leaving the whole-file digest as an
+unverifiable historical note.
+
 ## DEM and event-day surface caveats
 
 **Components affected:** alpha-line extent, DEM-driven routing, and, for SPOT,
@@ -1301,6 +1425,57 @@ point-to-point relative vertical accuracy below 4 m LE90 on slopes above 20%.
 Translating 4 m vertically through the four alpha angles gives horizontal scales
 of 6.40, 7.85, 9.42, and 11.62 m. Those values are not site-specific Davos error
 bounds; local DSM, vegetation, and event-day snow mismatch remain unbounded.
+
+## Frozen-digest re-derivation over canonical LF bytes (18 August 2026)
+
+**No scientific number in this report changed.** Every metric, count, threshold,
+pass fraction and coordinate is exactly what it was. What changed is a set of
+SHA-256 values, and only because they had been frozen over the wrong byte form
+of files whose content was never in question.
+
+The repository is authored on Windows with `core.autocrlf=true`, so an unpinned
+text file is checked out as CRLF while git stores it as LF. Digests frozen on
+such a checkout describe the checkout, not the repository. Commit `4d7e5b6`
+pinned `validation-data/**/*.{json,geojson}` to `eol=lf` and thereby exposed the
+inconsistency: ten tests began failing because a recorded digest no longer
+matched the file it named — in one direction because the file had become LF
+while its digest was CRLF-derived, and in the other because the digest was
+LF-derived while the file was still delivered as CRLF.
+
+`.gitattributes` now pins the whole repository (`* text=auto eol=lf`, with
+`*.npz binary`). A per-file allowlist was rejected: it only ever covers the files
+someone remembered to add, and the next frozen digest silently reintroduces the
+defect. `tests/test_frozen_identity_line_endings.py` fails if any tracked text
+file carries CRLF, if the repository-wide pin is removed, or if any recorded
+digest matches the CRLF rendering of a repository file rather than its LF
+rendering.
+
+The change is content-neutral, and the neutrality is checked rather than
+asserted:
+
+- No committed blob in this repository has ever contained a CR byte. The
+  canonical bytes were always LF; only the working tree differed. Normalizing
+  252 tracked files to LF produced **zero** staged content change under
+  `git add --renormalize`.
+- Both qualitative observation GeoJSONs and the candidate-funnel head parse to
+  objects identical to their CRLF forms; `risk.py` is the same source text.
+- Across the 41 rewritten evidence files, everything outside a 64-hex digest
+  token is byte-identical to the committed version, and the number of digest
+  tokens per file is unchanged.
+- The five SPOT prediction bundles were rewritten only to rebind
+  `experiment_spec_sha256`. Every array is bit-identical to the committed
+  version, entry order is preserved, and no other metadata field differs. The
+  runner computes `prediction_identity_sha256` before attaching the spec digest,
+  so that identity is unaffected by construction.
+- Derived identities were re-derived by their own published definitions, not
+  re-run: `dataset_identity_sha256` from
+  `sha256(schema_version \0 manifest \0 observations \0 original_source)`, and
+  `artifact_identity_sha256` as the canonical SHA-256 of the result object
+  excluding itself. The acquisition artifacts were regenerated by their own
+  builders to a fixpoint.
+
+Anyone holding an earlier copy of this report should expect its digests to
+differ and its numbers not to.
 
 ## Supported conclusion and remaining gaps
 

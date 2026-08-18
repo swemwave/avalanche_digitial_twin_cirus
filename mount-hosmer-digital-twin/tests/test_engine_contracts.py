@@ -327,3 +327,180 @@ def test_normalized_result_identity_is_content_addressed():
     tampered["runout_area_m2"] = 50.0
     with pytest.raises(ValidationError, match="identity"):
         NormalizedRunoutResult.model_validate(tampered)
+
+
+def _runout_content(**overrides):
+    """Minimal valid runout content; overrides exercise one rule at a time."""
+
+    grid = _grid()
+    field = RasterField(
+        quantity=OutputQuantity.RUNOUT_EXTENT,
+        unit="1",
+        artifact=_artifact("runout.npy"),
+        mask=_mask(grid),
+        grid=grid,
+        dtype="bool",
+        valid_min=0.0,
+        valid_max=1.0,
+        semantics="positive flow thickness",
+    )
+    content = {
+        "schema_version": NORMALIZED_RESULT_SCHEMA_VERSION,
+        "disclaimer": DISCLAIMER,
+        "site_id": "synthetic.utm11",
+        "stage": EngineStage.RUNOUT,
+        "regime": AvalancheRegime.DENSE_DRY,
+        "provenance": RunProvenance(
+            engine_id=AVAFRAME_COM1DFA.engine_id,
+            engine_version="2.1",
+            adapter_version="test",
+            license_spdx="EUPL-1.2",
+            execution_boundary=ExecutionBoundary.OFFLINE_SUBPROCESS,
+            executable_sha256=HASH,
+            environment_sha256=HASH,
+            adapter_sha256=HASH,
+            selection_sha256=HASH,
+            configuration_sha256=HASH,
+            input_manifest_sha256=HASH,
+            output_manifest_sha256=HASH,
+            scenario_sha256=HASH,
+            seed=1,
+            source_urls=(AVAFRAME_COM1DFA.source_url,),
+        ),
+        "validation": AVAFRAME_COM1DFA.validation,
+        "uncertainty": (),
+        "warnings": (),
+        "limitations": ("test output only",),
+        "runout_extent": field,
+        "runout_polygons": None,
+        "flow_depth": None,
+        "flow_velocity": None,
+        "flow_pressure": None,
+        "runout_area_m2": 25.0,
+        "aoi_status": "complete_within_domain",
+    }
+    content.update(overrides)
+    return content, grid
+
+
+def test_a_published_quantity_cannot_also_be_declared_unsupported():
+    from avycore.engines import UnsupportedOutput
+
+    content, grid = _runout_content()
+    energy = RasterField(
+        quantity=OutputQuantity.ENERGY_LINE_HEIGHT,
+        unit="m",
+        artifact=_artifact("energy.npy"),
+        mask=_mask(grid),
+        grid=grid,
+        dtype="float32",
+        valid_min=0.0,
+        valid_max=10.0,
+        semantics="energy-line height",
+    )
+    content["energy_line_height"] = energy
+    content["unsupported_outputs"] = (
+        UnsupportedOutput(
+            quantity=OutputQuantity.ENERGY_LINE_HEIGHT,
+            reason="claimed unsupported while also published",
+        ),
+    )
+    with pytest.raises(ValidationError, match="declared unsupported but a normalized field"):
+        build_result(NormalizedRunoutResult, content)
+
+
+def test_a_runout_result_cannot_declare_its_own_extent_unsupported():
+    from avycore.engines import UnsupportedOutput
+
+    content, _ = _runout_content()
+    content["unsupported_outputs"] = (
+        UnsupportedOutput(quantity=OutputQuantity.RUNOUT_EXTENT, reason="nonsense"),
+    )
+    with pytest.raises(ValidationError, match="cannot declare its own extent unsupported"):
+        build_result(NormalizedRunoutResult, content)
+
+
+def test_unsupported_declarations_must_be_unique():
+    from avycore.engines import UnsupportedOutput
+
+    content, _ = _runout_content()
+    duplicate = UnsupportedOutput(
+        quantity=OutputQuantity.FLOW_VELOCITY, reason="no momentum equation"
+    )
+    content["unsupported_outputs"] = (duplicate, duplicate)
+    with pytest.raises(ValidationError, match="must be unique"):
+        build_result(NormalizedRunoutResult, content)
+
+
+@pytest.mark.parametrize(
+    "quantity,wrong_unit",
+    [
+        (OutputQuantity.ENERGY_LINE_HEIGHT, "1"),
+        (OutputQuantity.TRAVEL_ANGLE, "radian"),
+        (OutputQuantity.ARRIVAL_TIME, "min"),
+    ],
+)
+def test_new_quantities_reject_a_non_canonical_unit(quantity, wrong_unit):
+    grid = _grid()
+    with pytest.raises(ValidationError, match="requires unit"):
+        RasterField(
+            quantity=quantity,
+            unit=wrong_unit,
+            artifact=_artifact("field.npy"),
+            mask=_mask(grid),
+            grid=grid,
+            dtype="float32",
+            valid_min=0.0,
+            valid_max=1.0,
+            semantics="wrong unit",
+        )
+
+
+def test_field_for_returns_each_published_quantity_and_none_otherwise():
+    content, grid = _runout_content()
+    angle = RasterField(
+        quantity=OutputQuantity.TRAVEL_ANGLE,
+        unit="degree",
+        artifact=_artifact("angle.npy"),
+        mask=_mask(grid),
+        grid=grid,
+        dtype="float32",
+        valid_min=0.0,
+        valid_max=90.0,
+        semantics="travel angle",
+    )
+    content["travel_angle"] = angle
+    result = build_result(NormalizedRunoutResult, content)
+    assert result.field_for(OutputQuantity.TRAVEL_ANGLE) is angle
+    assert result.field_for(OutputQuantity.RUNOUT_EXTENT) is result.runout_extent
+    assert result.field_for(OutputQuantity.ARRIVAL_TIME) is None
+
+
+def test_a_normalized_field_must_declare_a_projected_metre_grid_in_xy_order():
+    with pytest.raises(ValidationError, match="metre units and x,y order"):
+        CRSContract(
+            definition="EPSG:32611",
+            projected=True,
+            horizontal_unit="degree",
+            coordinate_order="longitude,latitude",
+            vertical_datum=None,
+            vertical_datum_status="unknown",
+        )
+    with pytest.raises(ValidationError, match="degree units and longitude,latitude order"):
+        CRSContract(
+            definition="EPSG:4326",
+            projected=False,
+            horizontal_unit="m",
+            coordinate_order="x,y",
+            vertical_datum=None,
+            vertical_datum_status="unknown",
+        )
+    with pytest.raises(ValidationError, match="known vertical datum must be named"):
+        CRSContract(
+            definition="EPSG:32611",
+            projected=True,
+            horizontal_unit="m",
+            coordinate_order="x,y",
+            vertical_datum=None,
+            vertical_datum_status="known",
+        )

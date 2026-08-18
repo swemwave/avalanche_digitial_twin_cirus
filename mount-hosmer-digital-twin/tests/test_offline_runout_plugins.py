@@ -11,9 +11,11 @@ from pathlib import Path
 import pytest
 
 from app.processing.runout.avaframe import AvaFrameCom1DFAAdapter
-from app.processing.runout.availability import (
-    AvaFrameFlowPyAvailabilityAdapter,
-    RAvaFlowAvailabilityAdapter,
+from app.processing.runout.availability import RAvaFlowAvailabilityAdapter
+from app.processing.runout.flowpy import (
+    AvaFrameCom4FlowPyAdapter,
+    UPSTREAM_FLOWPY_REVIEWED_COMMITS,
+    UpstreamFlowPyAdapter,
 )
 from app.processing.runout.process import ExternalModelProcessError, run_isolated_worker
 
@@ -35,12 +37,37 @@ def test_missing_avaframe_environment_is_explicitly_unavailable(tmp_path: Path):
 
 
 def test_unimplemented_external_adapters_fail_closed(tmp_path: Path):
-    flowpy = AvaFrameFlowPyAvailabilityAdapter(tmp_path / "missing-python").availability()
+    flowpy = AvaFrameCom4FlowPyAdapter(tmp_path / "missing-python").availability()
     r_avaflow = RAvaFlowAvailabilityAdapter().availability()
     assert flowpy.status == "unavailable"
     assert "does not exist" in flowpy.reason
     assert r_avaflow.status == "unavailable"
     assert "No version-bound" in r_avaflow.reason
+
+
+def test_standalone_flowpy_identity_stays_fail_closed_and_never_uses_the_avaframe_port(tmp_path: Path):
+    unconfigured = UpstreamFlowPyAdapter().availability()
+    assert unconfigured.status == "unavailable"
+    assert "archived read-only" in unconfigured.reason
+    assert unconfigured.engine_id == "runout.flowpy_upstream"
+
+    checkout = tmp_path / "FlowPy"
+    checkout.mkdir()
+    (checkout / "main.py").write_text("print('not upstream')\n", encoding="utf-8")
+    unreviewed = UpstreamFlowPyAdapter(checkout).availability()
+    assert unreviewed.status == "unavailable"
+    assert "matches no reviewed upstream commit" in unreviewed.reason
+
+    with pytest.raises(ExternalModelProcessError) as caught:
+        UpstreamFlowPyAdapter(checkout).run_runout()
+    assert caught.value.code == "adapter_disabled"
+
+
+def test_released_upstream_flowpy_commit_is_recorded_as_rejected():
+    released = UPSTREAM_FLOWPY_REVIEWED_COMMITS["7b061599355cef584491d69eae2686307d286901"]
+    assert released["ref"] == "v1.0.3"
+    assert released["status"] == "rejected"
+    assert "argv" in released["reason"]
 
 
 def test_subprocess_nonzero_exit_is_visible(tmp_path: Path):
@@ -235,3 +262,61 @@ def test_real_avaframe_synthetic_example_is_normalized_and_replayable(tmp_path: 
     assert first.runout.validation.eligible_field_events == 0
     assert first.runout.uncertainty == ()
     assert any("no propagated uncertainty" in item for item in first.runout.limitations)
+
+
+# --- com1DFA pta versus Flow-Py fpTravelAngleMax -----------------------------
+
+# Digests of the pinned AvaFrame 2.1 sources the characterization in
+# docs/runout-engines.md section 2.1 was read from.  If an upstream file changes,
+# the conclusion has to be re-derived rather than inherited, so the digests are
+# checked against the installed environment whenever one is configured.
+CHARACTERIZED_UPSTREAM_SOURCES = {
+    "com1DFA/DFAfunctionsCython.pyx": (
+        "24ac032d7456ecc99da92fbdb9405ee09eb9f7fd8a8f84770803c1eeab4bfadc"
+    ),
+    "com4FlowPy/flowClass.py": (
+        "27a0bfccc04999c1ac5261ac392cb020682eb1928a05eb787e1bce410c6be8a0"
+    ),
+    "com4FlowPy/flowCore.py": (
+        "b864600db0e9d5a9ddbd7740a8bb3496f92eeadce6a6b1b81d6217e4a68d3b0f"
+    ),
+}
+
+
+def test_com1dfa_travel_angle_stays_unsupported_with_the_characterized_reason():
+    """Equivalence was characterized and refuted, so the comparison stays off.
+
+    The reason has to carry the finding, not a placeholder: the next reader has
+    to be able to tell "nobody looked" from "somebody looked and they differ".
+    """
+
+    from avycore.engines import OutputQuantity
+
+    from app.processing.runout.avaframe import UNSUPPORTED_COM1DFA_OUTPUTS
+
+    declared = {item.quantity: item.reason for item in UNSUPPORTED_COM1DFA_OUTPUTS}
+    reason = declared[OutputQuantity.TRAVEL_ANGLE]
+    assert "fpTravelAngleMax" in reason and "pta" in reason
+    # The two structural differences that decide it.
+    assert "trajectory" in reason and "shortest" in reason
+    assert "runout-engines.md" in reason
+    assert "no equivalence has been characterized" not in reason
+
+
+@pytest.mark.skipif(
+    not os.environ.get("AVAFRAME_TEST_PYTHON"),
+    reason="Set AVAFRAME_TEST_PYTHON to an isolated AvaFrame 2.1 Python executable.",
+)
+def test_the_characterized_upstream_sources_are_still_the_installed_ones():
+    import hashlib
+
+    python = Path(os.environ["AVAFRAME_TEST_PYTHON"]).resolve()
+    root = python.parents[1] / "Lib" / "site-packages" / "avaframe"
+    if not root.is_dir():
+        root = next(python.parents[1].glob("lib/python*/site-packages/avaframe"))
+    for relative, expected in sorted(CHARACTERIZED_UPSTREAM_SOURCES.items()):
+        actual = hashlib.sha256((root / relative).read_bytes()).hexdigest()
+        assert actual == expected, (
+            f"{relative} changed upstream; re-derive docs/runout-engines.md section 2.1 "
+            "instead of carrying its conclusion forward."
+        )
