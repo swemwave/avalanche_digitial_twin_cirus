@@ -966,6 +966,11 @@ def test_a_sweep_cannot_be_both_published_and_declined(tmp_path: Path):
 
 
 def test_moving_the_release_boundary_changes_the_release_and_its_identity(tmp_path: Path):
+    # Writing the release bundle rasterizes, so this one genuinely needs the
+    # bake-time geospatial stack. requirements-dev.txt does not install it, so
+    # skip rather than pretend the dependency is present.
+    pytest.importorskip("rasterio")
+
     from app.processing.runout.synthetic import _make_release_bundle
 
     areas = {}

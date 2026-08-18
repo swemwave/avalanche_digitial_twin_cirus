@@ -9,9 +9,6 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
-import rasterio
-import rasterio.features
-from rasterio.transform import from_origin
 
 from avycore.engines import (
     AVYCORE_RELEASE_BASELINE,
@@ -128,6 +125,8 @@ def _inline_input(name: str, kind: InputKind, value: object, unit: str | None) -
 
 
 def _synthetic_fields() -> tuple[dict[str, np.ndarray], object, CRSContract, GridContract]:
+    from rasterio.transform import from_origin
+
     rows, columns, resolution = 180, 60, 5.0
     distance = np.arange(rows, dtype=np.float64)[:, None] * resolution
     upper_length = 280.0
@@ -216,6 +215,13 @@ def _offset_extent(extent: np.ndarray, valid: np.ndarray, cells: int) -> np.ndar
 def _make_release_bundle(
     root: Path, *, release_boundary_offset_m: float = 0.0
 ) -> tuple[NormalizedReleaseResult, dict[str, object]]:
+    # rasterio is a bake-time dependency (requirements-bake.txt) and is absent
+    # from the runtime and dev/test environments by design. Importing it at module
+    # scope took the whole module -- including the pure-numpy _offset_extent -- down
+    # wherever the geospatial stack is not installed. Only this function rasterizes.
+    import rasterio
+    import rasterio.features
+
     fields, transform, crs, grid = _synthetic_fields()
     source_mask = fields["mask"]
     layers = {
