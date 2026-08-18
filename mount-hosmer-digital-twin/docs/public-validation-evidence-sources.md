@@ -137,7 +137,7 @@ The three Sentinel-2 no-pair states remain explicit: `regobs-354318` and
 `regobs-358192` have no strictly post-event catalogue acquisition in the frozen
 window, while `regobs-448389` has no strictly pre-event acquisition. The live
 artifact and immutable-cache replay were byte-identical (file SHA-256
-`10496db7a7ae8bab4314efb3c00ed9568126281ead7f23701540e54179810866`).
+`44e2bd82e0cb26e8c506cab76002b528cfabc5b1b49ad60735abcebc8e2e70b6`).
 
 These counts establish catalogue availability only. No imagery pixels were
 opened, no avalanche was interpreted, and no event became contract-eligible or

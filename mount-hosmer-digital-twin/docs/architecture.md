@@ -3,6 +3,8 @@
 How the Mount Hosmer digital twin is put together, and why.
 
 **Related:** [`limitations.md`](limitations.md) (what it cannot do) ·
+[`prediction-products.md`](prediction-products.md) (the offline pipeline and its products) ·
+[`runout-engines.md`](runout-engines.md) (which upstream engine runs, and what it can produce) ·
 [`../../docs/data-footprint.md`](../../docs/data-footprint.md) (the bake input contract) ·
 [`../../AGENTS.md`](../../AGENTS.md) (development objective and invariants).
 
@@ -86,6 +88,9 @@ FastAPI, ~1k LOC of runtime, plus a bake-time engine that is never imported by t
 | **AvyCore — research snow/regimes** | `packages/avycore/src/avycore/snowpack` | Runtime-safe hourly forcing contract, evolving snow-state indices, solar geometry, separate dry-slab/wet-snow/dry-loose release paths, explicit unsupported-glide result, and regime-aware zone extraction. Used by frozen validation runners only; not wired to `/api/assess`. |
 | **Scenario contract** | `packages/avycore/src/avycore/scenario.py` | Strict user inputs, status/provenance/uncertainty, spatial support, classification and canonical identity. Each parameter is `active` (enters an equation) or `advisory` (cannot). |
 | **Advisories** | `packages/avycore/src/avycore/advisories.py` | Deterministic rules turning snowpack/field records into ranked written statements. Never numeric — every advisory publishes `changed_the_number: false`. |
+| **Release coupling contract** | `packages/avycore/src/avycore/release_coupling.py` | The SnowState-to-Release input contract for dry-slab coupling. Decides eligibility and names what is missing; it computes no release value and has no path from terrain alone to an instability result. |
+| **Prediction products** | `app/predictions.py`, `app/api/predictions.py` | Runtime-safe reader and read-only routes over `runtime\predictions\`. Pydantic and the standard library only; no engine is imported or run in a request. |
+| **Offline pipeline** | `app/pipeline.py` | ⚠️ Offline. The one entry point that runs Mountain Pack → Condition Pack → Snow State → Release → Runout per engine → Comparison → Prediction Product. |
 | **Assess** | `app/assess.py` | scenario → supported-condition mask → release raster → zones → runout (top-N) → one JSON. Disclaimer attached here, in code. |
 | **AvyCore — assistant** | `packages/avycore/src/avycore/assistant` | Local Ollama. `explain` narrates an assessment; `chat` parses to sliders → runs the real `/assess` → narrates. |
 | **Compatibility facades** | `app/{risk,geo,assistant}.py`, `app/simulation/*` | Keep existing imports and monkeypatch points working while delegating to the packages. |
@@ -264,6 +269,9 @@ runtime\
 │   ├── exposure\features.geojson  classified WGS84 exposure vectors (optional)
 │   ├── layers\*.npy            6 model layers + 2 provenance layers (+ 2 optional exposure)
 │   └── meta.json               lineage/checksums/identity + grid/AOI/tiles/exposure/reprojection
+├── predictions\        immutable offline prediction products (python -m app.pipeline)
+│   └── prediction-product-<sha256>\  contract document + checksums + stage bundles
+├── stage-cache\runout\  --resume only; offline engine reuse, never read by the service
 ├── sources\conditions\  immutable offline ECCC/PCIC source snapshots
 ├── reports\conditions\  generated coverage, disagreement, and M2 characterization reports
 ├── reports\terrain\     generated inactive reference-elevation contracts
@@ -319,6 +327,41 @@ provenance but is excluded from the scientific result ID. Replay still requires
 byte-identical comparison fields, normalized configuration and environment
 artifacts and identical scientific report content.
 
+### The offline pipeline and its products
+
+`python -m app.pipeline` is the single offline entry point. It runs the compatible
+stages in order, publishes a content-addressed `PredictionProduct`, and refuses to
+substitute anything for a stage that cannot run. Products are written to
+`runtime\predictions\<product_id>\`, a **sibling generated root and deliberately
+not a child of `runtime\baked\`**: the bake validates `baked\` against
+`meta.json` and `--force` replaces that whole tree atomically, so a product stored
+inside it would be destroyed by an unrelated terrain rebuild. The durable contract
+— stage statuses, replay identity, storage layout, the read-only API, and the
+bounded sensitivity ensembles — is in
+[`prediction-products.md`](prediction-products.md).
+
+`--resume` may replace one engine execution with a stored bundle, but only when a
+key over the complete run identity — engine and adapter digests, the isolated
+interpreter's bytes and its installed-package manifest, and the engine request
+minus disposable paths — matches, and only after the stored bundle re-verifies
+against its own checksums and provenance. The cache lives at
+`runtime\stage-cache\`, a third sibling root; the serving application never reads
+it, and a resumed run publishes the identical `product_id`.
+
+`GET /api/predictions`, `GET /api/predictions/{product_id}` and
+`GET /api/predictions/{product_id}/comparisons/{comparison_id}` serve those
+products read-only. They open files and validate them; no external engine is
+imported or executed inside a request, and `POST /api/assess` is unchanged.
+
+Flow-Py now has a real, characterized adapter rather than an availability stub.
+`runout.avaframe_flowpy` executes AvaFrame's `com4FlowPy` port and records the
+hashes of the module files that ran; `runout.flowpy_upstream` is the separate
+identity for the archived GPL-3.0 standalone distribution and stays fail-closed.
+Which upstream implementation produced a result, what each engine can and cannot
+output, and the analytical energy-line verification case are documented in
+[`runout-engines.md`](runout-engines.md). r.avaflow still has an isolated
+availability boundary and no enabled runner.
+
 The reproducible integration example is:
 
 ```powershell
@@ -332,11 +375,12 @@ python scripts\run_synthetic_avaframe.py `
 It creates synthetic projected terrain, runs the existing uncalibrated PRA-style
 relative release index, and supplies explicit synthetic thickness, density,
 Voellmy parameters, timestep and seed to com1DFA. It is a software-integration
-case, not a Mount Hosmer scenario or a validation case. `com4FlowPy` is detected
-through AvaFrame but execution remains disabled until its normalized semantics
-are characterized. r.avaflow has an isolated availability boundary but no
-enabled runner. The existing release, alpha-angle and particle engines remain
-the serving baselines; no API or frontend contract changes in this slice.
+case, not a Mount Hosmer scenario or a validation case.
+`scripts\run_synthetic_engine_comparison.py` extends it by driving com1DFA and
+com4FlowPy from that *same* normalized release — polygons to one, raster to the
+other, neither consuming the other's output — and reporting their disagreement.
+The existing release, alpha-angle and particle engines remain the serving
+baselines for `POST /api/assess`.
 
 ---
 

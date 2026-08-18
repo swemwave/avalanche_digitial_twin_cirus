@@ -134,6 +134,16 @@ def test_combined_serving_import_is_socket_blocked_and_offline_processing_free()
         "app.processing.snow",
         "app.processing.snow.official_example",
         "app.processing.snow.snowpack_output",
+        # The offline pipeline and every external runout adapter execute engines
+        # in isolated subprocesses. Serving reads the immutable products they
+        # wrote; importing them here would put AvaFrame's dependency closure --
+        # and the ability to launch it -- inside the request path.
+        "app.pipeline",
+        "app.processing.runout.avaframe",
+        "app.processing.runout.flowpy",
+        "app.processing.runout.flowpy_benchmark",
+        "app.processing.runout.synthetic",
+        "avaframe",
         "cdsapi",
         "eccodes",
         "cfgrib",

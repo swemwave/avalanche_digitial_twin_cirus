@@ -1,5 +1,8 @@
 .env
 .venv/
+# Isolated, pinned external-engine environments (see docs/runout-engines.md).
+.venv-avaframe/
+.venv-flowpy/
 __pycache__/
 .pytest_cache/
 *.pyc

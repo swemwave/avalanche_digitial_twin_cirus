@@ -97,11 +97,15 @@ runtime\baked\meta.json                    # lineage, checksums, bake identity, 
 runtime\reports\terrain\reference-elevations\... # inactive bake-bound elevation contracts
 runtime\verification\bake-preservation\...       # complete pre-rebuild inventory/copy
 runtime\snow-state-packs\...                      # inactive offline M3 outputs, when eligible
+runtime\predictions\prediction-product-<sha256>\  # immutable offline pipeline products
 ```
 
-High-fidelity engine runs are also offline products, but they are not part of the
-serving surface unless a future reviewed bake step explicitly promotes a stable
-schema into `runtime/baked/`. The AvaFrame synthetic example writes only to the
+High-fidelity engine runs are also offline products. They are served read-only
+from `runtime/predictions/`, a sibling generated root chosen so that a terrain
+rebuild of `runtime/baked/` cannot destroy them and so that they stay outside the
+bake's own checksum contract; see
+`mount-hosmer-digital-twin/docs/prediction-products.md`. Nothing is promoted into
+`runtime/baked/` without a reviewed bake step. The AvaFrame synthetic example writes only to the
 operator-supplied output directory. Its isolated environment comes from
 `backend/requirements-avaframe.txt`; AvaFrame, rasterio, GDAL/pyproj and external
 engine executables are absent from the serving dependency closure. Every engine
