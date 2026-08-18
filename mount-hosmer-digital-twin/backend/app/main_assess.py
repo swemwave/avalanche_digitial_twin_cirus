@@ -13,6 +13,7 @@ makes no outbound calls at all.
 from __future__ import annotations
 
 from app.api import assess as assess_routes
+from app.api import predictions as prediction_routes
 from app.api import terrain as terrain_routes
 from app.service import baked_stamp, create_app
 
@@ -22,7 +23,11 @@ app = create_app(
         "Terrain metadata, baked map tiles, and the simplified avalanche release/runout "
         "model. Experimental and NOT an operational avalanche forecast."
     ),
-    routers=[terrain_routes.router, assess_routes.router],
+    # Prediction products are read-only files. They belong here rather than in the
+    # assistant because the ALB routes everything under /api/* to this service, and
+    # because reading a product must sit beside the model it describes. Serving them
+    # launches no engine: app.predictions imports pydantic and the standard library.
+    routers=[terrain_routes.router, assess_routes.router, prediction_routes.router],
     # `baked: false` means the bake has not run. The service still answers so it can
     # say so -- unbuilt is a different condition from broken (invariant I3).
     # `bake_generated_at` names *which* bake this image carries, so a stale deploy is

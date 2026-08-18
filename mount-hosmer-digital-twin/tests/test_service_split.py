@@ -47,6 +47,23 @@ def test_assess_service_serves_terrain_and_assess_but_no_assistant():
     assert not any(p.startswith("/api/assistant") for p in paths)
 
 
+def test_assess_service_serves_the_prediction_products():
+    """The deployed ALB sends every /api/* path here, so a route mounted only on the
+    single-process app is a 404 in production while passing every local test. The
+    read-only product routes must be on this service or the client sees an error
+    where it should see an empty, honest answer."""
+
+    paths = _paths("app.main_assess")
+    assert "/api/predictions" in paths
+    assert "/api/predictions/{product_id}" in paths
+    assert "/api/predictions/{product_id}/comparisons/{comparison_id}" in paths
+
+
+def test_assistant_service_does_not_serve_prediction_products():
+    paths = _paths("app.main_assistant")
+    assert not any(p.startswith("/api/predictions") for p in paths)
+
+
 def test_assistant_service_serves_only_the_assistant():
     paths = _paths("app.main_assistant")
     assert "/api/assistant/chat" in paths
