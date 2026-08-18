@@ -4,7 +4,7 @@
   "experiment_id": "public-data-field-validation-v1",
   "experiment_spec_sha256": "7e7bff60541d988f331d38055e9f96c179d407b111e433428d15356adc766b8d",
   "source_candidate_inventory_id": "public-event-candidates-v1",
-  "source_candidate_inventory_sha256": "f8fdec5bfd878266dae5bfee2305a13086b46fff3e342025cd7d300e2f07dcb2",
+  "source_candidate_inventory_sha256": "a533c30411ddacf3b13f6fa48c0044d648e066a08c811e2e8ad9b1ad3ddcebd5",
   "catalogue_acquisition_frozen_at_utc": "2026-08-13T00:00:00Z",
   "stage": "metadata_only_satellite_catalogue_availability_preflight",
   "predictions_generated": false,

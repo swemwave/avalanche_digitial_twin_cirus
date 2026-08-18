@@ -10,7 +10,7 @@
     {
       "bytes": 45001,
       "path": "validation-data/acquisition/field-validation-owner-request-v1.json",
-      "sha256": "9090b7f66e067bf4161c70b3b7edf0519cdea51909432f3c322f33b7f90eb4b4"
+      "sha256": "d03725d226ca92ee34799987a1ed299a070c07026a6c2e2601243c22a9e1ac79"
     },
     {
       "bytes": 23004,
@@ -20,7 +20,7 @@
     {
       "bytes": 26484,
       "path": "validation-data/acquisition/field-validation-owner-requests-v1.md",
-      "sha256": "59df9bb69b00b77c00934da4a746014f3cdc688eebba37c9085157d0fd9cb890"
+      "sha256": "963b6850abbfa85569a8f9dabdbfb0c6a8994636c73ee4b7e36b30cea5007905"
     },
     {
       "bytes": 7492,
@@ -40,14 +40,14 @@
     {
       "bytes": 2065,
       "path": "validation-data/acquisition/field-validation-group-split-preregistration-v1.json",
-      "sha256": "83ca9bd3d14ba722f9b9c4bc2a4f8b5de438d8e106fdffe6e896460f47f5a4b1"
+      "sha256": "fd54c75aa98276afc612691c0b7c4a634d03785c8f0a875962daf4bb024aba3c"
     }
   ],
   "frozen_source_artifacts": [
     {
       "bytes": 6956,
       "path": "validation-data/experiments/public-data-field-validation-v2.json",
-      "sha256": "91586bd87f057222268dacfb3651f5dc22c02cd8fc0a26e5cd98f8f7228c2cb9"
+      "sha256": "79dbc18b1fc12fb1dace5d81ca680cb572fc1edb7f054452e30ed738924f2007"
     },
     {
       "bytes": 30889,
@@ -57,7 +57,7 @@
     {
       "bytes": 441703,
       "path": "validation-data/candidates/public-event-strict-funnel-v5.json",
-      "sha256": "bf665aba57cf6167b19247a28a9a39e688b7e4105f7b4bbd87164200a2e038c1"
+      "sha256": "ecd03c92b6b6bc1e10da6d5833c31f15ab2610beb2dd9436482f697714bd0827"
     }
   ],
   "implementation_artifacts": [
@@ -98,7 +98,7 @@
     }
   ],
   "metrics_authorized": false,
-  "normalized_artifact_sha256": "271e6dee5f72a52b7b71a9691e6794fdad12046d2e07973465317df0359548bd",
+  "normalized_artifact_sha256": "b2508645a78a256f69c619b02ccea000d512c494901ef1c3d96c1d06e5cdf9c4",
   "prediction_authorized": false,
   "recalculated_at_utc": "2026-08-15T04:20:00Z",
   "schema": "avycore-field-validation-acquisition-integrity-v1",

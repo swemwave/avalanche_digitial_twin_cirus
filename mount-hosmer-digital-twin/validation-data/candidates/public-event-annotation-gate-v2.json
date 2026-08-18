@@ -362,7 +362,7 @@
   "prototype_disclaimer": "Experimental research prototype only. It does not replace Avalanche Canada guidance or field assessment. Scores are relative indices, not probabilities.",
   "schema": "avycore-public-event-annotation-gate-v2",
   "source_ai_annotation_proposals_sha256": "840f958d2484ab9272cfd06dfc277bbaca4cd1a74bef80b860c20294e9ee22fa",
-  "source_blinded_packet_manifest_sha256": "7b9b6252e1062f678b4257db0a56308f042888961e779e6fbda8495cca95ce38",
-  "source_regobs_evidence_manifest_sha256": "cb14787db2c40d5b043d9ac4a25afbbd92da48067d291599a4ebd2f9a27baaae",
+  "source_blinded_packet_manifest_sha256": "dace0145b3612ece387792408b89b96330d39bbdc18e6890f7c2282e19f7fc80",
+  "source_regobs_evidence_manifest_sha256": "87ea8956f8d5340de7d9eb3dd82f3d674022f2c487e0462e5b0d964b24086fe5",
   "stage": "blinded_observation_annotation_and_human_review_gate"
 }

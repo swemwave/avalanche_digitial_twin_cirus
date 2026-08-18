@@ -38352,6 +38352,6 @@
   "regobs_start_stop_target_coordinates_accessed": false,
   "schema": "avycore-public-event-imagery-acquisition-v2",
   "selection_rule_frozen_before_pixel_access": true,
-  "source_preflight_sha256": "10496db7a7ae8bab4314efb3c00ed9568126281ead7f23701540e54179810866",
+  "source_preflight_sha256": "44e2bd82e0cb26e8c506cab76002b528cfabc5b1b49ad60735abcebc8e2e70b6",
   "stage": "anonymous_public_imagery_acquisition_before_target_access"
 }

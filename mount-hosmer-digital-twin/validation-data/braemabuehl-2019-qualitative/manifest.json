@@ -50,7 +50,7 @@
     "method": "The source report gives no quantified horizontal positional uncertainty for the interpreted outlines."
   },
   "observations_file": "observations.geojson",
-  "observations_sha256": "c0b0e6bcc2183ea4a1b1d1f1c0d9e92285413d03493dc5528fc2023f44269fd7",
+  "observations_sha256": "7ba2ecb0566a8f8eddd67103c0fe7d30b836edee76745018bee34d26fb515f3f",
   "limitations": [
     "Remote-sensing interpretation is qualitative evidence under the avycore contract, not field-validation ground truth.",
     "No quantified horizontal uncertainty or complete surveyed domain is published, so strict IoU and within-uncertainty endpoint metrics are ineligible.",

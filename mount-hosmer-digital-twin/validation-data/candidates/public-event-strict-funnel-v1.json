@@ -3959,13 +3959,13 @@
   "prototype_disclaimer": "Experimental research prototype only. It does not replace Avalanche Canada guidance or field assessment. Scores are relative indices, not probabilities.",
   "schema": "avycore-public-event-strict-funnel-v1",
   "source_artifacts": {
-    "annotation_gate_sha256": "21dea28ef531ac6a9eb966f70bbf95ad755b7690c6f50e9921c85c6486582ded",
-    "blinded_packets_sha256": "7b9b6252e1062f678b4257db0a56308f042888961e779e6fbda8495cca95ce38",
-    "imagery_acquisition_sha256": "377589e23eb17a0a147b84db096b5443fdca11ff31da25c9d43df84e39140bf5",
-    "pixel_qa_sha256": "afa29bac585646d197043307dff2dce8ad0eff5d7a8103f11b9e99d7096d156d",
-    "regobs_evidence_sha256": "cb14787db2c40d5b043d9ac4a25afbbd92da48067d291599a4ebd2f9a27baaae",
-    "release_state_evidence_sha256": "030d6386a215c1dc9a35f1da52ae22b0e21abcee9dcfd10d87df644c846c0d06",
-    "terrain_acquisition_sha256": "59b9e278637a9c889ff40e01d49512fe9c8870d26675c472e6fc62679c76ed68"
+    "annotation_gate_sha256": "56d468b7041078656ef0ea07cf2486e89aa19d9b4af67f22d9a767828c4983a2",
+    "blinded_packets_sha256": "dace0145b3612ece387792408b89b96330d39bbdc18e6890f7c2282e19f7fc80",
+    "imagery_acquisition_sha256": "58e01b432e582cd5cec3f65982b674bbbbd8d8ee410c2823df9647d19b8611b9",
+    "pixel_qa_sha256": "084e49373b8b9d86d60fca73cd330ecb1709d8ff3822a046247f3083394ec0b5",
+    "regobs_evidence_sha256": "87ea8956f8d5340de7d9eb3dd82f3d674022f2c487e0462e5b0d964b24086fe5",
+    "release_state_evidence_sha256": "7525a802aefb02bc0159b551aa2b26c6a5b0cf5b9937967fd5455f0fd661c6f7",
+    "terrain_acquisition_sha256": "35b17fac59423e69e86aeb0a7e4e876d5f47f614633e5a10804fa620b835c692"
   },
   "stop_decision": {
     "gate_10_avaframe_integration": "not_performed_by_required_stop_rule",

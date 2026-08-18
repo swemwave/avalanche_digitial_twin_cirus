@@ -147,7 +147,7 @@
     "protocol": {
       "bytes": 6956,
       "path": "validation-data/experiments/public-data-field-validation-v2.json",
-      "sha256": "91586bd87f057222268dacfb3651f5dc22c02cd8fc0a26e5cd98f8f7228c2cb9"
+      "sha256": "79dbc18b1fc12fb1dace5d81ca680cb572fc1edb7f054452e30ed738924f2007"
     },
     "public_source_audit": {
       "bytes": 30889,
@@ -157,10 +157,10 @@
     "strict_public_funnel": {
       "bytes": 441703,
       "path": "validation-data/candidates/public-event-strict-funnel-v5.json",
-      "sha256": "bf665aba57cf6167b19247a28a9a39e688b7e4105f7b4bbd87164200a2e038c1"
+      "sha256": "ecd03c92b6b6bc1e10da6d5833c31f15ab2610beb2dd9436482f697714bd0827"
     }
   },
-  "normalized_artifact_sha256": "75c6ac8e3ebc05b7d6a957631ccc3ee3d3cd6d208b7a1bb87fa4b7cfd74c1403",
+  "normalized_artifact_sha256": "ffd7ea05f8276196c68c0bc8175a898b059ecf3b7d47ff7b588851bb93995297",
   "owner_routes": [
     {
       "candidate_request": "All retainable dry dense-slab source events behind the Sovilla Monte Pizzac 18-event mass-balance study, GEODAR archive, and later Vallée de la Sionne records; preferably 24 or more candidates before QA attrition.",

@@ -13279,7 +13279,7 @@
       "mountain_group": "Gotthard Alps fixed tile",
       "partition": "holdout",
       "prediction_artifact_path": "validation-data/predictions/spot-blind-swiss-v1/holdout_gotthard.npz",
-      "prediction_artifact_sha256": "e726f8e9955607e2d4828baf0896142332a643992d9cc0604fa85c4bc882ff29",
+      "prediction_artifact_sha256": "b14b15da3d4b6ca6632ef31f6bcb351c87122c97350dcea1ad9744defcc2775b",
       "prediction_identity_sha256": "9b857c86f8c4c8e6c3c269739de2b7ba8a49299db36adff33f0a51b8cdf69abd",
       "prediction_summary": {
         "block_id": "holdout_gotthard",
@@ -13329,7 +13329,7 @@
             "zones": []
           }
         },
-        "experiment_spec_sha256": "d209e4fca6d04134139cf9f1965b576f6365769a1cf25180fa7b2079fb35398c",
+        "experiment_spec_sha256": "f208e81e7d6bd6dabe8f92c99859da272d5c3dda432e4e7fcfc5a9145bc18075",
         "held_out_outlines_opened": false,
         "held_out_outlines_used_as_model_inputs": false,
         "mask_sha256": {
@@ -37142,7 +37142,7 @@
       "mountain_group": "Glarus Alps fixed tile",
       "partition": "holdout",
       "prediction_artifact_path": "validation-data/predictions/spot-blind-swiss-v1/holdout_glarus.npz",
-      "prediction_artifact_sha256": "b2c1250aa513aa4922e24ca77b1bbf54437590bd81f7b6674fc3b9506b223835",
+      "prediction_artifact_sha256": "13dd1517cc80ec897e2c21a7d1dc08cdeaba12ebba7b3bf2600c0fd050a30f1c",
       "prediction_identity_sha256": "0c5a6842c4236f831210857afd580d2c019f115db9e8effbea1dd4407383afdc",
       "prediction_summary": {
         "block_id": "holdout_glarus",
@@ -37459,7 +37459,7 @@
             ]
           }
         },
-        "experiment_spec_sha256": "d209e4fca6d04134139cf9f1965b576f6365769a1cf25180fa7b2079fb35398c",
+        "experiment_spec_sha256": "f208e81e7d6bd6dabe8f92c99859da272d5c3dda432e4e7fcfc5a9145bc18075",
         "held_out_outlines_opened": false,
         "held_out_outlines_used_as_model_inputs": false,
         "mask_sha256": {
@@ -47728,7 +47728,7 @@
       "mountain_group": "Albula Alps fixed tile",
       "partition": "holdout",
       "prediction_artifact_path": "validation-data/predictions/spot-blind-swiss-v1/holdout_albula.npz",
-      "prediction_artifact_sha256": "20668ecdaa8f5f9be7965ecc490358d2f0eac93a9b57f516961c7bfa4d8d846e",
+      "prediction_artifact_sha256": "f1bccde9343636e78dd8495d87f8ee1eb2f3167908a7a35926313fcda739be58",
       "prediction_identity_sha256": "617627402710ea914f0c46f97e1cb19e7d83eb15aea0d9a59def2da6871c0747",
       "prediction_summary": {
         "block_id": "holdout_albula",
@@ -47778,7 +47778,7 @@
             "zones": []
           }
         },
-        "experiment_spec_sha256": "d209e4fca6d04134139cf9f1965b576f6365769a1cf25180fa7b2079fb35398c",
+        "experiment_spec_sha256": "f208e81e7d6bd6dabe8f92c99859da272d5c3dda432e4e7fcfc5a9145bc18075",
         "held_out_outlines_opened": false,
         "held_out_outlines_used_as_model_inputs": false,
         "mask_sha256": {
@@ -57335,7 +57335,7 @@
       "mountain_group": "Silvretta and Lower Engadine fixed tile",
       "partition": "holdout",
       "prediction_artifact_path": "validation-data/predictions/spot-blind-swiss-v1/holdout_silvretta.npz",
-      "prediction_artifact_sha256": "701c25051028522623bbce16b0f1274bb7939cd875f7f2bb33ad4f8bb0104ea7",
+      "prediction_artifact_sha256": "cd7f3b86f5edd8ad117c276d5bfabfa543d1eb708f03876236680f86cdc10f15",
       "prediction_identity_sha256": "5c131a62aac3df9c31a75b1daad1028a995ebc694cb6e524240c01732307f0b4",
       "prediction_summary": {
         "block_id": "holdout_silvretta",
@@ -57385,7 +57385,7 @@
             "zones": []
           }
         },
-        "experiment_spec_sha256": "d209e4fca6d04134139cf9f1965b576f6365769a1cf25180fa7b2079fb35398c",
+        "experiment_spec_sha256": "f208e81e7d6bd6dabe8f92c99859da272d5c3dda432e4e7fcfc5a9145bc18075",
         "held_out_outlines_opened": false,
         "held_out_outlines_used_as_model_inputs": false,
         "mask_sha256": {
@@ -57607,14 +57607,14 @@
   "emails_sent": false,
   "experiment_id": "spot-blind-swiss-v1",
   "experiment_spec_path": "validation-data/experiments/spot-blind-swiss-v1.json",
-  "experiment_spec_sha256": "d209e4fca6d04134139cf9f1965b576f6365769a1cf25180fa7b2079fb35398c",
+  "experiment_spec_sha256": "f208e81e7d6bd6dabe8f92c99859da272d5c3dda432e4e7fcfc5a9145bc18075",
   "held_out_outlines_used_as_model_inputs": false,
   "held_out_outlines_used_as_release_seeds": false,
   "model_identity": {
     "model_version": "stage3-1.2.0",
     "parameter_manifest_sha256": "aaafd6f9fc6e8d598cb56c479bcc072374ee94ba17613c0ac2df0594f8059628",
     "risk_source_path": "packages/avycore/src/avycore/hazard/risk.py",
-    "risk_source_sha256": "e865cde2032e25cd4843084641158497fd3aef647ebbe47a595522fd4a4e5e74",
+    "risk_source_sha256": "4aa94d5f2dda486d3804d680b34aea45e8bc70cfbf84ef54807ca323be93f8fc",
     "runner_source_path": "scripts/validation/run_spot_blind_hindcast.py",
     "runner_source_sha256": "b73e6c7f84f46cc0fc3b6127dce88412ca666fd02f7f165ebd8289e66a63b6de",
     "runout_source_path": "packages/avycore/src/avycore/hazard/runout.py",

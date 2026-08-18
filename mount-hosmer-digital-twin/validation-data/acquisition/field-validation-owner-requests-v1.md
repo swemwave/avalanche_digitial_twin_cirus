@@ -12,10 +12,10 @@ predictions and metrics remain unauthorized.
 
 | Artifact | Bytes | SHA-256 |
 |---|---:|---|
-| `validation-data/experiments/public-data-field-validation-v2.json` | 6956 | `91586bd87f057222268dacfb3651f5dc22c02cd8fc0a26e5cd98f8f7228c2cb9` |
-| `validation-data/candidates/public-event-strict-funnel-v5.json` | 441703 | `bf665aba57cf6167b19247a28a9a39e688b7e4105f7b4bbd87164200a2e038c1` |
+| `validation-data/experiments/public-data-field-validation-v2.json` | 6956 | `79dbc18b1fc12fb1dace5d81ca680cb572fc1edb7f054452e30ed738924f2007` |
+| `validation-data/candidates/public-event-strict-funnel-v5.json` | 441703 | `ecd03c92b6b6bc1e10da6d5833c31f15ab2610beb2dd9436482f697714bd0827` |
 | `validation-data/candidates/public-validation-source-audit-v2.json` | 30889 | `a4c1ef834d0f1da97f43d939c17da692f355a054066fa28ea85dc5c37e4b66ae` |
-| `validation-data/acquisition/field-validation-owner-request-v1.json` | 45001 | `9090b7f66e067bf4161c70b3b7edf0519cdea51909432f3c322f33b7f90eb4b4` |
+| `validation-data/acquisition/field-validation-owner-request-v1.json` | 45001 | `d03725d226ca92ee34799987a1ed299a070c07026a6c2e2601243c22a9e1ac79` |
 | `validation-data/acquisition/field-validation-owner-delivery-v1.schema.json` | 23004 | `b0fe1994b3909c89ee07391dc200047f7c7ee38506b51db65f36998267395e9f` |
 
 The complete acquisition/workflow hash inventory is regenerated at 

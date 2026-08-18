@@ -3346,6 +3346,6 @@
   "regobs_attachments_accessed": false,
   "regobs_start_stop_target_coordinates_accessed": false,
   "schema": "avycore-public-event-pixel-qa-v1",
-  "source_acquisition_sha256": "377589e23eb17a0a147b84db096b5443fdca11ff31da25c9d43df84e39140bf5",
+  "source_acquisition_sha256": "58e01b432e582cd5cec3f65982b674bbbbd8d8ee410c2823df9647d19b8611b9",
   "stage": "reproducible_conservative_pixel_qa_before_target_access"
 }

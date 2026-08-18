@@ -8216,8 +8216,8 @@
   "regobs_attachments_accessed": true,
   "regobs_start_stop_target_coordinates_accessed": true,
   "schema": "avycore-public-regobs-blinded-evidence-v1",
-  "source_blinded_packet_manifest_sha256": "7b9b6252e1062f678b4257db0a56308f042888961e779e6fbda8495cca95ce38",
-  "source_preflight_sha256": "10496db7a7ae8bab4314efb3c00ed9568126281ead7f23701540e54179810866",
+  "source_blinded_packet_manifest_sha256": "dace0145b3612ece387792408b89b96330d39bbdc18e6890f7c2282e19f7fc80",
+  "source_preflight_sha256": "44e2bd82e0cb26e8c506cab76002b528cfabc5b1b49ad60735abcebc8e2e70b6",
   "source_regobs_response_sha256": "8a33061b3706819e062701091b55913e83cd837834566c685ff0ae5d3e73957c",
   "stage": "regobs_public_target_source_access_after_packet_blinding"
 }

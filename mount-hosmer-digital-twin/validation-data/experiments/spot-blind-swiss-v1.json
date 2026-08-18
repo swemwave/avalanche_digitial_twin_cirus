@@ -267,7 +267,7 @@
     "model_version": "stage3-1.2.0",
     "parameter_manifest_sha256": "aaafd6f9fc6e8d598cb56c479bcc072374ee94ba17613c0ac2df0594f8059628",
     "risk_source_path": "packages/avycore/src/avycore/hazard/risk.py",
-    "risk_source_sha256": "e865cde2032e25cd4843084641158497fd3aef647ebbe47a595522fd4a4e5e74",
+    "risk_source_sha256": "4aa94d5f2dda486d3804d680b34aea45e8bc70cfbf84ef54807ca323be93f8fc",
     "runout_source_path": "packages/avycore/src/avycore/hazard/runout.py",
     "runout_source_sha256": "fa2c5e1c912bf9a5865494501bdb4e5d1c6da05e04b1b9aaf303afbffed0ab27",
     "runner_source_path": "scripts/validation/run_spot_blind_hindcast.py",

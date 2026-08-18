@@ -10045,7 +10045,7 @@
   "regobs_attachments_accessed": false,
   "regobs_start_stop_target_coordinates_accessed": false,
   "schema": "avycore-public-event-pixel-qa-v2",
-  "source_acquisition_sha256": "aad1dd8bc60e26bf1b4b24ce2370e7353766bb58501ae09d36a3c86db8e30160",
-  "source_sentinel1_processing_sha256": "26832d27c6b17a3b8534df5b147cecf64f756dead4c69cb7f22be838d7ba4917",
+  "source_acquisition_sha256": "4a019bb04ff5b74766942a4b8376218597bd80b2c4b30e3fc5dbf8853da731a9",
+  "source_sentinel1_processing_sha256": "7d1c9ea383302dbfde79e161d6c358335f3c624d7461f936c0ed7b0f6390b763",
   "stage": "reproducible_conservative_pixel_qa_before_target_access"
 }

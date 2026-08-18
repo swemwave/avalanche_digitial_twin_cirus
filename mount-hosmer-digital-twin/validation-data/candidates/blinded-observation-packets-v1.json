@@ -308,7 +308,7 @@
   "regobs_attachments_accessed": false,
   "regobs_start_stop_target_coordinates_accessed": false,
   "schema": "avycore-blinded-observation-packets-v1",
-  "source_acquisition_sha256": "377589e23eb17a0a147b84db096b5443fdca11ff31da25c9d43df84e39140bf5",
-  "source_pixel_qa_sha256": "afa29bac585646d197043307dff2dce8ad0eff5d7a8103f11b9e99d7096d156d",
+  "source_acquisition_sha256": "58e01b432e582cd5cec3f65982b674bbbbd8d8ee410c2823df9647d19b8611b9",
+  "source_pixel_qa_sha256": "084e49373b8b9d86d60fca73cd330ecb1709d8ff3822a046247f3083394ec0b5",
   "stage": "blinded_observation_packet_construction_before_regobs_target_access"
 }

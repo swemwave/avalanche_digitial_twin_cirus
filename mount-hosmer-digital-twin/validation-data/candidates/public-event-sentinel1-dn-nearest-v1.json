@@ -6413,5 +6413,5 @@
   "resampling": "nearest",
   "schema": "avycore-public-event-sentinel1-dn-nearest-v1",
   "selection_reused_without_change": true,
-  "source_imagery_acquisition_sha256": "aad1dd8bc60e26bf1b4b24ce2370e7353766bb58501ae09d36a3c86db8e30160"
+  "source_imagery_acquisition_sha256": "4a019bb04ff5b74766942a4b8376218597bd80b2c4b30e3fc5dbf8853da731a9"
 }

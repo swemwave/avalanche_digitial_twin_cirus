@@ -795,6 +795,6 @@
   "normalized_artifact_sha256": "054b2d272031f129a8a24b84d81ec37944845b83e4aceb76958f91c29bdc69ef",
   "review_root": ".validation-cache/public-event-human-reviews-v1/submissions",
   "schema": "avycore-public-event-human-review-status-v5",
-  "source_packet_manifest_sha256": "ccb998b55955a86100e5fba79c7f290b1325630eb67456a7ed128fe795974114",
+  "source_packet_manifest_sha256": "8a1b68091a23a6b53a9a4f33a2b7f7115088a5dcd4a62055d7606f0a7d73337d",
   "unknown_or_invalid_submission_paths": []
 }

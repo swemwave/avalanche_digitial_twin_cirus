@@ -61,7 +61,7 @@
   "public_data_audit": {
     "strict_funnel": {
       "path": "validation-data/candidates/public-event-strict-funnel-v5.json",
-      "sha256": "bf665aba57cf6167b19247a28a9a39e688b7e4105f7b4bbd87164200a2e038c1",
+      "sha256": "ecd03c92b6b6bc1e10da6d5833c31f15ab2610beb2dd9436482f697714bd0827",
       "candidates_evaluated": 26,
       "eligible_any_profile": 0,
       "independent_human_reviews": 0,

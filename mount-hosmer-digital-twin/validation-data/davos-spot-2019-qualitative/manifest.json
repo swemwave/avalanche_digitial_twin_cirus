@@ -49,7 +49,7 @@
     "method": "The supplied data description gives no per-outline quantified horizontal uncertainty for these six polygons."
   },
   "observations_file": "observations.geojson",
-  "observations_sha256": "1e6f9c48109c4832e0d54c549cf0716ceb672799a70c5bc7dbc2ee9808101745",
+  "observations_sha256": "40fd551cd611c4a68d909211986b5c7564d295906938559a2cf665b47bf10b5d",
   "limitations": [
     "Satellite-image interpretations are qualitative evidence under the avycore contract, not field-validation ground truth.",
     "Each polygon is a whole-avalanche footprint; it must not be scored as a deposit polygon and provides no independent release polygon for an engine run.",
