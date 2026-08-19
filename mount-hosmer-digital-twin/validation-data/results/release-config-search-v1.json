@@ -1,0 +1,2623 @@
+{
+  "acceptance": {
+    "passed": false,
+    "reserved_block_spent": false,
+    "reserved_blocks_still_sealed": [
+      "row1col4",
+      "row2col4",
+      "row6col9",
+      "row5col10"
+    ],
+    "rule": "A configuration succeeds only if its release-only event capture beats the same-area slope-only baseline on all five development blocks by at least 5 percentage points, at equal flagged-terrain budget, with every physical guardrail passing."
+  },
+  "baseline_definition": {
+    "slope_curve_is_pinned": true,
+    "slope_only_same_area_budget": "The highest-scoring cells under the regime-hindcast-v1 published slope response, taken at exactly the model's own flagged-cell count.",
+    "why_pinned": "Candidate configurations may move their own slope response. If the baseline moved with them the comparison would measure nothing."
+  },
+  "disclaimer": "Experimental research prototype; not an operational avalanche forecast and not a replacement for Avalanche Canada guidance or field assessment. Scores are relative indices, not probabilities.",
+  "emails_sent": false,
+  "evaluations": [
+    {
+      "blocks": [
+        {
+          "block_id": "development_albula",
+          "capture_margin_percentage_points": 2.197802197802198,
+          "captured_event_count": 50,
+          "event_capture_fraction": 0.27472527472527475,
+          "event_count": 182,
+          "flagged_eligible_cell_count": 8789,
+          "flagged_eligible_terrain_fraction": 0.019578970817554022,
+          "mapped_positive_footprint_coverage_fraction": 0.06526069127123608,
+          "mean_slope_of_flagged_terrain_deg": 40.05721954469836,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 46,
+            "event_capture_fraction": 0.25274725274725274,
+            "mapped_positive_footprint_coverage_fraction": 0.0322788517867604,
+            "mean_slope_of_flagged_terrain_deg": 40.21544062316804
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.08624416884742292
+        },
+        {
+          "block_id": "development_glarus",
+          "capture_margin_percentage_points": -9.237875288683602,
+          "captured_event_count": 120,
+          "event_capture_fraction": 0.27713625866050806,
+          "event_count": 433,
+          "flagged_eligible_cell_count": 14132,
+          "flagged_eligible_terrain_fraction": 0.03148139897527289,
+          "mapped_positive_footprint_coverage_fraction": 0.07206199876619371,
+          "mean_slope_of_flagged_terrain_deg": 43.76019782990327,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 160,
+            "event_capture_fraction": 0.3695150115473441,
+            "mapped_positive_footprint_coverage_fraction": 0.04850400987045034,
+            "mean_slope_of_flagged_terrain_deg": 40.403892724128674
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.09616473252193602
+        },
+        {
+          "block_id": "development_gotthard",
+          "capture_margin_percentage_points": 9.54356846473029,
+          "captured_event_count": 36,
+          "event_capture_fraction": 0.14937759336099585,
+          "event_count": 241,
+          "flagged_eligible_cell_count": 7413,
+          "flagged_eligible_terrain_fraction": 0.016513700155936735,
+          "mapped_positive_footprint_coverage_fraction": 0.04179665117463551,
+          "mean_slope_of_flagged_terrain_deg": 39.39719491987178,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 13,
+            "event_capture_fraction": 0.05394190871369295,
+            "mapped_positive_footprint_coverage_fraction": 0.01830394091806201,
+            "mean_slope_of_flagged_terrain_deg": 40.14230623789424
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.05166599217590719
+        },
+        {
+          "block_id": "development_silvretta",
+          "capture_margin_percentage_points": -4.1420118343195265,
+          "captured_event_count": 31,
+          "event_capture_fraction": 0.1834319526627219,
+          "event_count": 169,
+          "flagged_eligible_cell_count": 9792,
+          "flagged_eligible_terrain_fraction": 0.021813321452439294,
+          "mapped_positive_footprint_coverage_fraction": 0.05989322655989323,
+          "mean_slope_of_flagged_terrain_deg": 40.12843960289862,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 38,
+            "event_capture_fraction": 0.22485207100591717,
+            "mapped_positive_footprint_coverage_fraction": 0.03798242687131576,
+            "mean_slope_of_flagged_terrain_deg": 40.24455189860724
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.0900735294117647
+        },
+        {
+          "block_id": "development_western_bernese",
+          "capture_margin_percentage_points": 1.7730496453900708,
+          "captured_event_count": 102,
+          "event_capture_fraction": 0.3617021276595745,
+          "event_count": 282,
+          "flagged_eligible_cell_count": 14249,
+          "flagged_eligible_terrain_fraction": 0.03174203608821564,
+          "mapped_positive_footprint_coverage_fraction": 0.11999222092570984,
+          "mean_slope_of_flagged_terrain_deg": 41.03073497249901,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 97,
+            "event_capture_fraction": 0.34397163120567376,
+            "mapped_positive_footprint_coverage_fraction": 0.044729677168416956,
+            "mean_slope_of_flagged_terrain_deg": 40.382237102886826
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.10091936276229911
+        }
+      ],
+      "blocks_beating_slope_baseline": 3,
+      "config_id": "sample_0039",
+      "meets_success_rule": false,
+      "minimum_margin_percentage_points": -9.237875288683602,
+      "parameters": {
+        "config_id": "sample_0039",
+        "dry_slab": {
+          "activation_new_snow_cm": 5.0,
+          "convexity_weight": 0.35,
+          "forest_damping_max": 0.5,
+          "loading_base": 0.1,
+          "max_mean_temperature_c": 1.0,
+          "new_snow_full_cm": 50.0,
+          "new_snow_settlement_time_h": 96.0,
+          "release_threshold": 50.0,
+          "slope_breakpoints_deg": [
+            0,
+            26,
+            30,
+            34,
+            38,
+            42,
+            45,
+            50,
+            55,
+            65,
+            90
+          ],
+          "slope_max_deg": 60.0,
+          "slope_min_deg": 25.0,
+          "slope_scores": [
+            0,
+            0,
+            10,
+            60,
+            100,
+            100,
+            85,
+            45,
+            20,
+            5,
+            0
+          ],
+          "snow_loading_weight": 0.4,
+          "threshold_derivation": "seeded_sample:narrow",
+          "wind_loading_weight": 0.75
+        },
+        "morphology": {
+          "closing_radius_px": 1,
+          "declared_minimum_zone_area_m2": 10000.0,
+          "effective_minimum_zone_area_m2": 9900.0,
+          "maximum_zones_per_regime": 40,
+          "opening_structure": "none",
+          "radius_rounding": "ceil",
+          "resolution_m": 30.0,
+          "smoothing_radius_m": 15.0
+        },
+        "schema": "avycore-release-v2-parameters-v1",
+        "unchanged_from_v1": {
+          "dry_loose": "activation, slope response and weights are v1",
+          "full_depth_glide": "unsupported, exactly as v1",
+          "weak_interface_proxy": "diagnostic only, zero numerical effect",
+          "wet_snow": "activation, slope response and weights are v1"
+        },
+        "wind": {
+          "drift_available_min_new_snow_cm": 0.5,
+          "drift_index_full": 12.0,
+          "drift_kernel": "hours_above",
+          "drift_settlement_time_h": 96.0,
+          "drift_threshold_dry_ms": 6.5,
+          "drift_threshold_wet_ms": 9.0,
+          "resolves_ridgetop_wind": false,
+          "statistic_is_a_transport_proxy": true
+        }
+      }
+    },
+    {
+      "blocks": [
+        {
+          "block_id": "development_albula",
+          "capture_margin_percentage_points": 0.0,
+          "captured_event_count": 35,
+          "event_capture_fraction": 0.19230769230769232,
+          "event_count": 182,
+          "flagged_eligible_cell_count": 6379,
+          "flagged_eligible_terrain_fraction": 0.01421029182445979,
+          "mapped_positive_footprint_coverage_fraction": 0.04715875805506737,
+          "mean_slope_of_flagged_terrain_deg": 40.37738188166364,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 35,
+            "event_capture_fraction": 0.19230769230769232,
+            "mapped_positive_footprint_coverage_fraction": 0.024311657879320447,
+            "mean_slope_of_flagged_terrain_deg": 40.15865523449996
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.06098134503840728
+        },
+        {
+          "block_id": "development_glarus",
+          "capture_margin_percentage_points": -13.394919168591224,
+          "captured_event_count": 78,
+          "event_capture_fraction": 0.18013856812933027,
+          "event_count": 433,
+          "flagged_eligible_cell_count": 12156,
+          "flagged_eligible_terrain_fraction": 0.027079527734462018,
+          "mapped_positive_footprint_coverage_fraction": 0.051395743368291176,
+          "mean_slope_of_flagged_terrain_deg": 44.27177212339516,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 136,
+            "event_capture_fraction": 0.3140877598152425,
+            "mapped_positive_footprint_coverage_fraction": 0.04175663170882171,
+            "mean_slope_of_flagged_terrain_deg": 40.34813988149931
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.08325106943073379
+        },
+        {
+          "block_id": "development_gotthard",
+          "capture_margin_percentage_points": 8.71369294605809,
+          "captured_event_count": 27,
+          "event_capture_fraction": 0.11203319502074689,
+          "event_count": 241,
+          "flagged_eligible_cell_count": 5272,
+          "flagged_eligible_terrain_fraction": 0.011744263755847627,
+          "mapped_positive_footprint_coverage_fraction": 0.02938180429108041,
+          "mean_slope_of_flagged_terrain_deg": 39.20202550757818,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 6,
+            "event_capture_fraction": 0.024896265560165973,
+            "mapped_positive_footprint_coverage_fraction": 0.013497166868275292,
+            "mean_slope_of_flagged_terrain_deg": 40.10175930494965
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.0407814871016692
+        },
+        {
+          "block_id": "development_silvretta",
+          "capture_margin_percentage_points": 2.9585798816568047,
+          "captured_event_count": 19,
+          "event_capture_fraction": 0.11242603550295859,
+          "event_count": 169,
+          "flagged_eligible_cell_count": 6432,
+          "flagged_eligible_terrain_fraction": 0.014328358208955224,
+          "mapped_positive_footprint_coverage_fraction": 0.03675898120342565,
+          "mean_slope_of_flagged_terrain_deg": 39.74716448724566,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 14,
+            "event_capture_fraction": 0.08284023668639054,
+            "mapped_positive_footprint_coverage_fraction": 0.025581136692247805,
+            "mean_slope_of_flagged_terrain_deg": 40.16685282353738
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.07198383084577115
+        },
+        {
+          "block_id": "development_western_bernese",
+          "capture_margin_percentage_points": -1.0638297872340425,
+          "captured_event_count": 78,
+          "event_capture_fraction": 0.2765957446808511,
+          "event_count": 282,
+          "flagged_eligible_cell_count": 12033,
+          "flagged_eligible_terrain_fraction": 0.026805524615727334,
+          "mapped_positive_footprint_coverage_fraction": 0.08007584597432905,
+          "mean_slope_of_flagged_terrain_deg": 41.31995990061754,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 81,
+            "event_capture_fraction": 0.2872340425531915,
+            "mapped_positive_footprint_coverage_fraction": 0.03748541423570595,
+            "mean_slope_of_flagged_terrain_deg": 40.3244115679993
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.08144269924374636
+        }
+      ],
+      "blocks_beating_slope_baseline": 2,
+      "config_id": "sample_0146",
+      "meets_success_rule": false,
+      "minimum_margin_percentage_points": -13.394919168591224,
+      "parameters": {
+        "config_id": "sample_0146",
+        "dry_slab": {
+          "activation_new_snow_cm": 5.0,
+          "convexity_weight": 0.35,
+          "forest_damping_max": 0.9,
+          "loading_base": 0.5,
+          "max_mean_temperature_c": 1.0,
+          "new_snow_full_cm": 80.0,
+          "new_snow_settlement_time_h": 96.0,
+          "release_threshold": 55.0,
+          "slope_breakpoints_deg": [
+            0,
+            26,
+            30,
+            34,
+            38,
+            42,
+            45,
+            50,
+            55,
+            65,
+            90
+          ],
+          "slope_max_deg": 60.0,
+          "slope_min_deg": 25.0,
+          "slope_scores": [
+            0,
+            0,
+            10,
+            60,
+            100,
+            100,
+            85,
+            45,
+            20,
+            5,
+            0
+          ],
+          "snow_loading_weight": 0.4,
+          "threshold_derivation": "seeded_sample:narrow",
+          "wind_loading_weight": 0.75
+        },
+        "morphology": {
+          "closing_radius_px": 1,
+          "declared_minimum_zone_area_m2": 900.0,
+          "effective_minimum_zone_area_m2": 8100.0,
+          "maximum_zones_per_regime": 40,
+          "opening_structure": "square3",
+          "radius_rounding": "ceil",
+          "resolution_m": 30.0,
+          "smoothing_radius_m": 15.0
+        },
+        "schema": "avycore-release-v2-parameters-v1",
+        "unchanged_from_v1": {
+          "dry_loose": "activation, slope response and weights are v1",
+          "full_depth_glide": "unsupported, exactly as v1",
+          "weak_interface_proxy": "diagnostic only, zero numerical effect",
+          "wet_snow": "activation, slope response and weights are v1"
+        },
+        "wind": {
+          "drift_available_min_new_snow_cm": 0.5,
+          "drift_index_full": 12.0,
+          "drift_kernel": "hours_above",
+          "drift_settlement_time_h": 96.0,
+          "drift_threshold_dry_ms": 6.5,
+          "drift_threshold_wet_ms": 11.0,
+          "resolves_ridgetop_wind": false,
+          "statistic_is_a_transport_proxy": true
+        }
+      }
+    },
+    {
+      "blocks": [
+        {
+          "block_id": "development_albula",
+          "capture_margin_percentage_points": -4.395604395604396,
+          "captured_event_count": 52,
+          "event_capture_fraction": 0.2857142857142857,
+          "event_count": 182,
+          "flagged_eligible_cell_count": 10146,
+          "flagged_eligible_terrain_fraction": 0.02260191579416351,
+          "mapped_positive_footprint_coverage_fraction": 0.09373169302870533,
+          "mean_slope_of_flagged_terrain_deg": 39.716997527286615,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 60,
+            "event_capture_fraction": 0.32967032967032966,
+            "mapped_positive_footprint_coverage_fraction": 0.03725834797891037,
+            "mean_slope_of_flagged_terrain_deg": 40.2490774771647
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.0947171299034102
+        },
+        {
+          "block_id": "development_glarus",
+          "capture_margin_percentage_points": -16.166281755196305,
+          "captured_event_count": 114,
+          "event_capture_fraction": 0.2632794457274827,
+          "event_count": 433,
+          "flagged_eligible_cell_count": 15736,
+          "flagged_eligible_terrain_fraction": 0.03505457785698374,
+          "mapped_positive_footprint_coverage_fraction": 0.08293491671807526,
+          "mean_slope_of_flagged_terrain_deg": 43.33742733236855,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 184,
+            "event_capture_fraction": 0.42494226327944573,
+            "mapped_positive_footprint_coverage_fraction": 0.05413325107958051,
+            "mean_slope_of_flagged_terrain_deg": 40.44780806787255
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.10688866293848501
+        },
+        {
+          "block_id": "development_gotthard",
+          "capture_margin_percentage_points": 1.2448132780082988,
+          "captured_event_count": 40,
+          "event_capture_fraction": 0.16597510373443983,
+          "event_count": 241,
+          "flagged_eligible_cell_count": 11579,
+          "flagged_eligible_terrain_fraction": 0.02579416351080419,
+          "mapped_positive_footprint_coverage_fraction": 0.06538486025339021,
+          "mean_slope_of_flagged_terrain_deg": 39.81136744968919,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 37,
+            "event_capture_fraction": 0.15352697095435686,
+            "mapped_positive_footprint_coverage_fraction": 0.02785382313618132,
+            "mean_slope_of_flagged_terrain_deg": 40.220719184022215
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.0785905518611279
+        },
+        {
+          "block_id": "development_silvretta",
+          "capture_margin_percentage_points": -13.017751479289942,
+          "captured_event_count": 29,
+          "event_capture_fraction": 0.17159763313609466,
+          "event_count": 169,
+          "flagged_eligible_cell_count": 11426,
+          "flagged_eligible_terrain_fraction": 0.025453330363109823,
+          "mapped_positive_footprint_coverage_fraction": 0.07718829941052163,
+          "mean_slope_of_flagged_terrain_deg": 39.47520080748694,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 51,
+            "event_capture_fraction": 0.30177514792899407,
+            "mapped_positive_footprint_coverage_fraction": 0.04409965521076632,
+            "mean_slope_of_flagged_terrain_deg": 40.28274053837025
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.10817433922632592
+        },
+        {
+          "block_id": "development_western_bernese",
+          "capture_margin_percentage_points": -4.609929078014185,
+          "captured_event_count": 90,
+          "event_capture_fraction": 0.3191489361702128,
+          "event_count": 282,
+          "flagged_eligible_cell_count": 14851,
+          "flagged_eligible_terrain_fraction": 0.0330830920026732,
+          "mapped_positive_footprint_coverage_fraction": 0.13759237650719564,
+          "mean_slope_of_flagged_terrain_deg": 40.747396607180974,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 103,
+            "event_capture_fraction": 0.36524822695035464,
+            "mapped_positive_footprint_coverage_fraction": 0.04643134966938934,
+            "mean_slope_of_flagged_terrain_deg": 40.399157061431396
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.1002626085785469
+        }
+      ],
+      "blocks_beating_slope_baseline": 1,
+      "config_id": "sample_0062",
+      "meets_success_rule": false,
+      "minimum_margin_percentage_points": -16.166281755196305,
+      "parameters": {
+        "config_id": "sample_0062",
+        "dry_slab": {
+          "activation_new_snow_cm": 5.0,
+          "convexity_weight": 0.35,
+          "forest_damping_max": 0.7,
+          "loading_base": 0.1,
+          "max_mean_temperature_c": 1.0,
+          "new_snow_full_cm": 50.0,
+          "new_snow_settlement_time_h": 24.0,
+          "release_threshold": 45.0,
+          "slope_breakpoints_deg": [
+            0,
+            26,
+            30,
+            34,
+            38,
+            42,
+            45,
+            50,
+            55,
+            65,
+            90
+          ],
+          "slope_max_deg": 60.0,
+          "slope_min_deg": 25.0,
+          "slope_scores": [
+            0,
+            0,
+            10,
+            60,
+            100,
+            100,
+            85,
+            45,
+            20,
+            5,
+            0
+          ],
+          "snow_loading_weight": 0.4,
+          "threshold_derivation": "seeded_sample:narrow",
+          "wind_loading_weight": 1.6
+        },
+        "morphology": {
+          "closing_radius_px": 1,
+          "declared_minimum_zone_area_m2": 900.0,
+          "effective_minimum_zone_area_m2": 4500.0,
+          "maximum_zones_per_regime": 40,
+          "opening_structure": "cross",
+          "radius_rounding": "ceil",
+          "resolution_m": 30.0,
+          "smoothing_radius_m": 15.0
+        },
+        "schema": "avycore-release-v2-parameters-v1",
+        "unchanged_from_v1": {
+          "dry_loose": "activation, slope response and weights are v1",
+          "full_depth_glide": "unsupported, exactly as v1",
+          "weak_interface_proxy": "diagnostic only, zero numerical effect",
+          "wet_snow": "activation, slope response and weights are v1"
+        },
+        "wind": {
+          "drift_available_min_new_snow_cm": 0.5,
+          "drift_index_full": 6.0,
+          "drift_kernel": "hours_above",
+          "drift_settlement_time_h": 24.0,
+          "drift_threshold_dry_ms": 6.5,
+          "drift_threshold_wet_ms": 9.9,
+          "resolves_ridgetop_wind": false,
+          "statistic_is_a_transport_proxy": true
+        }
+      }
+    },
+    {
+      "blocks": [
+        {
+          "block_id": "development_albula",
+          "capture_margin_percentage_points": -15.934065934065934,
+          "captured_event_count": 40,
+          "event_capture_fraction": 0.21978021978021978,
+          "event_count": 182,
+          "flagged_eligible_cell_count": 11157,
+          "flagged_eligible_terrain_fraction": 0.0248540877701047,
+          "mapped_positive_footprint_coverage_fraction": 0.06649091974223785,
+          "mean_slope_of_flagged_terrain_deg": 41.567710400867114,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 69,
+            "event_capture_fraction": 0.3791208791208791,
+            "mapped_positive_footprint_coverage_fraction": 0.041124780316344464,
+            "mean_slope_of_flagged_terrain_deg": 40.2764810362287
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.08622389531235995
+        },
+        {
+          "block_id": "development_glarus",
+          "capture_margin_percentage_points": -20.785219399538107,
+          "captured_event_count": 102,
+          "event_capture_fraction": 0.23556581986143188,
+          "event_count": 433,
+          "flagged_eligible_cell_count": 16314,
+          "flagged_eligible_terrain_fraction": 0.036342169748273555,
+          "mapped_positive_footprint_coverage_fraction": 0.08347470697100555,
+          "mean_slope_of_flagged_terrain_deg": 44.27025142937179,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 192,
+            "event_capture_fraction": 0.44341801385681295,
+            "mapped_positive_footprint_coverage_fraction": 0.05621529919802591,
+            "mean_slope_of_flagged_terrain_deg": 40.46227816265705
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.10077234277307834
+        },
+        {
+          "block_id": "development_gotthard",
+          "capture_margin_percentage_points": -6.224066390041494,
+          "captured_event_count": 59,
+          "event_capture_fraction": 0.24481327800829875,
+          "event_count": 241,
+          "flagged_eligible_cell_count": 16877,
+          "flagged_eligible_terrain_fraction": 0.037596346625083536,
+          "mapped_positive_footprint_coverage_fraction": 0.07926402241039027,
+          "mean_slope_of_flagged_terrain_deg": 41.93950737611147,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 74,
+            "event_capture_fraction": 0.3070539419087137,
+            "mapped_positive_footprint_coverage_fraction": 0.0424333099891768,
+            "mean_slope_of_flagged_terrain_deg": 40.31380913914073
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.10712804408366416
+        },
+        {
+          "block_id": "development_silvretta",
+          "capture_margin_percentage_points": -20.71005917159763,
+          "captured_event_count": 31,
+          "event_capture_fraction": 0.1834319526627219,
+          "event_count": 169,
+          "flagged_eligible_cell_count": 13681,
+          "flagged_eligible_terrain_fraction": 0.03047672087324571,
+          "mapped_positive_footprint_coverage_fraction": 0.05677900122344567,
+          "mean_slope_of_flagged_terrain_deg": 40.89603452568871,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 66,
+            "event_capture_fraction": 0.3905325443786982,
+            "mapped_positive_footprint_coverage_fraction": 0.053497942386831275,
+            "mean_slope_of_flagged_terrain_deg": 40.33685343806293
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.11300343542138733
+        },
+        {
+          "block_id": "development_western_bernese",
+          "capture_margin_percentage_points": -6.382978723404255,
+          "captured_event_count": 74,
+          "event_capture_fraction": 0.2624113475177305,
+          "event_count": 282,
+          "flagged_eligible_cell_count": 13352,
+          "flagged_eligible_terrain_fraction": 0.02974381822232123,
+          "mapped_positive_footprint_coverage_fraction": 0.0778879813302217,
+          "mean_slope_of_flagged_terrain_deg": 42.37696890062455,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 92,
+            "event_capture_fraction": 0.3262411347517731,
+            "mapped_positive_footprint_coverage_fraction": 0.04244457409568261,
+            "mean_slope_of_flagged_terrain_deg": 40.358719067204994
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.08186039544637508
+        }
+      ],
+      "blocks_beating_slope_baseline": 0,
+      "config_id": "sample_0196",
+      "meets_success_rule": false,
+      "minimum_margin_percentage_points": -20.785219399538107,
+      "parameters": {
+        "config_id": "sample_0196",
+        "dry_slab": {
+          "activation_new_snow_cm": 5.0,
+          "convexity_weight": 0.35,
+          "forest_damping_max": 0.7,
+          "loading_base": 0.2,
+          "max_mean_temperature_c": 1.0,
+          "new_snow_full_cm": 50.0,
+          "new_snow_settlement_time_h": 96.0,
+          "release_threshold": 55.0,
+          "slope_breakpoints_deg": [
+            0,
+            20,
+            25,
+            30,
+            34,
+            40,
+            45,
+            50,
+            55,
+            65,
+            90
+          ],
+          "slope_max_deg": 60.0,
+          "slope_min_deg": 25.0,
+          "slope_scores": [
+            0,
+            0,
+            15,
+            55,
+            85,
+            100,
+            95,
+            75,
+            45,
+            15,
+            0
+          ],
+          "snow_loading_weight": 0.6,
+          "threshold_derivation": "seeded_sample:v1",
+          "wind_loading_weight": 1.2
+        },
+        "morphology": {
+          "closing_radius_px": 1,
+          "declared_minimum_zone_area_m2": 900.0,
+          "effective_minimum_zone_area_m2": 900.0,
+          "maximum_zones_per_regime": 40,
+          "opening_structure": "none",
+          "radius_rounding": "ceil",
+          "resolution_m": 30.0,
+          "smoothing_radius_m": 15.0
+        },
+        "schema": "avycore-release-v2-parameters-v1",
+        "unchanged_from_v1": {
+          "dry_loose": "activation, slope response and weights are v1",
+          "full_depth_glide": "unsupported, exactly as v1",
+          "weak_interface_proxy": "diagnostic only, zero numerical effect",
+          "wet_snow": "activation, slope response and weights are v1"
+        },
+        "wind": {
+          "drift_available_min_new_snow_cm": 0.5,
+          "drift_index_full": 24.0,
+          "drift_kernel": "hours_above",
+          "drift_settlement_time_h": 96.0,
+          "drift_threshold_dry_ms": 9.0,
+          "drift_threshold_wet_ms": 9.9,
+          "resolves_ridgetop_wind": false,
+          "statistic_is_a_transport_proxy": true
+        }
+      }
+    },
+    {
+      "blocks": [
+        {
+          "block_id": "development_albula",
+          "capture_margin_percentage_points": -2.197802197802198,
+          "captured_event_count": 72,
+          "event_capture_fraction": 0.3956043956043956,
+          "event_count": 182,
+          "flagged_eligible_cell_count": 11804,
+          "flagged_eligible_terrain_fraction": 0.026295388728001783,
+          "mapped_positive_footprint_coverage_fraction": 0.11892208553016989,
+          "mean_slope_of_flagged_terrain_deg": 38.525669197113544,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 76,
+            "event_capture_fraction": 0.4175824175824176,
+            "mapped_positive_footprint_coverage_fraction": 0.044053895723491505,
+            "mean_slope_of_flagged_terrain_deg": 40.29280160718431
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.08098949508641139
+        },
+        {
+          "block_id": "development_glarus",
+          "capture_margin_percentage_points": -16.397228637413395,
+          "captured_event_count": 135,
+          "event_capture_fraction": 0.3117782909930716,
+          "event_count": 433,
+          "flagged_eligible_cell_count": 17758,
+          "flagged_eligible_terrain_fraction": 0.03955892180886612,
+          "mapped_positive_footprint_coverage_fraction": 0.11347162245527452,
+          "mean_slope_of_flagged_terrain_deg": 43.35570925315069,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 206,
+            "event_capture_fraction": 0.47575057736720555,
+            "mapped_positive_footprint_coverage_fraction": 0.06107341147439852,
+            "mean_slope_of_flagged_terrain_deg": 40.50057675610497
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.10440364905957879
+        },
+        {
+          "block_id": "development_gotthard",
+          "capture_margin_percentage_points": -9.12863070539419,
+          "captured_event_count": 47,
+          "event_capture_fraction": 0.1950207468879668,
+          "event_count": 241,
+          "flagged_eligible_cell_count": 15214,
+          "flagged_eligible_terrain_fraction": 0.03389173535308532,
+          "mapped_positive_footprint_coverage_fraction": 0.080123511810021,
+          "mean_slope_of_flagged_terrain_deg": 39.4663316182086,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 69,
+            "event_capture_fraction": 0.2863070539419087,
+            "mapped_positive_footprint_coverage_fraction": 0.03804036416884192,
+            "mean_slope_of_flagged_terrain_deg": 40.284715080286304
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.08058367293282503
+        },
+        {
+          "block_id": "development_silvretta",
+          "capture_margin_percentage_points": -21.301775147928993,
+          "captured_event_count": 30,
+          "event_capture_fraction": 0.17751479289940827,
+          "event_count": 169,
+          "flagged_eligible_cell_count": 13673,
+          "flagged_eligible_terrain_fraction": 0.030458899532189797,
+          "mapped_positive_footprint_coverage_fraction": 0.0770214659103548,
+          "mean_slope_of_flagged_terrain_deg": 39.0683807037416,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 66,
+            "event_capture_fraction": 0.3905325443786982,
+            "mapped_positive_footprint_coverage_fraction": 0.053442331220108996,
+            "mean_slope_of_flagged_terrain_deg": 40.336581825887436
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.1060484165874351
+        },
+        {
+          "block_id": "development_western_bernese",
+          "capture_margin_percentage_points": -4.25531914893617,
+          "captured_event_count": 103,
+          "event_capture_fraction": 0.36524822695035464,
+          "event_count": 282,
+          "flagged_eligible_cell_count": 16983,
+          "flagged_eligible_terrain_fraction": 0.03783247939407441,
+          "mapped_positive_footprint_coverage_fraction": 0.13934266822248154,
+          "mean_slope_of_flagged_terrain_deg": 41.71534519827858,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 115,
+            "event_capture_fraction": 0.4078014184397163,
+            "mapped_positive_footprint_coverage_fraction": 0.053626993387786856,
+            "mean_slope_of_flagged_terrain_deg": 40.4533919901742
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.1031031031031031
+        }
+      ],
+      "blocks_beating_slope_baseline": 0,
+      "config_id": "sample_0103",
+      "meets_success_rule": false,
+      "minimum_margin_percentage_points": -21.301775147928993,
+      "parameters": {
+        "config_id": "sample_0103",
+        "dry_slab": {
+          "activation_new_snow_cm": 5.0,
+          "convexity_weight": 0.35,
+          "forest_damping_max": 0.7,
+          "loading_base": 0.2,
+          "max_mean_temperature_c": 1.0,
+          "new_snow_full_cm": 25.0,
+          "new_snow_settlement_time_h": 96.0,
+          "release_threshold": 55.0,
+          "slope_breakpoints_deg": [
+            0,
+            22,
+            26,
+            30,
+            34,
+            40,
+            46,
+            52,
+            58,
+            70,
+            90
+          ],
+          "slope_max_deg": 60.0,
+          "slope_min_deg": 25.0,
+          "slope_scores": [
+            0,
+            0,
+            40,
+            75,
+            95,
+            100,
+            100,
+            90,
+            65,
+            20,
+            0
+          ],
+          "snow_loading_weight": 0.4,
+          "threshold_derivation": "seeded_sample:broad",
+          "wind_loading_weight": 1.2
+        },
+        "morphology": {
+          "closing_radius_px": 1,
+          "declared_minimum_zone_area_m2": 10000.0,
+          "effective_minimum_zone_area_m2": 9900.0,
+          "maximum_zones_per_regime": 40,
+          "opening_structure": "square3",
+          "radius_rounding": "ceil",
+          "resolution_m": 30.0,
+          "smoothing_radius_m": 15.0
+        },
+        "schema": "avycore-release-v2-parameters-v1",
+        "unchanged_from_v1": {
+          "dry_loose": "activation, slope response and weights are v1",
+          "full_depth_glide": "unsupported, exactly as v1",
+          "weak_interface_proxy": "diagnostic only, zero numerical effect",
+          "wet_snow": "activation, slope response and weights are v1"
+        },
+        "wind": {
+          "drift_available_min_new_snow_cm": 0.5,
+          "drift_index_full": 6.0,
+          "drift_kernel": "hours_above",
+          "drift_settlement_time_h": 48.0,
+          "drift_threshold_dry_ms": 6.5,
+          "drift_threshold_wet_ms": 11.0,
+          "resolves_ridgetop_wind": false,
+          "statistic_is_a_transport_proxy": true
+        }
+      }
+    },
+    {
+      "blocks": [
+        {
+          "block_id": "development_albula",
+          "capture_margin_percentage_points": -8.241758241758241,
+          "captured_event_count": 26,
+          "event_capture_fraction": 0.14285714285714285,
+          "event_count": 182,
+          "flagged_eligible_cell_count": 7969,
+          "flagged_eligible_terrain_fraction": 0.017752283359322787,
+          "mapped_positive_footprint_coverage_fraction": 0.024194493263034564,
+          "mean_slope_of_flagged_terrain_deg": 42.743022686296165,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 41,
+            "event_capture_fraction": 0.22527472527472528,
+            "mapped_positive_footprint_coverage_fraction": 0.02952548330404218,
+            "mean_slope_of_flagged_terrain_deg": 40.19841860946979
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.06751160747898105
+        },
+        {
+          "block_id": "development_glarus",
+          "capture_margin_percentage_points": -21.939953810623557,
+          "captured_event_count": 99,
+          "event_capture_fraction": 0.22863741339491916,
+          "event_count": 433,
+          "flagged_eligible_cell_count": 16849,
+          "flagged_eligible_terrain_fraction": 0.037533971931387834,
+          "mapped_positive_footprint_coverage_fraction": 0.08991363355953115,
+          "mean_slope_of_flagged_terrain_deg": 44.14475443458138,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 194,
+            "event_capture_fraction": 0.44803695150115475,
+            "mapped_positive_footprint_coverage_fraction": 0.05764188772362739,
+            "mean_slope_of_flagged_terrain_deg": 40.4767163725124
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.11110451658852158
+        },
+        {
+          "block_id": "development_gotthard",
+          "capture_margin_percentage_points": -4.979253112033195,
+          "captured_event_count": 39,
+          "event_capture_fraction": 0.16182572614107885,
+          "event_count": 241,
+          "flagged_eligible_cell_count": 12831,
+          "flagged_eligible_terrain_fraction": 0.0285832033860548,
+          "mapped_positive_footprint_coverage_fraction": 0.05873177564143375,
+          "mean_slope_of_flagged_terrain_deg": 43.529789365617255,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 51,
+            "event_capture_fraction": 0.21161825726141079,
+            "mapped_positive_footprint_coverage_fraction": 0.031228114853250142,
+            "mean_slope_of_flagged_terrain_deg": 40.24173335748101
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.06538851219702284
+        },
+        {
+          "block_id": "development_silvretta",
+          "capture_margin_percentage_points": -14.201183431952662,
+          "captured_event_count": 31,
+          "event_capture_fraction": 0.1834319526627219,
+          "event_count": 169,
+          "flagged_eligible_cell_count": 12618,
+          "flagged_eligible_terrain_fraction": 0.028108710180441077,
+          "mapped_positive_footprint_coverage_fraction": 0.0599488377266155,
+          "mean_slope_of_flagged_terrain_deg": 41.96099675342235,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 55,
+            "event_capture_fraction": 0.3254437869822485,
+            "mapped_positive_footprint_coverage_fraction": 0.0486597708819931,
+            "mean_slope_of_flagged_terrain_deg": 40.31133116805094
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.09684577587573308
+        },
+        {
+          "block_id": "development_western_bernese",
+          "capture_margin_percentage_points": -5.319148936170213,
+          "captured_event_count": 73,
+          "event_capture_fraction": 0.25886524822695034,
+          "event_count": 282,
+          "flagged_eligible_cell_count": 12539,
+          "flagged_eligible_terrain_fraction": 0.027932724437513923,
+          "mapped_positive_footprint_coverage_fraction": 0.0706923376118242,
+          "mean_slope_of_flagged_terrain_deg": 43.04206303229067,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 88,
+            "event_capture_fraction": 0.3120567375886525,
+            "mapped_positive_footprint_coverage_fraction": 0.039089848308051345,
+            "mean_slope_of_flagged_terrain_deg": 40.33602393442615
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.07440784751575086
+        }
+      ],
+      "blocks_beating_slope_baseline": 0,
+      "config_id": "ladder_threshold_60",
+      "meets_success_rule": false,
+      "minimum_margin_percentage_points": -21.939953810623557,
+      "parameters": {
+        "config_id": "ladder_threshold_60",
+        "dry_slab": {
+          "activation_new_snow_cm": 5.0,
+          "convexity_weight": 0.15,
+          "forest_damping_max": 0.7,
+          "loading_base": 0.2,
+          "max_mean_temperature_c": 1.0,
+          "new_snow_full_cm": 50.0,
+          "new_snow_settlement_time_h": 48.0,
+          "release_threshold": 60.0,
+          "slope_breakpoints_deg": [
+            0,
+            20,
+            25,
+            30,
+            34,
+            40,
+            45,
+            50,
+            55,
+            65,
+            90
+          ],
+          "slope_max_deg": 60.0,
+          "slope_min_deg": 25.0,
+          "slope_scores": [
+            0,
+            0,
+            15,
+            55,
+            85,
+            100,
+            95,
+            75,
+            45,
+            15,
+            0
+          ],
+          "snow_loading_weight": 0.6,
+          "threshold_derivation": "declared_ladder_point",
+          "wind_loading_weight": 0.75
+        },
+        "morphology": {
+          "closing_radius_px": 1,
+          "declared_minimum_zone_area_m2": 2500.0,
+          "effective_minimum_zone_area_m2": 2700.0,
+          "maximum_zones_per_regime": 40,
+          "opening_structure": "none",
+          "radius_rounding": "ceil",
+          "resolution_m": 30.0,
+          "smoothing_radius_m": 15.0
+        },
+        "schema": "avycore-release-v2-parameters-v1",
+        "unchanged_from_v1": {
+          "dry_loose": "activation, slope response and weights are v1",
+          "full_depth_glide": "unsupported, exactly as v1",
+          "weak_interface_proxy": "diagnostic only, zero numerical effect",
+          "wet_snow": "activation, slope response and weights are v1"
+        },
+        "wind": {
+          "drift_available_min_new_snow_cm": 0.5,
+          "drift_index_full": 2000.0,
+          "drift_kernel": "cubic_excess",
+          "drift_settlement_time_h": 48.0,
+          "drift_threshold_dry_ms": 7.7,
+          "drift_threshold_wet_ms": 9.9,
+          "resolves_ridgetop_wind": false,
+          "statistic_is_a_transport_proxy": true
+        }
+      }
+    },
+    {
+      "blocks": [
+        {
+          "block_id": "development_albula",
+          "capture_margin_percentage_points": -11.538461538461538,
+          "captured_event_count": 62,
+          "event_capture_fraction": 0.34065934065934067,
+          "event_count": 182,
+          "flagged_eligible_cell_count": 13952,
+          "flagged_eligible_terrain_fraction": 0.031080418801514815,
+          "mapped_positive_footprint_coverage_fraction": 0.09220855301698887,
+          "mean_slope_of_flagged_terrain_deg": 40.30580695465617,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 83,
+            "event_capture_fraction": 0.45604395604395603,
+            "mapped_positive_footprint_coverage_fraction": 0.05067369654364382,
+            "mean_slope_of_flagged_terrain_deg": 40.340216124003085
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.12944380733944955
+        },
+        {
+          "block_id": "development_glarus",
+          "capture_margin_percentage_points": -17.321016166281755,
+          "captured_event_count": 131,
+          "event_capture_fraction": 0.302540415704388,
+          "event_count": 433,
+          "flagged_eligible_cell_count": 17628,
+          "flagged_eligible_terrain_fraction": 0.039269325016707504,
+          "mapped_positive_footprint_coverage_fraction": 0.09585132634176434,
+          "mean_slope_of_flagged_terrain_deg": 43.11192163415904,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 206,
+            "event_capture_fraction": 0.47575057736720555,
+            "mapped_positive_footprint_coverage_fraction": 0.06068784700801974,
+            "mean_slope_of_flagged_terrain_deg": 40.49715635223077
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.1189017472203313
+        },
+        {
+          "block_id": "development_gotthard",
+          "capture_margin_percentage_points": -12.863070539419088,
+          "captured_event_count": 59,
+          "event_capture_fraction": 0.24481327800829875,
+          "event_count": 241,
+          "flagged_eligible_cell_count": 20351,
+          "flagged_eligible_terrain_fraction": 0.04533526397861439,
+          "mapped_positive_footprint_coverage_fraction": 0.09721780098045457,
+          "mean_slope_of_flagged_terrain_deg": 40.902949759769335,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 90,
+            "event_capture_fraction": 0.37344398340248963,
+            "mapped_positive_footprint_coverage_fraction": 0.04969122047494748,
+            "mean_slope_of_flagged_terrain_deg": 40.37820679373744
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.13620952287356886
+        },
+        {
+          "block_id": "development_silvretta",
+          "capture_margin_percentage_points": -22.485207100591715,
+          "captured_event_count": 33,
+          "event_capture_fraction": 0.1952662721893491,
+          "event_count": 169,
+          "flagged_eligible_cell_count": 14876,
+          "flagged_eligible_terrain_fraction": 0.03313878369347294,
+          "mapped_positive_footprint_coverage_fraction": 0.06695584473362251,
+          "mean_slope_of_flagged_terrain_deg": 39.90886791741601,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 71,
+            "event_capture_fraction": 0.42011834319526625,
+            "mapped_positive_footprint_coverage_fraction": 0.05850294739183628,
+            "mean_slope_of_flagged_terrain_deg": 40.36500739769193
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.12463027695617102
+        },
+        {
+          "block_id": "development_western_bernese",
+          "capture_margin_percentage_points": 1.4184397163120568,
+          "captured_event_count": 119,
+          "event_capture_fraction": 0.4219858156028369,
+          "event_count": 282,
+          "flagged_eligible_cell_count": 16952,
+          "flagged_eligible_terrain_fraction": 0.03776342169748274,
+          "mapped_positive_footprint_coverage_fraction": 0.13185530921820304,
+          "mean_slope_of_flagged_terrain_deg": 41.206873381233486,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 115,
+            "event_capture_fraction": 0.4078014184397163,
+            "mapped_positive_footprint_coverage_fraction": 0.05357837417347336,
+            "mean_slope_of_flagged_terrain_deg": 40.452825766793396
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.10736196319018405
+        }
+      ],
+      "blocks_beating_slope_baseline": 1,
+      "config_id": "sample_0087",
+      "meets_success_rule": false,
+      "minimum_margin_percentage_points": -22.485207100591715,
+      "parameters": {
+        "config_id": "sample_0087",
+        "dry_slab": {
+          "activation_new_snow_cm": 5.0,
+          "convexity_weight": 0.35,
+          "forest_damping_max": 0.9,
+          "loading_base": 0.1,
+          "max_mean_temperature_c": 1.0,
+          "new_snow_full_cm": 25.0,
+          "new_snow_settlement_time_h": 48.0,
+          "release_threshold": 35.0,
+          "slope_breakpoints_deg": [
+            0,
+            26,
+            30,
+            34,
+            38,
+            42,
+            45,
+            50,
+            55,
+            65,
+            90
+          ],
+          "slope_max_deg": 60.0,
+          "slope_min_deg": 25.0,
+          "slope_scores": [
+            0,
+            0,
+            10,
+            60,
+            100,
+            100,
+            85,
+            45,
+            20,
+            5,
+            0
+          ],
+          "snow_loading_weight": 0.4,
+          "threshold_derivation": "seeded_sample:narrow",
+          "wind_loading_weight": 0.75
+        },
+        "morphology": {
+          "closing_radius_px": 1,
+          "declared_minimum_zone_area_m2": 10000.0,
+          "effective_minimum_zone_area_m2": 9900.0,
+          "maximum_zones_per_regime": 40,
+          "opening_structure": "none",
+          "radius_rounding": "ceil",
+          "resolution_m": 30.0,
+          "smoothing_radius_m": 15.0
+        },
+        "schema": "avycore-release-v2-parameters-v1",
+        "unchanged_from_v1": {
+          "dry_loose": "activation, slope response and weights are v1",
+          "full_depth_glide": "unsupported, exactly as v1",
+          "weak_interface_proxy": "diagnostic only, zero numerical effect",
+          "wet_snow": "activation, slope response and weights are v1"
+        },
+        "wind": {
+          "drift_available_min_new_snow_cm": 0.5,
+          "drift_index_full": 6.0,
+          "drift_kernel": "hours_above",
+          "drift_settlement_time_h": 96.0,
+          "drift_threshold_dry_ms": 9.0,
+          "drift_threshold_wet_ms": 9.0,
+          "resolves_ridgetop_wind": false,
+          "statistic_is_a_transport_proxy": true
+        }
+      }
+    },
+    {
+      "blocks": [
+        {
+          "block_id": "development_albula",
+          "capture_margin_percentage_points": -4.945054945054945,
+          "captured_event_count": 71,
+          "event_capture_fraction": 0.3901098901098901,
+          "event_count": 182,
+          "flagged_eligible_cell_count": 12845,
+          "flagged_eligible_terrain_fraction": 0.02861439073290265,
+          "mapped_positive_footprint_coverage_fraction": 0.11470415934387815,
+          "mean_slope_of_flagged_terrain_deg": 38.91688135502727,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 80,
+            "event_capture_fraction": 0.43956043956043955,
+            "mapped_positive_footprint_coverage_fraction": 0.04745166959578207,
+            "mean_slope_of_flagged_terrain_deg": 40.31429411642001
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.09552355001946283
+        },
+        {
+          "block_id": "development_glarus",
+          "capture_margin_percentage_points": -14.780600461893764,
+          "captured_event_count": 153,
+          "event_capture_fraction": 0.3533487297921478,
+          "event_count": 433,
+          "flagged_eligible_cell_count": 18904,
+          "flagged_eligible_terrain_fraction": 0.04211182891512586,
+          "mapped_positive_footprint_coverage_fraction": 0.11829117828500925,
+          "mean_slope_of_flagged_terrain_deg": 43.47501140431837,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 217,
+            "event_capture_fraction": 0.5011547344110855,
+            "mapped_positive_footprint_coverage_fraction": 0.06527606415792721,
+            "mean_slope_of_flagged_terrain_deg": 40.529403725065926
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.11193398222598391
+        },
+        {
+          "block_id": "development_gotthard",
+          "capture_margin_percentage_points": -9.12863070539419,
+          "captured_event_count": 52,
+          "event_capture_fraction": 0.2157676348547718,
+          "event_count": 241,
+          "flagged_eligible_cell_count": 16602,
+          "flagged_eligible_terrain_fraction": 0.036983738026286475,
+          "mapped_positive_footprint_coverage_fraction": 0.08894123639141784,
+          "mean_slope_of_flagged_terrain_deg": 39.48170798492064,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 74,
+            "event_capture_fraction": 0.3070539419087137,
+            "mapped_positive_footprint_coverage_fraction": 0.04176481823390845,
+            "mean_slope_of_flagged_terrain_deg": 40.30862069896813
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.08745934224792194
+        },
+        {
+          "block_id": "development_silvretta",
+          "capture_margin_percentage_points": -23.668639053254438,
+          "captured_event_count": 28,
+          "event_capture_fraction": 0.16568047337278108,
+          "event_count": 169,
+          "flagged_eligible_cell_count": 14146,
+          "flagged_eligible_terrain_fraction": 0.03151258632212074,
+          "mapped_positive_footprint_coverage_fraction": 0.06734512290067846,
+          "mean_slope_of_flagged_terrain_deg": 38.95220759348773,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 68,
+            "event_capture_fraction": 0.40236686390532544,
+            "mapped_positive_footprint_coverage_fraction": 0.05555555555555555,
+            "mean_slope_of_flagged_terrain_deg": 40.34801008434018
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.10780432631132475
+        },
+        {
+          "block_id": "development_western_bernese",
+          "capture_margin_percentage_points": -5.673758865248227,
+          "captured_event_count": 100,
+          "event_capture_fraction": 0.3546099290780142,
+          "event_count": 282,
+          "flagged_eligible_cell_count": 17338,
+          "flagged_eligible_terrain_fraction": 0.03862330140343061,
+          "mapped_positive_footprint_coverage_fraction": 0.14755931544146247,
+          "mean_slope_of_flagged_terrain_deg": 41.852264282626116,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 116,
+            "event_capture_fraction": 0.41134751773049644,
+            "mapped_positive_footprint_coverage_fraction": 0.05493971217425126,
+            "mean_slope_of_flagged_terrain_deg": 40.46297469003237
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.10347214211558427
+        }
+      ],
+      "blocks_beating_slope_baseline": 0,
+      "config_id": "sample_0182",
+      "meets_success_rule": false,
+      "minimum_margin_percentage_points": -23.668639053254438,
+      "parameters": {
+        "config_id": "sample_0182",
+        "dry_slab": {
+          "activation_new_snow_cm": 5.0,
+          "convexity_weight": 0.35,
+          "forest_damping_max": 0.5,
+          "loading_base": 0.1,
+          "max_mean_temperature_c": 1.0,
+          "new_snow_full_cm": 25.0,
+          "new_snow_settlement_time_h": 24.0,
+          "release_threshold": 55.0,
+          "slope_breakpoints_deg": [
+            0,
+            22,
+            26,
+            30,
+            34,
+            40,
+            46,
+            52,
+            58,
+            70,
+            90
+          ],
+          "slope_max_deg": 60.0,
+          "slope_min_deg": 25.0,
+          "slope_scores": [
+            0,
+            0,
+            40,
+            75,
+            95,
+            100,
+            100,
+            90,
+            65,
+            20,
+            0
+          ],
+          "snow_loading_weight": 0.6,
+          "threshold_derivation": "seeded_sample:broad",
+          "wind_loading_weight": 1.2
+        },
+        "morphology": {
+          "closing_radius_px": 1,
+          "declared_minimum_zone_area_m2": 2500.0,
+          "effective_minimum_zone_area_m2": 8100.0,
+          "maximum_zones_per_regime": 40,
+          "opening_structure": "square3",
+          "radius_rounding": "ceil",
+          "resolution_m": 30.0,
+          "smoothing_radius_m": 15.0
+        },
+        "schema": "avycore-release-v2-parameters-v1",
+        "unchanged_from_v1": {
+          "dry_loose": "activation, slope response and weights are v1",
+          "full_depth_glide": "unsupported, exactly as v1",
+          "weak_interface_proxy": "diagnostic only, zero numerical effect",
+          "wet_snow": "activation, slope response and weights are v1"
+        },
+        "wind": {
+          "drift_available_min_new_snow_cm": 0.5,
+          "drift_index_full": 2.4000000000000004,
+          "drift_kernel": "hours_above",
+          "drift_settlement_time_h": 96.0,
+          "drift_threshold_dry_ms": 7.7,
+          "drift_threshold_wet_ms": 9.9,
+          "resolves_ridgetop_wind": false,
+          "statistic_is_a_transport_proxy": true
+        }
+      }
+    },
+    {
+      "blocks": [
+        {
+          "block_id": "development_albula",
+          "capture_margin_percentage_points": -14.835164835164836,
+          "captured_event_count": 31,
+          "event_capture_fraction": 0.17032967032967034,
+          "event_count": 182,
+          "flagged_eligible_cell_count": 10062,
+          "flagged_eligible_terrain_fraction": 0.02241479171307641,
+          "mapped_positive_footprint_coverage_fraction": 0.03719976567076743,
+          "mean_slope_of_flagged_terrain_deg": 42.19621204140409,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 58,
+            "event_capture_fraction": 0.31868131868131866,
+            "mapped_positive_footprint_coverage_fraction": 0.036848271821909785,
+            "mean_slope_of_flagged_terrain_deg": 40.24630036654517
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.10723514211886305
+        },
+        {
+          "block_id": "development_glarus",
+          "capture_margin_percentage_points": -24.942263279445726,
+          "captured_event_count": 96,
+          "event_capture_fraction": 0.22170900692840648,
+          "event_count": 433,
+          "flagged_eligible_cell_count": 17518,
+          "flagged_eligible_terrain_fraction": 0.03902428157718869,
+          "mapped_positive_footprint_coverage_fraction": 0.0919185687847008,
+          "mean_slope_of_flagged_terrain_deg": 43.91719410917315,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 204,
+            "event_capture_fraction": 0.47113163972286376,
+            "mapped_positive_footprint_coverage_fraction": 0.060263726095003085,
+            "mean_slope_of_flagged_terrain_deg": 40.4942132553726
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.11999086653727595
+        },
+        {
+          "block_id": "development_gotthard",
+          "capture_margin_percentage_points": -9.95850622406639,
+          "captured_event_count": 40,
+          "event_capture_fraction": 0.16597510373443983,
+          "event_count": 241,
+          "flagged_eligible_cell_count": 14531,
+          "flagged_eligible_terrain_fraction": 0.03237023836043662,
+          "mapped_positive_footprint_coverage_fraction": 0.06506653084611956,
+          "mean_slope_of_flagged_terrain_deg": 42.98753770575308,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 64,
+            "event_capture_fraction": 0.26556016597510373,
+            "mapped_positive_footprint_coverage_fraction": 0.0360030559623098,
+            "mean_slope_of_flagged_terrain_deg": 40.27336389558559
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.0848530727410364
+        },
+        {
+          "block_id": "development_silvretta",
+          "capture_margin_percentage_points": -21.893491124260354,
+          "captured_event_count": 23,
+          "event_capture_fraction": 0.13609467455621302,
+          "event_count": 169,
+          "flagged_eligible_cell_count": 12886,
+          "flagged_eligible_terrain_fraction": 0.028705725105814213,
+          "mapped_positive_footprint_coverage_fraction": 0.05160716271827383,
+          "mean_slope_of_flagged_terrain_deg": 41.71965134449115,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 60,
+            "event_capture_fraction": 0.35502958579881655,
+            "mapped_positive_footprint_coverage_fraction": 0.049938827716605495,
+            "mean_slope_of_flagged_terrain_deg": 40.317363421664965
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.0980909514201459
+        },
+        {
+          "block_id": "development_western_bernese",
+          "capture_margin_percentage_points": -13.120567375886525,
+          "captured_event_count": 68,
+          "event_capture_fraction": 0.24113475177304963,
+          "event_count": 282,
+          "flagged_eligible_cell_count": 15088,
+          "flagged_eligible_terrain_fraction": 0.033611049231454665,
+          "mapped_positive_footprint_coverage_fraction": 0.09086931155192532,
+          "mean_slope_of_flagged_terrain_deg": 42.44878165896346,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 105,
+            "event_capture_fraction": 0.3723404255319149,
+            "mapped_positive_footprint_coverage_fraction": 0.04735511474134578,
+            "mean_slope_of_flagged_terrain_deg": 40.40520394038042
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.10319459172852598
+        }
+      ],
+      "blocks_beating_slope_baseline": 0,
+      "config_id": "anchor_v1_frozen",
+      "meets_success_rule": false,
+      "minimum_margin_percentage_points": -24.942263279445726,
+      "parameters": {
+        "config_id": "anchor_v1_frozen",
+        "dry_slab": {
+          "activation_new_snow_cm": 5.0,
+          "convexity_weight": 0.15,
+          "forest_damping_max": 0.7,
+          "loading_base": 0.2,
+          "max_mean_temperature_c": 1.0,
+          "new_snow_full_cm": 50.0,
+          "new_snow_settlement_time_h": 48.0,
+          "release_threshold": 55.0,
+          "slope_breakpoints_deg": [
+            0,
+            20,
+            25,
+            30,
+            34,
+            40,
+            45,
+            50,
+            55,
+            65,
+            90
+          ],
+          "slope_max_deg": 60.0,
+          "slope_min_deg": 25.0,
+          "slope_scores": [
+            0,
+            0,
+            15,
+            55,
+            85,
+            100,
+            95,
+            75,
+            45,
+            15,
+            0
+          ],
+          "snow_loading_weight": 0.6,
+          "threshold_derivation": "inherited_v1_uncalibrated",
+          "wind_loading_weight": 0.75
+        },
+        "morphology": {
+          "closing_radius_px": 1,
+          "declared_minimum_zone_area_m2": 2500.0,
+          "effective_minimum_zone_area_m2": 8100.0,
+          "maximum_zones_per_regime": 40,
+          "opening_structure": "square3",
+          "radius_rounding": "v1_max1_round",
+          "resolution_m": 30.0,
+          "smoothing_radius_m": 15.0
+        },
+        "schema": "avycore-release-v2-parameters-v1",
+        "unchanged_from_v1": {
+          "dry_loose": "activation, slope response and weights are v1",
+          "full_depth_glide": "unsupported, exactly as v1",
+          "weak_interface_proxy": "diagnostic only, zero numerical effect",
+          "wet_snow": "activation, slope response and weights are v1"
+        },
+        "wind": {
+          "drift_available_min_new_snow_cm": 0.5,
+          "drift_index_full": 2000.0,
+          "drift_kernel": "cubic_excess",
+          "drift_settlement_time_h": 48.0,
+          "drift_threshold_dry_ms": 7.7,
+          "drift_threshold_wet_ms": 9.9,
+          "resolves_ridgetop_wind": false,
+          "statistic_is_a_transport_proxy": true
+        }
+      }
+    },
+    {
+      "blocks": [
+        {
+          "block_id": "development_albula",
+          "capture_margin_percentage_points": -17.582417582417584,
+          "captured_event_count": 35,
+          "event_capture_fraction": 0.19230769230769232,
+          "event_count": 182,
+          "flagged_eligible_cell_count": 10926,
+          "flagged_eligible_terrain_fraction": 0.02433949654711517,
+          "mapped_positive_footprint_coverage_fraction": 0.040597539543057996,
+          "mean_slope_of_flagged_terrain_deg": 41.852460125045596,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 67,
+            "event_capture_fraction": 0.36813186813186816,
+            "mapped_positive_footprint_coverage_fraction": 0.04007029876977153,
+            "mean_slope_of_flagged_terrain_deg": 40.269846971537326
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.12099578985905181
+        },
+        {
+          "block_id": "development_glarus",
+          "capture_margin_percentage_points": -24.942263279445726,
+          "captured_event_count": 99,
+          "event_capture_fraction": 0.22863741339491916,
+          "event_count": 433,
+          "flagged_eligible_cell_count": 17988,
+          "flagged_eligible_terrain_fraction": 0.040071285364223656,
+          "mapped_positive_footprint_coverage_fraction": 0.09295959284392351,
+          "mean_slope_of_flagged_terrain_deg": 43.89054938372119,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 207,
+            "event_capture_fraction": 0.4780600461893764,
+            "mapped_positive_footprint_coverage_fraction": 0.06188309685379396,
+            "mean_slope_of_flagged_terrain_deg": 40.50367243119762
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.12202579497442739
+        },
+        {
+          "block_id": "development_gotthard",
+          "capture_margin_percentage_points": -10.37344398340249,
+          "captured_event_count": 43,
+          "event_capture_fraction": 0.17842323651452283,
+          "event_count": 241,
+          "flagged_eligible_cell_count": 14954,
+          "flagged_eligible_terrain_fraction": 0.0333125417687681,
+          "mapped_positive_footprint_coverage_fraction": 0.0656713567199338,
+          "mean_slope_of_flagged_terrain_deg": 42.800814199658085,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 68,
+            "event_capture_fraction": 0.2821576763485477,
+            "mapped_positive_footprint_coverage_fraction": 0.037308206532119435,
+            "mean_slope_of_flagged_terrain_deg": 40.28047998572984
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.08927377290357096
+        },
+        {
+          "block_id": "development_silvretta",
+          "capture_margin_percentage_points": -21.893491124260354,
+          "captured_event_count": 29,
+          "event_capture_fraction": 0.17159763313609466,
+          "event_count": 169,
+          "flagged_eligible_cell_count": 13711,
+          "flagged_eligible_terrain_fraction": 0.03054355090220539,
+          "mapped_positive_footprint_coverage_fraction": 0.06033811589367145,
+          "mean_slope_of_flagged_terrain_deg": 41.51181096295439,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 66,
+            "event_capture_fraction": 0.3905325443786982,
+            "mapped_positive_footprint_coverage_fraction": 0.05366477588699811,
+            "mean_slope_of_flagged_terrain_deg": 40.337556866672315
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.1041499525928087
+        },
+        {
+          "block_id": "development_western_bernese",
+          "capture_margin_percentage_points": -9.574468085106384,
+          "captured_event_count": 82,
+          "event_capture_fraction": 0.2907801418439716,
+          "event_count": 282,
+          "flagged_eligible_cell_count": 15599,
+          "flagged_eligible_terrain_fraction": 0.0347493873914012,
+          "mapped_positive_footprint_coverage_fraction": 0.10151691948658109,
+          "mean_slope_of_flagged_terrain_deg": 42.281088087633485,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 109,
+            "event_capture_fraction": 0.38652482269503546,
+            "mapped_positive_footprint_coverage_fraction": 0.048862310385064174,
+            "mean_slope_of_flagged_terrain_deg": 40.415860096180516
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.10763510481441119
+        }
+      ],
+      "blocks_beating_slope_baseline": 0,
+      "config_id": "anchor_v2_baseline",
+      "meets_success_rule": false,
+      "minimum_margin_percentage_points": -24.942263279445726,
+      "parameters": {
+        "config_id": "anchor_v2_baseline",
+        "dry_slab": {
+          "activation_new_snow_cm": 5.0,
+          "convexity_weight": 0.15,
+          "forest_damping_max": 0.7,
+          "loading_base": 0.2,
+          "max_mean_temperature_c": 1.0,
+          "new_snow_full_cm": 50.0,
+          "new_snow_settlement_time_h": 48.0,
+          "release_threshold": 55.0,
+          "slope_breakpoints_deg": [
+            0,
+            20,
+            25,
+            30,
+            34,
+            40,
+            45,
+            50,
+            55,
+            65,
+            90
+          ],
+          "slope_max_deg": 60.0,
+          "slope_min_deg": 25.0,
+          "slope_scores": [
+            0,
+            0,
+            15,
+            55,
+            85,
+            100,
+            95,
+            75,
+            45,
+            15,
+            0
+          ],
+          "snow_loading_weight": 0.6,
+          "threshold_derivation": "inherited_v1_uncalibrated",
+          "wind_loading_weight": 0.75
+        },
+        "morphology": {
+          "closing_radius_px": 1,
+          "declared_minimum_zone_area_m2": 2500.0,
+          "effective_minimum_zone_area_m2": 2700.0,
+          "maximum_zones_per_regime": 40,
+          "opening_structure": "none",
+          "radius_rounding": "ceil",
+          "resolution_m": 30.0,
+          "smoothing_radius_m": 15.0
+        },
+        "schema": "avycore-release-v2-parameters-v1",
+        "unchanged_from_v1": {
+          "dry_loose": "activation, slope response and weights are v1",
+          "full_depth_glide": "unsupported, exactly as v1",
+          "weak_interface_proxy": "diagnostic only, zero numerical effect",
+          "wet_snow": "activation, slope response and weights are v1"
+        },
+        "wind": {
+          "drift_available_min_new_snow_cm": 0.5,
+          "drift_index_full": 2000.0,
+          "drift_kernel": "cubic_excess",
+          "drift_settlement_time_h": 48.0,
+          "drift_threshold_dry_ms": 7.7,
+          "drift_threshold_wet_ms": 9.9,
+          "resolves_ridgetop_wind": false,
+          "statistic_is_a_transport_proxy": true
+        }
+      }
+    },
+    {
+      "blocks": [
+        {
+          "block_id": "development_albula",
+          "capture_margin_percentage_points": -21.978021978021978,
+          "captured_event_count": 36,
+          "event_capture_fraction": 0.1978021978021978,
+          "event_count": 182,
+          "flagged_eligible_cell_count": 11720,
+          "flagged_eligible_terrain_fraction": 0.02610826464691468,
+          "mapped_positive_footprint_coverage_fraction": 0.043468072642062094,
+          "mean_slope_of_flagged_terrain_deg": 41.25852668928205,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 76,
+            "event_capture_fraction": 0.4175824175824176,
+            "mapped_positive_footprint_coverage_fraction": 0.04381956649091974,
+            "mean_slope_of_flagged_terrain_deg": 40.29051632506855
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.1273037542662116
+        },
+        {
+          "block_id": "development_glarus",
+          "capture_margin_percentage_points": -24.942263279445726,
+          "captured_event_count": 112,
+          "event_capture_fraction": 0.2586605080831409,
+          "event_count": 433,
+          "flagged_eligible_cell_count": 19528,
+          "flagged_eligible_terrain_fraction": 0.04350189351748719,
+          "mapped_positive_footprint_coverage_fraction": 0.09010641579272054,
+          "mean_slope_of_flagged_terrain_deg": 43.493946982133295,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 220,
+            "event_capture_fraction": 0.5080831408775982,
+            "mapped_positive_footprint_coverage_fraction": 0.06728099938309685,
+            "mean_slope_of_flagged_terrain_deg": 40.542120829609175
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.12274682507169193
+        },
+        {
+          "block_id": "development_gotthard",
+          "capture_margin_percentage_points": -10.78838174273859,
+          "captured_event_count": 43,
+          "event_capture_fraction": 0.17842323651452283,
+          "event_count": 241,
+          "flagged_eligible_cell_count": 15177,
+          "flagged_eligible_terrain_fraction": 0.033809311650701716,
+          "mapped_positive_footprint_coverage_fraction": 0.06675367670465397,
+          "mean_slope_of_flagged_terrain_deg": 42.67913681211746,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 69,
+            "event_capture_fraction": 0.2863070539419087,
+            "mapped_positive_footprint_coverage_fraction": 0.03791303240593366,
+            "mean_slope_of_flagged_terrain_deg": 40.28399745345218
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.096791197206299
+        },
+        {
+          "block_id": "development_silvretta",
+          "capture_margin_percentage_points": -23.076923076923077,
+          "captured_event_count": 31,
+          "event_capture_fraction": 0.1834319526627219,
+          "event_count": 169,
+          "flagged_eligible_cell_count": 14481,
+          "flagged_eligible_terrain_fraction": 0.03225885497883716,
+          "mapped_positive_footprint_coverage_fraction": 0.06834612390167946,
+          "mean_slope_of_flagged_terrain_deg": 40.98092921327947,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 70,
+            "event_capture_fraction": 0.41420118343195267,
+            "mapped_positive_footprint_coverage_fraction": 0.057057057057057055,
+            "mean_slope_of_flagged_terrain_deg": 40.357859679804875
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.10579379877080312
+        },
+        {
+          "block_id": "development_western_bernese",
+          "capture_margin_percentage_points": -5.673758865248227,
+          "captured_event_count": 97,
+          "event_capture_fraction": 0.34397163120567376,
+          "event_count": 282,
+          "flagged_eligible_cell_count": 16253,
+          "flagged_eligible_terrain_fraction": 0.03620628202272221,
+          "mapped_positive_footprint_coverage_fraction": 0.12675029171528587,
+          "mean_slope_of_flagged_terrain_deg": 41.85316730415477,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 113,
+            "event_capture_fraction": 0.40070921985815605,
+            "mapped_positive_footprint_coverage_fraction": 0.05129327110073901,
+            "mean_slope_of_flagged_terrain_deg": 40.433640618694824
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.10927213437519227
+        }
+      ],
+      "blocks_beating_slope_baseline": 0,
+      "config_id": "sample_0148",
+      "meets_success_rule": false,
+      "minimum_margin_percentage_points": -24.942263279445726,
+      "parameters": {
+        "config_id": "sample_0148",
+        "dry_slab": {
+          "activation_new_snow_cm": 5.0,
+          "convexity_weight": 0.0,
+          "forest_damping_max": 0.5,
+          "loading_base": 0.35,
+          "max_mean_temperature_c": 1.0,
+          "new_snow_full_cm": 80.0,
+          "new_snow_settlement_time_h": 24.0,
+          "release_threshold": 50.0,
+          "slope_breakpoints_deg": [
+            0,
+            20,
+            25,
+            30,
+            34,
+            40,
+            45,
+            50,
+            55,
+            65,
+            90
+          ],
+          "slope_max_deg": 60.0,
+          "slope_min_deg": 25.0,
+          "slope_scores": [
+            0,
+            0,
+            15,
+            55,
+            85,
+            100,
+            95,
+            75,
+            45,
+            15,
+            0
+          ],
+          "snow_loading_weight": 0.6,
+          "threshold_derivation": "seeded_sample:v1",
+          "wind_loading_weight": 0.4
+        },
+        "morphology": {
+          "closing_radius_px": 1,
+          "declared_minimum_zone_area_m2": 10000.0,
+          "effective_minimum_zone_area_m2": 9900.0,
+          "maximum_zones_per_regime": 40,
+          "opening_structure": "none",
+          "radius_rounding": "ceil",
+          "resolution_m": 30.0,
+          "smoothing_radius_m": 15.0
+        },
+        "schema": "avycore-release-v2-parameters-v1",
+        "unchanged_from_v1": {
+          "dry_loose": "activation, slope response and weights are v1",
+          "full_depth_glide": "unsupported, exactly as v1",
+          "weak_interface_proxy": "diagnostic only, zero numerical effect",
+          "wet_snow": "activation, slope response and weights are v1"
+        },
+        "wind": {
+          "drift_available_min_new_snow_cm": 0.5,
+          "drift_index_full": 1000.0,
+          "drift_kernel": "cubic_excess",
+          "drift_settlement_time_h": 24.0,
+          "drift_threshold_dry_ms": 9.0,
+          "drift_threshold_wet_ms": 11.0,
+          "resolves_ridgetop_wind": false,
+          "statistic_is_a_transport_proxy": true
+        }
+      }
+    },
+    {
+      "blocks": [
+        {
+          "block_id": "development_albula",
+          "capture_margin_percentage_points": -7.6923076923076925,
+          "captured_event_count": 71,
+          "event_capture_fraction": 0.3901098901098901,
+          "event_count": 182,
+          "flagged_eligible_cell_count": 14601,
+          "flagged_eligible_terrain_fraction": 0.032526175094675876,
+          "mapped_positive_footprint_coverage_fraction": 0.12513181019332162,
+          "mean_slope_of_flagged_terrain_deg": 38.74692017629893,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 85,
+            "event_capture_fraction": 0.46703296703296704,
+            "mapped_positive_footprint_coverage_fraction": 0.0533684827182191,
+            "mean_slope_of_flagged_terrain_deg": 40.35589893686715
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.12211492363536744
+        },
+        {
+          "block_id": "development_glarus",
+          "capture_margin_percentage_points": -19.399538106235564,
+          "captured_event_count": 133,
+          "event_capture_fraction": 0.3071593533487298,
+          "event_count": 433,
+          "flagged_eligible_cell_count": 19054,
+          "flagged_eligible_terrain_fraction": 0.04244597905992426,
+          "mapped_positive_footprint_coverage_fraction": 0.11624768661320173,
+          "mean_slope_of_flagged_terrain_deg": 43.37395472740268,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 217,
+            "event_capture_fraction": 0.5011547344110855,
+            "mapped_positive_footprint_coverage_fraction": 0.06589296730413326,
+            "mean_slope_of_flagged_terrain_deg": 40.53191724869116
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.11252230502781568
+        },
+        {
+          "block_id": "development_gotthard",
+          "capture_margin_percentage_points": -12.033195020746888,
+          "captured_event_count": 62,
+          "event_capture_fraction": 0.2572614107883817,
+          "event_count": 241,
+          "flagged_eligible_cell_count": 20556,
+          "flagged_eligible_terrain_fraction": 0.0457919358431722,
+          "mapped_positive_footprint_coverage_fraction": 0.10141974915642707,
+          "mean_slope_of_flagged_terrain_deg": 40.14109437283339,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 91,
+            "event_capture_fraction": 0.3775933609958506,
+            "mapped_positive_footprint_coverage_fraction": 0.05045521105239702,
+            "mean_slope_of_flagged_terrain_deg": 40.38259936186283
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.10687877018875268
+        },
+        {
+          "block_id": "development_silvretta",
+          "capture_margin_percentage_points": -26.62721893491124,
+          "captured_event_count": 36,
+          "event_capture_fraction": 0.21301775147928995,
+          "event_count": 169,
+          "flagged_eligible_cell_count": 16214,
+          "flagged_eligible_terrain_fraction": 0.03611940298507463,
+          "mapped_positive_footprint_coverage_fraction": 0.07618729840952063,
+          "mean_slope_of_flagged_terrain_deg": 39.98479493255164,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 81,
+            "event_capture_fraction": 0.47928994082840237,
+            "mapped_positive_footprint_coverage_fraction": 0.06373039706373039,
+            "mean_slope_of_flagged_terrain_deg": 40.40182554852702
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.10910324411002838
+        },
+        {
+          "block_id": "development_western_bernese",
+          "capture_margin_percentage_points": -0.3546099290780142,
+          "captured_event_count": 104,
+          "event_capture_fraction": 0.36879432624113473,
+          "event_count": 282,
+          "flagged_eligible_cell_count": 15013,
+          "flagged_eligible_terrain_fraction": 0.03344397415905547,
+          "mapped_positive_footprint_coverage_fraction": 0.12310385064177364,
+          "mean_slope_of_flagged_terrain_deg": 42.257283709856445,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 105,
+            "event_capture_fraction": 0.3723404255319149,
+            "mapped_positive_footprint_coverage_fraction": 0.047014780241151306,
+            "mean_slope_of_flagged_terrain_deg": 40.40342491493944
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.08412708985545861
+        }
+      ],
+      "blocks_beating_slope_baseline": 0,
+      "config_id": "sample_0016",
+      "meets_success_rule": false,
+      "minimum_margin_percentage_points": -26.62721893491124,
+      "parameters": {
+        "config_id": "sample_0016",
+        "dry_slab": {
+          "activation_new_snow_cm": 5.0,
+          "convexity_weight": 0.35,
+          "forest_damping_max": 0.7,
+          "loading_base": 0.35,
+          "max_mean_temperature_c": 1.0,
+          "new_snow_full_cm": 25.0,
+          "new_snow_settlement_time_h": 48.0,
+          "release_threshold": 50.0,
+          "slope_breakpoints_deg": [
+            0,
+            22,
+            26,
+            30,
+            34,
+            40,
+            46,
+            52,
+            58,
+            70,
+            90
+          ],
+          "slope_max_deg": 60.0,
+          "slope_min_deg": 25.0,
+          "slope_scores": [
+            0,
+            0,
+            40,
+            75,
+            95,
+            100,
+            100,
+            90,
+            65,
+            20,
+            0
+          ],
+          "snow_loading_weight": 0.4,
+          "threshold_derivation": "seeded_sample:broad",
+          "wind_loading_weight": 1.2
+        },
+        "morphology": {
+          "closing_radius_px": 1,
+          "declared_minimum_zone_area_m2": 900.0,
+          "effective_minimum_zone_area_m2": 8100.0,
+          "maximum_zones_per_regime": 40,
+          "opening_structure": "square3",
+          "radius_rounding": "ceil",
+          "resolution_m": 30.0,
+          "smoothing_radius_m": 15.0
+        },
+        "schema": "avycore-release-v2-parameters-v1",
+        "unchanged_from_v1": {
+          "dry_loose": "activation, slope response and weights are v1",
+          "full_depth_glide": "unsupported, exactly as v1",
+          "weak_interface_proxy": "diagnostic only, zero numerical effect",
+          "wet_snow": "activation, slope response and weights are v1"
+        },
+        "wind": {
+          "drift_available_min_new_snow_cm": 0.5,
+          "drift_index_full": 12.0,
+          "drift_kernel": "hours_above",
+          "drift_settlement_time_h": 24.0,
+          "drift_threshold_dry_ms": 7.7,
+          "drift_threshold_wet_ms": 9.0,
+          "resolves_ridgetop_wind": false,
+          "statistic_is_a_transport_proxy": true
+        }
+      }
+    },
+    {
+      "blocks": [
+        {
+          "block_id": "development_albula",
+          "capture_margin_percentage_points": -12.637362637362637,
+          "captured_event_count": 70,
+          "event_capture_fraction": 0.38461538461538464,
+          "event_count": 182,
+          "flagged_eligible_cell_count": 16998,
+          "flagged_eligible_terrain_fraction": 0.03786589440855424,
+          "mapped_positive_footprint_coverage_fraction": 0.11400117164616286,
+          "mean_slope_of_flagged_terrain_deg": 39.48206473322585,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 93,
+            "event_capture_fraction": 0.510989010989011,
+            "mapped_positive_footprint_coverage_fraction": 0.06157000585823082,
+            "mean_slope_of_flagged_terrain_deg": 40.40940458475246
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.11277797387927992
+        },
+        {
+          "block_id": "development_glarus",
+          "capture_margin_percentage_points": -21.939953810623557,
+          "captured_event_count": 126,
+          "event_capture_fraction": 0.2909930715935335,
+          "event_count": 433,
+          "flagged_eligible_cell_count": 19625,
+          "flagged_eligible_terrain_fraction": 0.04371797727779016,
+          "mapped_positive_footprint_coverage_fraction": 0.11609346082665022,
+          "mean_slope_of_flagged_terrain_deg": 42.933690133161605,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 221,
+            "event_capture_fraction": 0.5103926096997691,
+            "mapped_positive_footprint_coverage_fraction": 0.06766656384947563,
+            "mean_slope_of_flagged_terrain_deg": 40.54373349737666
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.11357961783439491
+        },
+        {
+          "block_id": "development_gotthard",
+          "capture_margin_percentage_points": -21.16182572614108,
+          "captured_event_count": 53,
+          "event_capture_fraction": 0.21991701244813278,
+          "event_count": 241,
+          "flagged_eligible_cell_count": 24736,
+          "flagged_eligible_terrain_fraction": 0.055103586544887506,
+          "mapped_positive_footprint_coverage_fraction": 0.08149232826128477,
+          "mean_slope_of_flagged_terrain_deg": 39.33937609272817,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 104,
+            "event_capture_fraction": 0.4315352697095436,
+            "mapped_positive_footprint_coverage_fraction": 0.06111924619596358,
+            "mean_slope_of_flagged_terrain_deg": 40.45769571224746
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.1175614489003881
+        },
+        {
+          "block_id": "development_silvretta",
+          "capture_margin_percentage_points": -28.994082840236686,
+          "captured_event_count": 39,
+          "event_capture_fraction": 0.23076923076923078,
+          "event_count": 169,
+          "flagged_eligible_cell_count": 17944,
+          "flagged_eligible_terrain_fraction": 0.03997326798841613,
+          "mapped_positive_footprint_coverage_fraction": 0.08147035924813703,
+          "mean_slope_of_flagged_terrain_deg": 39.214693296715666,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 88,
+            "event_capture_fraction": 0.5207100591715976,
+            "mapped_positive_footprint_coverage_fraction": 0.07173840507173841,
+            "mean_slope_of_flagged_terrain_deg": 40.44128399601059
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.10973027195720018
+        },
+        {
+          "block_id": "development_western_bernese",
+          "capture_margin_percentage_points": -5.673758865248227,
+          "captured_event_count": 99,
+          "event_capture_fraction": 0.35106382978723405,
+          "event_count": 282,
+          "flagged_eligible_cell_count": 17105,
+          "flagged_eligible_terrain_fraction": 0.0381042548451771,
+          "mapped_positive_footprint_coverage_fraction": 0.13613380007779075,
+          "mean_slope_of_flagged_terrain_deg": 41.4454618886074,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 115,
+            "event_capture_fraction": 0.4078014184397163,
+            "mapped_positive_footprint_coverage_fraction": 0.05416180474523532,
+            "mean_slope_of_flagged_terrain_deg": 40.456066201172945
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.1019584916691026
+        }
+      ],
+      "blocks_beating_slope_baseline": 0,
+      "config_id": "sample_0115",
+      "meets_success_rule": false,
+      "minimum_margin_percentage_points": -28.994082840236686,
+      "parameters": {
+        "config_id": "sample_0115",
+        "dry_slab": {
+          "activation_new_snow_cm": 5.0,
+          "convexity_weight": 0.15,
+          "forest_damping_max": 0.9,
+          "loading_base": 0.1,
+          "max_mean_temperature_c": 1.0,
+          "new_snow_full_cm": 25.0,
+          "new_snow_settlement_time_h": 96.0,
+          "release_threshold": 55.0,
+          "slope_breakpoints_deg": [
+            0,
+            22,
+            26,
+            30,
+            34,
+            40,
+            46,
+            52,
+            58,
+            70,
+            90
+          ],
+          "slope_max_deg": 60.0,
+          "slope_min_deg": 25.0,
+          "slope_scores": [
+            0,
+            0,
+            40,
+            75,
+            95,
+            100,
+            100,
+            90,
+            65,
+            20,
+            0
+          ],
+          "snow_loading_weight": 0.6,
+          "threshold_derivation": "seeded_sample:broad",
+          "wind_loading_weight": 1.6
+        },
+        "morphology": {
+          "closing_radius_px": 1,
+          "declared_minimum_zone_area_m2": 900.0,
+          "effective_minimum_zone_area_m2": 8100.0,
+          "maximum_zones_per_regime": 40,
+          "opening_structure": "square3",
+          "radius_rounding": "ceil",
+          "resolution_m": 30.0,
+          "smoothing_radius_m": 15.0
+        },
+        "schema": "avycore-release-v2-parameters-v1",
+        "unchanged_from_v1": {
+          "dry_loose": "activation, slope response and weights are v1",
+          "full_depth_glide": "unsupported, exactly as v1",
+          "weak_interface_proxy": "diagnostic only, zero numerical effect",
+          "wet_snow": "activation, slope response and weights are v1"
+        },
+        "wind": {
+          "drift_available_min_new_snow_cm": 0.5,
+          "drift_index_full": 24.0,
+          "drift_kernel": "hours_above",
+          "drift_settlement_time_h": 48.0,
+          "drift_threshold_dry_ms": 7.7,
+          "drift_threshold_wet_ms": 9.9,
+          "resolves_ridgetop_wind": false,
+          "statistic_is_a_transport_proxy": true
+        }
+      }
+    },
+    {
+      "blocks": [
+        {
+          "block_id": "development_albula",
+          "capture_margin_percentage_points": -18.13186813186813,
+          "captured_event_count": 46,
+          "event_capture_fraction": 0.25274725274725274,
+          "event_count": 182,
+          "flagged_eligible_cell_count": 12405,
+          "flagged_eligible_terrain_fraction": 0.027634216974827357,
+          "mapped_positive_footprint_coverage_fraction": 0.08131224370240188,
+          "mean_slope_of_flagged_terrain_deg": 39.168138659783594,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 79,
+            "event_capture_fraction": 0.4340659340659341,
+            "mapped_positive_footprint_coverage_fraction": 0.04581136496777973,
+            "mean_slope_of_flagged_terrain_deg": 40.3039186827457
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.10028214429665458
+        },
+        {
+          "block_id": "development_glarus",
+          "capture_margin_percentage_points": -22.632794457274827,
+          "captured_event_count": 119,
+          "event_capture_fraction": 0.2748267898383372,
+          "event_count": 433,
+          "flagged_eligible_cell_count": 19325,
+          "flagged_eligible_terrain_fraction": 0.04304967698819336,
+          "mapped_positive_footprint_coverage_fraction": 0.10541332510795805,
+          "mean_slope_of_flagged_terrain_deg": 43.098666451911875,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 217,
+            "event_capture_fraction": 0.5011547344110855,
+            "mapped_positive_footprint_coverage_fraction": 0.0666640962368908,
+            "mean_slope_of_flagged_terrain_deg": 40.53796286677944
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.11275549805950841
+        },
+        {
+          "block_id": "development_gotthard",
+          "capture_margin_percentage_points": -7.8838174273858925,
+          "captured_event_count": 64,
+          "event_capture_fraction": 0.26556016597510373,
+          "event_count": 241,
+          "flagged_eligible_cell_count": 18808,
+          "flagged_eligible_terrain_fraction": 0.04189797282245489,
+          "mapped_positive_footprint_coverage_fraction": 0.09568981982555548,
+          "mean_slope_of_flagged_terrain_deg": 41.19934462963495,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 83,
+            "event_capture_fraction": 0.34439834024896265,
+            "mapped_positive_footprint_coverage_fraction": 0.046571592283695167,
+            "mean_slope_of_flagged_terrain_deg": 40.34849497390676
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.09740535942152276
+        },
+        {
+          "block_id": "development_silvretta",
+          "capture_margin_percentage_points": -29.585798816568047,
+          "captured_event_count": 33,
+          "event_capture_fraction": 0.1952662721893491,
+          "event_count": 169,
+          "flagged_eligible_cell_count": 16452,
+          "flagged_eligible_terrain_fraction": 0.03664958788148808,
+          "mapped_positive_footprint_coverage_fraction": 0.06550995439884329,
+          "mean_slope_of_flagged_terrain_deg": 39.88420752356761,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 83,
+            "event_capture_fraction": 0.4911242603550296,
+            "mapped_positive_footprint_coverage_fraction": 0.06495384273162051,
+            "mean_slope_of_flagged_terrain_deg": 40.40722910400843
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.10703865791393144
+        },
+        {
+          "block_id": "development_western_bernese",
+          "capture_margin_percentage_points": 1.7730496453900708,
+          "captured_event_count": 110,
+          "event_capture_fraction": 0.3900709219858156,
+          "event_count": 282,
+          "flagged_eligible_cell_count": 15145,
+          "flagged_eligible_terrain_fraction": 0.03373802628647806,
+          "mapped_positive_footprint_coverage_fraction": 0.11075457020614547,
+          "mean_slope_of_flagged_terrain_deg": 42.0676612207936,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 105,
+            "event_capture_fraction": 0.3723404255319149,
+            "mapped_positive_footprint_coverage_fraction": 0.04750097238428627,
+            "mean_slope_of_flagged_terrain_deg": 40.4067982978103
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.08966655661934632
+        }
+      ],
+      "blocks_beating_slope_baseline": 1,
+      "config_id": "sample_0041",
+      "meets_success_rule": false,
+      "minimum_margin_percentage_points": -29.585798816568047,
+      "parameters": {
+        "config_id": "sample_0041",
+        "dry_slab": {
+          "activation_new_snow_cm": 5.0,
+          "convexity_weight": 0.15,
+          "forest_damping_max": 0.7,
+          "loading_base": 0.2,
+          "max_mean_temperature_c": 1.0,
+          "new_snow_full_cm": 80.0,
+          "new_snow_settlement_time_h": 96.0,
+          "release_threshold": 55.0,
+          "slope_breakpoints_deg": [
+            0,
+            22,
+            26,
+            30,
+            34,
+            40,
+            46,
+            52,
+            58,
+            70,
+            90
+          ],
+          "slope_max_deg": 60.0,
+          "slope_min_deg": 25.0,
+          "slope_scores": [
+            0,
+            0,
+            40,
+            75,
+            95,
+            100,
+            100,
+            90,
+            65,
+            20,
+            0
+          ],
+          "snow_loading_weight": 0.6,
+          "threshold_derivation": "seeded_sample:broad",
+          "wind_loading_weight": 0.75
+        },
+        "morphology": {
+          "closing_radius_px": 1,
+          "declared_minimum_zone_area_m2": 900.0,
+          "effective_minimum_zone_area_m2": 4500.0,
+          "maximum_zones_per_regime": 40,
+          "opening_structure": "cross",
+          "radius_rounding": "ceil",
+          "resolution_m": 30.0,
+          "smoothing_radius_m": 15.0
+        },
+        "schema": "avycore-release-v2-parameters-v1",
+        "unchanged_from_v1": {
+          "dry_loose": "activation, slope response and weights are v1",
+          "full_depth_glide": "unsupported, exactly as v1",
+          "weak_interface_proxy": "diagnostic only, zero numerical effect",
+          "wet_snow": "activation, slope response and weights are v1"
+        },
+        "wind": {
+          "drift_available_min_new_snow_cm": 0.5,
+          "drift_index_full": 6.0,
+          "drift_kernel": "hours_above",
+          "drift_settlement_time_h": 96.0,
+          "drift_threshold_dry_ms": 9.0,
+          "drift_threshold_wet_ms": 11.0,
+          "resolves_ridgetop_wind": false,
+          "statistic_is_a_transport_proxy": true
+        }
+      }
+    },
+    {
+      "blocks": [
+        {
+          "block_id": "development_albula",
+          "capture_margin_percentage_points": -21.428571428571427,
+          "captured_event_count": 41,
+          "event_capture_fraction": 0.22527472527472528,
+          "event_count": 182,
+          "flagged_eligible_cell_count": 13078,
+          "flagged_eligible_terrain_fraction": 0.02913343729115616,
+          "mapped_positive_footprint_coverage_fraction": 0.07932044522554188,
+          "mean_slope_of_flagged_terrain_deg": 40.242651543133775,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 80,
+            "event_capture_fraction": 0.43956043956043955,
+            "mapped_positive_footprint_coverage_fraction": 0.04797891036906854,
+            "mean_slope_of_flagged_terrain_deg": 40.32040387626306
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.09298057807004129
+        },
+        {
+          "block_id": "development_glarus",
+          "capture_margin_percentage_points": -17.551963048498845,
+          "captured_event_count": 140,
+          "event_capture_fraction": 0.3233256351039261,
+          "event_count": 433,
+          "flagged_eligible_cell_count": 18829,
+          "flagged_eligible_terrain_fraction": 0.04194475384272667,
+          "mapped_positive_footprint_coverage_fraction": 0.10784238124614436,
+          "mean_slope_of_flagged_terrain_deg": 43.42542538315436,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 216,
+            "event_capture_fraction": 0.49884526558891457,
+            "mapped_positive_footprint_coverage_fraction": 0.06500616903146206,
+            "mean_slope_of_flagged_terrain_deg": 40.526868926047314
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.11466355090551808
+        },
+        {
+          "block_id": "development_gotthard",
+          "capture_margin_percentage_points": -12.448132780082988,
+          "captured_event_count": 64,
+          "event_capture_fraction": 0.26556016597510373,
+          "event_count": 241,
+          "flagged_eligible_cell_count": 20915,
+          "flagged_eligible_terrain_fraction": 0.04659166852305636,
+          "mapped_positive_footprint_coverage_fraction": 0.10826383141274591,
+          "mean_slope_of_flagged_terrain_deg": 40.77998137632512,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 94,
+            "event_capture_fraction": 0.3900414937759336,
+            "mapped_positive_footprint_coverage_fraction": 0.05153753103711721,
+            "mean_slope_of_flagged_terrain_deg": 40.39017287401842
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.12316519244561319
+        },
+        {
+          "block_id": "development_silvretta",
+          "capture_margin_percentage_points": -32.544378698224854,
+          "captured_event_count": 28,
+          "event_capture_fraction": 0.16568047337278108,
+          "event_count": 169,
+          "flagged_eligible_cell_count": 16507,
+          "flagged_eligible_terrain_fraction": 0.036772109601247494,
+          "mapped_positive_footprint_coverage_fraction": 0.06089422756089423,
+          "mean_slope_of_flagged_terrain_deg": 40.16577648632659,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 83,
+            "event_capture_fraction": 0.4911242603550296,
+            "mapped_positive_footprint_coverage_fraction": 0.0652318985652319,
+            "mean_slope_of_flagged_terrain_deg": 40.408443812823656
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.12915732719452352
+        },
+        {
+          "block_id": "development_western_bernese",
+          "capture_margin_percentage_points": 0.0,
+          "captured_event_count": 110,
+          "event_capture_fraction": 0.3900709219858156,
+          "event_count": 282,
+          "flagged_eligible_cell_count": 15788,
+          "flagged_eligible_terrain_fraction": 0.03517041657384718,
+          "mapped_positive_footprint_coverage_fraction": 0.1443990665110852,
+          "mean_slope_of_flagged_terrain_deg": 41.80505342679233,
+          "slope_only_same_area_budget": {
+            "captured_event_count": 110,
+            "event_capture_fraction": 0.3900709219858156,
+            "mapped_positive_footprint_coverage_fraction": 0.049591598599766626,
+            "mean_slope_of_flagged_terrain_deg": 40.421554861897484
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.09304535089941728
+        }
+      ],
+      "blocks_beating_slope_baseline": 0,
+      "config_id": "sample_0024",
+      "meets_success_rule": false,
+      "minimum_margin_percentage_points": -32.544378698224854,
+      "parameters": {
+        "config_id": "sample_0024",
+        "dry_slab": {
+          "activation_new_snow_cm": 5.0,
+          "convexity_weight": 0.35,
+          "forest_damping_max": 0.5,
+          "loading_base": 0.1,
+          "max_mean_temperature_c": 1.0,
+          "new_snow_full_cm": 50.0,
+          "new_snow_settlement_time_h": 24.0,
+          "release_threshold": 45.0,
+          "slope_breakpoints_deg": [
+            0,
+            20,
+            25,
+            30,
+            34,
+            40,
+            45,
+            50,
+            55,
+            65,
+            90
+          ],
+          "slope_max_deg": 60.0,
+          "slope_min_deg": 25.0,
+          "slope_scores": [
+            0,
+            0,
+            15,
+            55,
+            85,
+            100,
+            95,
+            75,
+            45,
+            15,
+            0
+          ],
+          "snow_loading_weight": 0.6,
+          "threshold_derivation": "seeded_sample:v1",
+          "wind_loading_weight": 1.6
+        },
+        "morphology": {
+          "closing_radius_px": 1,
+          "declared_minimum_zone_area_m2": 10000.0,
+          "effective_minimum_zone_area_m2": 9900.0,
+          "maximum_zones_per_regime": 40,
+          "opening_structure": "cross",
+          "radius_rounding": "ceil",
+          "resolution_m": 30.0,
+          "smoothing_radius_m": 15.0
+        },
+        "schema": "avycore-release-v2-parameters-v1",
+        "unchanged_from_v1": {
+          "dry_loose": "activation, slope response and weights are v1",
+          "full_depth_glide": "unsupported, exactly as v1",
+          "weak_interface_proxy": "diagnostic only, zero numerical effect",
+          "wet_snow": "activation, slope response and weights are v1"
+        },
+        "wind": {
+          "drift_available_min_new_snow_cm": 0.5,
+          "drift_index_full": 12.0,
+          "drift_kernel": "hours_above",
+          "drift_settlement_time_h": 96.0,
+          "drift_threshold_dry_ms": 9.0,
+          "drift_threshold_wet_ms": 9.9,
+          "resolves_ridgetop_wind": false,
+          "statistic_is_a_transport_proxy": true
+        }
+      }
+    }
+  ],
+  "experiment_id": "release-config-search-v1",
+  "integrity": {
+    "development_blocks_are_already_burned": "All five development blocks were scored and viewed in the frozen SPOT and CERRA experiments. Every number in this artifact is a development number.",
+    "frozen_digests_rewritten": false,
+    "frozen_experiment_specs_modified": false,
+    "frozen_v1_sources_modified": false,
+    "repaired_engine_reproduces_v1": "avycore.snowpack.release_v2 at its V1_FROZEN configuration reproduces all five committed regime-hindcast-v1 development release masks cell-for-cell, so every difference reported here is attributable to a configuration change and not to a reimplementation.",
+    "reserved_block_outlines_opened": false,
+    "reserved_blocks_predicted_or_scored": false
+  },
+  "limitations": [
+    "This is a development search, not a validation result. It adds zero events to the strict field holdout, does not change is_validated, and licenses no accuracy claim.",
+    "Event capture is positive-only. A configuration that flags more terrain captures more events; the same-area baseline is what makes the comparison meaningful, and the model loses it.",
+    "The search moved release localization only. No runout engine was simulated, because release localization dominated both frozen failures.",
+    "Wet-snow and dry-loose formulations were held at their frozen values so any capture change is attributable to the dry-slab pathway and its extraction."
+  ],
+  "metric_semantics": {
+    "capture_minimum_overlap_fraction": 0.05,
+    "note": "Unmapped terrain is unknown, never verified negative. Capture counts a mapped outline as captured when at least 5% of its cells are flagged, so it rewards touching many outlines and does not reward covering any one of them well.",
+    "positive_only": true,
+    "unmapped_cells_treated_as_negative": false
+  },
+  "partition": "development_only",
+  "purpose": "Repair the three documented release-engine defects, then search release configurations on development blocks only, to decide whether one reserved 1999 lattice block should be spent on a confirmatory test.",
+  "schema": "avycore-release-config-search-v1",
+  "search_declaration": {
+    "baseline_slope_curve": "regime-hindcast-v1 published slope response, pinned",
+    "blocks": [
+      "development_albula",
+      "development_glarus",
+      "development_gotthard",
+      "development_silvretta",
+      "development_western_bernese"
+    ],
+    "compute_budget_seconds": 14400,
+    "configuration_budget": 200,
+    "maximum_flagged_eligible_terrain_fraction": 0.2,
+    "plateau_limit": 50,
+    "promotion_fraction": 0.1,
+    "screen_block_id": "development_western_bernese",
+    "seed": 20260818,
+    "success_margin_percentage_points": 5.0
+  },
+  "software_environment": {
+    "libraries": {
+      "geopandas": "1.1.4",
+      "numpy": "2.2.6",
+      "pyproj": "3.7.2",
+      "rasterio": "1.5.0",
+      "scipy": "1.16.3",
+      "shapely": "2.1.2"
+    },
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.13.7"
+  },
+  "status": "failed_predeclared_success_rule",
+  "stop_condition": {
+    "best_screen_margin_percentage_points": 1.7730496453900708,
+    "configurations_evaluated": 128,
+    "configurations_fully_evaluated": 13,
+    "configurations_rejected_by_guardrail": 0,
+    "most_blocks_beating_slope_baseline": 3,
+    "reason": "PLATEAU",
+    "rule": "PLATEAU: 50 consecutive configurations with no improvement over the running best screening margin. Predeclared; not weakened after any score was seen."
+  },
+  "sweep_log_sha256": "49fbe30be31f67ba8cdc9b4e1fbf0cfa9763170e7bab353d346eeba072fb049c"
+}

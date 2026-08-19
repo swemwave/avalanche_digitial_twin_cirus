@@ -1244,6 +1244,120 @@ added, no email or external message was sent, no Mount Hosmer operational
 prediction or real bake was read or run, and no parameter changed after the
 holdout result was viewed.
 
+## Release-engine repair and configuration search (failed its success rule)
+
+**Status:** failed the predeclared success rule. The three defects documented in
+[`release-engine-repair-plan.md`](release-engine-repair-plan.md) were repaired
+and 128 release configurations were evaluated on development blocks. None beat
+the same-area slope-only baseline on all five development blocks by the required
+5 percentage points. The search therefore stopped on its predeclared PLATEAU
+condition and **no reserved block was spent**: all four remain sealed.
+
+The committed artifacts are the
+[search result](../validation-data/results/release-config-search-v1.json) and its
+[full sweep log](../validation-data/results/release-config-search-v1-sweep-log.jsonl),
+which records every configuration evaluated, including the losers.
+
+### What was repaired, and where
+
+The repair lives in `avycore/snowpack/release_v2.py`, a new module. It is not an
+edit to `risk.py`, `state.py`, `regimes.py` or `zones.py`, because
+`spot-blind-swiss-v1` and `regime-hindcast-v1` bind those files by SHA-256:
+editing them would make two already-published negative results unreplayable, and
+rewriting the frozen digests to match is out of bounds. Every frozen source,
+spec and digest in this repository is therefore unchanged, and both earlier
+experiments still replay.
+
+| Defect | Frozen v1 behaviour | Repair |
+|---|---|---|
+| Wind statistic | `mean(72 hours x 9 points)`, so every block's wind was below `WIND_TRANSPORT_MIN_KMH` and the largest weight in the model contributed exactly zero | the search path never scalarizes wind at all: `integrate_state` consumes the hourly `(sample, hour)` field per cell and accumulates the CERRA drift-potential index with a configurable kernel. `storm_window_wind_statistic` additionally offers a high quantile, a transporting-hours mean and a drift-weighted mean for any caller that must reduce a storm to one number; no configuration below used it |
+| Unreachable threshold | `RELEASE_THRESHOLD = 55` needed a terrain capability of 1.143 (Albula) and 1.049 (Silvretta) with transport zero, and capability is bounded by 1 | the threshold became a searched parameter: eight values from 25 to 60, drawn from a declared ladder and a seeded grid. `derive_threshold` implements the plan's operating-point derivation and `required_capability` makes the bound checkable, but both are exercised by tests only and neither produced a number in the artifact below |
+| Undeclared minimum zone area | a fixed 3x3 opening enforced 8100 m² at 30 m while the manifest advertised 2500 m² | `effective_minimum_zone_area_m2` computes and publishes the real floor; the repaired default drops the opening so the declared area is the operative one (2700 m² at 30 m) |
+
+Each defect is pinned by a test in `tests/test_release_engine_repair.py` built
+from committed artifacts, so none of them can silently return. The repaired
+module reproduces all five committed `regime-hindcast-v1` development release
+masks **cell-for-cell** at its `V1_FROZEN` configuration, which is what makes
+every difference below attributable to a configuration change rather than to a
+reimplementation.
+
+### Search design, declared before any score was seen
+
+Every candidate was screened on one predeclared development block (Western
+Bernese); the top decile was promoted to all five. The same-area slope-only
+baseline was **pinned** to the `regime-hindcast-v1` published slope response
+rather than read from the candidate, because a search allowed to move its own
+baseline measures nothing. Physical guardrails were vetoes, not tie-breakers: a
+benign day had to stay quiet, missing data could never become a flagged cell,
+and flagged terrain could not exceed the frozen 20% budget. Stop conditions were
+SUCCESS, FUTILITY, BUDGET and PLATEAU, whichever fired first.
+
+128 configurations were evaluated, 0 were rejected by a guardrail, and 13 were
+promoted to the full five-block evaluation. PLATEAU fired: the running best
+screening margin last improved at configuration 78 and the following 50
+configurations did not beat it.
+
+### Result
+
+| Configuration | W. Bernese | Albula | Glarus | Gotthard | Silvretta | Worst block |
+|---|---:|---:|---:|---:|---:|---:|
+| Frozen v1 engine | −13.12 | −14.84 | −24.94 | −9.96 | −21.89 | −24.94 |
+| Repaired morphology only | −9.57 | −17.58 | −24.94 | −10.37 | −21.89 | −24.94 |
+| Best searched configuration | **+1.77** | **+2.20** | −9.24 | **+9.54** | −4.14 | −9.24 |
+
+Margins are percentage points of release-only event capture against the
+same-area slope-only baseline. The best configuration beat the baseline on three
+of five blocks and lost on two. The rule required at least +5 points on all
+five, so it failed. The rule was not weakened after the score was seen, and the
+reserved block was not spent.
+
+### Why the slope baseline is hard to beat
+
+The best configuration and its same-area slope baseline select almost disjoint
+terrain — spatial agreement is 5.2% to 10.1% — at a similar mean slope: the
+baseline sits at 40.1–40.4° on every block and the model at 39.4–41.0° on
+four of the five. Glarus is the exception at 43.8°, and it is also the
+worst-margin block. On the metric the model does better:
+
+| Block | Model coverage of mapped positives | Slope baseline coverage |
+|---|---:|---:|
+| W. Bernese | 12.00% | 4.47% |
+| Albula | 6.53% | 3.23% |
+| Glarus | 7.21% | 4.85% |
+| Gotthard | 4.18% | 1.83% |
+| Silvretta | 5.99% | 3.80% |
+
+At equal terrain budget the repaired model intersects 1.5 to 2.7 times more
+mapped-avalanche area than the slope baseline, on every block. It still loses on
+event capture, and the two facts are consistent: an event counts as captured
+when just 5% of its cells are flagged, so the metric rewards touching many
+outlines slightly rather than covering any one of them well. Spreading a fixed
+budget thinly across all steep ground is an efficient way to clip many outlines;
+concentrating it into coherent, physically-motivated start zones is not.
+
+That is a property of a positive-only capture metric evaluated against outlines
+that include track and deposit, not evidence that a slope threshold is a better
+release model. It also means this comparison cannot be won by tuning loading
+parameters, which is the substantive finding: across 128 configurations spanning
+three drift kernels, eight release thresholds, four loading bases, four snow and
+four wind weights, three slope responses and three morphologies, none produced a
+configuration that beats a slope ranking on all five blocks. The remaining gap is
+not parameterisation. It is that the model has no snowpack-stratigraphy or
+weak-layer information, which is the variable that separates steep terrain that
+released from steep terrain that did not — and no amount of loading-parameter
+search can supply it.
+
+### Scope
+
+This is a development search. It adds **zero** events to the strict field
+holdout, strict N remains 0, `is_validated` remains `false`, and the trusted
+dataset identity registry remains empty. All five development blocks were
+already scored and viewed in the two frozen experiments, so every number here is
+a development number and is labelled as one. No reserved block was predicted,
+scored, or had its outlines opened; `row1col4`, `row2col4`, `row6col9` and
+`row5col10` all remain sealed. No frozen artifact, spec or digest was modified,
+and no email or external message was sent.
+
 ## Lower-rigor real-event comparison
 
 **Component tested:** empirical alpha angle plus fast downslope routing.
