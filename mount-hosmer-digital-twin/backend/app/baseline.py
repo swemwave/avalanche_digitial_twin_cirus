@@ -32,6 +32,23 @@ BASELINE_SCHEMA = "mount-hosmer-m0-baseline-v1"
 CASE_NAMES = ("benign", "loaded", "missing_data", "aoi_boundary")
 DEFAULT_SEED = 20260713
 
+#: Platform the checked-in ``output_sha256`` values were frozen on.
+#:
+#: Those digests are taken over raw float bytes, so they carry the BLAS/LAPACK
+#: build and the CPU instruction set the wheels dispatch to, not just the model.
+#: They reproduce here and on GitHub Actions' Windows runner; they do not on its
+#: Ubuntu runner, with numpy and scipy pinned to the versions used to freeze them.
+#: Only the byte digests diverge -- ``input_sha256``, ``input_coverage`` and the
+#: physical ``summary`` values are identical on every platform measured, and are
+#: asserted everywhere regardless of this scope. Nothing is re-frozen on a runner.
+#: See ``docs/limitations.md``.
+FROZEN_DIGEST_PLATFORM = "win32"
+
+
+def output_digest_is_comparable() -> bool:
+    """Whether the frozen ``output_sha256`` values are assertable on this platform."""
+    return sys.platform == FROZEN_DIGEST_PLATFORM
+
 
 @dataclass(frozen=True)
 class _Grid:
@@ -333,6 +350,7 @@ def compare_engines(
         mismatches.append("model_identity")
     if expectations and expectations.get("seed") != seed:
         mismatches.append("seed")
+    compare_digest = output_digest_is_comparable()
     for case_name in CASE_NAMES:
         baseline = run_case(baseline_engine, case_name, seed=seed)
         candidate = run_case(candidate_engine, case_name, seed=seed)
@@ -341,13 +359,18 @@ def compare_engines(
         for role, result in (("baseline", baseline), ("candidate", candidate)):
             expected = expected_results.get(result["engine"], {}).get(case_name)
             result["frozen_expectation"] = expected
+            result["output_digest_compared"] = compare_digest
             result["matches_frozen_baseline"] = (
                 None
                 if expected is None
                 else result["input_sha256"] == expected["input_sha256"]
                 and result["input_coverage"] == expected["input_coverage"]
-                and result["output_sha256"] == expected["output_sha256"]
                 and result["summary"] == expected["summary"]
+                and (
+                    result["output_sha256"] == expected["output_sha256"]
+                    if compare_digest
+                    else True
+                )
             )
             if result["matches_frozen_baseline"] is False:
                 mismatches.append(f"{role}:{result['engine']}:{case_name}")
@@ -370,6 +393,8 @@ def compare_engines(
         "seed": seed,
         "cases": comparisons,
         "frozen_baseline_checked": expectations is not None,
+        "frozen_output_digest_platform": FROZEN_DIGEST_PLATFORM,
+        "frozen_output_digest_compared": compare_digest,
         "frozen_baseline_mismatches": mismatches,
         "all_checked_results_match": not mismatches,
     }
