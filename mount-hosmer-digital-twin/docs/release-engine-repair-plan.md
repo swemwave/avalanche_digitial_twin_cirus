@@ -15,6 +15,32 @@ block, and still loses on event capture, because a 5%-overlap capture rule
 rewards touching many outlines over covering any one of them. No loading-parameter
 search closes that gap; the missing variable is snowpack stratigraphy.
 
+**Two things below are now known to be wrong, and are left standing rather than
+edited.**
+
+*Defect 1's stated mechanism does not apply to the SPOT/ERA5 blocks.* The
+diagnosis says the wind term went inert because a 72-hour by 9-point mean
+diluted windy hours into a calm average. Re-testing the repaired engine on that
+same ERA5 forcing showed there were no windy hours to dilute: not one hourly
+value at any of the 45 sample points in any block reaches either transport
+threshold, the maximum single hour across all five blocks is 12.3 km/h against a
+15 km/h v1 threshold, and every offered wind statistic sits below both. The
+repair is correct and inert on this forcing. The mechanism does apply on CERRA,
+which is why the configuration search could use it and why the configuration it
+selected does not transfer back --
+[`release-v2-spot-forcing-v1.json`](../validation-data/results/release-v2-spot-forcing-v1.json).
+
+*The stratigraphy conclusion did not hold.* Section 5's written finding -- that
+the remaining gap is the absence of snowpack stratigraphy rather than
+parameterisation -- was tested by a second search that added exactly that
+variable and changed nothing else. It failed the same +5 pp rule and the effect
+ran backwards: the worst-block margin fell monotonically as the weak-interface
+weight rose, and the best configuration in the search uses weight zero --
+[`release-stratigraphy-search-v1.json`](../validation-data/results/release-stratigraphy-search-v1.json).
+Both searches are written up in
+[`validation-report.md`](validation-report.md). All four reserved blocks are
+still sealed.
+
 The diagnosis below is preserved as written, before execution.
 
 **Scope:** fix why `compute_release` / `extract_release_zones` produced almost no
