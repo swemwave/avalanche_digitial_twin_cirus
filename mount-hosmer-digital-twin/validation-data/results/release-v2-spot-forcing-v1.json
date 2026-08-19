@@ -1,0 +1,2632 @@
+{
+  "blocks": [
+    {
+      "antecedent_hour_count": 7,
+      "block_id": "dev_western_bernese",
+      "campaign_year": 2018,
+      "eligible_cell_count": 448900,
+      "event_count": 282,
+      "frozen_scalar_diagnostics": {
+        "new_snow_cm_frozen_scalar": 60.923333333333325,
+        "transporting_hour_fraction_at_dry_threshold": 0.0,
+        "wind_speed_kmh_frozen_scalar_mean": 3.568518518518518,
+        "wind_speed_kmh_maximum_hour": 8.1,
+        "wind_speed_kmh_p95": 6.5
+      },
+      "mountain_group": "Western Bernese Alps fixed tile",
+      "sample_geometry_elevation_agreement_rms_m": 79.0774995319879,
+      "saturation": {
+        "capability_is_reachable": true,
+        "frozen_scalar_new_snow_cm": 60.923333333333325,
+        "note": "Terrain capability is a product of factors each bounded by 1, so a requirement above 1.0 is unreachable by any terrain.",
+        "required_terrain_capability_at_zero_transport": 0.8088235294117647
+      },
+      "scorable_event_count": 273,
+      "source_partition": "development",
+      "storm_window": {
+        "api_bin_semantics": "72 preceding-hour snowfall/precipitation bins labelled (start, end]; instantaneous temperature and wind use the same labels",
+        "end_utc": "2018-01-24T06:00",
+        "hour_count": 72,
+        "start_utc": "2018-01-21T06:00"
+      },
+      "terrain_artifact_sha256": "32d228ac9c6e864b2c1d6c23f2f39a69ff112584a6784cf9f88bff205db699b6",
+      "wind": {
+        "every_statistic_below_every_threshold": true,
+        "hourly_field_shape_samples_hours": [
+          9,
+          72
+        ],
+        "hours_at_or_above_v1_wind_transport_minimum": 0,
+        "hours_at_or_above_v2_dry_transport_threshold": 0,
+        "maximum_single_hour_kmh": 8.1,
+        "statistics_kmh": {
+          "arithmetic_mean": 3.568518518518519,
+          "drift_weighted_mean": 3.568518518518519,
+          "quantile": 6.5,
+          "transporting_hours_mean": 3.568518518518519
+        },
+        "v1_wind_transport_minimum_kmh": 15.0,
+        "v2_dry_transport_threshold_kmh": 27.720000000000002
+      }
+    },
+    {
+      "antecedent_hour_count": 7,
+      "block_id": "holdout_albula",
+      "campaign_year": 2019,
+      "eligible_cell_count": 448900,
+      "event_count": 182,
+      "frozen_scalar_diagnostics": {
+        "new_snow_cm_frozen_scalar": 29.283333333333335,
+        "transporting_hour_fraction_at_dry_threshold": 0.0,
+        "wind_speed_kmh_frozen_scalar_mean": 5.205709876543209,
+        "wind_speed_kmh_maximum_hour": 10.4,
+        "wind_speed_kmh_p95": 9.4
+      },
+      "mountain_group": "Albula Alps fixed tile",
+      "sample_geometry_elevation_agreement_rms_m": 55.23850263717824,
+      "saturation": {
+        "capability_is_reachable": false,
+        "frozen_scalar_new_snow_cm": 29.283333333333335,
+        "note": "Terrain capability is a product of factors each bounded by 1, so a requirement above 1.0 is unreachable by any terrain.",
+        "required_terrain_capability_at_zero_transport": 1.1431659461257067
+      },
+      "scorable_event_count": 173,
+      "source_partition": "holdout",
+      "storm_window": {
+        "api_bin_semantics": "72 preceding-hour snowfall/precipitation bins labelled (start, end]; instantaneous temperature and wind use the same labels",
+        "end_utc": "2019-01-16T06:00",
+        "hour_count": 72,
+        "start_utc": "2019-01-13T06:00"
+      },
+      "terrain_artifact_sha256": "9786b464088cfdda9d173af265b10987ee0c0c46552282a1d1677b8631e68bde",
+      "wind": {
+        "every_statistic_below_every_threshold": true,
+        "hourly_field_shape_samples_hours": [
+          9,
+          72
+        ],
+        "hours_at_or_above_v1_wind_transport_minimum": 0,
+        "hours_at_or_above_v2_dry_transport_threshold": 0,
+        "maximum_single_hour_kmh": 10.4,
+        "statistics_kmh": {
+          "arithmetic_mean": 5.205709876543209,
+          "drift_weighted_mean": 5.205709876543209,
+          "quantile": 9.4,
+          "transporting_hours_mean": 5.205709876543209
+        },
+        "v1_wind_transport_minimum_kmh": 15.0,
+        "v2_dry_transport_threshold_kmh": 27.720000000000002
+      }
+    },
+    {
+      "antecedent_hour_count": 7,
+      "block_id": "holdout_glarus",
+      "campaign_year": 2019,
+      "eligible_cell_count": 448900,
+      "event_count": 433,
+      "frozen_scalar_diagnostics": {
+        "new_snow_cm_frozen_scalar": 50.516666666666666,
+        "transporting_hour_fraction_at_dry_threshold": 0.0,
+        "wind_speed_kmh_frozen_scalar_mean": 5.878240740740741,
+        "wind_speed_kmh_maximum_hour": 11.9,
+        "wind_speed_kmh_p95": 10.064999999999998
+      },
+      "mountain_group": "Glarus Alps fixed tile",
+      "sample_geometry_elevation_agreement_rms_m": 26.21896438387213,
+      "saturation": {
+        "capability_is_reachable": true,
+        "frozen_scalar_new_snow_cm": 50.516666666666666,
+        "note": "Terrain capability is a product of factors each bounded by 1, so a requirement above 1.0 is unreachable by any terrain.",
+        "required_terrain_capability_at_zero_transport": 0.8088235294117647
+      },
+      "scorable_event_count": 421,
+      "source_partition": "holdout",
+      "storm_window": {
+        "api_bin_semantics": "72 preceding-hour snowfall/precipitation bins labelled (start, end]; instantaneous temperature and wind use the same labels",
+        "end_utc": "2019-01-16T06:00",
+        "hour_count": 72,
+        "start_utc": "2019-01-13T06:00"
+      },
+      "terrain_artifact_sha256": "421240e02da772de8baca2f30ef19ef6916f9785d8ff9c1c029008879ae7f53c",
+      "wind": {
+        "every_statistic_below_every_threshold": true,
+        "hourly_field_shape_samples_hours": [
+          9,
+          72
+        ],
+        "hours_at_or_above_v1_wind_transport_minimum": 0,
+        "hours_at_or_above_v2_dry_transport_threshold": 0,
+        "maximum_single_hour_kmh": 11.9,
+        "statistics_kmh": {
+          "arithmetic_mean": 5.8782407407407415,
+          "drift_weighted_mean": 5.8782407407407415,
+          "quantile": 10.064999999999998,
+          "transporting_hours_mean": 5.8782407407407415
+        },
+        "v1_wind_transport_minimum_kmh": 15.0,
+        "v2_dry_transport_threshold_kmh": 27.720000000000002
+      }
+    },
+    {
+      "antecedent_hour_count": 7,
+      "block_id": "holdout_gotthard",
+      "campaign_year": 2019,
+      "eligible_cell_count": 448900,
+      "event_count": 241,
+      "frozen_scalar_diagnostics": {
+        "new_snow_cm_frozen_scalar": 36.76555555555557,
+        "transporting_hour_fraction_at_dry_threshold": 0.0,
+        "wind_speed_kmh_frozen_scalar_mean": 6.43148148148148,
+        "wind_speed_kmh_maximum_hour": 11.6,
+        "wind_speed_kmh_p95": 10.1
+      },
+      "mountain_group": "Gotthard Alps fixed tile",
+      "sample_geometry_elevation_agreement_rms_m": 35.7534216042161,
+      "saturation": {
+        "capability_is_reachable": true,
+        "frozen_scalar_new_snow_cm": 36.76555555555557,
+        "note": "Terrain capability is a product of factors each bounded by 1, so a requirement above 1.0 is unreachable by any terrain.",
+        "required_terrain_capability_at_zero_transport": 0.9946661779741118
+      },
+      "scorable_event_count": 232,
+      "source_partition": "holdout",
+      "storm_window": {
+        "api_bin_semantics": "72 preceding-hour snowfall/precipitation bins labelled (start, end]; instantaneous temperature and wind use the same labels",
+        "end_utc": "2019-01-16T06:00",
+        "hour_count": 72,
+        "start_utc": "2019-01-13T06:00"
+      },
+      "terrain_artifact_sha256": "22290410d0e3b819b8360683b240bad1c7a3040c464bd57f3fed6964770fe729",
+      "wind": {
+        "every_statistic_below_every_threshold": true,
+        "hourly_field_shape_samples_hours": [
+          9,
+          72
+        ],
+        "hours_at_or_above_v1_wind_transport_minimum": 0,
+        "hours_at_or_above_v2_dry_transport_threshold": 0,
+        "maximum_single_hour_kmh": 11.6,
+        "statistics_kmh": {
+          "arithmetic_mean": 6.43148148148148,
+          "drift_weighted_mean": 6.43148148148148,
+          "quantile": 10.1,
+          "transporting_hours_mean": 6.43148148148148
+        },
+        "v1_wind_transport_minimum_kmh": 15.0,
+        "v2_dry_transport_threshold_kmh": 27.720000000000002
+      }
+    },
+    {
+      "antecedent_hour_count": 7,
+      "block_id": "holdout_silvretta",
+      "campaign_year": 2019,
+      "eligible_cell_count": 448900,
+      "event_count": 169,
+      "frozen_scalar_diagnostics": {
+        "new_snow_cm_frozen_scalar": 33.778888888888886,
+        "transporting_hour_fraction_at_dry_threshold": 0.0,
+        "wind_speed_kmh_frozen_scalar_mean": 5.317901234567901,
+        "wind_speed_kmh_maximum_hour": 12.3,
+        "wind_speed_kmh_p95": 9.6
+      },
+      "mountain_group": "Silvretta and Lower Engadine fixed tile",
+      "sample_geometry_elevation_agreement_rms_m": 41.178835175361186,
+      "saturation": {
+        "capability_is_reachable": false,
+        "frozen_scalar_new_snow_cm": 33.778888888888886,
+        "note": "Terrain capability is a product of factors each bounded by 1, so a requirement above 1.0 is unreachable by any terrain.",
+        "required_terrain_capability_at_zero_transport": 1.049063091290106
+      },
+      "scorable_event_count": 162,
+      "source_partition": "holdout",
+      "storm_window": {
+        "api_bin_semantics": "72 preceding-hour snowfall/precipitation bins labelled (start, end]; instantaneous temperature and wind use the same labels",
+        "end_utc": "2019-01-16T06:00",
+        "hour_count": 72,
+        "start_utc": "2019-01-13T06:00"
+      },
+      "terrain_artifact_sha256": "2cf2ab096216b7f13a4b24df5279b2356383ca83f0c3af304a7610cb7c206959",
+      "wind": {
+        "every_statistic_below_every_threshold": true,
+        "hourly_field_shape_samples_hours": [
+          9,
+          72
+        ],
+        "hours_at_or_above_v1_wind_transport_minimum": 0,
+        "hours_at_or_above_v2_dry_transport_threshold": 0,
+        "maximum_single_hour_kmh": 12.3,
+        "statistics_kmh": {
+          "arithmetic_mean": 5.317901234567901,
+          "drift_weighted_mean": 5.317901234567901,
+          "quantile": 9.6,
+          "transporting_hours_mean": 5.317901234567901
+        },
+        "v1_wind_transport_minimum_kmh": 15.0,
+        "v2_dry_transport_threshold_kmh": 27.720000000000002
+      }
+    }
+  ],
+  "declared_before_scoring": {
+    "baseline": "Same-area slope-only selection on the pinned regime-hindcast-v1 slope response, which is byte-identical to the production slope curve spot-blind-swiss-v1 used for its own slope baseline.",
+    "baseline_budget": "The release-only flagged-cell count of the configuration being scored. The frozen artifact's published slope baseline uses the end-to-end budget instead, so it is not quoted as a margin here.",
+    "capture_rules": {
+      "regime_5_percent": 0.05,
+      "spot_10_percent": 0.1
+    },
+    "configuration_ids": [
+      "frozen_v1_reference",
+      "v1_config_hourly_forcing",
+      "v2_baseline_hourly_forcing",
+      "search_best_configuration"
+    ],
+    "configuration_selection": "Fixed and enumerated. No search, no seed, no sampling. The searched configuration is used exactly as frozen.",
+    "primary_capture_rule": "spot_10_percent",
+    "primary_capture_rule_reason": "10% is what spot-blind-swiss-v1 froze for these blocks. The 5% rule of the configuration search is reported beside it for every block and configuration so neither can be selected after the fact."
+  },
+  "disclaimer": "Experimental research prototype; not an operational avalanche forecast and not a replacement for a published bulletin.",
+  "drift_kernels_available": [
+    "cubic_excess",
+    "linear_excess",
+    "hours_above"
+  ],
+  "evaluations": [
+    {
+      "blocks": [
+        {
+          "block_id": "dev_western_bernese",
+          "capture_by_rule": {
+            "regime_5_percent": {
+              "capture_margin_percentage_points": -2.127659574468085,
+              "captured_event_count": 15,
+              "event_capture_fraction": 0.05319148936170213,
+              "minimum_overlap_fraction": 0.05,
+              "slope_baseline_captured_event_count": 21,
+              "slope_baseline_event_capture_fraction": 0.07446808510638298
+            },
+            "spot_10_percent": {
+              "capture_margin_percentage_points": 2.8368794326241136,
+              "captured_event_count": 13,
+              "event_capture_fraction": 0.04609929078014184,
+              "minimum_overlap_fraction": 0.1,
+              "slope_baseline_captured_event_count": 5,
+              "slope_baseline_event_capture_fraction": 0.01773049645390071
+            }
+          },
+          "capture_margin_percentage_points": 2.8368794326241136,
+          "event_count": 282,
+          "flagged_eligible_cell_count": 5710,
+          "flagged_eligible_terrain_fraction": 0.012719982178658945,
+          "flagged_on_missing_input_cell_count": 0,
+          "flagged_outside_eligible_cell_count": 0,
+          "frozen_conditions": {
+            "new_snow_cm": 60.9,
+            "wind_direction_deg": 169.0,
+            "wind_speed_kmh": 3.6
+          },
+          "frozen_zone_count": 40,
+          "mapped_positive_footprint_coverage_fraction": 0.04059704395176974,
+          "mean_slope_of_flagged_terrain_deg": 41.449301496362104,
+          "prediction_artifact_sha256": "c867a717faaef9a1ae5f82f1e3ce9602c8583cc20759d3953384d64e451daa10",
+          "primary_capture_rule": "spot_10_percent",
+          "scorable_event_count": 273,
+          "slope_only_same_area_budget": {
+            "mapped_positive_footprint_coverage_fraction": 0.017113963438350838,
+            "mean_slope_of_flagged_terrain_deg": 40.15759915487153
+          },
+          "source": "frozen spot-blind-swiss-v1 prediction artifact, read only",
+          "spatial_agreement_with_slope_baseline_fraction": 0.07215411558669002
+        },
+        {
+          "block_id": "holdout_albula",
+          "capture_by_rule": {
+            "regime_5_percent": {
+              "capture_margin_percentage_points": 0.0,
+              "captured_event_count": 0,
+              "event_capture_fraction": 0.0,
+              "minimum_overlap_fraction": 0.05,
+              "slope_baseline_captured_event_count": 0,
+              "slope_baseline_event_capture_fraction": 0.0
+            },
+            "spot_10_percent": {
+              "capture_margin_percentage_points": 0.0,
+              "captured_event_count": 0,
+              "event_capture_fraction": 0.0,
+              "minimum_overlap_fraction": 0.1,
+              "slope_baseline_captured_event_count": 0,
+              "slope_baseline_event_capture_fraction": 0.0
+            }
+          },
+          "capture_margin_percentage_points": 0.0,
+          "event_count": 182,
+          "flagged_eligible_cell_count": 0,
+          "flagged_eligible_terrain_fraction": 0.0,
+          "flagged_on_missing_input_cell_count": 0,
+          "flagged_outside_eligible_cell_count": 0,
+          "frozen_conditions": {
+            "new_snow_cm": 29.3,
+            "wind_direction_deg": 342.4,
+            "wind_speed_kmh": 5.2
+          },
+          "frozen_zone_count": 0,
+          "mapped_positive_footprint_coverage_fraction": 0.0,
+          "mean_slope_of_flagged_terrain_deg": null,
+          "prediction_artifact_sha256": "f1bccde9343636e78dd8495d87f8ee1eb2f3167908a7a35926313fcda739be58",
+          "primary_capture_rule": "spot_10_percent",
+          "scorable_event_count": 173,
+          "slope_only_same_area_budget": {
+            "mapped_positive_footprint_coverage_fraction": 0.0,
+            "mean_slope_of_flagged_terrain_deg": null
+          },
+          "source": "frozen spot-blind-swiss-v1 prediction artifact, read only",
+          "spatial_agreement_with_slope_baseline_fraction": null
+        },
+        {
+          "block_id": "holdout_glarus",
+          "capture_by_rule": {
+            "regime_5_percent": {
+              "capture_margin_percentage_points": -4.618937644341801,
+              "captured_event_count": 26,
+              "event_capture_fraction": 0.06004618937644342,
+              "minimum_overlap_fraction": 0.05,
+              "slope_baseline_captured_event_count": 46,
+              "slope_baseline_event_capture_fraction": 0.10623556581986143
+            },
+            "spot_10_percent": {
+              "capture_margin_percentage_points": -0.4618937644341801,
+              "captured_event_count": 22,
+              "event_capture_fraction": 0.050808314087759814,
+              "minimum_overlap_fraction": 0.1,
+              "slope_baseline_captured_event_count": 24,
+              "slope_baseline_event_capture_fraction": 0.05542725173210162
+            }
+          },
+          "capture_margin_percentage_points": -0.4618937644341801,
+          "event_count": 433,
+          "flagged_eligible_cell_count": 4441,
+          "flagged_eligible_terrain_fraction": 0.009893071953664513,
+          "flagged_on_missing_input_cell_count": 0,
+          "flagged_outside_eligible_cell_count": 0,
+          "frozen_conditions": {
+            "new_snow_cm": 50.5,
+            "wind_direction_deg": 277.1,
+            "wind_speed_kmh": 5.9
+          },
+          "frozen_zone_count": 40,
+          "mapped_positive_footprint_coverage_fraction": 0.018931215299198025,
+          "mean_slope_of_flagged_terrain_deg": 41.711786903419146,
+          "prediction_artifact_sha256": "13dd1517cc80ec897e2c21a7d1dc08cdeaba12ebba7b3bf2600c0fd050a30f1c",
+          "primary_capture_rule": "spot_10_percent",
+          "scorable_event_count": 421,
+          "slope_only_same_area_budget": {
+            "mapped_positive_footprint_coverage_fraction": 0.015229796421961752,
+            "mean_slope_of_flagged_terrain_deg": 40.12648753265195
+          },
+          "source": "frozen spot-blind-swiss-v1 prediction artifact, read only",
+          "spatial_agreement_with_slope_baseline_fraction": 0.05584327854086917
+        },
+        {
+          "block_id": "holdout_gotthard",
+          "capture_by_rule": {
+            "regime_5_percent": {
+              "capture_margin_percentage_points": 0.0,
+              "captured_event_count": 0,
+              "event_capture_fraction": 0.0,
+              "minimum_overlap_fraction": 0.05,
+              "slope_baseline_captured_event_count": 0,
+              "slope_baseline_event_capture_fraction": 0.0
+            },
+            "spot_10_percent": {
+              "capture_margin_percentage_points": 0.0,
+              "captured_event_count": 0,
+              "event_capture_fraction": 0.0,
+              "minimum_overlap_fraction": 0.1,
+              "slope_baseline_captured_event_count": 0,
+              "slope_baseline_event_capture_fraction": 0.0
+            }
+          },
+          "capture_margin_percentage_points": 0.0,
+          "event_count": 241,
+          "flagged_eligible_cell_count": 0,
+          "flagged_eligible_terrain_fraction": 0.0,
+          "flagged_on_missing_input_cell_count": 0,
+          "flagged_outside_eligible_cell_count": 0,
+          "frozen_conditions": {
+            "new_snow_cm": 36.8,
+            "wind_direction_deg": 313.4,
+            "wind_speed_kmh": 6.4
+          },
+          "frozen_zone_count": 0,
+          "mapped_positive_footprint_coverage_fraction": 0.0,
+          "mean_slope_of_flagged_terrain_deg": null,
+          "prediction_artifact_sha256": "b14b15da3d4b6ca6632ef31f6bcb351c87122c97350dcea1ad9744defcc2775b",
+          "primary_capture_rule": "spot_10_percent",
+          "scorable_event_count": 232,
+          "slope_only_same_area_budget": {
+            "mapped_positive_footprint_coverage_fraction": 0.0,
+            "mean_slope_of_flagged_terrain_deg": null
+          },
+          "source": "frozen spot-blind-swiss-v1 prediction artifact, read only",
+          "spatial_agreement_with_slope_baseline_fraction": null
+        },
+        {
+          "block_id": "holdout_silvretta",
+          "capture_by_rule": {
+            "regime_5_percent": {
+              "capture_margin_percentage_points": 0.0,
+              "captured_event_count": 0,
+              "event_capture_fraction": 0.0,
+              "minimum_overlap_fraction": 0.05,
+              "slope_baseline_captured_event_count": 0,
+              "slope_baseline_event_capture_fraction": 0.0
+            },
+            "spot_10_percent": {
+              "capture_margin_percentage_points": 0.0,
+              "captured_event_count": 0,
+              "event_capture_fraction": 0.0,
+              "minimum_overlap_fraction": 0.1,
+              "slope_baseline_captured_event_count": 0,
+              "slope_baseline_event_capture_fraction": 0.0
+            }
+          },
+          "capture_margin_percentage_points": 0.0,
+          "event_count": 169,
+          "flagged_eligible_cell_count": 0,
+          "flagged_eligible_terrain_fraction": 0.0,
+          "flagged_on_missing_input_cell_count": 0,
+          "flagged_outside_eligible_cell_count": 0,
+          "frozen_conditions": {
+            "new_snow_cm": 33.8,
+            "wind_direction_deg": 295.7,
+            "wind_speed_kmh": 5.3
+          },
+          "frozen_zone_count": 0,
+          "mapped_positive_footprint_coverage_fraction": 0.0,
+          "mean_slope_of_flagged_terrain_deg": null,
+          "prediction_artifact_sha256": "cd7f3b86f5edd8ad117c276d5bfabfa543d1eb708f03876236680f86cdc10f15",
+          "primary_capture_rule": "spot_10_percent",
+          "scorable_event_count": 162,
+          "slope_only_same_area_budget": {
+            "mapped_positive_footprint_coverage_fraction": 0.0,
+            "mean_slope_of_flagged_terrain_deg": null
+          },
+          "source": "frozen spot-blind-swiss-v1 prediction artifact, read only",
+          "spatial_agreement_with_slope_baseline_fraction": null
+        }
+      ],
+      "configuration_id": "frozen_v1_reference",
+      "description": "The committed spot-blind-swiss-v1 release mask, re-scored through this script's metric. Not a model run.",
+      "parameters": null,
+      "summary": {
+        "block_count": 5,
+        "blocks_beating_slope_baseline": 1,
+        "minimum_capture_margin_percentage_points": -0.4618937644341801,
+        "zero_release_block_count": 3,
+        "zero_release_blocks": [
+          "holdout_albula",
+          "holdout_gotthard",
+          "holdout_silvretta"
+        ]
+      }
+    },
+    {
+      "blocks": [
+        {
+          "block_id": "dev_western_bernese",
+          "capture_by_rule": {
+            "regime_5_percent": {
+              "capture_margin_percentage_points": -17.02127659574468,
+              "captured_event_count": 57,
+              "event_capture_fraction": 0.20212765957446807,
+              "minimum_overlap_fraction": 0.05,
+              "slope_baseline_captured_event_count": 105,
+              "slope_baseline_event_capture_fraction": 0.3723404255319149
+            },
+            "spot_10_percent": {
+              "capture_margin_percentage_points": 1.7730496453900708,
+              "captured_event_count": 52,
+              "event_capture_fraction": 0.18439716312056736,
+              "minimum_overlap_fraction": 0.1,
+              "slope_baseline_captured_event_count": 47,
+              "slope_baseline_event_capture_fraction": 0.16666666666666666
+            }
+          },
+          "capture_margin_percentage_points": 1.7730496453900708,
+          "dry_slab_is_the_like_for_like_pathway": "spot-blind-swiss-v1 ran a single-regime release score. Only the dry-slab footprint is comparable to its frozen mask, and only the dry-slab pathway is touched by the three documented defects.",
+          "dry_slab_saturation": {
+            "capability_is_reachable": true,
+            "observed_transport_term": 0.0,
+            "peak_new_snow_index_cm_best_cell": 51.26902770996094,
+            "required_terrain_capability_at_best_cell": 0.8088235294117647
+          },
+          "event_count": 282,
+          "flagged_eligible_cell_count": 15196,
+          "flagged_eligible_terrain_fraction": 0.03385163733570951,
+          "flagged_on_missing_input_cell_count": 0,
+          "flagged_outside_eligible_cell_count": 0,
+          "mapped_positive_footprint_coverage_fraction": 0.0808051341890315,
+          "mean_slope_of_flagged_terrain_deg": 41.92704305902347,
+          "primary_capture_rule": "spot_10_percent",
+          "regime_footprints": {
+            "dry_loose": {
+              "flagged_eligible_cell_count": 6206
+            },
+            "dry_slab": {
+              "flagged_eligible_cell_count": 5526,
+              "metrics": {
+                "block_id": "dev_western_bernese",
+                "capture_by_rule": {
+                  "regime_5_percent": {
+                    "capture_margin_percentage_points": -1.7730496453900708,
+                    "captured_event_count": 16,
+                    "event_capture_fraction": 0.05673758865248227,
+                    "minimum_overlap_fraction": 0.05,
+                    "slope_baseline_captured_event_count": 21,
+                    "slope_baseline_event_capture_fraction": 0.07446808510638298
+                  },
+                  "spot_10_percent": {
+                    "capture_margin_percentage_points": 3.1914893617021276,
+                    "captured_event_count": 14,
+                    "event_capture_fraction": 0.04964539007092199,
+                    "minimum_overlap_fraction": 0.1,
+                    "slope_baseline_captured_event_count": 5,
+                    "slope_baseline_event_capture_fraction": 0.01773049645390071
+                  }
+                },
+                "capture_margin_percentage_points": 3.1914893617021276,
+                "event_count": 282,
+                "flagged_eligible_cell_count": 5526,
+                "flagged_eligible_terrain_fraction": 0.012310091334372912,
+                "flagged_on_missing_input_cell_count": 0,
+                "flagged_outside_eligible_cell_count": 0,
+                "mapped_positive_footprint_coverage_fraction": 0.04137495138078569,
+                "mean_slope_of_flagged_terrain_deg": 41.50273541889888,
+                "primary_capture_rule": "spot_10_percent",
+                "scorable_event_count": 273,
+                "slope_only_same_area_budget": {
+                  "mapped_positive_footprint_coverage_fraction": 0.01677362893815636,
+                  "mean_slope_of_flagged_terrain_deg": 40.15333310685381
+                },
+                "spatial_agreement_with_slope_baseline_fraction": 0.07148027506333696
+              }
+            },
+            "full_depth_glide": {
+              "flagged_eligible_cell_count": 0
+            },
+            "wet_snow": {
+              "flagged_eligible_cell_count": 5020
+            }
+          },
+          "scorable_event_count": 273,
+          "slope_only_same_area_budget": {
+            "mapped_positive_footprint_coverage_fraction": 0.04754959159859977,
+            "mean_slope_of_flagged_terrain_deg": 40.408101961216694
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.11035798894445907,
+          "state_diagnostics": {
+            "antecedent_hour_count": 7,
+            "buried_weak_interface_proxy_maximum": 0.0,
+            "drift_index_normalized_maximum": 0.0,
+            "drift_index_normalized_mean": 0.0,
+            "peak_new_snow_index_cm_maximum": 51.26902770996094,
+            "peak_new_snow_index_cm_mean": 39.27640914916992,
+            "storm_hour_count": 72
+          },
+          "zone_count_by_regime": {
+            "dry_loose": 40,
+            "dry_slab": 40,
+            "full_depth_glide": 0,
+            "wet_snow": 40
+          },
+          "zone_count_total": 120
+        },
+        {
+          "block_id": "holdout_albula",
+          "capture_by_rule": {
+            "regime_5_percent": {
+              "capture_margin_percentage_points": -7.142857142857143,
+              "captured_event_count": 26,
+              "event_capture_fraction": 0.14285714285714285,
+              "minimum_overlap_fraction": 0.05,
+              "slope_baseline_captured_event_count": 39,
+              "slope_baseline_event_capture_fraction": 0.21428571428571427
+            },
+            "spot_10_percent": {
+              "capture_margin_percentage_points": 4.945054945054945,
+              "captured_event_count": 23,
+              "event_capture_fraction": 0.12637362637362637,
+              "minimum_overlap_fraction": 0.1,
+              "slope_baseline_captured_event_count": 14,
+              "slope_baseline_event_capture_fraction": 0.07692307692307693
+            }
+          },
+          "capture_margin_percentage_points": 4.945054945054945,
+          "dry_slab_is_the_like_for_like_pathway": "spot-blind-swiss-v1 ran a single-regime release score. Only the dry-slab footprint is comparable to its frozen mask, and only the dry-slab pathway is touched by the three documented defects.",
+          "dry_slab_saturation": {
+            "capability_is_reachable": false,
+            "observed_transport_term": 0.0,
+            "peak_new_snow_index_cm_best_cell": 30.506855010986328,
+            "required_terrain_capability_at_best_cell": 1.1159224092134732
+          },
+          "event_count": 182,
+          "flagged_eligible_cell_count": 7691,
+          "flagged_eligible_terrain_fraction": 0.01713299175762976,
+          "flagged_on_missing_input_cell_count": 0,
+          "flagged_outside_eligible_cell_count": 0,
+          "mapped_positive_footprint_coverage_fraction": 0.030638547158758054,
+          "mean_slope_of_flagged_terrain_deg": 42.54874985203478,
+          "primary_capture_rule": "spot_10_percent",
+          "regime_footprints": {
+            "dry_loose": {
+              "flagged_eligible_cell_count": 5030
+            },
+            "dry_slab": {
+              "flagged_eligible_cell_count": 0,
+              "metrics": {
+                "block_id": "holdout_albula",
+                "capture_by_rule": {
+                  "regime_5_percent": {
+                    "capture_margin_percentage_points": 0.0,
+                    "captured_event_count": 0,
+                    "event_capture_fraction": 0.0,
+                    "minimum_overlap_fraction": 0.05,
+                    "slope_baseline_captured_event_count": 0,
+                    "slope_baseline_event_capture_fraction": 0.0
+                  },
+                  "spot_10_percent": {
+                    "capture_margin_percentage_points": 0.0,
+                    "captured_event_count": 0,
+                    "event_capture_fraction": 0.0,
+                    "minimum_overlap_fraction": 0.1,
+                    "slope_baseline_captured_event_count": 0,
+                    "slope_baseline_event_capture_fraction": 0.0
+                  }
+                },
+                "capture_margin_percentage_points": 0.0,
+                "event_count": 182,
+                "flagged_eligible_cell_count": 0,
+                "flagged_eligible_terrain_fraction": 0.0,
+                "flagged_on_missing_input_cell_count": 0,
+                "flagged_outside_eligible_cell_count": 0,
+                "mapped_positive_footprint_coverage_fraction": 0.0,
+                "mean_slope_of_flagged_terrain_deg": null,
+                "primary_capture_rule": "spot_10_percent",
+                "scorable_event_count": 173,
+                "slope_only_same_area_budget": {
+                  "mapped_positive_footprint_coverage_fraction": 0.0,
+                  "mean_slope_of_flagged_terrain_deg": null
+                },
+                "spatial_agreement_with_slope_baseline_fraction": null
+              }
+            },
+            "full_depth_glide": {
+              "flagged_eligible_cell_count": 0
+            },
+            "wet_snow": {
+              "flagged_eligible_cell_count": 2713
+            }
+          },
+          "scorable_event_count": 173,
+          "slope_only_same_area_budget": {
+            "mapped_positive_footprint_coverage_fraction": 0.028119507908611598,
+            "mean_slope_of_flagged_terrain_deg": 40.19090354323248
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.06150045507736315,
+          "state_diagnostics": {
+            "antecedent_hour_count": 7,
+            "buried_weak_interface_proxy_maximum": 0.0,
+            "drift_index_normalized_maximum": 0.0,
+            "drift_index_normalized_mean": 0.0,
+            "peak_new_snow_index_cm_maximum": 30.506855010986328,
+            "peak_new_snow_index_cm_mean": 24.33452606201172,
+            "storm_hour_count": 72
+          },
+          "zone_count_by_regime": {
+            "dry_loose": 40,
+            "dry_slab": 0,
+            "full_depth_glide": 0,
+            "wet_snow": 40
+          },
+          "zone_count_total": 80
+        },
+        {
+          "block_id": "holdout_glarus",
+          "capture_by_rule": {
+            "regime_5_percent": {
+              "capture_margin_percentage_points": -24.942263279445726,
+              "captured_event_count": 61,
+              "event_capture_fraction": 0.14087759815242495,
+              "minimum_overlap_fraction": 0.05,
+              "slope_baseline_captured_event_count": 169,
+              "slope_baseline_event_capture_fraction": 0.3903002309468822
+            },
+            "spot_10_percent": {
+              "capture_margin_percentage_points": -5.542725173210162,
+              "captured_event_count": 54,
+              "event_capture_fraction": 0.12471131639722864,
+              "minimum_overlap_fraction": 0.1,
+              "slope_baseline_captured_event_count": 78,
+              "slope_baseline_event_capture_fraction": 0.18013856812933027
+            }
+          },
+          "capture_margin_percentage_points": -5.542725173210162,
+          "dry_slab_is_the_like_for_like_pathway": "spot-blind-swiss-v1 ran a single-regime release score. Only the dry-slab footprint is comparable to its frozen mask, and only the dry-slab pathway is touched by the three documented defects.",
+          "dry_slab_saturation": {
+            "capability_is_reachable": true,
+            "observed_transport_term": 0.0,
+            "peak_new_snow_index_cm_best_cell": 48.88702392578125,
+            "required_terrain_capability_at_best_cell": 0.8217351275717522
+          },
+          "event_count": 433,
+          "flagged_eligible_cell_count": 14711,
+          "flagged_eligible_terrain_fraction": 0.0327712185341947,
+          "flagged_on_missing_input_cell_count": 0,
+          "flagged_outside_eligible_cell_count": 0,
+          "mapped_positive_footprint_coverage_fraction": 0.05544417026526835,
+          "mean_slope_of_flagged_terrain_deg": 45.99569801113784,
+          "primary_capture_rule": "spot_10_percent",
+          "regime_footprints": {
+            "dry_loose": {
+              "flagged_eligible_cell_count": 8122
+            },
+            "dry_slab": {
+              "flagged_eligible_cell_count": 3049,
+              "metrics": {
+                "block_id": "holdout_glarus",
+                "capture_by_rule": {
+                  "regime_5_percent": {
+                    "capture_margin_percentage_points": -4.849884526558891,
+                    "captured_event_count": 10,
+                    "event_capture_fraction": 0.023094688221709007,
+                    "minimum_overlap_fraction": 0.05,
+                    "slope_baseline_captured_event_count": 31,
+                    "slope_baseline_event_capture_fraction": 0.07159353348729793
+                  },
+                  "spot_10_percent": {
+                    "capture_margin_percentage_points": -2.540415704387991,
+                    "captured_event_count": 6,
+                    "event_capture_fraction": 0.013856812933025405,
+                    "minimum_overlap_fraction": 0.1,
+                    "slope_baseline_captured_event_count": 17,
+                    "slope_baseline_event_capture_fraction": 0.03926096997690531
+                  }
+                },
+                "capture_margin_percentage_points": -2.540415704387991,
+                "event_count": 433,
+                "flagged_eligible_cell_count": 3049,
+                "flagged_eligible_terrain_fraction": 0.006792158609935398,
+                "flagged_on_missing_input_cell_count": 0,
+                "flagged_outside_eligible_cell_count": 0,
+                "mapped_positive_footprint_coverage_fraction": 0.010757248611967921,
+                "mean_slope_of_flagged_terrain_deg": 41.674196835696485,
+                "primary_capture_rule": "spot_10_percent",
+                "scorable_event_count": 421,
+                "slope_only_same_area_budget": {
+                  "mapped_positive_footprint_coverage_fraction": 0.010448797038864898,
+                  "mean_slope_of_flagged_terrain_deg": 40.08721723146773
+                },
+                "spatial_agreement_with_slope_baseline_fraction": 0.04296490652673007
+              }
+            },
+            "full_depth_glide": {
+              "flagged_eligible_cell_count": 0
+            },
+            "wet_snow": {
+              "flagged_eligible_cell_count": 3964
+            }
+          },
+          "scorable_event_count": 421,
+          "slope_only_same_area_budget": {
+            "mapped_positive_footprint_coverage_fraction": 0.05035471930906848,
+            "mean_slope_of_flagged_terrain_deg": 40.41990416496131
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.10876215077153151,
+          "state_diagnostics": {
+            "antecedent_hour_count": 7,
+            "buried_weak_interface_proxy_maximum": 0.0,
+            "drift_index_normalized_maximum": 0.0,
+            "drift_index_normalized_mean": 0.0,
+            "peak_new_snow_index_cm_maximum": 48.88702392578125,
+            "peak_new_snow_index_cm_mean": 42.59467697143555,
+            "storm_hour_count": 72
+          },
+          "zone_count_by_regime": {
+            "dry_loose": 40,
+            "dry_slab": 40,
+            "full_depth_glide": 0,
+            "wet_snow": 40
+          },
+          "zone_count_total": 120
+        },
+        {
+          "block_id": "holdout_gotthard",
+          "capture_by_rule": {
+            "regime_5_percent": {
+              "capture_margin_percentage_points": 2.074688796680498,
+              "captured_event_count": 28,
+              "event_capture_fraction": 0.11618257261410789,
+              "minimum_overlap_fraction": 0.05,
+              "slope_baseline_captured_event_count": 23,
+              "slope_baseline_event_capture_fraction": 0.0954356846473029
+            },
+            "spot_10_percent": {
+              "capture_margin_percentage_points": 9.12863070539419,
+              "captured_event_count": 25,
+              "event_capture_fraction": 0.1037344398340249,
+              "minimum_overlap_fraction": 0.1,
+              "slope_baseline_captured_event_count": 3,
+              "slope_baseline_event_capture_fraction": 0.012448132780082987
+            }
+          },
+          "capture_margin_percentage_points": 9.12863070539419,
+          "dry_slab_is_the_like_for_like_pathway": "spot-blind-swiss-v1 ran a single-regime release score. Only the dry-slab footprint is comparable to its frozen mask, and only the dry-slab pathway is touched by the three documented defects.",
+          "dry_slab_saturation": {
+            "capability_is_reachable": true,
+            "observed_transport_term": 0.0,
+            "peak_new_snow_index_cm_best_cell": 39.08454513549805,
+            "required_terrain_capability_at_best_cell": 0.9561698132631508
+          },
+          "event_count": 241,
+          "flagged_eligible_cell_count": 9785,
+          "flagged_eligible_terrain_fraction": 0.021797727779015372,
+          "flagged_on_missing_input_cell_count": 0,
+          "flagged_outside_eligible_cell_count": 0,
+          "mapped_positive_footprint_coverage_fraction": 0.04526644171388553,
+          "mean_slope_of_flagged_terrain_deg": 44.569647836855744,
+          "primary_capture_rule": "spot_10_percent",
+          "regime_footprints": {
+            "dry_loose": {
+              "flagged_eligible_cell_count": 8748
+            },
+            "dry_slab": {
+              "flagged_eligible_cell_count": 0,
+              "metrics": {
+                "block_id": "holdout_gotthard",
+                "capture_by_rule": {
+                  "regime_5_percent": {
+                    "capture_margin_percentage_points": 0.0,
+                    "captured_event_count": 0,
+                    "event_capture_fraction": 0.0,
+                    "minimum_overlap_fraction": 0.05,
+                    "slope_baseline_captured_event_count": 0,
+                    "slope_baseline_event_capture_fraction": 0.0
+                  },
+                  "spot_10_percent": {
+                    "capture_margin_percentage_points": 0.0,
+                    "captured_event_count": 0,
+                    "event_capture_fraction": 0.0,
+                    "minimum_overlap_fraction": 0.1,
+                    "slope_baseline_captured_event_count": 0,
+                    "slope_baseline_event_capture_fraction": 0.0
+                  }
+                },
+                "capture_margin_percentage_points": 0.0,
+                "event_count": 241,
+                "flagged_eligible_cell_count": 0,
+                "flagged_eligible_terrain_fraction": 0.0,
+                "flagged_on_missing_input_cell_count": 0,
+                "flagged_outside_eligible_cell_count": 0,
+                "mapped_positive_footprint_coverage_fraction": 0.0,
+                "mean_slope_of_flagged_terrain_deg": null,
+                "primary_capture_rule": "spot_10_percent",
+                "scorable_event_count": 232,
+                "slope_only_same_area_budget": {
+                  "mapped_positive_footprint_coverage_fraction": 0.0,
+                  "mean_slope_of_flagged_terrain_deg": null
+                },
+                "spatial_agreement_with_slope_baseline_fraction": null
+              }
+            },
+            "full_depth_glide": {
+              "flagged_eligible_cell_count": 0
+            },
+            "wet_snow": {
+              "flagged_eligible_cell_count": 1037
+            }
+          },
+          "scorable_event_count": 232,
+          "slope_only_same_area_budget": {
+            "mapped_positive_footprint_coverage_fraction": 0.023492710256573502,
+            "mean_slope_of_flagged_terrain_deg": 40.18605368394418
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.06346448645886561,
+          "state_diagnostics": {
+            "antecedent_hour_count": 7,
+            "buried_weak_interface_proxy_maximum": 0.0,
+            "drift_index_normalized_maximum": 0.0,
+            "drift_index_normalized_mean": 0.0,
+            "peak_new_snow_index_cm_maximum": 39.08454513549805,
+            "peak_new_snow_index_cm_mean": 32.0791130065918,
+            "storm_hour_count": 72
+          },
+          "zone_count_by_regime": {
+            "dry_loose": 40,
+            "dry_slab": 0,
+            "full_depth_glide": 0,
+            "wet_snow": 40
+          },
+          "zone_count_total": 80
+        },
+        {
+          "block_id": "holdout_silvretta",
+          "capture_by_rule": {
+            "regime_5_percent": {
+              "capture_margin_percentage_points": 2.366863905325444,
+              "captured_event_count": 18,
+              "event_capture_fraction": 0.10650887573964497,
+              "minimum_overlap_fraction": 0.05,
+              "slope_baseline_captured_event_count": 14,
+              "slope_baseline_event_capture_fraction": 0.08284023668639054
+            },
+            "spot_10_percent": {
+              "capture_margin_percentage_points": 6.508875739644971,
+              "captured_event_count": 15,
+              "event_capture_fraction": 0.08875739644970414,
+              "minimum_overlap_fraction": 0.1,
+              "slope_baseline_captured_event_count": 4,
+              "slope_baseline_event_capture_fraction": 0.023668639053254437
+            }
+          },
+          "capture_margin_percentage_points": 6.508875739644971,
+          "dry_slab_is_the_like_for_like_pathway": "spot-blind-swiss-v1 ran a single-regime release score. Only the dry-slab footprint is comparable to its frozen mask, and only the dry-slab pathway is touched by the three documented defects.",
+          "dry_slab_saturation": {
+            "capability_is_reachable": false,
+            "observed_transport_term": 0.0,
+            "peak_new_snow_index_cm_best_cell": 34.859107971191406,
+            "required_terrain_capability_at_best_cell": 1.0287153036333496
+          },
+          "event_count": 169,
+          "flagged_eligible_cell_count": 6593,
+          "flagged_eligible_terrain_fraction": 0.014687012697705502,
+          "flagged_on_missing_input_cell_count": 0,
+          "flagged_outside_eligible_cell_count": 0,
+          "mapped_positive_footprint_coverage_fraction": 0.03470136803470137,
+          "mean_slope_of_flagged_terrain_deg": 45.292810985681484,
+          "primary_capture_rule": "spot_10_percent",
+          "regime_footprints": {
+            "dry_loose": {
+              "flagged_eligible_cell_count": 6266
+            },
+            "dry_slab": {
+              "flagged_eligible_cell_count": 0,
+              "metrics": {
+                "block_id": "holdout_silvretta",
+                "capture_by_rule": {
+                  "regime_5_percent": {
+                    "capture_margin_percentage_points": 0.0,
+                    "captured_event_count": 0,
+                    "event_capture_fraction": 0.0,
+                    "minimum_overlap_fraction": 0.05,
+                    "slope_baseline_captured_event_count": 0,
+                    "slope_baseline_event_capture_fraction": 0.0
+                  },
+                  "spot_10_percent": {
+                    "capture_margin_percentage_points": 0.0,
+                    "captured_event_count": 0,
+                    "event_capture_fraction": 0.0,
+                    "minimum_overlap_fraction": 0.1,
+                    "slope_baseline_captured_event_count": 0,
+                    "slope_baseline_event_capture_fraction": 0.0
+                  }
+                },
+                "capture_margin_percentage_points": 0.0,
+                "event_count": 169,
+                "flagged_eligible_cell_count": 0,
+                "flagged_eligible_terrain_fraction": 0.0,
+                "flagged_on_missing_input_cell_count": 0,
+                "flagged_outside_eligible_cell_count": 0,
+                "mapped_positive_footprint_coverage_fraction": 0.0,
+                "mean_slope_of_flagged_terrain_deg": null,
+                "primary_capture_rule": "spot_10_percent",
+                "scorable_event_count": 162,
+                "slope_only_same_area_budget": {
+                  "mapped_positive_footprint_coverage_fraction": 0.0,
+                  "mean_slope_of_flagged_terrain_deg": null
+                },
+                "spatial_agreement_with_slope_baseline_fraction": null
+              }
+            },
+            "full_depth_glide": {
+              "flagged_eligible_cell_count": 0
+            },
+            "wet_snow": {
+              "flagged_eligible_cell_count": 327
+            }
+          },
+          "scorable_event_count": 162,
+          "slope_only_same_area_budget": {
+            "mapped_positive_footprint_coverage_fraction": 0.02619285952619286,
+            "mean_slope_of_flagged_terrain_deg": 40.17067218712822
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.053086607007432125,
+          "state_diagnostics": {
+            "antecedent_hour_count": 7,
+            "buried_weak_interface_proxy_maximum": 0.0,
+            "drift_index_normalized_maximum": 0.0,
+            "drift_index_normalized_mean": 0.0,
+            "peak_new_snow_index_cm_maximum": 34.859107971191406,
+            "peak_new_snow_index_cm_mean": 31.239225387573242,
+            "storm_hour_count": 72
+          },
+          "zone_count_by_regime": {
+            "dry_loose": 40,
+            "dry_slab": 0,
+            "full_depth_glide": 0,
+            "wet_snow": 31
+          },
+          "zone_count_total": 71
+        }
+      ],
+      "configuration_id": "v1_config_hourly_forcing",
+      "dataclass": {
+        "config_id": "v1_config_hourly_forcing",
+        "convexity_weight": 0.15,
+        "drift_available_min_new_snow_cm": 0.5,
+        "drift_index_full": 2000.0,
+        "drift_kernel": "cubic_excess",
+        "drift_settlement_time_h": 48.0,
+        "drift_threshold_dry_ms": 7.7,
+        "drift_threshold_wet_ms": 9.9,
+        "dry_slab_activation_new_snow_cm": 5.0,
+        "dry_slab_max_mean_temperature_c": 1.0,
+        "forest_damping_max": 0.7,
+        "loading_base": 0.2,
+        "maximum_zones_per_regime": 40,
+        "minimum_zone_area_m2": 2500.0,
+        "new_snow_full_cm": 50.0,
+        "new_snow_settlement_time_h": 48.0,
+        "opening_structure": "square3",
+        "radius_rounding": "v1_max1_round",
+        "release_threshold": 55.0,
+        "slope_breakpoints_deg": [
+          0,
+          20,
+          25,
+          30,
+          34,
+          40,
+          45,
+          50,
+          55,
+          65,
+          90
+        ],
+        "slope_max_deg": 60.0,
+        "slope_min_deg": 25.0,
+        "slope_scores": [
+          0,
+          0,
+          15,
+          55,
+          85,
+          100,
+          95,
+          75,
+          45,
+          15,
+          0
+        ],
+        "smoothing_radius_m": 15.0,
+        "snow_loading_weight": 0.6,
+        "threshold_derivation": "inherited_v1_uncalibrated",
+        "weak_burial_full_new_snow_cm": 40.0,
+        "weak_burial_minimum_new_snow_cm": 10.0,
+        "weak_critical_gradient_k_per_m": 10.0,
+        "weak_faceting_full_hours": 72.0,
+        "weak_gradient_minimum_snow_depth_m": 0.2,
+        "weak_loading_weight": 0.0,
+        "weak_melt_destruction_positive_degree_hours": 24.0,
+        "weak_rain_destruction_mm": 5.0,
+        "weak_slab_minimum_antecedent_depth_m": 0.2,
+        "wind_loading_weight": 0.75
+      },
+      "description": "The frozen v1 parameters, fed the hourly (sample, hour) ERA5 field instead of the scalar. Isolates the forcing repair alone.",
+      "parameters": {
+        "config_id": "v1_config_hourly_forcing",
+        "dry_slab": {
+          "activation_new_snow_cm": 5.0,
+          "convexity_weight": 0.15,
+          "forest_damping_max": 0.7,
+          "loading_base": 0.2,
+          "max_mean_temperature_c": 1.0,
+          "new_snow_full_cm": 50.0,
+          "new_snow_settlement_time_h": 48.0,
+          "release_threshold": 55.0,
+          "slope_breakpoints_deg": [
+            0,
+            20,
+            25,
+            30,
+            34,
+            40,
+            45,
+            50,
+            55,
+            65,
+            90
+          ],
+          "slope_max_deg": 60.0,
+          "slope_min_deg": 25.0,
+          "slope_scores": [
+            0,
+            0,
+            15,
+            55,
+            85,
+            100,
+            95,
+            75,
+            45,
+            15,
+            0
+          ],
+          "snow_loading_weight": 0.6,
+          "threshold_derivation": "inherited_v1_uncalibrated",
+          "wind_loading_weight": 0.75
+        },
+        "morphology": {
+          "closing_radius_px": 1,
+          "declared_minimum_zone_area_m2": 2500.0,
+          "effective_minimum_zone_area_m2": 8100.0,
+          "maximum_zones_per_regime": 40,
+          "opening_structure": "square3",
+          "radius_rounding": "v1_max1_round",
+          "resolution_m": 30.0,
+          "smoothing_radius_m": 15.0
+        },
+        "schema": "avycore-release-v2-parameters-v1",
+        "unchanged_from_v1": {
+          "dry_loose": "activation, slope response and weights are v1",
+          "full_depth_glide": "unsupported, exactly as v1",
+          "weak_interface_proxy": "diagnostic only, zero numerical effect",
+          "wet_snow": "activation, slope response and weights are v1"
+        },
+        "wind": {
+          "drift_available_min_new_snow_cm": 0.5,
+          "drift_index_full": 2000.0,
+          "drift_kernel": "cubic_excess",
+          "drift_settlement_time_h": 48.0,
+          "drift_threshold_dry_ms": 7.7,
+          "drift_threshold_wet_ms": 9.9,
+          "resolves_ridgetop_wind": false,
+          "statistic_is_a_transport_proxy": true
+        }
+      },
+      "summary": {
+        "block_count": 5,
+        "blocks_beating_slope_baseline": 4,
+        "minimum_capture_margin_percentage_points": -5.542725173210162,
+        "zero_release_block_count": 0,
+        "zero_release_blocks": []
+      }
+    },
+    {
+      "blocks": [
+        {
+          "block_id": "dev_western_bernese",
+          "capture_by_rule": {
+            "regime_5_percent": {
+              "capture_margin_percentage_points": -14.893617021276595,
+              "captured_event_count": 69,
+              "event_capture_fraction": 0.24468085106382978,
+              "minimum_overlap_fraction": 0.05,
+              "slope_baseline_captured_event_count": 111,
+              "slope_baseline_event_capture_fraction": 0.39361702127659576
+            },
+            "spot_10_percent": {
+              "capture_margin_percentage_points": 3.900709219858156,
+              "captured_event_count": 61,
+              "event_capture_fraction": 0.21631205673758866,
+              "minimum_overlap_fraction": 0.1,
+              "slope_baseline_captured_event_count": 50,
+              "slope_baseline_event_capture_fraction": 0.1773049645390071
+            }
+          },
+          "capture_margin_percentage_points": 3.900709219858156,
+          "dry_slab_is_the_like_for_like_pathway": "spot-blind-swiss-v1 ran a single-regime release score. Only the dry-slab footprint is comparable to its frozen mask, and only the dry-slab pathway is touched by the three documented defects.",
+          "dry_slab_saturation": {
+            "capability_is_reachable": true,
+            "observed_transport_term": 0.0,
+            "peak_new_snow_index_cm_best_cell": 51.26902770996094,
+            "required_terrain_capability_at_best_cell": 0.8088235294117647
+          },
+          "event_count": 282,
+          "flagged_eligible_cell_count": 15911,
+          "flagged_eligible_terrain_fraction": 0.035444419692581865,
+          "flagged_on_missing_input_cell_count": 0,
+          "flagged_outside_eligible_cell_count": 0,
+          "mapped_positive_footprint_coverage_fraction": 0.08775768183586154,
+          "mean_slope_of_flagged_terrain_deg": 41.70749993977904,
+          "primary_capture_rule": "spot_10_percent",
+          "regime_footprints": {
+            "dry_loose": {
+              "flagged_eligible_cell_count": 6449
+            },
+            "dry_slab": {
+              "flagged_eligible_cell_count": 6097,
+              "metrics": {
+                "block_id": "dev_western_bernese",
+                "capture_by_rule": {
+                  "regime_5_percent": {
+                    "capture_margin_percentage_points": 2.8368794326241136,
+                    "captured_event_count": 32,
+                    "event_capture_fraction": 0.11347517730496454,
+                    "minimum_overlap_fraction": 0.05,
+                    "slope_baseline_captured_event_count": 24,
+                    "slope_baseline_event_capture_fraction": 0.0851063829787234
+                  },
+                  "spot_10_percent": {
+                    "capture_margin_percentage_points": 7.092198581560283,
+                    "captured_event_count": 25,
+                    "event_capture_fraction": 0.08865248226950355,
+                    "minimum_overlap_fraction": 0.1,
+                    "slope_baseline_captured_event_count": 5,
+                    "slope_baseline_event_capture_fraction": 0.01773049645390071
+                  }
+                },
+                "capture_margin_percentage_points": 7.092198581560283,
+                "event_count": 282,
+                "flagged_eligible_cell_count": 6097,
+                "flagged_eligible_terrain_fraction": 0.013582089552238805,
+                "flagged_on_missing_input_cell_count": 0,
+                "flagged_outside_eligible_cell_count": 0,
+                "mapped_positive_footprint_coverage_fraction": 0.049980552314274604,
+                "mean_slope_of_flagged_terrain_deg": 41.61885633557785,
+                "primary_capture_rule": "spot_10_percent",
+                "scorable_event_count": 273,
+                "slope_only_same_area_budget": {
+                  "mapped_positive_footprint_coverage_fraction": 0.018280824581874758,
+                  "mean_slope_of_flagged_terrain_deg": 40.16938658606836
+                },
+                "spatial_agreement_with_slope_baseline_fraction": 0.07544694111858291
+              }
+            },
+            "full_depth_glide": {
+              "flagged_eligible_cell_count": 0
+            },
+            "wet_snow": {
+              "flagged_eligible_cell_count": 5303
+            }
+          },
+          "scorable_event_count": 273,
+          "slope_only_same_area_budget": {
+            "mapped_positive_footprint_coverage_fraction": 0.04993193309996111,
+            "mean_slope_of_flagged_terrain_deg": 40.425264841021814
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.11809440010055935,
+          "state_diagnostics": {
+            "antecedent_hour_count": 7,
+            "buried_weak_interface_proxy_maximum": 0.0,
+            "drift_index_normalized_maximum": 0.0,
+            "drift_index_normalized_mean": 0.0,
+            "peak_new_snow_index_cm_maximum": 51.26902770996094,
+            "peak_new_snow_index_cm_mean": 39.27640914916992,
+            "storm_hour_count": 72
+          },
+          "zone_count_by_regime": {
+            "dry_loose": 40,
+            "dry_slab": 40,
+            "full_depth_glide": 0,
+            "wet_snow": 40
+          },
+          "zone_count_total": 120
+        },
+        {
+          "block_id": "holdout_albula",
+          "capture_by_rule": {
+            "regime_5_percent": {
+              "capture_margin_percentage_points": -7.6923076923076925,
+              "captured_event_count": 29,
+              "event_capture_fraction": 0.15934065934065933,
+              "minimum_overlap_fraction": 0.05,
+              "slope_baseline_captured_event_count": 43,
+              "slope_baseline_event_capture_fraction": 0.23626373626373626
+            },
+            "spot_10_percent": {
+              "capture_margin_percentage_points": 6.043956043956044,
+              "captured_event_count": 26,
+              "event_capture_fraction": 0.14285714285714285,
+              "minimum_overlap_fraction": 0.1,
+              "slope_baseline_captured_event_count": 15,
+              "slope_baseline_event_capture_fraction": 0.08241758241758242
+            }
+          },
+          "capture_margin_percentage_points": 6.043956043956044,
+          "dry_slab_is_the_like_for_like_pathway": "spot-blind-swiss-v1 ran a single-regime release score. Only the dry-slab footprint is comparable to its frozen mask, and only the dry-slab pathway is touched by the three documented defects.",
+          "dry_slab_saturation": {
+            "capability_is_reachable": false,
+            "observed_transport_term": 0.0,
+            "peak_new_snow_index_cm_best_cell": 30.506855010986328,
+            "required_terrain_capability_at_best_cell": 1.1159224092134732
+          },
+          "event_count": 182,
+          "flagged_eligible_cell_count": 8172,
+          "flagged_eligible_terrain_fraction": 0.018204499888616617,
+          "flagged_on_missing_input_cell_count": 0,
+          "flagged_outside_eligible_cell_count": 0,
+          "mapped_positive_footprint_coverage_fraction": 0.03145869947275923,
+          "mean_slope_of_flagged_terrain_deg": 42.083274906894125,
+          "primary_capture_rule": "spot_10_percent",
+          "regime_footprints": {
+            "dry_loose": {
+              "flagged_eligible_cell_count": 5250
+            },
+            "dry_slab": {
+              "flagged_eligible_cell_count": 0,
+              "metrics": {
+                "block_id": "holdout_albula",
+                "capture_by_rule": {
+                  "regime_5_percent": {
+                    "capture_margin_percentage_points": 0.0,
+                    "captured_event_count": 0,
+                    "event_capture_fraction": 0.0,
+                    "minimum_overlap_fraction": 0.05,
+                    "slope_baseline_captured_event_count": 0,
+                    "slope_baseline_event_capture_fraction": 0.0
+                  },
+                  "spot_10_percent": {
+                    "capture_margin_percentage_points": 0.0,
+                    "captured_event_count": 0,
+                    "event_capture_fraction": 0.0,
+                    "minimum_overlap_fraction": 0.1,
+                    "slope_baseline_captured_event_count": 0,
+                    "slope_baseline_event_capture_fraction": 0.0
+                  }
+                },
+                "capture_margin_percentage_points": 0.0,
+                "event_count": 182,
+                "flagged_eligible_cell_count": 0,
+                "flagged_eligible_terrain_fraction": 0.0,
+                "flagged_on_missing_input_cell_count": 0,
+                "flagged_outside_eligible_cell_count": 0,
+                "mapped_positive_footprint_coverage_fraction": 0.0,
+                "mean_slope_of_flagged_terrain_deg": null,
+                "primary_capture_rule": "spot_10_percent",
+                "scorable_event_count": 173,
+                "slope_only_same_area_budget": {
+                  "mapped_positive_footprint_coverage_fraction": 0.0,
+                  "mean_slope_of_flagged_terrain_deg": null
+                },
+                "spatial_agreement_with_slope_baseline_fraction": null
+              }
+            },
+            "full_depth_glide": {
+              "flagged_eligible_cell_count": 0
+            },
+            "wet_snow": {
+              "flagged_eligible_cell_count": 2980
+            }
+          },
+          "scorable_event_count": 173,
+          "slope_only_same_area_budget": {
+            "mapped_positive_footprint_coverage_fraction": 0.030345635618043352,
+            "mean_slope_of_flagged_terrain_deg": 40.202066752937455
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.06950562897699461,
+          "state_diagnostics": {
+            "antecedent_hour_count": 7,
+            "buried_weak_interface_proxy_maximum": 0.0,
+            "drift_index_normalized_maximum": 0.0,
+            "drift_index_normalized_mean": 0.0,
+            "peak_new_snow_index_cm_maximum": 30.506855010986328,
+            "peak_new_snow_index_cm_mean": 24.33452606201172,
+            "storm_hour_count": 72
+          },
+          "zone_count_by_regime": {
+            "dry_loose": 40,
+            "dry_slab": 0,
+            "full_depth_glide": 0,
+            "wet_snow": 40
+          },
+          "zone_count_total": 80
+        },
+        {
+          "block_id": "holdout_glarus",
+          "capture_by_rule": {
+            "regime_5_percent": {
+              "capture_margin_percentage_points": -25.40415704387991,
+              "captured_event_count": 70,
+              "event_capture_fraction": 0.16166281755196305,
+              "minimum_overlap_fraction": 0.05,
+              "slope_baseline_captured_event_count": 180,
+              "slope_baseline_event_capture_fraction": 0.41570438799076215
+            },
+            "spot_10_percent": {
+              "capture_margin_percentage_points": -4.387990762124711,
+              "captured_event_count": 65,
+              "event_capture_fraction": 0.15011547344110854,
+              "minimum_overlap_fraction": 0.1,
+              "slope_baseline_captured_event_count": 84,
+              "slope_baseline_event_capture_fraction": 0.19399538106235567
+            }
+          },
+          "capture_margin_percentage_points": -4.387990762124711,
+          "dry_slab_is_the_like_for_like_pathway": "spot-blind-swiss-v1 ran a single-regime release score. Only the dry-slab footprint is comparable to its frozen mask, and only the dry-slab pathway is touched by the three documented defects.",
+          "dry_slab_saturation": {
+            "capability_is_reachable": true,
+            "observed_transport_term": 0.0,
+            "peak_new_snow_index_cm_best_cell": 48.88702392578125,
+            "required_terrain_capability_at_best_cell": 0.8217351275717522
+          },
+          "event_count": 433,
+          "flagged_eligible_cell_count": 15466,
+          "flagged_eligible_terrain_fraction": 0.03445310759634663,
+          "flagged_on_missing_input_cell_count": 0,
+          "flagged_outside_eligible_cell_count": 0,
+          "mapped_positive_footprint_coverage_fraction": 0.061458975940777295,
+          "mean_slope_of_flagged_terrain_deg": 45.45433335382572,
+          "primary_capture_rule": "spot_10_percent",
+          "regime_footprints": {
+            "dry_loose": {
+              "flagged_eligible_cell_count": 8295
+            },
+            "dry_slab": {
+              "flagged_eligible_cell_count": 3715,
+              "metrics": {
+                "block_id": "holdout_glarus",
+                "capture_by_rule": {
+                  "regime_5_percent": {
+                    "capture_margin_percentage_points": -4.849884526558891,
+                    "captured_event_count": 14,
+                    "event_capture_fraction": 0.03233256351039261,
+                    "minimum_overlap_fraction": 0.05,
+                    "slope_baseline_captured_event_count": 35,
+                    "slope_baseline_event_capture_fraction": 0.08083140877598152
+                  },
+                  "spot_10_percent": {
+                    "capture_margin_percentage_points": -1.8475750577367205,
+                    "captured_event_count": 10,
+                    "event_capture_fraction": 0.023094688221709007,
+                    "minimum_overlap_fraction": 0.1,
+                    "slope_baseline_captured_event_count": 18,
+                    "slope_baseline_event_capture_fraction": 0.04157043879907621
+                  }
+                },
+                "capture_margin_percentage_points": -1.8475750577367205,
+                "event_count": 433,
+                "flagged_eligible_cell_count": 3715,
+                "flagged_eligible_terrain_fraction": 0.008275785252840276,
+                "flagged_on_missing_input_cell_count": 0,
+                "flagged_outside_eligible_cell_count": 0,
+                "mapped_positive_footprint_coverage_fraction": 0.016386489821098086,
+                "mean_slope_of_flagged_terrain_deg": 41.46695784187573,
+                "primary_capture_rule": "spot_10_percent",
+                "scorable_event_count": 421,
+                "slope_only_same_area_budget": {
+                  "mapped_positive_footprint_coverage_fraction": 0.012299506477483036,
+                  "mean_slope_of_flagged_terrain_deg": 40.1045772742455
+                },
+                "spatial_agreement_with_slope_baseline_fraction": 0.05464333781965007
+              }
+            },
+            "full_depth_glide": {
+              "flagged_eligible_cell_count": 0
+            },
+            "wet_snow": {
+              "flagged_eligible_cell_count": 4118
+            }
+          },
+          "scorable_event_count": 421,
+          "slope_only_same_area_budget": {
+            "mapped_positive_footprint_coverage_fraction": 0.05328500925354719,
+            "mean_slope_of_flagged_terrain_deg": 40.440731332232104
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.1206517522306996,
+          "state_diagnostics": {
+            "antecedent_hour_count": 7,
+            "buried_weak_interface_proxy_maximum": 0.0,
+            "drift_index_normalized_maximum": 0.0,
+            "drift_index_normalized_mean": 0.0,
+            "peak_new_snow_index_cm_maximum": 48.88702392578125,
+            "peak_new_snow_index_cm_mean": 42.59467697143555,
+            "storm_hour_count": 72
+          },
+          "zone_count_by_regime": {
+            "dry_loose": 40,
+            "dry_slab": 40,
+            "full_depth_glide": 0,
+            "wet_snow": 40
+          },
+          "zone_count_total": 120
+        },
+        {
+          "block_id": "holdout_gotthard",
+          "capture_by_rule": {
+            "regime_5_percent": {
+              "capture_margin_percentage_points": -0.8298755186721992,
+              "captured_event_count": 28,
+              "event_capture_fraction": 0.11618257261410789,
+              "minimum_overlap_fraction": 0.05,
+              "slope_baseline_captured_event_count": 30,
+              "slope_baseline_event_capture_fraction": 0.12448132780082988
+            },
+            "spot_10_percent": {
+              "capture_margin_percentage_points": 7.8838174273858925,
+              "captured_event_count": 25,
+              "event_capture_fraction": 0.1037344398340249,
+              "minimum_overlap_fraction": 0.1,
+              "slope_baseline_captured_event_count": 6,
+              "slope_baseline_event_capture_fraction": 0.024896265560165973
+            }
+          },
+          "capture_margin_percentage_points": 7.8838174273858925,
+          "dry_slab_is_the_like_for_like_pathway": "spot-blind-swiss-v1 ran a single-regime release score. Only the dry-slab footprint is comparable to its frozen mask, and only the dry-slab pathway is touched by the three documented defects.",
+          "dry_slab_saturation": {
+            "capability_is_reachable": true,
+            "observed_transport_term": 0.0,
+            "peak_new_snow_index_cm_best_cell": 39.08454513549805,
+            "required_terrain_capability_at_best_cell": 0.9561698132631508
+          },
+          "event_count": 241,
+          "flagged_eligible_cell_count": 10449,
+          "flagged_eligible_terrain_fraction": 0.02327689908665627,
+          "flagged_on_missing_input_cell_count": 0,
+          "flagged_outside_eligible_cell_count": 0,
+          "mapped_positive_footprint_coverage_fraction": 0.04141465588591074,
+          "mean_slope_of_flagged_terrain_deg": 44.17982075866734,
+          "primary_capture_rule": "spot_10_percent",
+          "regime_footprints": {
+            "dry_loose": {
+              "flagged_eligible_cell_count": 9121
+            },
+            "dry_slab": {
+              "flagged_eligible_cell_count": 198,
+              "metrics": {
+                "block_id": "holdout_gotthard",
+                "capture_by_rule": {
+                  "regime_5_percent": {
+                    "capture_margin_percentage_points": 0.0,
+                    "captured_event_count": 0,
+                    "event_capture_fraction": 0.0,
+                    "minimum_overlap_fraction": 0.05,
+                    "slope_baseline_captured_event_count": 0,
+                    "slope_baseline_event_capture_fraction": 0.0
+                  },
+                  "spot_10_percent": {
+                    "capture_margin_percentage_points": 0.0,
+                    "captured_event_count": 0,
+                    "event_capture_fraction": 0.0,
+                    "minimum_overlap_fraction": 0.1,
+                    "slope_baseline_captured_event_count": 0,
+                    "slope_baseline_event_capture_fraction": 0.0
+                  }
+                },
+                "capture_margin_percentage_points": 0.0,
+                "event_count": 241,
+                "flagged_eligible_cell_count": 198,
+                "flagged_eligible_terrain_fraction": 0.00044107819113388283,
+                "flagged_on_missing_input_cell_count": 0,
+                "flagged_outside_eligible_cell_count": 0,
+                "mapped_positive_footprint_coverage_fraction": 0.00012733176290825746,
+                "mean_slope_of_flagged_terrain_deg": 41.1380942662557,
+                "primary_capture_rule": "spot_10_percent",
+                "scorable_event_count": 232,
+                "slope_only_same_area_budget": {
+                  "mapped_positive_footprint_coverage_fraction": 0.00041382822945183674,
+                  "mean_slope_of_flagged_terrain_deg": 40.003922472096455
+                },
+                "spatial_agreement_with_slope_baseline_fraction": 0.010101010101010102
+              }
+            },
+            "full_depth_glide": {
+              "flagged_eligible_cell_count": 0
+            },
+            "wet_snow": {
+              "flagged_eligible_cell_count": 1150
+            }
+          },
+          "scorable_event_count": 232,
+          "slope_only_same_area_budget": {
+            "mapped_positive_footprint_coverage_fraction": 0.02498885847074553,
+            "mean_slope_of_flagged_terrain_deg": 40.19847337808754
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.07876351804000382,
+          "state_diagnostics": {
+            "antecedent_hour_count": 7,
+            "buried_weak_interface_proxy_maximum": 0.0,
+            "drift_index_normalized_maximum": 0.0,
+            "drift_index_normalized_mean": 0.0,
+            "peak_new_snow_index_cm_maximum": 39.08454513549805,
+            "peak_new_snow_index_cm_mean": 32.0791130065918,
+            "storm_hour_count": 72
+          },
+          "zone_count_by_regime": {
+            "dry_loose": 40,
+            "dry_slab": 40,
+            "full_depth_glide": 0,
+            "wet_snow": 40
+          },
+          "zone_count_total": 120
+        },
+        {
+          "block_id": "holdout_silvretta",
+          "capture_by_rule": {
+            "regime_5_percent": {
+              "capture_margin_percentage_points": 2.366863905325444,
+              "captured_event_count": 23,
+              "event_capture_fraction": 0.13609467455621302,
+              "minimum_overlap_fraction": 0.05,
+              "slope_baseline_captured_event_count": 19,
+              "slope_baseline_event_capture_fraction": 0.11242603550295859
+            },
+            "spot_10_percent": {
+              "capture_margin_percentage_points": 8.284023668639053,
+              "captured_event_count": 18,
+              "event_capture_fraction": 0.10650887573964497,
+              "minimum_overlap_fraction": 0.1,
+              "slope_baseline_captured_event_count": 4,
+              "slope_baseline_event_capture_fraction": 0.023668639053254437
+            }
+          },
+          "capture_margin_percentage_points": 8.284023668639053,
+          "dry_slab_is_the_like_for_like_pathway": "spot-blind-swiss-v1 ran a single-regime release score. Only the dry-slab footprint is comparable to its frozen mask, and only the dry-slab pathway is touched by the three documented defects.",
+          "dry_slab_saturation": {
+            "capability_is_reachable": false,
+            "observed_transport_term": 0.0,
+            "peak_new_snow_index_cm_best_cell": 34.859107971191406,
+            "required_terrain_capability_at_best_cell": 1.0287153036333496
+          },
+          "event_count": 169,
+          "flagged_eligible_cell_count": 7050,
+          "flagged_eligible_terrain_fraction": 0.015705056805524614,
+          "flagged_on_missing_input_cell_count": 0,
+          "flagged_outside_eligible_cell_count": 0,
+          "mapped_positive_footprint_coverage_fraction": 0.043154265376487595,
+          "mean_slope_of_flagged_terrain_deg": 44.90518729216664,
+          "primary_capture_rule": "spot_10_percent",
+          "regime_footprints": {
+            "dry_loose": {
+              "flagged_eligible_cell_count": 6570
+            },
+            "dry_slab": {
+              "flagged_eligible_cell_count": 0,
+              "metrics": {
+                "block_id": "holdout_silvretta",
+                "capture_by_rule": {
+                  "regime_5_percent": {
+                    "capture_margin_percentage_points": 0.0,
+                    "captured_event_count": 0,
+                    "event_capture_fraction": 0.0,
+                    "minimum_overlap_fraction": 0.05,
+                    "slope_baseline_captured_event_count": 0,
+                    "slope_baseline_event_capture_fraction": 0.0
+                  },
+                  "spot_10_percent": {
+                    "capture_margin_percentage_points": 0.0,
+                    "captured_event_count": 0,
+                    "event_capture_fraction": 0.0,
+                    "minimum_overlap_fraction": 0.1,
+                    "slope_baseline_captured_event_count": 0,
+                    "slope_baseline_event_capture_fraction": 0.0
+                  }
+                },
+                "capture_margin_percentage_points": 0.0,
+                "event_count": 169,
+                "flagged_eligible_cell_count": 0,
+                "flagged_eligible_terrain_fraction": 0.0,
+                "flagged_on_missing_input_cell_count": 0,
+                "flagged_outside_eligible_cell_count": 0,
+                "mapped_positive_footprint_coverage_fraction": 0.0,
+                "mean_slope_of_flagged_terrain_deg": null,
+                "primary_capture_rule": "spot_10_percent",
+                "scorable_event_count": 162,
+                "slope_only_same_area_budget": {
+                  "mapped_positive_footprint_coverage_fraction": 0.0,
+                  "mean_slope_of_flagged_terrain_deg": null
+                },
+                "spatial_agreement_with_slope_baseline_fraction": null
+              }
+            },
+            "full_depth_glide": {
+              "flagged_eligible_cell_count": 0
+            },
+            "wet_snow": {
+              "flagged_eligible_cell_count": 480
+            }
+          },
+          "scorable_event_count": 162,
+          "slope_only_same_area_budget": {
+            "mapped_positive_footprint_coverage_fraction": 0.02769436102769436,
+            "mean_slope_of_flagged_terrain_deg": 40.18115186867139
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.06382978723404255,
+          "state_diagnostics": {
+            "antecedent_hour_count": 7,
+            "buried_weak_interface_proxy_maximum": 0.0,
+            "drift_index_normalized_maximum": 0.0,
+            "drift_index_normalized_mean": 0.0,
+            "peak_new_snow_index_cm_maximum": 34.859107971191406,
+            "peak_new_snow_index_cm_mean": 31.239225387573242,
+            "storm_hour_count": 72
+          },
+          "zone_count_by_regime": {
+            "dry_loose": 40,
+            "dry_slab": 0,
+            "full_depth_glide": 0,
+            "wet_snow": 40
+          },
+          "zone_count_total": 80
+        }
+      ],
+      "configuration_id": "v2_baseline_hourly_forcing",
+      "dataclass": {
+        "config_id": "v2_baseline_hourly_forcing",
+        "convexity_weight": 0.15,
+        "drift_available_min_new_snow_cm": 0.5,
+        "drift_index_full": 2000.0,
+        "drift_kernel": "cubic_excess",
+        "drift_settlement_time_h": 48.0,
+        "drift_threshold_dry_ms": 7.7,
+        "drift_threshold_wet_ms": 9.9,
+        "dry_slab_activation_new_snow_cm": 5.0,
+        "dry_slab_max_mean_temperature_c": 1.0,
+        "forest_damping_max": 0.7,
+        "loading_base": 0.2,
+        "maximum_zones_per_regime": 40,
+        "minimum_zone_area_m2": 2500.0,
+        "new_snow_full_cm": 50.0,
+        "new_snow_settlement_time_h": 48.0,
+        "opening_structure": "none",
+        "radius_rounding": "ceil",
+        "release_threshold": 55.0,
+        "slope_breakpoints_deg": [
+          0,
+          20,
+          25,
+          30,
+          34,
+          40,
+          45,
+          50,
+          55,
+          65,
+          90
+        ],
+        "slope_max_deg": 60.0,
+        "slope_min_deg": 25.0,
+        "slope_scores": [
+          0,
+          0,
+          15,
+          55,
+          85,
+          100,
+          95,
+          75,
+          45,
+          15,
+          0
+        ],
+        "smoothing_radius_m": 15.0,
+        "snow_loading_weight": 0.6,
+        "threshold_derivation": "inherited_v1_uncalibrated",
+        "weak_burial_full_new_snow_cm": 40.0,
+        "weak_burial_minimum_new_snow_cm": 10.0,
+        "weak_critical_gradient_k_per_m": 10.0,
+        "weak_faceting_full_hours": 72.0,
+        "weak_gradient_minimum_snow_depth_m": 0.2,
+        "weak_loading_weight": 0.0,
+        "weak_melt_destruction_positive_degree_hours": 24.0,
+        "weak_rain_destruction_mm": 5.0,
+        "weak_slab_minimum_antecedent_depth_m": 0.2,
+        "wind_loading_weight": 0.75
+      },
+      "description": "v1 parameters with the morphology told truthfully -- no 3x3 opening, explicit closing-radius rounding. Isolates defect 3 on top of the forcing repair.",
+      "parameters": {
+        "config_id": "v2_baseline_hourly_forcing",
+        "dry_slab": {
+          "activation_new_snow_cm": 5.0,
+          "convexity_weight": 0.15,
+          "forest_damping_max": 0.7,
+          "loading_base": 0.2,
+          "max_mean_temperature_c": 1.0,
+          "new_snow_full_cm": 50.0,
+          "new_snow_settlement_time_h": 48.0,
+          "release_threshold": 55.0,
+          "slope_breakpoints_deg": [
+            0,
+            20,
+            25,
+            30,
+            34,
+            40,
+            45,
+            50,
+            55,
+            65,
+            90
+          ],
+          "slope_max_deg": 60.0,
+          "slope_min_deg": 25.0,
+          "slope_scores": [
+            0,
+            0,
+            15,
+            55,
+            85,
+            100,
+            95,
+            75,
+            45,
+            15,
+            0
+          ],
+          "snow_loading_weight": 0.6,
+          "threshold_derivation": "inherited_v1_uncalibrated",
+          "wind_loading_weight": 0.75
+        },
+        "morphology": {
+          "closing_radius_px": 1,
+          "declared_minimum_zone_area_m2": 2500.0,
+          "effective_minimum_zone_area_m2": 2700.0,
+          "maximum_zones_per_regime": 40,
+          "opening_structure": "none",
+          "radius_rounding": "ceil",
+          "resolution_m": 30.0,
+          "smoothing_radius_m": 15.0
+        },
+        "schema": "avycore-release-v2-parameters-v1",
+        "unchanged_from_v1": {
+          "dry_loose": "activation, slope response and weights are v1",
+          "full_depth_glide": "unsupported, exactly as v1",
+          "weak_interface_proxy": "diagnostic only, zero numerical effect",
+          "wet_snow": "activation, slope response and weights are v1"
+        },
+        "wind": {
+          "drift_available_min_new_snow_cm": 0.5,
+          "drift_index_full": 2000.0,
+          "drift_kernel": "cubic_excess",
+          "drift_settlement_time_h": 48.0,
+          "drift_threshold_dry_ms": 7.7,
+          "drift_threshold_wet_ms": 9.9,
+          "resolves_ridgetop_wind": false,
+          "statistic_is_a_transport_proxy": true
+        }
+      },
+      "summary": {
+        "block_count": 5,
+        "blocks_beating_slope_baseline": 4,
+        "minimum_capture_margin_percentage_points": -4.387990762124711,
+        "zero_release_block_count": 0,
+        "zero_release_blocks": []
+      }
+    },
+    {
+      "blocks": [
+        {
+          "block_id": "dev_western_bernese",
+          "capture_by_rule": {
+            "regime_5_percent": {
+              "capture_margin_percentage_points": -8.865248226950355,
+              "captured_event_count": 66,
+              "event_capture_fraction": 0.23404255319148937,
+              "minimum_overlap_fraction": 0.05,
+              "slope_baseline_captured_event_count": 91,
+              "slope_baseline_event_capture_fraction": 0.32269503546099293
+            },
+            "spot_10_percent": {
+              "capture_margin_percentage_points": 7.801418439716312,
+              "captured_event_count": 59,
+              "event_capture_fraction": 0.20921985815602837,
+              "minimum_overlap_fraction": 0.1,
+              "slope_baseline_captured_event_count": 37,
+              "slope_baseline_event_capture_fraction": 0.13120567375886524
+            }
+          },
+          "capture_margin_percentage_points": 7.801418439716312,
+          "dry_slab_is_the_like_for_like_pathway": "spot-blind-swiss-v1 ran a single-regime release score. Only the dry-slab footprint is comparable to its frozen mask, and only the dry-slab pathway is touched by the three documented defects.",
+          "dry_slab_saturation": {
+            "capability_is_reachable": false,
+            "observed_transport_term": 0.0,
+            "peak_new_snow_index_cm_best_cell": 51.808387756347656,
+            "required_terrain_capability_at_best_cell": 1.0869565217391304
+          },
+          "event_count": 282,
+          "flagged_eligible_cell_count": 12838,
+          "flagged_eligible_terrain_fraction": 0.028598797059478726,
+          "flagged_on_missing_input_cell_count": 0,
+          "flagged_outside_eligible_cell_count": 0,
+          "mapped_positive_footprint_coverage_fraction": 0.07424154025670945,
+          "mean_slope_of_flagged_terrain_deg": 42.31490188737695,
+          "primary_capture_rule": "spot_10_percent",
+          "regime_footprints": {
+            "dry_loose": {
+              "flagged_eligible_cell_count": 7368
+            },
+            "dry_slab": {
+              "flagged_eligible_cell_count": 0,
+              "metrics": {
+                "block_id": "dev_western_bernese",
+                "capture_by_rule": {
+                  "regime_5_percent": {
+                    "capture_margin_percentage_points": 0.0,
+                    "captured_event_count": 0,
+                    "event_capture_fraction": 0.0,
+                    "minimum_overlap_fraction": 0.05,
+                    "slope_baseline_captured_event_count": 0,
+                    "slope_baseline_event_capture_fraction": 0.0
+                  },
+                  "spot_10_percent": {
+                    "capture_margin_percentage_points": 0.0,
+                    "captured_event_count": 0,
+                    "event_capture_fraction": 0.0,
+                    "minimum_overlap_fraction": 0.1,
+                    "slope_baseline_captured_event_count": 0,
+                    "slope_baseline_event_capture_fraction": 0.0
+                  }
+                },
+                "capture_margin_percentage_points": 0.0,
+                "event_count": 282,
+                "flagged_eligible_cell_count": 0,
+                "flagged_eligible_terrain_fraction": 0.0,
+                "flagged_on_missing_input_cell_count": 0,
+                "flagged_outside_eligible_cell_count": 0,
+                "mapped_positive_footprint_coverage_fraction": 0.0,
+                "mean_slope_of_flagged_terrain_deg": null,
+                "primary_capture_rule": "spot_10_percent",
+                "scorable_event_count": 273,
+                "slope_only_same_area_budget": {
+                  "mapped_positive_footprint_coverage_fraction": 0.0,
+                  "mean_slope_of_flagged_terrain_deg": null
+                },
+                "spatial_agreement_with_slope_baseline_fraction": null
+              }
+            },
+            "full_depth_glide": {
+              "flagged_eligible_cell_count": 0
+            },
+            "wet_snow": {
+              "flagged_eligible_cell_count": 5470
+            }
+          },
+          "scorable_event_count": 273,
+          "slope_only_same_area_budget": {
+            "mapped_positive_footprint_coverage_fraction": 0.04045118630882925,
+            "mean_slope_of_flagged_terrain_deg": 40.343721656008924
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.0727527652282287,
+          "state_diagnostics": {
+            "antecedent_hour_count": 7,
+            "buried_weak_interface_proxy_maximum": 0.0,
+            "drift_index_normalized_maximum": 0.0,
+            "drift_index_normalized_mean": 0.0,
+            "peak_new_snow_index_cm_maximum": 51.808387756347656,
+            "peak_new_snow_index_cm_mean": 41.2255744934082,
+            "storm_hour_count": 72
+          },
+          "zone_count_by_regime": {
+            "dry_loose": 40,
+            "dry_slab": 0,
+            "full_depth_glide": 0,
+            "wet_snow": 40
+          },
+          "zone_count_total": 80
+        },
+        {
+          "block_id": "holdout_albula",
+          "capture_by_rule": {
+            "regime_5_percent": {
+              "capture_margin_percentage_points": -8.791208791208792,
+              "captured_event_count": 30,
+              "event_capture_fraction": 0.16483516483516483,
+              "minimum_overlap_fraction": 0.05,
+              "slope_baseline_captured_event_count": 46,
+              "slope_baseline_event_capture_fraction": 0.25274725274725274
+            },
+            "spot_10_percent": {
+              "capture_margin_percentage_points": 6.043956043956044,
+              "captured_event_count": 28,
+              "event_capture_fraction": 0.15384615384615385,
+              "minimum_overlap_fraction": 0.1,
+              "slope_baseline_captured_event_count": 17,
+              "slope_baseline_event_capture_fraction": 0.09340659340659341
+            }
+          },
+          "capture_margin_percentage_points": 6.043956043956044,
+          "dry_slab_is_the_like_for_like_pathway": "spot-blind-swiss-v1 ran a single-regime release score. Only the dry-slab footprint is comparable to its frozen mask, and only the dry-slab pathway is touched by the three documented defects.",
+          "dry_slab_saturation": {
+            "capability_is_reachable": false,
+            "observed_transport_term": 0.0,
+            "peak_new_snow_index_cm_best_cell": 37.12989807128906,
+            "required_terrain_capability_at_best_cell": 1.3611543625811489
+          },
+          "event_count": 182,
+          "flagged_eligible_cell_count": 8915,
+          "flagged_eligible_terrain_fraction": 0.019859656939184674,
+          "flagged_on_missing_input_cell_count": 0,
+          "flagged_outside_eligible_cell_count": 0,
+          "mapped_positive_footprint_coverage_fraction": 0.038488576449912125,
+          "mean_slope_of_flagged_terrain_deg": 41.300418029203215,
+          "primary_capture_rule": "spot_10_percent",
+          "regime_footprints": {
+            "dry_loose": {
+              "flagged_eligible_cell_count": 5761
+            },
+            "dry_slab": {
+              "flagged_eligible_cell_count": 0,
+              "metrics": {
+                "block_id": "holdout_albula",
+                "capture_by_rule": {
+                  "regime_5_percent": {
+                    "capture_margin_percentage_points": 0.0,
+                    "captured_event_count": 0,
+                    "event_capture_fraction": 0.0,
+                    "minimum_overlap_fraction": 0.05,
+                    "slope_baseline_captured_event_count": 0,
+                    "slope_baseline_event_capture_fraction": 0.0
+                  },
+                  "spot_10_percent": {
+                    "capture_margin_percentage_points": 0.0,
+                    "captured_event_count": 0,
+                    "event_capture_fraction": 0.0,
+                    "minimum_overlap_fraction": 0.1,
+                    "slope_baseline_captured_event_count": 0,
+                    "slope_baseline_event_capture_fraction": 0.0
+                  }
+                },
+                "capture_margin_percentage_points": 0.0,
+                "event_count": 182,
+                "flagged_eligible_cell_count": 0,
+                "flagged_eligible_terrain_fraction": 0.0,
+                "flagged_on_missing_input_cell_count": 0,
+                "flagged_outside_eligible_cell_count": 0,
+                "mapped_positive_footprint_coverage_fraction": 0.0,
+                "mean_slope_of_flagged_terrain_deg": null,
+                "primary_capture_rule": "spot_10_percent",
+                "scorable_event_count": 173,
+                "slope_only_same_area_budget": {
+                  "mapped_positive_footprint_coverage_fraction": 0.0,
+                  "mean_slope_of_flagged_terrain_deg": null
+                },
+                "spatial_agreement_with_slope_baseline_fraction": null
+              }
+            },
+            "full_depth_glide": {
+              "flagged_eligible_cell_count": 0
+            },
+            "wet_snow": {
+              "flagged_eligible_cell_count": 3233
+            }
+          },
+          "scorable_event_count": 173,
+          "slope_only_same_area_budget": {
+            "mapped_positive_footprint_coverage_fraction": 0.03245459871118922,
+            "mean_slope_of_flagged_terrain_deg": 40.21846412192284
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.08300616937745373,
+          "state_diagnostics": {
+            "antecedent_hour_count": 7,
+            "buried_weak_interface_proxy_maximum": 0.0,
+            "drift_index_normalized_maximum": 0.0,
+            "drift_index_normalized_mean": 0.0,
+            "peak_new_snow_index_cm_maximum": 37.12989807128906,
+            "peak_new_snow_index_cm_mean": 29.34444808959961,
+            "storm_hour_count": 72
+          },
+          "zone_count_by_regime": {
+            "dry_loose": 40,
+            "dry_slab": 0,
+            "full_depth_glide": 0,
+            "wet_snow": 40
+          },
+          "zone_count_total": 80
+        },
+        {
+          "block_id": "holdout_glarus",
+          "capture_by_rule": {
+            "regime_5_percent": {
+              "capture_margin_percentage_points": -14.318706697459584,
+              "captured_event_count": 76,
+              "event_capture_fraction": 0.17551963048498845,
+              "minimum_overlap_fraction": 0.05,
+              "slope_baseline_captured_event_count": 138,
+              "slope_baseline_event_capture_fraction": 0.3187066974595843
+            },
+            "spot_10_percent": {
+              "capture_margin_percentage_points": 0.0,
+              "captured_event_count": 69,
+              "event_capture_fraction": 0.15935334872979215,
+              "minimum_overlap_fraction": 0.1,
+              "slope_baseline_captured_event_count": 69,
+              "slope_baseline_event_capture_fraction": 0.15935334872979215
+            }
+          },
+          "capture_margin_percentage_points": 0.0,
+          "dry_slab_is_the_like_for_like_pathway": "spot-blind-swiss-v1 ran a single-regime release score. Only the dry-slab footprint is comparable to its frozen mask, and only the dry-slab pathway is touched by the three documented defects.",
+          "dry_slab_saturation": {
+            "capability_is_reachable": false,
+            "observed_transport_term": 0.0,
+            "peak_new_snow_index_cm_best_cell": 51.481807708740234,
+            "required_terrain_capability_at_best_cell": 1.0869565217391304
+          },
+          "event_count": 433,
+          "flagged_eligible_cell_count": 12752,
+          "flagged_eligible_terrain_fraction": 0.028407217643127647,
+          "flagged_on_missing_input_cell_count": 0,
+          "flagged_outside_eligible_cell_count": 0,
+          "mapped_positive_footprint_coverage_fraction": 0.05405613818630475,
+          "mean_slope_of_flagged_terrain_deg": 46.110057846814804,
+          "primary_capture_rule": "spot_10_percent",
+          "regime_footprints": {
+            "dry_loose": {
+              "flagged_eligible_cell_count": 8486
+            },
+            "dry_slab": {
+              "flagged_eligible_cell_count": 0,
+              "metrics": {
+                "block_id": "holdout_glarus",
+                "capture_by_rule": {
+                  "regime_5_percent": {
+                    "capture_margin_percentage_points": 0.0,
+                    "captured_event_count": 0,
+                    "event_capture_fraction": 0.0,
+                    "minimum_overlap_fraction": 0.05,
+                    "slope_baseline_captured_event_count": 0,
+                    "slope_baseline_event_capture_fraction": 0.0
+                  },
+                  "spot_10_percent": {
+                    "capture_margin_percentage_points": 0.0,
+                    "captured_event_count": 0,
+                    "event_capture_fraction": 0.0,
+                    "minimum_overlap_fraction": 0.1,
+                    "slope_baseline_captured_event_count": 0,
+                    "slope_baseline_event_capture_fraction": 0.0
+                  }
+                },
+                "capture_margin_percentage_points": 0.0,
+                "event_count": 433,
+                "flagged_eligible_cell_count": 0,
+                "flagged_eligible_terrain_fraction": 0.0,
+                "flagged_on_missing_input_cell_count": 0,
+                "flagged_outside_eligible_cell_count": 0,
+                "mapped_positive_footprint_coverage_fraction": 0.0,
+                "mean_slope_of_flagged_terrain_deg": null,
+                "primary_capture_rule": "spot_10_percent",
+                "scorable_event_count": 421,
+                "slope_only_same_area_budget": {
+                  "mapped_positive_footprint_coverage_fraction": 0.0,
+                  "mean_slope_of_flagged_terrain_deg": null
+                },
+                "spatial_agreement_with_slope_baseline_fraction": null
+              }
+            },
+            "full_depth_glide": {
+              "flagged_eligible_cell_count": 0
+            },
+            "wet_snow": {
+              "flagged_eligible_cell_count": 4311
+            }
+          },
+          "scorable_event_count": 421,
+          "slope_only_same_area_budget": {
+            "mapped_positive_footprint_coverage_fraction": 0.04360734114743985,
+            "mean_slope_of_flagged_terrain_deg": 40.36410221311648
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.0832810539523212,
+          "state_diagnostics": {
+            "antecedent_hour_count": 7,
+            "buried_weak_interface_proxy_maximum": 0.0,
+            "drift_index_normalized_maximum": 0.0,
+            "drift_index_normalized_mean": 0.0,
+            "peak_new_snow_index_cm_maximum": 51.481807708740234,
+            "peak_new_snow_index_cm_mean": 46.307979583740234,
+            "storm_hour_count": 72
+          },
+          "zone_count_by_regime": {
+            "dry_loose": 40,
+            "dry_slab": 0,
+            "full_depth_glide": 0,
+            "wet_snow": 40
+          },
+          "zone_count_total": 80
+        },
+        {
+          "block_id": "holdout_gotthard",
+          "capture_by_rule": {
+            "regime_5_percent": {
+              "capture_margin_percentage_points": -1.2448132780082988,
+              "captured_event_count": 30,
+              "event_capture_fraction": 0.12448132780082988,
+              "minimum_overlap_fraction": 0.05,
+              "slope_baseline_captured_event_count": 33,
+              "slope_baseline_event_capture_fraction": 0.13692946058091288
+            },
+            "spot_10_percent": {
+              "capture_margin_percentage_points": 7.468879668049793,
+              "captured_event_count": 25,
+              "event_capture_fraction": 0.1037344398340249,
+              "minimum_overlap_fraction": 0.1,
+              "slope_baseline_captured_event_count": 7,
+              "slope_baseline_event_capture_fraction": 0.029045643153526972
+            }
+          },
+          "capture_margin_percentage_points": 7.468879668049793,
+          "dry_slab_is_the_like_for_like_pathway": "spot-blind-swiss-v1 ran a single-regime release score. Only the dry-slab footprint is comparable to its frozen mask, and only the dry-slab pathway is touched by the three documented defects.",
+          "dry_slab_saturation": {
+            "capability_is_reachable": false,
+            "observed_transport_term": 0.0,
+            "peak_new_snow_index_cm_best_cell": 47.9849853515625,
+            "required_terrain_capability_at_best_cell": 1.1223548758975823
+          },
+          "event_count": 241,
+          "flagged_eligible_cell_count": 10750,
+          "flagged_eligible_terrain_fraction": 0.023947427043885052,
+          "flagged_on_missing_input_cell_count": 0,
+          "flagged_outside_eligible_cell_count": 0,
+          "mapped_positive_footprint_coverage_fraction": 0.042751639396447445,
+          "mean_slope_of_flagged_terrain_deg": 43.99967516468846,
+          "primary_capture_rule": "spot_10_percent",
+          "regime_footprints": {
+            "dry_loose": {
+              "flagged_eligible_cell_count": 9580
+            },
+            "dry_slab": {
+              "flagged_eligible_cell_count": 0,
+              "metrics": {
+                "block_id": "holdout_gotthard",
+                "capture_by_rule": {
+                  "regime_5_percent": {
+                    "capture_margin_percentage_points": 0.0,
+                    "captured_event_count": 0,
+                    "event_capture_fraction": 0.0,
+                    "minimum_overlap_fraction": 0.05,
+                    "slope_baseline_captured_event_count": 0,
+                    "slope_baseline_event_capture_fraction": 0.0
+                  },
+                  "spot_10_percent": {
+                    "capture_margin_percentage_points": 0.0,
+                    "captured_event_count": 0,
+                    "event_capture_fraction": 0.0,
+                    "minimum_overlap_fraction": 0.1,
+                    "slope_baseline_captured_event_count": 0,
+                    "slope_baseline_event_capture_fraction": 0.0
+                  }
+                },
+                "capture_margin_percentage_points": 0.0,
+                "event_count": 241,
+                "flagged_eligible_cell_count": 0,
+                "flagged_eligible_terrain_fraction": 0.0,
+                "flagged_on_missing_input_cell_count": 0,
+                "flagged_outside_eligible_cell_count": 0,
+                "mapped_positive_footprint_coverage_fraction": 0.0,
+                "mean_slope_of_flagged_terrain_deg": null,
+                "primary_capture_rule": "spot_10_percent",
+                "scorable_event_count": 232,
+                "slope_only_same_area_budget": {
+                  "mapped_positive_footprint_coverage_fraction": 0.0,
+                  "mean_slope_of_flagged_terrain_deg": null
+                },
+                "spatial_agreement_with_slope_baseline_fraction": null
+              }
+            },
+            "full_depth_glide": {
+              "flagged_eligible_cell_count": 0
+            },
+            "wet_snow": {
+              "flagged_eligible_cell_count": 1170
+            }
+          },
+          "scorable_event_count": 232,
+          "slope_only_same_area_budget": {
+            "mapped_positive_footprint_coverage_fraction": 0.0258165149296492,
+            "mean_slope_of_flagged_terrain_deg": 40.20472827645235
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.08093023255813954,
+          "state_diagnostics": {
+            "antecedent_hour_count": 7,
+            "buried_weak_interface_proxy_maximum": 0.0,
+            "drift_index_normalized_maximum": 0.0,
+            "drift_index_normalized_mean": 0.0,
+            "peak_new_snow_index_cm_maximum": 47.9849853515625,
+            "peak_new_snow_index_cm_mean": 39.37057876586914,
+            "storm_hour_count": 72
+          },
+          "zone_count_by_regime": {
+            "dry_loose": 40,
+            "dry_slab": 0,
+            "full_depth_glide": 0,
+            "wet_snow": 31
+          },
+          "zone_count_total": 71
+        },
+        {
+          "block_id": "holdout_silvretta",
+          "capture_by_rule": {
+            "regime_5_percent": {
+              "capture_margin_percentage_points": 0.0,
+              "captured_event_count": 22,
+              "event_capture_fraction": 0.1301775147928994,
+              "minimum_overlap_fraction": 0.05,
+              "slope_baseline_captured_event_count": 22,
+              "slope_baseline_event_capture_fraction": 0.1301775147928994
+            },
+            "spot_10_percent": {
+              "capture_margin_percentage_points": 8.284023668639053,
+              "captured_event_count": 18,
+              "event_capture_fraction": 0.10650887573964497,
+              "minimum_overlap_fraction": 0.1,
+              "slope_baseline_captured_event_count": 4,
+              "slope_baseline_event_capture_fraction": 0.023668639053254437
+            }
+          },
+          "capture_margin_percentage_points": 8.284023668639053,
+          "dry_slab_is_the_like_for_like_pathway": "spot-blind-swiss-v1 ran a single-regime release score. Only the dry-slab footprint is comparable to its frozen mask, and only the dry-slab pathway is touched by the three documented defects.",
+          "dry_slab_saturation": {
+            "capability_is_reachable": false,
+            "observed_transport_term": 0.0,
+            "peak_new_snow_index_cm_best_cell": 42.308441162109375,
+            "required_terrain_capability_at_best_cell": 1.235724978062563
+          },
+          "event_count": 169,
+          "flagged_eligible_cell_count": 7477,
+          "flagged_eligible_terrain_fraction": 0.01665627088438405,
+          "flagged_on_missing_input_cell_count": 0,
+          "flagged_outside_eligible_cell_count": 0,
+          "mapped_positive_footprint_coverage_fraction": 0.04287620954287621,
+          "mean_slope_of_flagged_terrain_deg": 44.7507472587362,
+          "primary_capture_rule": "spot_10_percent",
+          "regime_footprints": {
+            "dry_loose": {
+              "flagged_eligible_cell_count": 7070
+            },
+            "dry_slab": {
+              "flagged_eligible_cell_count": 0,
+              "metrics": {
+                "block_id": "holdout_silvretta",
+                "capture_by_rule": {
+                  "regime_5_percent": {
+                    "capture_margin_percentage_points": 0.0,
+                    "captured_event_count": 0,
+                    "event_capture_fraction": 0.0,
+                    "minimum_overlap_fraction": 0.05,
+                    "slope_baseline_captured_event_count": 0,
+                    "slope_baseline_event_capture_fraction": 0.0
+                  },
+                  "spot_10_percent": {
+                    "capture_margin_percentage_points": 0.0,
+                    "captured_event_count": 0,
+                    "event_capture_fraction": 0.0,
+                    "minimum_overlap_fraction": 0.1,
+                    "slope_baseline_captured_event_count": 0,
+                    "slope_baseline_event_capture_fraction": 0.0
+                  }
+                },
+                "capture_margin_percentage_points": 0.0,
+                "event_count": 169,
+                "flagged_eligible_cell_count": 0,
+                "flagged_eligible_terrain_fraction": 0.0,
+                "flagged_on_missing_input_cell_count": 0,
+                "flagged_outside_eligible_cell_count": 0,
+                "mapped_positive_footprint_coverage_fraction": 0.0,
+                "mean_slope_of_flagged_terrain_deg": null,
+                "primary_capture_rule": "spot_10_percent",
+                "scorable_event_count": 162,
+                "slope_only_same_area_budget": {
+                  "mapped_positive_footprint_coverage_fraction": 0.0,
+                  "mean_slope_of_flagged_terrain_deg": null
+                },
+                "spatial_agreement_with_slope_baseline_fraction": null
+              }
+            },
+            "full_depth_glide": {
+              "flagged_eligible_cell_count": 0
+            },
+            "wet_snow": {
+              "flagged_eligible_cell_count": 407
+            }
+          },
+          "scorable_event_count": 162,
+          "slope_only_same_area_budget": {
+            "mapped_positive_footprint_coverage_fraction": 0.029307084862640418,
+            "mean_slope_of_flagged_terrain_deg": 40.191442641405814
+          },
+          "spatial_agreement_with_slope_baseline_fraction": 0.06727297044269091,
+          "state_diagnostics": {
+            "antecedent_hour_count": 7,
+            "buried_weak_interface_proxy_maximum": 0.0,
+            "drift_index_normalized_maximum": 0.0,
+            "drift_index_normalized_mean": 0.0,
+            "peak_new_snow_index_cm_maximum": 42.308441162109375,
+            "peak_new_snow_index_cm_mean": 37.99091720581055,
+            "storm_hour_count": 72
+          },
+          "zone_count_by_regime": {
+            "dry_loose": 40,
+            "dry_slab": 0,
+            "full_depth_glide": 0,
+            "wet_snow": 19
+          },
+          "zone_count_total": 59
+        }
+      ],
+      "configuration_id": "search_best_configuration",
+      "dataclass": {
+        "config_id": "search_best_configuration",
+        "convexity_weight": 0.35,
+        "drift_available_min_new_snow_cm": 0.5,
+        "drift_index_full": 12.0,
+        "drift_kernel": "hours_above",
+        "drift_settlement_time_h": 96.0,
+        "drift_threshold_dry_ms": 6.5,
+        "drift_threshold_wet_ms": 9.0,
+        "dry_slab_activation_new_snow_cm": 5.0,
+        "dry_slab_max_mean_temperature_c": 1.0,
+        "forest_damping_max": 0.5,
+        "loading_base": 0.1,
+        "maximum_zones_per_regime": 40,
+        "minimum_zone_area_m2": 10000.0,
+        "new_snow_full_cm": 50.0,
+        "new_snow_settlement_time_h": 96.0,
+        "opening_structure": "none",
+        "radius_rounding": "ceil",
+        "release_threshold": 50.0,
+        "slope_breakpoints_deg": [
+          0,
+          26,
+          30,
+          34,
+          38,
+          42,
+          45,
+          50,
+          55,
+          65,
+          90
+        ],
+        "slope_max_deg": 60.0,
+        "slope_min_deg": 25.0,
+        "slope_scores": [
+          0,
+          0,
+          10,
+          60,
+          100,
+          100,
+          85,
+          45,
+          20,
+          5,
+          0
+        ],
+        "smoothing_radius_m": 15.0,
+        "snow_loading_weight": 0.4,
+        "threshold_derivation": "seeded_sample:narrow",
+        "weak_burial_full_new_snow_cm": 40.0,
+        "weak_burial_minimum_new_snow_cm": 10.0,
+        "weak_critical_gradient_k_per_m": 10.0,
+        "weak_faceting_full_hours": 72.0,
+        "weak_gradient_minimum_snow_depth_m": 0.2,
+        "weak_loading_weight": 0.0,
+        "weak_melt_destruction_positive_degree_hours": 24.0,
+        "weak_rain_destruction_mm": 5.0,
+        "weak_slab_minimum_antecedent_depth_m": 0.2,
+        "wind_loading_weight": 0.75
+      },
+      "description": "The best configuration of the completed 128-configuration search, byte-for-byte as frozen in release-config-search-v1.json. It was selected on CERRA development blocks and is applied here unchanged; nothing was re-tuned for SPOT forcing.",
+      "parameters": {
+        "config_id": "search_best_configuration",
+        "dry_slab": {
+          "activation_new_snow_cm": 5.0,
+          "convexity_weight": 0.35,
+          "forest_damping_max": 0.5,
+          "loading_base": 0.1,
+          "max_mean_temperature_c": 1.0,
+          "new_snow_full_cm": 50.0,
+          "new_snow_settlement_time_h": 96.0,
+          "release_threshold": 50.0,
+          "slope_breakpoints_deg": [
+            0,
+            26,
+            30,
+            34,
+            38,
+            42,
+            45,
+            50,
+            55,
+            65,
+            90
+          ],
+          "slope_max_deg": 60.0,
+          "slope_min_deg": 25.0,
+          "slope_scores": [
+            0,
+            0,
+            10,
+            60,
+            100,
+            100,
+            85,
+            45,
+            20,
+            5,
+            0
+          ],
+          "snow_loading_weight": 0.4,
+          "threshold_derivation": "seeded_sample:narrow",
+          "wind_loading_weight": 0.75
+        },
+        "morphology": {
+          "closing_radius_px": 1,
+          "declared_minimum_zone_area_m2": 10000.0,
+          "effective_minimum_zone_area_m2": 9900.0,
+          "maximum_zones_per_regime": 40,
+          "opening_structure": "none",
+          "radius_rounding": "ceil",
+          "resolution_m": 30.0,
+          "smoothing_radius_m": 15.0
+        },
+        "schema": "avycore-release-v2-parameters-v1",
+        "unchanged_from_v1": {
+          "dry_loose": "activation, slope response and weights are v1",
+          "full_depth_glide": "unsupported, exactly as v1",
+          "weak_interface_proxy": "diagnostic only, zero numerical effect",
+          "wet_snow": "activation, slope response and weights are v1"
+        },
+        "wind": {
+          "drift_available_min_new_snow_cm": 0.5,
+          "drift_index_full": 12.0,
+          "drift_kernel": "hours_above",
+          "drift_settlement_time_h": 96.0,
+          "drift_threshold_dry_ms": 6.5,
+          "drift_threshold_wet_ms": 9.0,
+          "resolves_ridgetop_wind": false,
+          "statistic_is_a_transport_proxy": true
+        }
+      },
+      "summary": {
+        "block_count": 5,
+        "blocks_beating_slope_baseline": 4,
+        "minimum_capture_margin_percentage_points": 0.0,
+        "zero_release_block_count": 0,
+        "zero_release_blocks": []
+      }
+    }
+  ],
+  "experiment_id": "release-v2-spot-forcing-v1",
+  "inputs": {
+    "cache_builder_source_sha256": "8d1242e3d5004b085b0ffa0b8cca0cbb41776f7c65c3f68617508a6c82c8d8fd",
+    "frozen_spot_development_result_sha256": "8af542a4b89387937607956a67ec4a63cebba0eff9b96b93f88923a6332fc857",
+    "frozen_spot_holdout_result_sha256": "e0a8b30c031a6b4a8aa58883310bb9de710c7caecaf0d20063490a894777dce5",
+    "frozen_spot_spec_sha256": "f208e81e7d6bd6dabe8f92c99859da272d5c3dda432e4e7fcfc5a9145bc18075",
+    "release_config_search_result_sha256": "ec7e65c8f26f1cfc0fcdfff100ecbe241cdddaf5f17a20cea1a590f4fd27d1b8",
+    "release_v2_source_sha256": "374fce21f3f2b95a9c87ac4c5cf1b254f7080e2dc510ae175098d2556ccf5408",
+    "runner_source_sha256": "83e43adad4db22da5af5bf52f10b8c8cf6d1c2fd86ece9b2f99375920335c8cc",
+    "scorer_source_sha256": "973cd6e93e63767fd8cd6a5154788da8de821c32370b9e74d088cc290583b0ba"
+  },
+  "integrity": {
+    "all_scored_blocks_are_burned": "Every SPOT block was predicted, scored and published in spot-blind-swiss-v1, and its outlines were opened. Every number in this artifact is a development number.",
+    "eligible_mask_matches_frozen_prediction": true,
+    "emails_sent": false,
+    "frozen_artifacts_or_digests_modified": false,
+    "frozen_experiment_specs_modified": false,
+    "frozen_v1_sources_modified": false,
+    "reserved_blocks_predicted_or_scored": false,
+    "reserved_blocks_still_sealed": [
+      "row1col4",
+      "row2col4",
+      "row6col9",
+      "row5col10"
+    ]
+  },
+  "partition": "development_only",
+  "purpose": "Re-test the zero-release-zone condition on the ERA5 forcing that produced it, using the repaired release engine. The completed configuration search ran on CERRA forcing, where the scalar-wind defect does not apply, so this condition had never been re-tested.",
+  "schema": "avycore-release-v2-spot-forcing-v1",
+  "scope": {
+    "is_validated": false,
+    "note": "Beating or losing to a slope baseline is not validation. This adds no eligible field-holdout event and licenses no accuracy claim.",
+    "strict_field_holdout_events_added": 0
+  },
+  "software_environment": {
+    "libraries": {
+      "geopandas": "1.1.4",
+      "numpy": "2.2.6",
+      "pyproj": "3.7.2",
+      "rasterio": "1.5.0",
+      "scipy": "1.16.3",
+      "shapely": "2.1.2"
+    },
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.13.7"
+  },
+  "status": "development_rescoring_of_burned_blocks"
+}
