@@ -36,6 +36,20 @@ What is repaired
    letting a no-snow, no-wind day light up or by treating missing data as a
    neutral value.
 
+What was added afterwards, and why
+----------------------------------
+The 128-configuration search over the four dimensions above failed its
+predeclared rule, and the written conclusion was that the missing variable is
+snowpack stratigraphy rather than any loading parameter. ``weak_loading_weight``
+and the ``weak_*`` fields beside it give
+:mod:`avycore.snowpack.stratigraphy`'s buried weak-interface index a place in
+the dry-slab loading sum, so that conclusion can be tested. The weight defaults
+to **zero**, which makes every field inert and keeps this module's output
+bit-identical to what ``release-config-search-v1.json`` recorded. A non-zero
+weight also changes what :meth:`ReleaseConfigV2.manifest` reports, because at
+that point the claim "weak_interface_proxy: diagnostic only, zero numerical
+effect" would be false.
+
 Everything here is an UNCALIBRATED relative index on a 0-100 scale. None of it
 is a probability, a forecast, or a danger rating, and none of it is fitted to an
 observed avalanche outside the development blocks named in the experiment.
@@ -95,6 +109,19 @@ from .state import (
     WEAKNESS_MAX_TEMPERATURE_C,
     WEAKNESS_MAX_WIND_KMH,
 )
+from .stratigraphy import (
+    BURIAL_FULL_NEW_SNOW_CM,
+    BURIAL_MINIMUM_NEW_SNOW_CM,
+    CRITICAL_TEMPERATURE_GRADIENT_K_PER_M,
+    FACETING_FULL_HOURS,
+    GRADIENT_MINIMUM_SNOW_DEPTH_M,
+    MELT_DESTRUCTION_POSITIVE_DEGREE_HOURS,
+    RAIN_DESTRUCTION_MM,
+    SLAB_MINIMUM_ANTECEDENT_DEPTH_M,
+    StratigraphyConfig,
+    bulk_temperature_gradient_k_per_m,
+    buried_weak_layer_index,
+)
 from .zones import (
     DRY_SLAB_MAX_FOREST_FRACTION,
     LOOSE_MAX_FOREST_FRACTION,
@@ -103,6 +130,7 @@ from .zones import (
 
 __all__ = [
     "DRIFT_KERNELS",
+    "V2_STRATIGRAPHY",
     "OPENING_STRUCTURES",
     "RADIUS_ROUNDINGS",
     "ReleaseConfigV2",
@@ -299,9 +327,53 @@ class ReleaseConfigV2:
     opening_structure: str = "square3"
     maximum_zones_per_regime: int = 40
 
+    # -- buried weak interface (the variable the loading search lacked) ------
+    #: Weight the buried weak-interface index carries in the dry-slab loading
+    #: sum, parallel to ``snow_loading_weight`` and ``wind_loading_weight``.
+    #: **Zero is the default and zero reproduces every published result.** A
+    #: non-zero weight also makes the index's ``known`` mask binding: a cell
+    #: whose stratigraphy cannot be evaluated becomes a missing-input cell, and
+    #: a missing-input cell is never flagged.
+    weak_loading_weight: float = 0.0
+    weak_critical_gradient_k_per_m: float = CRITICAL_TEMPERATURE_GRADIENT_K_PER_M
+    weak_faceting_full_hours: float = FACETING_FULL_HOURS
+    weak_gradient_minimum_snow_depth_m: float = GRADIENT_MINIMUM_SNOW_DEPTH_M
+    weak_melt_destruction_positive_degree_hours: float = (
+        MELT_DESTRUCTION_POSITIVE_DEGREE_HOURS
+    )
+    weak_rain_destruction_mm: float = RAIN_DESTRUCTION_MM
+    weak_burial_minimum_new_snow_cm: float = BURIAL_MINIMUM_NEW_SNOW_CM
+    weak_burial_full_new_snow_cm: float = BURIAL_FULL_NEW_SNOW_CM
+    weak_slab_minimum_antecedent_depth_m: float = SLAB_MINIMUM_ANTECEDENT_DEPTH_M
+
     #: Threshold provenance. ``"inherited_v1"`` is the uncalibrated 55.0; a
     #: derived threshold records the operating point it came from.
     threshold_derivation: str = "inherited_v1_uncalibrated"
+
+    @property
+    def stratigraphy(self) -> StratigraphyConfig:
+        """The weak-interface parameters as the stratigraphy module's own type.
+
+        Kept as flat fields on this dataclass rather than as a nested one so
+        that ``asdict(config)`` and ``ReleaseConfigV2(**entry)`` still round-trip
+        through a sweep log, and so that a log written before these fields
+        existed still loads -- every absent key falls back to an inert default.
+        """
+        return StratigraphyConfig(
+            loading_weight=self.weak_loading_weight,
+            critical_gradient_k_per_m=self.weak_critical_gradient_k_per_m,
+            faceting_full_hours=self.weak_faceting_full_hours,
+            gradient_minimum_snow_depth_m=self.weak_gradient_minimum_snow_depth_m,
+            melt_destruction_positive_degree_hours=(
+                self.weak_melt_destruction_positive_degree_hours
+            ),
+            rain_destruction_mm=self.weak_rain_destruction_mm,
+            burial_minimum_new_snow_cm=self.weak_burial_minimum_new_snow_cm,
+            burial_full_new_snow_cm=self.weak_burial_full_new_snow_cm,
+            slab_minimum_antecedent_depth_m=(
+                self.weak_slab_minimum_antecedent_depth_m
+            ),
+        )
 
     def closing_radius_px(self, resolution_m: float) -> int:
         ratio = self.smoothing_radius_m / resolution_m
@@ -315,7 +387,7 @@ class ReleaseConfigV2:
 
     def manifest(self, *, resolution_m: float = 30.0) -> dict[str, Any]:
         """Everything that influences a score, including the honest minimum area."""
-        return {
+        manifest: dict[str, Any] = {
             "schema": "avycore-release-v2-parameters-v1",
             "config_id": self.config_id,
             "wind": {
@@ -366,6 +438,19 @@ class ReleaseConfigV2:
                 "weak_interface_proxy": "diagnostic only, zero numerical effect",
             },
         }
+        if self.weak_loading_weight != 0.0:
+            # The manifest reports what influences a score. At a non-zero weight
+            # the line above would be a false statement, so it is replaced
+            # rather than left standing beside a contradicting section. At zero
+            # weight the manifest is byte-identical to the one
+            # release-config-search-v1 recorded, which is what keeps that
+            # published artifact replayable.
+            manifest["unchanged_from_v1"]["weak_interface_proxy"] = (
+                "superseded: the buried weak-interface index carries loading "
+                "weight in the dry-slab pathway; see the stratigraphy section"
+            )
+            manifest["stratigraphy"] = self.stratigraphy.manifest()
+        return manifest
 
 
 #: The frozen v1 engine, expressed in v2's vocabulary. Used by the equivalence
@@ -406,6 +491,28 @@ class SnowStateV2:
     mean_storm_temperature_c: np.ndarray
     buried_weak_interface_proxy: np.ndarray
     mask: np.ndarray
+
+    # -- antecedent fields the stratigraphy index consumes -------------------
+    # Optional, and ``None`` means *not computed*, never *zero*. A state built
+    # without them can still be scored -- but only by a configuration whose
+    # ``weak_loading_weight`` is zero, because a configuration that gives the
+    # index weight has no honest way to read an absent field.
+    #: ``weakness_hours / WEAKNESS_FULL_HOURS``, bounded, and **without** v1's
+    #: burial gate. ``buried_weak_interface_proxy`` keeps that gate and stays
+    #: exactly the v1 diagnostic; the stratigraphy index applies its own.
+    surface_weakening_fraction: np.ndarray | None = None
+    #: Antecedent hours whose estimated bulk snowpack temperature gradient
+    #: exceeded the kinetic-growth threshold. ``None`` without a snow-depth
+    #: series, which is the only honest value for an unevaluable mechanism.
+    faceting_hours: np.ndarray | None = None
+    #: Degree-hours above freezing *before* the storm. Distinct from
+    #: ``positive_degree_hours``, which is the storm-window sum.
+    antecedent_positive_degree_hours: np.ndarray | None = None
+    #: Liquid precipitation before the storm, which destroys a weak surface.
+    antecedent_rain_mm: np.ndarray | None = None
+    #: Whether a snow-depth series was supplied at all.
+    snow_depth_series_available: bool = False
+
     metadata: dict[str, Any] = field(default_factory=dict)
 
 
@@ -460,6 +567,9 @@ def integrate_state(
     rain_on_snow = zeros.copy()
     positive_degree_hours = zeros.copy()
     weakness_hours = zeros.copy()
+    faceting_hours = zeros.copy()
+    antecedent_positive_degree_hours = zeros.copy()
+    antecedent_rain = zeros.copy()
     temperature_sum = zeros.copy()
     independent_peak_new_snow = zeros.copy()
     antecedent_depth = zeros.copy()
@@ -489,8 +599,25 @@ def integrate_state(
                 & (wind_kmh <= WEAKNESS_MAX_WIND_KMH)
                 & (precipitation <= WEAKNESS_MAX_PRECIPITATION_MM)
             )
+            # Antecedent accumulations for the stratigraphy index. These are
+            # new outputs; no field the frozen engine reads is touched here, so
+            # a zero-weight configuration is unaffected by every line below.
+            antecedent_fraction = _snow_fraction(temperature)
+            antecedent_positive_degree_hours += np.maximum(temperature, 0.0)
+            antecedent_rain += precipitation * (1.0 - antecedent_fraction)
             if depth is not None:
                 antecedent_depth = depth.astype("float64", copy=True)
+                # Kinetic growth needs a gradient and a surface that is not
+                # being buried as it forms, so a precipitating hour does not
+                # count even if it is cold.
+                gradient = bulk_temperature_gradient_k_per_m(
+                    temperature,
+                    depth,
+                    minimum_depth_m=config.weak_gradient_minimum_snow_depth_m,
+                )
+                faceting_hours += (
+                    gradient >= config.weak_critical_gradient_k_per_m
+                ) & (precipitation <= WEAKNESS_MAX_PRECIPITATION_MM)
             continue
 
         storm_hour_count += 1
@@ -557,6 +684,7 @@ def integrate_state(
     def finish(values: np.ndarray) -> np.ndarray:
         return np.where(mask, 0.0, np.asarray(values, dtype="float32")).astype("float32")
 
+    depth_available = snow_depth_m is not None
     return SnowStateV2(
         new_snow_index_cm=finish(snapshot_new_snow),
         drift_index_normalized=finish(
@@ -570,10 +698,19 @@ def integrate_state(
         mean_storm_temperature_c=finish(temperature_sum / float(storm_hour_count)),
         buried_weak_interface_proxy=finish(weak_proxy),
         mask=mask,
+        surface_weakening_fraction=finish(
+            np.clip(weakness_hours / WEAKNESS_FULL_HOURS, 0.0, 1.0)
+        ),
+        faceting_hours=finish(faceting_hours) if depth_available else None,
+        antecedent_positive_degree_hours=finish(antecedent_positive_degree_hours),
+        antecedent_rain_mm=finish(antecedent_rain),
+        snow_depth_series_available=depth_available,
         metadata={
             "hour_count_storm": storm_hour_count,
             "hour_count_total": len(times_utc),
             "drift_kernel": config.drift_kernel,
+            "snow_depth_series_available": depth_available,
+            "stratigraphy_gradient_mechanism_evaluable": depth_available,
             "phase_classification_applications": 1,
             "wind_direction_convention": "meteorological_from_degrees_clockwise_from_north",
         },
@@ -595,6 +732,48 @@ def _relative_scale(values: np.ndarray, valid: np.ndarray) -> float:
     return scale or 1.0
 
 
+def _weak_interface_load(
+    state: SnowStateV2, new_snow: np.ndarray, config: ReleaseConfigV2
+) -> tuple[np.ndarray, np.ndarray]:
+    """The buried weak-interface index and the mask of where it is knowable.
+
+    Raises rather than substituting a zero when the state was not built with
+    the antecedent fields. A configuration that gives this term weight and is
+    handed a state that cannot supply it has no correct silent behaviour: a
+    zero would say "no weak layer" about something nobody measured, which is the
+    favourable reading of an absent input.
+    """
+    missing_fields = [
+        name
+        for name in (
+            "surface_weakening_fraction",
+            "antecedent_positive_degree_hours",
+            "antecedent_rain_mm",
+        )
+        if getattr(state, name) is None
+    ]
+    if missing_fields:
+        raise ValueError(
+            "weak_loading_weight is non-zero but the snow state carries no "
+            f"{', '.join(missing_fields)}. Integrate the state with this module "
+            "rather than scoring a weak-interface term against fields that were "
+            "never computed."
+        )
+    return buried_weak_layer_index(
+        faceting_hours=state.faceting_hours,
+        surface_weakening_fraction=state.surface_weakening_fraction,
+        antecedent_positive_degree_hours=state.antecedent_positive_degree_hours,
+        antecedent_rain_mm=state.antecedent_rain_mm,
+        new_snow_index_cm=new_snow,
+        antecedent_snow_depth_m=(
+            state.antecedent_snow_depth_m
+            if state.snow_depth_series_available
+            else None
+        ),
+        config=config.stratigraphy,
+    )
+
+
 def regime_scores(
     *,
     slope: np.ndarray,
@@ -611,7 +790,11 @@ def regime_scores(
 
     Wet-snow and dry-loose keep their v1 formulations verbatim: the plan's
     defects are all in the dry-slab pathway and its extraction, and moving three
-    mechanisms at once would make any capture change uninterpretable.
+    mechanisms at once would make any capture change uninterpretable. The
+    buried weak-interface term enters the same dry-slab pathway for the same
+    reason, and only when ``config.weak_loading_weight`` is non-zero; at the
+    default zero this function is bit-identical to the version that produced
+    ``release-config-search-v1.json``.
     """
     mask = np.asarray(terrain_mask, dtype=bool) | np.asarray(state.mask, dtype=bool)
     valid = ~mask
@@ -649,8 +832,14 @@ def regime_scores(
     lee_factor = np.where(drift_from < 0.0, 0.0, lee_factor)
     drift_load = drift * lee_factor * (0.7 + 0.3 * convergence)
     snow_load = np.clip(new_snow / config.new_snow_full_cm, 0.0, 1.0)
+    weak_load = np.zeros(slope.shape, dtype="float64")
+    weak_known = np.ones(slope.shape, dtype=bool)
+    if config.weak_loading_weight != 0.0:
+        weak_load, weak_known = _weak_interface_load(state, new_snow, config)
     loading = np.clip(
-        config.snow_loading_weight * snow_load + config.wind_loading_weight * drift_load,
+        config.snow_loading_weight * snow_load
+        + config.wind_loading_weight * drift_load
+        + config.weak_loading_weight * weak_load,
         0.0,
         1.0,
     )
@@ -669,6 +858,14 @@ def regime_scores(
     scores[DRY_SLAB] = np.clip(slab, 0.0, 100.0)
     active[DRY_SLAB] = (
         valid
+        # Unknown is missing input, not "no weak layer". Where the index cannot
+        # be evaluated the dry-slab pathway is inapplicable, so the cell leaves
+        # that pathway's admissible set rather than being scored as though the
+        # unmeasured interface were absent. It is scoped to dry-slab because
+        # wet-snow and dry-loose never read the field; suppressing them for a
+        # gap in a term they do not use would be a different change wearing
+        # this one's justification.
+        & weak_known
         & (new_snow >= config.dry_slab_activation_new_snow_cm)
         & (mean_temperature <= config.dry_slab_max_mean_temperature_c)
     )
