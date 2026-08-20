@@ -2,12 +2,15 @@
 #
 # Deploy the Mount Hosmer digital twin to AWS ECS Fargate behind one ALB.
 #
-#   assess     terrain + tiles + the hazard model   (carries the 188 MB bake)
-#   assistant  the AI, calling YOUR laptop's Ollama through a Cloudflare Tunnel
-#   frontend   the Next.js single screen
+#   assess      terrain + tiles + the hazard model   (carries the 188 MB bake)
+#   assistant   the AI, calling YOUR laptop's Ollama through a Cloudflare Tunnel
+#   frontend    the Next.js single screen
+#   bakeworker  rasterio/pyproj/PIL/yaml -- bakes user-uploaded mountains. Internal
+#               only (no ALB route, no public URL), parked at 0 tasks by default.
 #
-# All three sit behind ONE load balancer doing path-based routing, so they share an
-# origin and there is no CORS anywhere.
+# The first three sit behind ONE load balancer doing path-based routing, so they
+# share an origin and there is no CORS anywhere. bakeworker is reached from assess
+# alone, over ECS Service Connect, entirely inside the VPC.
 #
 # ---------------------------------------------------------------------------
 # ACCOUNT SAFETY -- read this first
@@ -99,12 +102,17 @@ stack_resource_id() {
 }
 
 wait_services_stable() {
-  local assess assistant frontend
+  local assess assistant frontend bakeworker
   assess="$(stack_resource_id AssessService)"
   assistant="$(stack_resource_id AssistantService)"
   frontend="$(stack_resource_id FrontendService)"
+  # Always included, even when BakeWorkerDesiredCount is 0: "stable" means running
+  # count equals desired count with no deployment in progress, which a service
+  # already sitting at 0/0 satisfies immediately -- so this adds no wait time when
+  # bakeworker is parked, and still catches a real rollout failure when it is not.
+  bakeworker="$(stack_resource_id BakeWorkerService)"
   "${AWS[@]}" ecs wait services-stable --cluster "${STACK}-cluster" \
-    --services "$assess" "$assistant" "$frontend"
+    --services "$assess" "$assistant" "$frontend" "$bakeworker"
 }
 
 # ACM certificates are region-scoped like everything else here, and requested once
@@ -140,7 +148,7 @@ step_1_ecr() {
       || echo "  iam: service-linked role for $svc already present"
   done
 
-  for name in assess assistant frontend; do
+  for name in assess assistant frontend bakeworker; do
     "${AWS[@]}" ecr describe-repositories --repository-names "twin/$name" >/dev/null 2>&1 \
       || "${AWS[@]}" ecr create-repository --repository-name "twin/$name" \
            --image-scanning-configuration scanOnPush=false >/dev/null
@@ -156,6 +164,13 @@ step_1_ecr() {
 # the CALLER too, so a cleanup function closing over the gate's `local` variables
 # fires a second time in a scope where they no longer exist -- which under `set -u`
 # printed "assess_name: unbound variable" after every otherwise-successful build.
+#
+# bakeworker only gets the liveness check below (run it, curl /health -- NOT
+# /api/health, it is not behind the ALB and does not share that prefix). It does
+# not get the identity/imagery/assessment assertions further down: those exercise
+# the public API contract that only assess serves, and actually exercising a bake
+# here would need real DEM input and run far longer than a pre-push smoke test
+# should.
 QA_CONTAINER_NAMES=()
 
 cleanup_release_containers() {
@@ -164,22 +179,24 @@ cleanup_release_containers() {
 }
 
 local_container_gate() {
-  local assess_image="$1" assistant_image="$2" frontend_image="$3" expected_sha="$4"
-  local assess_name="${STACK}-qa-assess" assistant_name="${STACK}-qa-assistant" frontend_name="${STACK}-qa-frontend"
-  local assess_port="${QA_ASSESS_PORT:-18080}" assistant_port="${QA_ASSISTANT_PORT:-18081}" frontend_port="${QA_FRONTEND_PORT:-13000}"
+  local assess_image="$1" assistant_image="$2" frontend_image="$3" bakeworker_image="$4" expected_sha="$5"
+  local assess_name="${STACK}-qa-assess" assistant_name="${STACK}-qa-assistant" frontend_name="${STACK}-qa-frontend" bakeworker_name="${STACK}-qa-bakeworker"
+  local assess_port="${QA_ASSESS_PORT:-18080}" assistant_port="${QA_ASSISTANT_PORT:-18081}" frontend_port="${QA_FRONTEND_PORT:-13000}" bakeworker_port="${QA_BAKEWORKER_PORT:-18082}"
 
-  QA_CONTAINER_NAMES=("$assess_name" "$assistant_name" "$frontend_name")
+  QA_CONTAINER_NAMES=("$assess_name" "$assistant_name" "$frontend_name" "$bakeworker_name")
   trap cleanup_release_containers RETURN
   cleanup_release_containers
 
   docker run --rm -d --name "$assess_name" -e PORT=8080 -p "127.0.0.1:${assess_port}:8080" "$assess_image" >/dev/null
   docker run --rm -d --name "$assistant_name" -e PORT=8080 -p "127.0.0.1:${assistant_port}:8080" "$assistant_image" >/dev/null
   docker run --rm -d --name "$frontend_name" -p "127.0.0.1:${frontend_port}:3000" "$frontend_image" >/dev/null
+  docker run --rm -d --name "$bakeworker_name" -e PORT=8080 -p "127.0.0.1:${bakeworker_port}:8080" "$bakeworker_image" >/dev/null
 
   local url attempt
   for url in "http://127.0.0.1:${assess_port}/api/health" \
              "http://127.0.0.1:${assistant_port}/api/health" \
-             "http://127.0.0.1:${frontend_port}/"; do
+             "http://127.0.0.1:${frontend_port}/" \
+             "http://127.0.0.1:${bakeworker_port}/health"; do
     for attempt in $(seq 1 60); do
       curl -fsS "$url" >/dev/null 2>&1 && break
       sleep 1
@@ -239,9 +256,9 @@ PY
   echo "OK: exact local release containers passed health, identity, imagery, and assessment gates."
 }
 
-# --- 2. Build, validate, and push all three immutable release images ----------
+# --- 2. Build, validate, and push all four immutable release images -----------
 step_2_push() {
-  local reg tag sha assess_image assistant_image frontend_image
+  local reg tag sha assess_image assistant_image frontend_image bakeworker_image
   reg="$(registry)"
   tag="${RELEASE_TAG:-$(release_tag)}"
   sha="$(bake_sha256)"
@@ -252,6 +269,7 @@ step_2_push() {
   assess_image="$reg/twin/assess:$tag"
   assistant_image="$reg/twin/assistant:$tag"
   frontend_image="$reg/twin/frontend:$tag"
+  bakeworker_image="$reg/twin/bakeworker:$tag"
 
   echo ">>> assess (~900 MB -- this is the slow one)"
   docker build --platform "$PLATFORM" --target assess \
@@ -271,11 +289,16 @@ step_2_push() {
     --build-arg "NEXT_PUBLIC_ASSISTANT_BASE_URL=" \
     -t "$frontend_image" ./frontend
 
-  local_container_gate "$assess_image" "$assistant_image" "$frontend_image" "$sha"
+  echo ">>> bakeworker (rasterio/pyproj/PIL/yaml -- the only image with them)"
+  docker build --platform "$PLATFORM" --target bakeworker \
+    -t "$bakeworker_image" -f Dockerfile.backend .
+
+  local_container_gate "$assess_image" "$assistant_image" "$frontend_image" "$bakeworker_image" "$sha"
 
   docker push "$assess_image"
   docker push "$assistant_image"
   docker push "$frontend_image"
+  docker push "$bakeworker_image"
 
   mkdir -p "$RELEASE_STATE_DIR"
   printf '%s\n' "$tag" > "$RELEASE_TAG_FILE.tmp"
@@ -346,8 +369,8 @@ step_dns() {
 # --- 3. Create/update the stack ----------------------------------------------
 step_3_stack() {
   guard_account
-  local tag cert sha assess_image assistant_image frontend_image
-  local previous_assess previous_assistant previous_frontend ollama_url
+  local tag cert sha assess_image assistant_image frontend_image bakeworker_image
+  local previous_assess previous_assistant previous_frontend previous_bakeworker ollama_url
   [[ -f "$RELEASE_TAG_FILE" ]] || {
     echo "No validated release state. Run '$0 2' before rolling the live services." >&2
     exit 1
@@ -362,9 +385,11 @@ step_3_stack() {
   assess_image="$(image_ref assess "$tag")"
   assistant_image="$(image_ref assistant "$tag")"
   frontend_image="$(image_ref frontend "$tag")"
+  bakeworker_image="$(image_ref bakeworker "$tag")"
   previous_assess="$(stack_parameter AssessImage)"
   previous_assistant="$(stack_parameter AssistantImage)"
   previous_frontend="$(stack_parameter FrontendImage)"
+  previous_bakeworker="$(stack_parameter BakeWorkerImage)"
   previous_expected_bake="$(stack_parameter ExpectedBakeSha256)"
   if [[ ! "$previous_expected_bake" =~ ^[0-9a-f]{64}$ ]]; then
     previous_expected_bake="$sha"
@@ -384,9 +409,11 @@ step_3_stack() {
       "AssessImage=$assess_image" \
       "AssistantImage=$assistant_image" \
       "FrontendImage=$frontend_image" \
+      "BakeWorkerImage=$bakeworker_image" \
       "OllamaUrl=$ollama_url" \
       "CapacityProvider=${CAPACITY:-FARGATE}" \
       "DesiredCount=${DESIRED:-1}" \
+      "BakeWorkerDesiredCount=${BAKEWORKER_DESIRED:-0}" \
       "ExpectedBakeSha256=$sha" \
       "Domain=$DOMAIN" \
       "CertificateArn=$cert"
@@ -406,14 +433,14 @@ step_3_stack() {
   fi
 
   # CloudFormation waits for the update, the ECS circuit breaker rolls back task
-  # startup failures, and this explicit waiter verifies all three generated
+  # startup failures, and this explicit waiter verifies all four generated
   # service names rather than assuming short names that do not exist.
   wait_services_stable
 
   if ! "$PYTHON_BIN" deploy/verify_live.py "https://$DOMAIN" --expected-bake-sha256 "$sha" \
      || ! PLAYWRIGHT_BASE_URL="https://$DOMAIN" npm --prefix frontend run smoke
   then
-    echo "Post-rollout health gate failed; restoring the three previous image identities." >&2
+    echo "Post-rollout health gate failed; restoring the four previous image identities." >&2
     "${AWS[@]}" cloudformation deploy \
       --stack-name "$STACK" --template-file deploy/aws/infra.yaml \
       --capabilities CAPABILITY_IAM \
@@ -421,6 +448,7 @@ step_3_stack() {
         "AssessImage=$previous_assess" \
         "AssistantImage=$previous_assistant" \
         "FrontendImage=$previous_frontend" \
+        "BakeWorkerImage=$previous_bakeworker" \
         "ExpectedBakeSha256=$previous_expected_bake" \
       --no-fail-on-empty-changeset
     wait_services_stable
@@ -462,7 +490,7 @@ step_app_url() {
 # the stack sits in CREATE_IN_PROGRESS until it rolls back ~15 minutes later. So
 # verify before spending that, and say plainly what to run.
 #
-# This checks the RELEASE TAG all three services share, written by step 2 into
+# This checks the RELEASE TAG all four services share, written by step 2 into
 # $RELEASE_TAG_FILE and resolved to immutable digests by `stack`. It deliberately
 # does not check `:latest`: this deployment pins digests precisely so that "which
 # code is inside" is answerable, and a mutable tag cannot answer it.
@@ -490,7 +518,7 @@ step_check() {
   }
 
   local svc
-  for svc in assess assistant frontend; do
+  for svc in assess assistant frontend bakeworker; do
     _has_image "$svc" "$tag" || missing+=("$svc:$tag")
   done
 
@@ -500,7 +528,7 @@ step_check() {
     return 1
   fi
 
-  echo "  images: assess, assistant, frontend all present at $tag"
+  echo "  images: assess, assistant, frontend, bakeworker all present at $tag"
   local pushed
   pushed=$("${AWS[@]}" ecr describe-images --repository-name twin/assess \
             --image-ids "imageTag=$tag" --query 'imageDetails[0].imagePushedAt' --output text 2>/dev/null || true)

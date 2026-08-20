@@ -4,14 +4,21 @@ AWSTemplateFormatVersion: "2010-09-09"
 # lives here in comments (which are not part of the template body) and the
 # Description field below is kept short.
 #
-# Mount Hosmer avalanche digital twin -- three microservices on ECS Fargate behind
-# one Application Load Balancer.
+# Mount Hosmer avalanche digital twin -- four microservices on ECS Fargate behind
+# one Application Load Balancer. Three (assess, assistant, frontend) are public,
+# routed through the ALB; the fourth (bakeworker) is internal-only, reachable from
+# assess alone over Service Connect, and normally parked at 0 tasks -- see
+# BakeWorkerDesiredCount below.
 #
 # Topology
 # --------
 #     internet -> ALB (public) -> 3 Fargate tasks (public subnets)
 #                                     assistant -> Cloudflare Tunnel -> a laptop
 #                                                                       running Ollama
+#                                     assess -> Service Connect -> bakeworker
+#                                               (no ALB, no public route; parked at
+#                                               0 tasks unless a demo needs live
+#                                               mountain uploads)
 #
 # Two deliberate cost decisions, both worth understanding before changing them:
 #
@@ -105,6 +112,24 @@ Parameters:
     Type: String
     AllowedPattern: "^[0-9a-f]{64}$"
     Description: Exact baked-data identity required by the hourly public health probe.
+
+  BakeWorkerImage:
+    Type: String
+    Description: >
+      ECR image URI for the bakeworker service (rasterio/pyproj/PIL/yaml -- the only
+      service in the fleet that carries them). Internal-only: never registered with
+      the ALB, reachable from assess alone, over Service Connect.
+
+  BakeWorkerDesiredCount:
+    Type: Number
+    Default: 0
+    MinValue: 0
+    MaxValue: 2
+    Description: >
+      Tasks for the bakeworker service, kept separate from DesiredCount above
+      because live mountain uploads are a rarely-used demo feature, not core
+      traffic. Default 0 means it is parked -- zero compute cost -- until this is
+      explicitly raised (e.g. to demo live uploads).
 
 # ===========================================================================
 Resources:
@@ -210,6 +235,38 @@ Resources:
           SourceSecurityGroupId: !Ref AlbSecurityGroup
           Description: Frontend, from the ALB only.
       Tags: [{ Key: Name, Value: !Sub "${AWS::StackName}-task-sg" }]
+
+  # A rule that names its own security group as the source cannot be embedded in
+  # SecurityGroupIngress above -- CloudFormation rejects that as a circular
+  # dependency (the group would have to reference its own not-yet-created GroupId).
+  # A separate AWS::EC2::SecurityGroupIngress resource is the documented way around
+  # that: it can !Ref TaskSecurityGroup as both the group the rule attaches to and
+  # the allowed source, because by the time THIS resource is created, the group
+  # already exists.
+  TaskSecurityGroupIngressBakeWorker:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref TaskSecurityGroup
+      IpProtocol: tcp
+      FromPort: 8080
+      ToPort: 8080
+      SourceSecurityGroupId: !Ref TaskSecurityGroup
+      Description: assess -> bakeworker over Service Connect (both are members of this SG).
+
+  EfsSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: >
+        EFS mount targets for the shared /runtime/mountains volume. Inbound NFS from
+        Fargate tasks (assess, bakeworker) only.
+      VpcId: !Ref Vpc
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 2049
+          ToPort: 2049
+          SourceSecurityGroupId: !Ref TaskSecurityGroup
+          Description: NFS from assess/bakeworker tasks only.
+      Tags: [{ Key: Name, Value: !Sub "${AWS::StackName}-efs-sg" }]
 
   # --- Load balancer -------------------------------------------------------
   LoadBalancer:
@@ -516,6 +573,64 @@ Resources:
         - Type: forward
           TargetGroupArn: !Ref AssessTargetGroup
 
+  # --- Shared storage (EFS) --------------------------------------------------
+  # runtime/mountains/ (registry.json + per-upload source/pack.json/baked/bake.log,
+  # see backend/app/mountains.py) is shared between assess and bakeworker, mounted
+  # at the SAME container path in both task definitions below. Mount Hosmer's own
+  # reviewed bake stays exactly where it is today -- baked into the assess image at
+  # /runtime/baked -- and is deliberately NOT put on EFS. This also incidentally
+  # fixes a latent bug: if AssessService's DesiredCount is ever raised above 1, each
+  # task today has its own disconnected registry/uploads; EFS gives every task (of
+  # either service) the same view.
+  #
+  # Bursting throughput (the default) and General Purpose performance mode: this is
+  # a low-traffic demo feature (MAX_UPLOADED_MOUNTAINS = 3 in mountains.py, each
+  # capped well under a GB), nowhere near where Provisioned/Elastic throughput would
+  # pay for itself. No lifecycle-to-Infrequent-Access policy either, by choice: IA
+  # trades a lower per-GB storage price for a per-GB retrieval fee and extra
+  # first-touch latency, which is the wrong trade for data this small (cents/month
+  # on Standard regardless) that gets touched in bursts exactly when someone is
+  # live-demoing the upload feature -- the worst time to eat a retrieval penalty.
+  MountainsFileSystem:
+    Type: AWS::EFS::FileSystem
+    Properties:
+      PerformanceMode: generalPurpose
+      ThroughputMode: bursting
+      Encrypted: true
+      FileSystemTags: [{ Key: Name, Value: !Sub "${AWS::StackName}-mountains" }]
+
+  MountainsMountTargetA:
+    Type: AWS::EFS::MountTarget
+    Properties:
+      FileSystemId: !Ref MountainsFileSystem
+      SubnetId: !Ref SubnetA
+      SecurityGroups: [!Ref EfsSecurityGroup]
+
+  MountainsMountTargetB:
+    Type: AWS::EFS::MountTarget
+    Properties:
+      FileSystemId: !Ref MountainsFileSystem
+      SubnetId: !Ref SubnetB
+      SecurityGroups: [!Ref EfsSecurityGroup]
+
+  # Scoped to /mountains so a mistaken RootDirectory elsewhere on the file system can
+  # never be reached from a container -- EFSVolumeConfiguration.RootDirectory in the
+  # task definitions below is required to be "/" (or omitted) whenever an access
+  # point is used, so this Path is the only root a mounting container can ever get.
+  # uid/gid 10001 matches Dockerfile.backend's `useradd --uid 10001 avalanche`, the
+  # user both the assess and bakeworker containers run as -- CreationInfo makes the
+  # directory owned by, and writable by, exactly that user on first mount, with no
+  # IAM involved (see AuthorizationConfig.IAM: DISABLED on both task definitions,
+  # and the ExecutionRole comment below explaining why that is deliberate here).
+  MountainsAccessPoint:
+    Type: AWS::EFS::AccessPoint
+    Properties:
+      FileSystemId: !Ref MountainsFileSystem
+      PosixUser: { Uid: "10001", Gid: "10001" }
+      RootDirectory:
+        Path: /mountains
+        CreationInfo: { OwnerUid: "10001", OwnerGid: "10001", Permissions: "0755" }
+
   # --- ECS -----------------------------------------------------------------
   Cluster:
     Type: AWS::ECS::Cluster
@@ -524,9 +639,25 @@ Resources:
       CapacityProviders: [FARGATE, FARGATE_SPOT]
       ClusterSettings:
         - { Name: containerInsights, Value: disabled }   # avoids CloudWatch charges
+      # Default AWS Cloud Map namespace for Service Connect (assess -> bakeworker,
+      # see BakeWorkerService below). A namespace name that does not already exist
+      # is created automatically by ECS the first time a Service Connect-enabled
+      # service deploys into it -- no separate AWS::ServiceDiscovery::* resource is
+      # needed in this template. Verified against the AWS::ECS::Cluster
+      # ServiceConnectDefaults CloudFormation reference: "If you enter a new name, a
+      # AWS Cloud Map namespace will be created."
+      ServiceConnectDefaults:
+        Namespace: !Sub "${AWS::StackName}.local"
 
   # Pulls images from ECR and writes logs. This is the only IAM role needed: the
   # application itself calls no AWS APIs, so the tasks get no task role at all.
+  #
+  # The EFS mount below (MountainsAccessPoint) deliberately preserves that: IAM-based
+  # EFS authorization (AuthorizationConfig.IAM: ENABLED) would need a task role with
+  # elasticfilesystem:Client* permissions, so both task definitions instead set
+  # IAM: DISABLED and rely only on the access point's POSIX uid/gid enforcement plus
+  # EfsSecurityGroup's NFS-from-tasks-only rule for access control. Service Connect
+  # (also added below) needs nothing extra on either role either -- no change here.
   ExecutionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -557,6 +688,12 @@ Resources:
       LogGroupName: !Sub "/ecs/${AWS::StackName}/frontend"
       RetentionInDays: 7
 
+  BakeWorkerLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/ecs/${AWS::StackName}/bakeworker"
+      RetentionInDays: 7
+
   # 1 vCPU / 4 GB. MEASURED, not guessed: one assessment on the 2400x2400 (5.8M
   # cell) grid peaks at ~1477 MB resident. At 2048 MB the container was killed
   # mid-request with `OutOfMemoryError` (exit 137) and ECS silently restarted it,
@@ -580,14 +717,36 @@ Resources:
       RuntimePlatform:
         OperatingSystemFamily: LINUX
         CpuArchitecture: X86_64          # matches the linux/amd64 images we build
+      # Shared with BakeWorkerTaskDefinition at the SAME container path and access
+      # point, so both services (and every replica of either) see one registry and
+      # one set of uploads, never a disconnected per-task copy.
+      Volumes:
+        - Name: mountains
+          EFSVolumeConfiguration:
+            FilesystemId: !Ref MountainsFileSystem
+            TransitEncryption: ENABLED   # required whenever AuthorizationConfig uses an access point
+            AuthorizationConfig:
+              AccessPointId: !Ref MountainsAccessPoint
+              IAM: DISABLED               # POSIX + security group only -- see ExecutionRole comment above
       ContainerDefinitions:
         - Name: assess
           Image: !Ref AssessImage
           Essential: true
           PortMappings: [{ ContainerPort: 8080, Protocol: tcp }]
+          MountPoints:
+            - SourceVolume: mountains
+              ContainerPath: /runtime/mountains
+              ReadOnly: false
           Environment:
             - { Name: PORT, Value: "8080" }
             - { Name: AVALANCHE_RUNTIME_ROOT, Value: /runtime }
+            # Reaches bakeworker over Service Connect -- see BakeWorkerService's
+            # ServiceConnectConfiguration for the "bakeworker" DNS alias this
+            # resolves to inside the cluster. When bakeworker is parked at 0 tasks
+            # (the default), there is no healthy Service Connect endpoint to route
+            # to, so a call here fails fast rather than hanging -- assess's own
+            # httpx timeout on this URL is what keeps /api/mountains responsive.
+            - { Name: AVALANCHE_BAKE_WORKER_URL, Value: "http://bakeworker:8080" }
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -655,9 +814,57 @@ Resources:
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: ecs
 
+  # bakeworker runs the identical app.bake computation a real bake runs -- same
+  # measured memory profile as AssessTaskDefinition above (see its comment block),
+  # so it gets the same 1 vCPU / 4 GB rather than AssistantTaskDefinition's much
+  # smaller 256/512, which is sized for a thin HTTP relay to Ollama, not a raster
+  # computation.
+  BakeWorkerTaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Sub "${AWS::StackName}-bakeworker"
+      RequiresCompatibilities: [FARGATE]
+      NetworkMode: awsvpc
+      Cpu: "1024"
+      Memory: "4096"
+      ExecutionRoleArn: !GetAtt ExecutionRole.Arn
+      RuntimePlatform:
+        OperatingSystemFamily: LINUX
+        CpuArchitecture: X86_64
+      Volumes:
+        - Name: mountains
+          EFSVolumeConfiguration:
+            FilesystemId: !Ref MountainsFileSystem
+            TransitEncryption: ENABLED
+            AuthorizationConfig:
+              AccessPointId: !Ref MountainsAccessPoint
+              IAM: DISABLED
+      ContainerDefinitions:
+        - Name: bakeworker
+          Image: !Ref BakeWorkerImage
+          Essential: true
+          # Name (not just ContainerPort) is what BakeWorkerService's
+          # ServiceConnectConfiguration.Services[].PortName refers to below --
+          # Service Connect resolves ports by this name, not by number.
+          PortMappings:
+            - { ContainerPort: 8080, Protocol: tcp, Name: bakeworker, AppProtocol: http }
+          MountPoints:
+            - SourceVolume: mountains
+              ContainerPath: /runtime/mountains
+              ReadOnly: false
+          Environment:
+            - { Name: PORT, Value: "8080" }
+            - { Name: AVALANCHE_RUNTIME_ROOT, Value: /runtime }
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref BakeWorkerLogGroup
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: ecs
+
   AssessService:
     Type: AWS::ECS::Service
-    DependsOn: [AssessRule, DefaultRoute]
+    DependsOn: [AssessRule, DefaultRoute, MountainsMountTargetA, MountainsMountTargetB]
     Properties:
       Cluster: !Ref Cluster
       TaskDefinition: !Ref AssessTaskDefinition
@@ -677,6 +884,13 @@ Resources:
           SecurityGroups: [!Ref TaskSecurityGroup]
       LoadBalancers:
         - { ContainerName: assess, ContainerPort: 8080, TargetGroupArn: !Ref AssessTargetGroup }
+      # "Client" Service Connect membership only -- assess calls bakeworker by its
+      # advertised DNS name (see AVALANCHE_BAKE_WORKER_URL above) but exposes
+      # nothing of its own via Service Connect, so there is no Services: list here.
+      # Still reachable from the internet exactly as before, through
+      # AssessTargetGroup; the two mechanisms are independent.
+      ServiceConnectConfiguration:
+        Enabled: true
       # The image is ~900 MB and the layers load on boot; do not let the ALB mark it
       # unhealthy while it is still coming up.
       HealthCheckGracePeriodSeconds: 120
@@ -724,6 +938,44 @@ Resources:
       LoadBalancers:
         - { ContainerName: frontend, ContainerPort: 3000, TargetGroupArn: !Ref FrontendTargetGroup }
       HealthCheckGracePeriodSeconds: 60
+
+  # Cost control lives entirely in BakeWorkerDesiredCount (default 0). Unlike the
+  # other three services, this one has NO LoadBalancers entry -- it is never
+  # registered with any ALB target group and is reachable only from inside the VPC,
+  # over Service Connect. It also does not use the shared DesiredCount parameter,
+  # so baseline monthly cost is unchanged unless someone explicitly turns this on.
+  BakeWorkerService:
+    Type: AWS::ECS::Service
+    DependsOn: [DefaultRoute, MountainsMountTargetA, MountainsMountTargetB]
+    Properties:
+      Cluster: !Ref Cluster
+      TaskDefinition: !Ref BakeWorkerTaskDefinition
+      DesiredCount: !Ref BakeWorkerDesiredCount
+      DeploymentConfiguration:
+        MinimumHealthyPercent: 100
+        MaximumPercent: 200
+        DeploymentCircuitBreaker: { Enable: true, Rollback: true }
+      CapacityProviderStrategy:
+        - { CapacityProvider: !Ref CapacityProvider, Weight: 1 }
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          # Same "no NAT gateway" reasoning as the other three services -- this task
+          # also needs outbound to pull its image from ECR.
+          AssignPublicIp: ENABLED
+          Subnets: [!Ref SubnetA, !Ref SubnetB]
+          SecurityGroups: [!Ref TaskSecurityGroup]
+      # Advertises itself as "bakeworker" in the cluster's default Service Connect
+      # namespace (see Cluster.ServiceConnectDefaults above), so assess can reach it
+      # at http://bakeworker:8080 -- exactly AVALANCHE_BAKE_WORKER_URL above --
+      # without a second load balancer.
+      ServiceConnectConfiguration:
+        Enabled: true
+        Services:
+          - PortName: bakeworker
+            DiscoveryName: bakeworker
+            ClientAliases:
+              - Port: 8080
+                DnsName: bakeworker
 
 # ===========================================================================
 Outputs:
