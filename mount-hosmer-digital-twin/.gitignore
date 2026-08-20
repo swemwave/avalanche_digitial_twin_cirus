@@ -19,6 +19,10 @@ runtime/processed/
 runtime/previews/
 runtime/exports/
 runtime/logs/*.log
+# User-uploaded mountains: raw uploads plus everything baked from them. These are
+# somebody's own files with no reviewed provenance, and they must never be
+# committed alongside the vetted Mount Hosmer bake.
+runtime/mountains/
 
 # Local pytest run artifacts (-o cache_dir=... / --basetemp=...).
 .test-cache/

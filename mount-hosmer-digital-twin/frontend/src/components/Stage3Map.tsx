@@ -12,6 +12,7 @@ import {
   exposureUrl,
   imageryTileUrlTemplate,
   tileUrlTemplate,
+  type MountainId,
   type AssessResult,
   type TwinMeta,
 } from "@/lib/twin";
@@ -50,6 +51,8 @@ type Band = { upper: number; band: string; color: string };
 
 type Props = {
   meta: TwinMeta | null;
+  /** Which mountain's baked tiles to draw. `null` is Mount Hosmer. */
+  mountain?: MountainId;
   result: AssessResult | null;
   exaggeration: number;
   camera: CameraPreset;
@@ -66,6 +69,7 @@ type Props = {
 
 export function Stage3Map({
   meta,
+  mountain = null,
   result,
   exaggeration,
   camera,
@@ -141,7 +145,7 @@ export function Stage3Map({
           <Source
             id="terrain"
             type="raster-dem"
-            tiles={[tileUrlTemplate()]}
+            tiles={[tileUrlTemplate(mountain)]}
             tileSize={meta.tiles.tile_size}
             minzoom={meta.tiles.min_zoom}
             maxzoom={meta.tiles.max_zoom}
@@ -163,7 +167,7 @@ export function Stage3Map({
             <Source
               id="imagery"
               type="raster"
-              tiles={[imageryTileUrlTemplate()]}
+              tiles={[imageryTileUrlTemplate(mountain)]}
               tileSize={meta.imagery.tile_size}
               minzoom={meta.imagery.min_zoom}
               maxzoom={meta.imagery.max_zoom}
@@ -252,7 +256,7 @@ export function Stage3Map({
           {/* Exposure last, so roads and rail stay legible where they cross a
               zone. Never in interactiveLayerIds: they must not steal zone clicks. */}
           {exposureVisible ? (
-            <Source id="exposure" type="geojson" data={exposureUrl()}>
+            <Source id="exposure" type="geojson" data={exposureUrl(mountain)}>
               <Layer
                 id="exposure-settlement-fill"
                 type="fill"
