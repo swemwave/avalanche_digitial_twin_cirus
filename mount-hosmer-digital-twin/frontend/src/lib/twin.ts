@@ -12,7 +12,7 @@ import {
 import type {
   AreaHazardComponents,
   AssessRequest as GeneratedAssessRequest,
-  AssessResultOutput,
+  AssessResult as GeneratedAssessResult,
   ChatResult,
   ChatTurn,
   Conditions,
@@ -29,7 +29,7 @@ import type {
   PredictionProductSummary,
   PredictionStageRecord,
   PredictionUnsupportedSweep,
-  ReleaseZoneOutput,
+  ReleaseZone as GeneratedReleaseZone,
   RunoutComparisonDetail,
   RunoutComparisonMetric,
   UnsupportedOutputRecord,
@@ -51,8 +51,8 @@ export const ASSISTANT_BASE_URL = base(process.env.NEXT_PUBLIC_ASSISTANT_BASE_UR
 export type ReleaseSize = NonNullable<GeneratedAssessRequest["release_size"]>;
 export type SimulationMode = NonNullable<GeneratedAssessRequest["simulation_mode"]>;
 export type AssessRequest = GeneratedAssessRequest;
-export type AssessResult = AssessResultOutput;
-export type AssessZone = ReleaseZoneOutput;
+export type AssessResult = GeneratedAssessResult;
+export type AssessZone = GeneratedReleaseZone;
 export type {
   AreaHazardComponents,
   ChatResult,
