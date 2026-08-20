@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { AssistantPanel } from "@/components/AssistantPanel";
 import { ConditionPanel } from "@/components/ConditionPanel";
+import { PredictionProductPanel } from "@/components/PredictionProductPanel";
 import { ResultCard } from "@/components/ResultCard";
 import { Stage3Map, type CameraPreset, type ContrastMode, type SurfaceView } from "@/components/Stage3Map";
 import { getTwinMeta, postAssess, type AssessRequest, type AssessResult, type TwinMeta } from "@/lib/twin";
@@ -264,6 +265,16 @@ export function Stage3App() {
                 onClearZone={() => setSelectedZone(null)}
                 stale={resultStale}
               />
+            </section>
+
+            <section className="rounded-lg border border-[var(--border)] bg-[var(--panel)] p-4">
+              <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-[var(--accent)]">
+                Offline prediction products
+              </h3>
+              {/* Read-only view of what the offline pipeline produced. External
+                  engines never run inside a request, so this panel reads files and
+                  shows unavailable stages and outputs as such. */}
+              <PredictionProductPanel />
             </section>
 
             <section className="rounded-lg border border-[var(--border)] bg-[var(--panel)] p-4">

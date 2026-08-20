@@ -1,0 +1,561 @@
+{
+  "accounts_used": false,
+  "anonymous_public_access_only": true,
+  "claim_boundary": "A source lead is not an eligible validation event. Provider metadata and checksums establish discoverability and stated contents only; uninspected archives, absent component fields, and absent reviews remain absent evidence.",
+  "counts": {
+    "anonymous_access_verified": 4,
+    "new_eligible_events": 0,
+    "sources_audited": 4,
+    "validation_contract_v3_sources": 0
+  },
+  "frozen_at_utc": "2026-08-14T00:00:00Z",
+  "model_results_opened": false,
+  "normalized_artifact_sha256": "d6b2a7f9b8d762ab1d78b6a8a71814ce0ab537fecc1373cd235488f81159bf05",
+  "outreach_used": false,
+  "predictions_generated": false,
+  "schema": "avycore-public-validation-source-audit-v1",
+  "sources": [
+    {
+      "anonymous_access_verified": true,
+      "assessment": "Useful reusable SAR and binary-outline benchmark across four regions. The primary record does not establish per-event release/deposit/toe components, snow-depth profiles, dry dense-slab regime, or two independent human reviews required by validation-contract v3.",
+      "blocking_contract_fields": [
+        "event_level_release_component",
+        "event_level_deposit_component",
+        "terminal_toe_component",
+        "release_thickness_profile",
+        "deposit_thickness_profile",
+        "dry_dense_slab_regime_confirmation",
+        "two_independent_human_reviews"
+      ],
+      "cache": {
+        "request_path": ".validation-cache/public-validation-source-audit-v1/zenodo-15863589-avalcd/request.json",
+        "request_sha256": "68144a3254337b866f99ab16af15d9f97f557f99748e8aa454d8185183bd3522",
+        "response_metadata": {
+          "content_length_header": "5654",
+          "content_type": "application/json",
+          "etag": "\"4\"",
+          "final_url": "https://zenodo.org/api/records/15863589",
+          "last_modified": null,
+          "status": 200
+        },
+        "response_metadata_path": ".validation-cache/public-validation-source-audit-v1/zenodo-15863589-avalcd/response-metadata.json",
+        "response_metadata_sha256": "d367512ab6da72cfc5247ecdf1a8064a2064a6ecf145326d0b32d8fa43f81c30",
+        "response_path": ".validation-cache/public-validation-source-audit-v1/zenodo-15863589-avalcd/response.json",
+        "response_sha256": "e19febdfeb820f911a26b54051a111eef4598fee1bc4b6583b9252c76d542401"
+      },
+      "evidence_types": [
+        "sentinel_1_pre_post",
+        "local_incidence_angle",
+        "copernicus_dem",
+        "slope_aspect",
+        "binary_avalanche_masks",
+        "avalanche_polygons"
+      ],
+      "files": [
+        {
+          "key": "AvalCD.zip",
+          "provider_checksum": "md5:f632099eaa2ff30101a2151e1ef1ddbb",
+          "size_bytes": 1088704029
+        }
+      ],
+      "landing_page": "https://zenodo.org/records/15863589",
+      "large_archives_downloaded": false,
+      "license": {
+        "id": "cc-by-nc-4.0"
+      },
+      "publication_date": "2026",
+      "source_id": "zenodo-15863589-avalcd",
+      "source_meets_validation_contract_v3": false,
+      "title": "AvalCD",
+      "url": "https://zenodo.org/api/records/15863589"
+    },
+    {
+      "anonymous_access_verified": true,
+      "assessment": "Provides reusable deposit outlines and visibility accounting for glacier avalanches. It lacks release polygons, a distinct terminal-toe observation, thickness profiles, the frozen dry dense-slab regime, and v3 reviews.",
+      "blocking_contract_fields": [
+        "release_component",
+        "terminal_toe_component",
+        "release_thickness_profile",
+        "deposit_thickness_profile",
+        "dry_dense_slab_regime_confirmation",
+        "two_independent_human_reviews"
+      ],
+      "cache": {
+        "request_path": ".validation-cache/public-validation-source-audit-v1/zenodo-10895011-glacier-deposits/request.json",
+        "request_sha256": "756009217cc6f04f98a18607818f71aee10d559739fd13433ea7c27a1f69ff3e",
+        "response_metadata": {
+          "content_length_header": "8936",
+          "content_type": "application/json",
+          "etag": "\"4\"",
+          "final_url": "https://zenodo.org/api/records/10895011",
+          "last_modified": null,
+          "status": 200
+        },
+        "response_metadata_path": ".validation-cache/public-validation-source-audit-v1/zenodo-10895011-glacier-deposits/response-metadata.json",
+        "response_metadata_sha256": "f71af2f8ced98f4eceb882df745d80de165e2b76be81e956dec68b3f80be51e0",
+        "response_path": ".validation-cache/public-validation-source-audit-v1/zenodo-10895011-glacier-deposits/response.json",
+        "response_sha256": "e58be702792a2ad805333821499a1e9853910d12c9a808b9be4f549359cdd85c"
+      },
+      "evidence_types": [
+        "sentinel_1_scene_dates",
+        "manual_updated_deposit_outlines",
+        "glacier_visibility_area"
+      ],
+      "files": [
+        {
+          "key": "MtBlanc.zip",
+          "provider_checksum": "md5:4ae677df08d4877fafdf28f626758193",
+          "size_bytes": 4244879
+        },
+        {
+          "key": "Everest.zip",
+          "provider_checksum": "md5:2491f98493d0fd40824b57a41b2fdb90",
+          "size_bytes": 3454078
+        },
+        {
+          "key": "Hispar.zip",
+          "provider_checksum": "md5:6011f16bc00974cd33f8fcbb58e08677",
+          "size_bytes": 6317621
+        },
+        {
+          "key": "README.txt",
+          "provider_checksum": "md5:be23dacc2637525fa8b0685d68aac0d3",
+          "size_bytes": 2377
+        }
+      ],
+      "landing_page": "https://zenodo.org/records/10895011",
+      "large_archives_downloaded": false,
+      "license": {
+        "id": "cc-by-4.0"
+      },
+      "publication_date": "2024-03-29",
+      "source_id": "zenodo-10895011-glacier-deposits",
+      "source_meets_validation_contract_v3": false,
+      "title": "Data for 'Mapping and characterization of avalanches on mountain glaciers with Sentinel-1 satellite imagery'",
+      "url": "https://zenodo.org/api/records/10895011"
+    },
+    {
+      "anonymous_access_verified": true,
+      "assessment": "Strong public event-surface evidence for three artificial cold avalanches at one site and one January 2019 campaign. It cannot by itself meet the frozen 12-event, six-path, two-mountain, three-storm diversity gate, and the primary record does not claim validation-contract-v3 independent reviews.",
+      "blocking_contract_fields": [
+        "cohort_event_count_12",
+        "six_independent_paths",
+        "two_mountains",
+        "three_storms",
+        "two_independent_human_reviews",
+        "contract_specific_component_attribution_audit"
+      ],
+      "cache": {
+        "request_path": ".validation-cache/public-validation-source-audit-v1/zenodo-15796703-braemabuehl/request.json",
+        "request_sha256": "d69234badd206bb73f5b3215d81bd7b8a635f86b1b2615495fae313d94dc0344",
+        "response_metadata": {
+          "content_length_header": "21540",
+          "content_type": "application/json",
+          "etag": "\"6\"",
+          "final_url": "https://zenodo.org/api/records/15796703",
+          "last_modified": null,
+          "status": 200
+        },
+        "response_metadata_path": ".validation-cache/public-validation-source-audit-v1/zenodo-15796703-braemabuehl/response-metadata.json",
+        "response_metadata_sha256": "3a888b3b819ecafc3959fe78e7ab461c7057c222f926f1442e8febb320b9221b",
+        "response_path": ".validation-cache/public-validation-source-audit-v1/zenodo-15796703-braemabuehl/response.json",
+        "response_sha256": "c3abebeab41f294e44504887cc7dda0cd7cc293c424ab4c2d89eb3899bd5441f"
+      },
+      "evidence_types": [
+        "three_cold_avalanche_outlines",
+        "post_event_orthophoto",
+        "snow_surface_height",
+        "one_metre_dtm",
+        "field_measurement_tables"
+      ],
+      "files": [
+        {
+          "key": "Avalanche_Outline.shp",
+          "provider_checksum": "md5:92cc69d0ee2914d4b44bed55399bc266",
+          "size_bytes": 25112
+        },
+        {
+          "key": "Wildi_PowArea.dbf",
+          "provider_checksum": "md5:4dae724c837264ad9d08c557eae3595b",
+          "size_bytes": 73
+        },
+        {
+          "key": "Wildi_PowArea.prj",
+          "provider_checksum": "md5:313304cd209164f8f1694217325cad38",
+          "size_bytes": 472
+        },
+        {
+          "key": "Wildi_PowArea.CPG",
+          "provider_checksum": "md5:ae3b3df9970b49b6523e608759bc957d",
+          "size_bytes": 5
+        },
+        {
+          "key": "Braema_HS_20190116_10cm.tif",
+          "provider_checksum": "md5:ff0d73f985f54c04a214ec45a15f57d6",
+          "size_bytes": 3558789709
+        },
+        {
+          "key": "Braemabuehl_Forest.shx",
+          "provider_checksum": "md5:e33e42ea24eb769c3e0b0dfa3688ee7b",
+          "size_bytes": 116
+        },
+        {
+          "key": "Wildi_DepoArea.sbx",
+          "provider_checksum": "md5:2f7ee95877ca029030bedc11001e46f4",
+          "size_bytes": 116
+        },
+        {
+          "key": "Wildi_DepoArea.shp",
+          "provider_checksum": "md5:dac254ef86537e82bcc91a8995178b96",
+          "size_bytes": 4832
+        },
+        {
+          "key": "Wildi_PowArea.sbn",
+          "provider_checksum": "md5:824f71e11dada6b2028f4e0dd024fcee",
+          "size_bytes": 132
+        },
+        {
+          "key": "Avalanche_Outline.xml",
+          "provider_checksum": "md5:44236f8213aece86e22225eee2093366",
+          "size_bytes": 712
+        },
+        {
+          "key": "R\u00fcchi_rel.shp",
+          "provider_checksum": "md5:477372e3dcb74e85ae944b8e55099c19",
+          "size_bytes": 1100
+        },
+        {
+          "key": "Braema_HS_20190116_10cm.xml",
+          "provider_checksum": "md5:f873defe02a28b053a0ca85b9014ab0e",
+          "size_bytes": 3300
+        },
+        {
+          "key": "Braemabuehl_Forest.shp",
+          "provider_checksum": "md5:4f34eab91c3240373f678bafa69c52f3",
+          "size_bytes": 11188
+        },
+        {
+          "key": "Wildi_DepoArea.CPG",
+          "provider_checksum": "md5:ae3b3df9970b49b6523e608759bc957d",
+          "size_bytes": 5
+        },
+        {
+          "key": "Wildi_DepoArea.sbn",
+          "provider_checksum": "md5:394f9fca91a78ba491c1329ab23a491c",
+          "size_bytes": 132
+        },
+        {
+          "key": "Avalanche_Outline.dbf",
+          "provider_checksum": "md5:53cebefde1a3d4b0180c1b4f54db9c03",
+          "size_bytes": 440
+        },
+        {
+          "key": "Avalanche_Outline.sbn",
+          "provider_checksum": "md5:858c8d86a298ba81356afb0218d68830",
+          "size_bytes": 196
+        },
+        {
+          "key": "R\u00fcchi_rel.sbx",
+          "provider_checksum": "md5:f4b78e0f14f7a7e1dd49465c82edca47",
+          "size_bytes": 116
+        },
+        {
+          "key": "Avalanche_Outline.prj",
+          "provider_checksum": "md5:313304cd209164f8f1694217325cad38",
+          "size_bytes": 472
+        },
+        {
+          "key": "Avalanche_Outline.shx",
+          "provider_checksum": "md5:40319e0f2e7df67ae7d07a45a8ace03c",
+          "size_bytes": 148
+        },
+        {
+          "key": "Wildi_DepoArea.dbf",
+          "provider_checksum": "md5:67f14ea1977ccb651666925e755c79cf",
+          "size_bytes": 73
+        },
+        {
+          "key": "Wildi_DepoArea.prj",
+          "provider_checksum": "md5:313304cd209164f8f1694217325cad38",
+          "size_bytes": 472
+        },
+        {
+          "key": "Wildi_PowArea.sbx",
+          "provider_checksum": "md5:d6d823012f288e25c2a041deffd79676",
+          "size_bytes": 116
+        },
+        {
+          "key": "R\u00fcchi_DepoArea.sbx",
+          "provider_checksum": "md5:e65bcf62253e9aab652995f95972d3c4",
+          "size_bytes": 116
+        },
+        {
+          "key": "R\u00fcchi_DepoArea.sbn",
+          "provider_checksum": "md5:0a06ab6de579ecb9bc1214f9e077a6bb",
+          "size_bytes": 132
+        },
+        {
+          "key": "Braemabuehl_DTM_1m.tfw",
+          "provider_checksum": "md5:e4199ca09561008bc8bc0c3b2742eed8",
+          "size_bytes": 36
+        },
+        {
+          "key": "R\u00fcchi_PowArea.shp",
+          "provider_checksum": "md5:693fdaffab38ae9305084063d5298ddb",
+          "size_bytes": 5340
+        },
+        {
+          "key": "R\u00fcchi_DepoArea.prj",
+          "provider_checksum": "md5:313304cd209164f8f1694217325cad38",
+          "size_bytes": 472
+        },
+        {
+          "key": "Braemabuehl_DTM_1m.ovr",
+          "provider_checksum": "md5:7bc8b54c2f534e05faa14a7c0a4b6de3",
+          "size_bytes": 9229702
+        },
+        {
+          "key": "Wildi_RelArea.sbx",
+          "provider_checksum": "md5:9b0f24b3134694b569fc5846410d8fd6",
+          "size_bytes": 116
+        },
+        {
+          "key": "Chaiseren_DepoArea.CPG",
+          "provider_checksum": "md5:ae3b3df9970b49b6523e608759bc957d",
+          "size_bytes": 5
+        },
+        {
+          "key": "Chaiseren_DepoArea.sbn",
+          "provider_checksum": "md5:bd9e7cee9268f0907fe5edd3394238ca",
+          "size_bytes": 132
+        },
+        {
+          "key": "Wildi_RelArea.cpg",
+          "provider_checksum": "md5:ae3b3df9970b49b6523e608759bc957d",
+          "size_bytes": 5
+        },
+        {
+          "key": "Braemabuehl_DTM_1m.tif",
+          "provider_checksum": "md5:680930cdd4af3410551909810a66ca54",
+          "size_bytes": 30536128
+        },
+        {
+          "key": "Braemabuehl_DTM_1m.xml",
+          "provider_checksum": "md5:c8ebf7afb4375c359075566a64653f09",
+          "size_bytes": 2773
+        },
+        {
+          "key": "Br\u00e4mab\u00fchl_Jan2019_Dataset.pdf",
+          "provider_checksum": "md5:067bf5ea80a35703b3edb18f70bebfdf",
+          "size_bytes": 689063
+        },
+        {
+          "key": "R\u00fcchi_PowArea.CPG",
+          "provider_checksum": "md5:ae3b3df9970b49b6523e608759bc957d",
+          "size_bytes": 5
+        },
+        {
+          "key": "Braemabuehl_Forest.dbf",
+          "provider_checksum": "md5:1f1fab1db56d2495fc63fd79cbe1303a",
+          "size_bytes": 419
+        },
+        {
+          "key": "Wildi_RelArea.pol",
+          "provider_checksum": "md5:5a598dbed0b0d6d37dab9a90c6a77c3e",
+          "size_bytes": 665
+        },
+        {
+          "key": "R\u00fcchi_DepoArea.dbf",
+          "provider_checksum": "md5:0c86ccbf25fdf2f770dfbf4f98577c62",
+          "size_bytes": 73
+        },
+        {
+          "key": "Wildi_RelArea.sbn",
+          "provider_checksum": "md5:7d467ce9bb4e10e7a9e92c421884b630",
+          "size_bytes": 132
+        },
+        {
+          "key": "R\u00fcchi_DepoArea.CPG",
+          "provider_checksum": "md5:ae3b3df9970b49b6523e608759bc957d",
+          "size_bytes": 5
+        },
+        {
+          "key": "R\u00fcchi_RelArea.prj",
+          "provider_checksum": "md5:313304cd209164f8f1694217325cad38",
+          "size_bytes": 472
+        },
+        {
+          "key": "R\u00fcchi_RelArea.sbx",
+          "provider_checksum": "md5:f4b78e0f14f7a7e1dd49465c82edca47",
+          "size_bytes": 116
+        },
+        {
+          "key": "R\u00fcchi_RelArea.sbn",
+          "provider_checksum": "md5:8018fd9dba913150d7c9464125945e96",
+          "size_bytes": 132
+        },
+        {
+          "key": "Wildi_RelArea.prj",
+          "provider_checksum": "md5:313304cd209164f8f1694217325cad38",
+          "size_bytes": 472
+        },
+        {
+          "key": "Braemabuehl_Forest.pol",
+          "provider_checksum": "md5:a4caf24ab743f7f99dbc1900f8def769",
+          "size_bytes": 830
+        },
+        {
+          "key": "Wildi_PowArea.shp",
+          "provider_checksum": "md5:b2af8b4f71b9d85b5acc76b2345ed56a",
+          "size_bytes": 4620
+        },
+        {
+          "key": "R\u00fcchi_DepoArea.shp",
+          "provider_checksum": "md5:6f3bad727dc7b1b5e8049555c9887097",
+          "size_bytes": 7660
+        },
+        {
+          "key": "WIldi_RelArea.pol",
+          "provider_checksum": "md5:5a598dbed0b0d6d37dab9a90c6a77c3e",
+          "size_bytes": 665
+        },
+        {
+          "key": "Avalanche_Outline.CPG",
+          "provider_checksum": "md5:ae3b3df9970b49b6523e608759bc957d",
+          "size_bytes": 5
+        },
+        {
+          "key": "Braema_HS_20190116_10cm.ovr",
+          "provider_checksum": "md5:003ebfacfb142a48677462a1a2d5ad1e",
+          "size_bytes": 188587622
+        },
+        {
+          "key": "Avalanche_Outline.sbx",
+          "provider_checksum": "md5:608f05bb513fea0ceedc855c70e09160",
+          "size_bytes": 124
+        },
+        {
+          "key": "Braemabuehl_Ortho_20190119_0.04cm.tif",
+          "provider_checksum": "md5:81735fcee524dfaa29cc9adbd10c4f1f",
+          "size_bytes": 4758212071
+        },
+        {
+          "key": "R\u00fcchi_RelArea.shp",
+          "provider_checksum": "md5:477372e3dcb74e85ae944b8e55099c19",
+          "size_bytes": 1100
+        },
+        {
+          "key": "Chaiseren_DepoArea.dbf",
+          "provider_checksum": "md5:342c2c367397816b8b7f62a25852f87f",
+          "size_bytes": 73
+        },
+        {
+          "key": "Chaiseren_DepoArea.prj",
+          "provider_checksum": "md5:313304cd209164f8f1694217325cad38",
+          "size_bytes": 472
+        },
+        {
+          "key": "Wildi_RelArea.shp",
+          "provider_checksum": "md5:7b325badf3b42f85186f918ccd442b1b",
+          "size_bytes": 684
+        },
+        {
+          "key": "R\u00fcchi_RelArea.CPG",
+          "provider_checksum": "md5:ae3b3df9970b49b6523e608759bc957d",
+          "size_bytes": 5
+        },
+        {
+          "key": "R\u00fcchi_RelArea.dbf",
+          "provider_checksum": "md5:76f402de1f98e50381666eb1100d2451",
+          "size_bytes": 73
+        },
+        {
+          "key": "R\u00fcchi_PowArea.sbx",
+          "provider_checksum": "md5:11bd5a8c8b78ced7a8b95049fc59909d",
+          "size_bytes": 116
+        },
+        {
+          "key": "R\u00fcchi_PowArea.sbn",
+          "provider_checksum": "md5:597cbb37c7836f8c9ea449eccbec39e2",
+          "size_bytes": 132
+        },
+        {
+          "key": "R\u00fcchi_PowArea.dbf",
+          "provider_checksum": "md5:7c633948166ad2e143e1ba37f71b75c5",
+          "size_bytes": 73
+        },
+        {
+          "key": "R\u00fcchi_PowArea.prj",
+          "provider_checksum": "md5:313304cd209164f8f1694217325cad38",
+          "size_bytes": 472
+        },
+        {
+          "key": "Wildi_RelArea.dbf",
+          "provider_checksum": "md5:67f14ea1977ccb651666925e755c79cf",
+          "size_bytes": 73
+        }
+      ],
+      "landing_page": "https://zenodo.org/records/15796703",
+      "large_archives_downloaded": false,
+      "license": {
+        "id": "cc-by-4.0"
+      },
+      "publication_date": "2025-07-03",
+      "source_id": "zenodo-15796703-braemabuehl",
+      "source_meets_validation_contract_v3": false,
+      "title": "Br\u00e4mab\u00fchl_Avalanche_Jan2019_Dataset",
+      "url": "https://zenodo.org/api/records/15796703"
+    },
+    {
+      "anonymous_access_verified": true,
+      "assessment": "Potential high-resolution imagery/terrain lead from a 2025 Davos field experiment. The landing record alone does not enumerate v3 event components, thickness profiles, independent paths/storms, or independent human reviews; the 4.7 GB archive was not treated as inspected ground truth.",
+      "blocking_contract_fields": [
+        "archive_component_inventory_unreviewed",
+        "release_deposit_toe_attribution",
+        "release_thickness_profile",
+        "deposit_thickness_profile",
+        "cohort_diversity",
+        "two_independent_human_reviews"
+      ],
+      "cache": {
+        "request_path": ".validation-cache/public-validation-source-audit-v1/zenodo-18198188-uas-monitoring/request.json",
+        "request_sha256": "79b6800e06494466e196174e314426f9e61be9fb34ed6ff6e79a3ac7536a5a4f",
+        "response_metadata": {
+          "content_length_header": "5315",
+          "content_type": "application/json",
+          "etag": "\"4\"",
+          "final_url": "https://zenodo.org/api/records/18198188",
+          "last_modified": null,
+          "status": 200
+        },
+        "response_metadata_path": ".validation-cache/public-validation-source-audit-v1/zenodo-18198188-uas-monitoring/response-metadata.json",
+        "response_metadata_sha256": "ab16e494f2b05d641910c5137c962245eca52cc0b0a3fd5516f2d70db358dd06",
+        "response_path": ".validation-cache/public-validation-source-audit-v1/zenodo-18198188-uas-monitoring/response.json",
+        "response_sha256": "c5a72744e49aef53ce8e1b667cdd044399d30ce8b95e850e4bf112fefeda3cb2"
+      },
+      "evidence_types": [
+        "uas_mapping",
+        "davos_field_experiment"
+      ],
+      "files": [
+        {
+          "key": "NHESS-Data.zip",
+          "provider_checksum": "md5:d0bcf66adc5e3a0e2d34b60b4b5f535b",
+          "size_bytes": 4711778174
+        }
+      ],
+      "landing_page": "https://zenodo.org/records/18198188",
+      "large_archives_downloaded": false,
+      "license": {
+        "id": "cc-by-4.0"
+      },
+      "publication_date": "2026-01-09",
+      "source_id": "zenodo-18198188-uas-monitoring",
+      "source_meets_validation_contract_v3": false,
+      "title": "Data for \"Autonomous and efficient large-scale snow avalanche monitoring\"",
+      "url": "https://zenodo.org/api/records/18198188"
+    }
+  ],
+  "special_terms_accepted": false,
+  "stage": "anonymous_reusable_public_source_search_before_model_results"
+}

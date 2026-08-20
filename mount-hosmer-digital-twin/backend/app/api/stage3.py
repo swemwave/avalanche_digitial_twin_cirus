@@ -16,9 +16,11 @@ from fastapi import APIRouter
 
 from app.api import assess as assess_routes
 from app.api import assistant as assistant_routes
+from app.api import predictions as prediction_routes
 from app.api import terrain as terrain_routes
 
 router = APIRouter()
 router.include_router(terrain_routes.router)
 router.include_router(assess_routes.router)
+router.include_router(prediction_routes.router)
 router.include_router(assistant_routes.router)

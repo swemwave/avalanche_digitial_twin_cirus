@@ -278,6 +278,22 @@ Acceptance gate:
 
 ### M5 — Physics-informed release model
 
+Executed status, 17 August 2026: the SnowState-to-Release input contract exists in
+`avycore.release_coupling` and is fail-closed. It requires slab depth and density,
+a candidate weak layer, a failure-initiation diagnostic, a crack-propagation
+diagnostic, a loading rate over a declared window, and a declared unit plus a
+bounded sensitivity span for each; it also requires the snow simulation to start
+before the valid time it describes, so a profile invented at the requested time is
+refused. Three acceptance-gate rules are encoded structurally rather than left to
+callers: there is no code path from terrain capability to an instability result
+without a snow-state term; an ineligible terrain class is removed from supported
+coverage and the contract cannot express "missing snow state, lower score"; and
+non-dry-slab regimes are refused as separate model types. Because no eligible Snow
+State Pack exists, every terrain class is currently ineligible. No release
+thickness, density, area, volume or instability index is produced from snow state,
+so the remainder of the M5 gate is open and the existing uncalibrated AvyCore
+relative-index release model remains the named baseline.
+
 Purpose: require both capable terrain and modeled snow instability.
 
 Initial scope: dry-slab release. Wet-snow, loose-snow, cornice and glide
@@ -333,7 +349,85 @@ Acceptance gate:
   predictions.
 - Local accuracy remains unclaimed until M8 evidence exists.
 
+Executed status, 14 August 2026: the official AvaFrame 2.1
+`avaSimilaritySol` case passed the pre-registered analytical, mass-balance,
+grid, unit, CRS, mask and boundary checks through the isolated adapter. The
+acceptance thresholds and content-addressed result are retained under
+`validation-data/benchmarks/avaframe-2.1-avaSimilaritySol/`. This completes the
+published analytical-case portion of the M6 gate only.
+
+Executed status, 17 August 2026: engine intercomparison and bounded uncertainty
+propagation are now implemented (see M6b and M7 below). M8 independent field
+evidence remains open, so com1DFA and Flow-Py both remain offline and non-default
+and no accuracy claim is made.
+
+### M6b — Flow-Py as an independent runout engine
+
+Purpose: compare a second, structurally different runout model on identical
+normalized inputs.
+
+Executed status, 17 August 2026:
+
+- The canonical upstream Flow-Py distribution was verified from primary sources:
+  [github.com/avaframe/FlowPy](https://github.com/avaframe/FlowPy), GPL-3.0-or-later,
+  latest release `v1.0.3` (2022-06-14, commit
+  `7b061599355cef584491d69eae2686307d286901`), last commit
+  `27ad81d3e804e4e9d85a9773fca10ee7dc428183` (2022-06-20), **archived read-only
+  since 2024-09-17**. Model reference: Neuhauser et al. (2022), Geosci. Model Dev.
+  15, 2423-2442, doi:10.5194/gmd-15-2423-2022.
+- The released `v1.0.3` command line **ignores its arguments**: `main.py`
+  reassigns `argv` to a hardcoded example. Only the untagged master commit fixes
+  it, and `main.py` imports PyQt5 unconditionally. `runout.flowpy_upstream` is
+  therefore a distinct, fail-closed engine identity that hashes an
+  operator-supplied checkout against both reviewed commits and never substitutes
+  the AvaFrame port.
+- `runout.avaframe_flowpy` executes AvaFrame 2.1's `com4FlowPy` port (EUPL-1.2)
+  through a version-bound isolated adapter. Every result records the name, size
+  and SHA-256 of each executed `com4FlowPy` module file, so the implementation
+  that produced a result is provable after the fact.
+- Normalized outputs are runout extent, energy-line height (m) and travel angle
+  (degree). Flow depth, velocity, pressure and arrival time are published as
+  `unsupported` with reasons, never as zeros. Unreached cells are a modelled zero;
+  only unknown terrain is masked, and the travel-angle field carries its own mask
+  because an angle is undefined where no path arrived.
+- The planar energy-line analytical case passes its preregistered limits
+  (energy-line error 3.34e-06 m, stopping-cell difference 0, travel-angle error
+  1.90e-06 degrees, travel-length error 0.0 m) with identical replay identity.
+  Frozen under `validation-data/benchmarks/flowpy-energy-line/`.
+
+Acceptance gate status: the published-verification and normalized-semantics
+portions pass. Field validation remains unavailable.
+
+### M6c — Engine intercomparison
+
+Executed status, 17 August 2026: `avycore.engines.compare_runout_results` now
+reports extent IoU, symmetric-difference area, per-engine exclusive areas, signed
+area difference, common valid coverage, single-result unknown area, per-engine
+maximum reach from a caller-supplied common reference cell, the signed reach
+difference, and per-quantity mean/maximum absolute differences for depth,
+velocity, pressure, energy-line height, travel angle and arrival time. A quantity
+one engine cannot produce is reported `unsupported` with that engine's reason, and
+domain truncation raises a visible warning that every extent metric inherits.
+
+On the synthetic case both engines run from one normalized release: extent IoU
+0.429, symmetric-difference area 52 100 m2, maximum reach 455.4 m (com1DFA) versus
+313.2 m (Flow-Py). These are disagreement metrics only.
+
 ### M7 — Uncertainty and ensemble execution
+
+Executed status, 17 August 2026: `python -m app.pipeline run --ensemble` runs a
+bounded deterministic sweep of one friction parameter per engine (Flow-Py angle of
+reach +/-3 degrees, com1DFA Voellmy `mu` +/-0.03) around the central value,
+re-using the central member rather than re-running it. Each sweep publishes every
+member's parameter value, deterministic member identity, result identity and
+runout area, the central and min/max areas, and the outer envelope, which the
+contract requires to contain every member footprint. The product names its
+dominant uncertainty contributor by area spread; on the synthetic case that is the
+Flow-Py angle of reach (35 075 m2 spread versus 7 250 m2 for `mu`). Both spans are
+assumed literature ranges labelled `literature`, not fitted values, and member
+frequency is stored with the sentence declaring it model frequency rather than
+probability. Forcing, snow state, release depth/density/extent and entrainment are
+not yet swept, so the published envelope is a lower bound on sensitivity.
 
 Purpose: replace one falsely precise output with traceable sensitivity.
 
@@ -430,6 +524,17 @@ Acceptance gate:
 
 ### M10 — API and concise interface
 
+Executed status, 17 August 2026: the read-only product surface is implemented.
+`GET /api/predictions`, `GET /api/predictions/{product_id}` and
+`GET /api/predictions/{product_id}/comparisons/{comparison_id}` serve immutable
+offline products without importing or executing any engine; OpenAPI, the generated
+frontend client and `frontend/src/lib/twin.ts` are regenerated from the same
+contract, and `PredictionProductPanel` renders stages, release summary, per-engine
+available and unsupported outputs, sensitivity envelopes, engine disagreement,
+validation level and limitations. `release_probability` is always null with a
+machine-readable reason, and unavailable values render as the word rather than a
+zero. The existing terrain, scenario and slider assessment workflows are unchanged.
+
 Purpose: expose the improved science without adding ungrounded narrative.
 
 AI execution:
@@ -507,6 +612,12 @@ New canonical behavior belongs in:
 - `backend/app/processing/runout/` — AvaFrame offline runner and conversion.
 - `tests/` — synthetic fixtures, provider samples, characterized numerical and
   validation tests.
+
+Durable contracts introduced by the executed milestones are documented in
+`docs/prediction-products.md` (the offline pipeline, product storage, the
+read-only API, and bounded sensitivity ensembles) and `docs/runout-engines.md`
+(verified upstream engine identities, capabilities, normalization rules and
+analytical verification).
 
 External scientific packages remain offline tools. Compatibility facades must
 not become canonical implementations.

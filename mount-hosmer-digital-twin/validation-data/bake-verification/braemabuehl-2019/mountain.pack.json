@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "id": "braemabuehl-2019",
+  "name": "Brämabühl 2019 event terrain",
+  "center_wgs84": [9.855208109766348, 46.786098468097535],
+  "grid": {
+    "analysis_crs": "EPSG:2056",
+    "coordinate_order": "easting,northing",
+    "bounds": [2783000.0, 1183000.0, 2786000.0, 1186000.0],
+    "resolution_m": 10.0,
+    "vertical_datum": {
+      "status": "unknown",
+      "name": null
+    }
+  },
+  "model_profile": "canadian-rockies-uncalibrated-stage3-v1",
+  "model_calibrated_locally": false,
+  "assets": {
+    "aoi": {
+      "href": "aoi.geojson",
+      "adapter": "geojson",
+      "purpose": "model_input",
+      "required": true,
+      "units": "EPSG:2056 easting,northing metres",
+      "source": {
+        "provider": "WSL Institute for Snow and Avalanche Research SLF / Zenodo",
+        "citation": "AOI derived exactly from the published Brämabühl DTM bounds in Glaus (2025), doi:10.5281/zenodo.15796703",
+        "licence": "CC BY 4.0"
+      }
+    },
+    "elevation_primary": {
+      "href": "Braemabuehl_DTM_1m.tif",
+      "adapter": "single_raster",
+      "purpose": "model_input",
+      "required": true,
+      "units": "metres",
+      "native_resolution_m": 1.0,
+      "source": {
+        "provider": "WSL Institute for Snow and Avalanche Research SLF / Zenodo",
+        "citation": "Glaus, Julia (2025), Brämabühl_Avalanche_Jan2019_Dataset, Braemabuehl_DTM_1m.tif, doi:10.5281/zenodo.15796703",
+        "licence": "CC BY 4.0"
+      }
+    },
+    "landcover": {
+      "href": "landcover-not-acquired.tif",
+      "adapter": "categorical_raster",
+      "purpose": "model_input",
+      "required": false,
+      "units": "categorical class code",
+      "native_resolution_m": null,
+      "source": {
+        "provider": "No source used",
+        "citation": "Land cover was deliberately not inferred for this bake verification; the forest layer must remain masked.",
+        "licence": "Not applicable (missing optional input)"
+      }
+    }
+  }
+}

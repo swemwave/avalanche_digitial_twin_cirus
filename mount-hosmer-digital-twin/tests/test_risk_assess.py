@@ -192,12 +192,12 @@ def test_model_fingerprint_covers_release_and_runout_parameters(tmp_path: Path):
     ("mode", "expected"),
     [
         ("fast", (276600.0, 276650.0, None, 12, 12, 12)),
-        # Advanced density uses true particle multiplicity (np.add.at). The old
-        # 116,325 m² core came from numpy fancy-index += collapsing duplicate
-        # particles in a cell; correcting that bug changes the 40th-percentile
-        # core by 1,100 m² (-0.95 %) while leaving the outer envelope and peak
-        # velocity unchanged.
-        ("advanced", (115225.0, 133125.0, 21.69, 6, 6, 5)),
+        # Advanced density uses true particle multiplicity (np.add.at). Relative
+        # to the intermediate full-fall-line projection, using the grade along
+        # each particle's actual travel direction changes core area
+        # 115,275 -> 114,225 m² (-0.911 %), envelope area 132,950 -> 132,800 m²
+        # (-0.113 %), and peak velocity 21.77 -> 21.79 m/s (+0.092 %).
+        ("advanced", (114225.0, 132800.0, 21.79, 6, 6, 5)),
     ],
 )
 def test_runout_engines_match_characterized_output(tmp_path: Path, mode: str, expected: tuple):

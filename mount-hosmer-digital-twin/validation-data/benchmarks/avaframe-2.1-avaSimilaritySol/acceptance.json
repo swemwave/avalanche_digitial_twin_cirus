@@ -1,0 +1,165 @@
+{
+  "schema": "avycore-avaframe-analytical-acceptance-v1",
+  "benchmark_id": "avaframe-2.1-avaSimilaritySol-published-case",
+  "preregistered_at_utc": "2026-08-14T23:45:26Z",
+  "locked_before_first_run": true,
+  "scientific_status": "software_verification_only",
+  "engine": {
+    "distribution": "avaframe",
+    "version": "2.1",
+    "source_commit": "9c3cefb89d626f5c0fb4c0329b41bc0c492ce175",
+    "source_tag": "2.1",
+    "license_spdx": "EUPL-1.2",
+    "windows_cp312_amd64_wheel": {
+      "filename": "avaframe-2.1-cp312-cp312-win_amd64.whl",
+      "byte_size": 1996667,
+      "sha256": "0fdf7d7dd23c45b756fc3080994daf6573283b6dc0e1183edef97f0e33ca6451"
+    }
+  },
+  "upstream_inputs": {
+    "root": "avaframe/data/avaSimilaritySol/Inputs",
+    "files": {
+      "DEM_IP_Topo.asc": {
+        "byte_size": 460056,
+        "sha256": "d585f9c768c7ef68035543a10b7a67f1b2e2496f108a7d773a24bcff010cc815"
+      },
+      "simiSol_com1DFACfg.ini": {
+        "byte_size": 4187,
+        "sha256": "5197d798d17bb07cccbd7cf7c0be79a432bb43c9ba00c6d223a7f0f05c96f8b4"
+      },
+      "REL/rel1.cpg": {
+        "byte_size": 5,
+        "sha256": "3ad3031f5503a4404af825262ee8232cc04d4ea6683d42c5dd0a2f2a27ac9824"
+      },
+      "REL/rel1.prj": {
+        "byte_size": 457,
+        "sha256": "af61f17863d3f6c062af630b1196dbdb760a093bc12d3d780261518dbff874e0"
+      }
+    }
+  },
+  "case_configuration": {
+    "basis": "Tonnel et al. (2023), Figure 4 most-accurate similarity-solution case, applied to the exact AvaFrame 2.1 avaSimilaritySol inputs",
+    "seed": 12345,
+    "evaluation_time_s": 20.0,
+    "overrides": {
+      "GENERAL": {
+        "aPPK": "-3",
+        "cMax": "0.02",
+        "meshCellSize": "3",
+        "nPPK0": "15",
+        "seed": "12345",
+        "sphKernelRadius": "3",
+        "tEnd": "20",
+        "tSteps": "0:1"
+      },
+      "SIMISOL": {
+        "onlyLast": "False",
+        "tSave": "20"
+      }
+    },
+    "required_physics": {
+      "friction_model": "Coulomb",
+      "entrainment_enabled": false,
+      "release_maximum_slope_normal_thickness_m": 4.0,
+      "release_density_kg_m3": 200.0,
+      "release_semiaxis_x_on_slope_m": 80.0,
+      "release_semiaxis_y_m": 80.0,
+      "bed_friction_angle_deg": 25.0,
+      "plane_inclination_angle_deg": 35.0
+    }
+  },
+  "acceptance_metrics": {
+    "front_downstream_absolute_error_m": {
+      "comparison": "absolute difference between numerical and semi-analytical downstream positive-thickness front at t=20 s on the common output grid",
+      "maximum": 6.0,
+      "tolerance_basis": "two 3 m computational cells; the upstream run script couples meshCellSize to the 3 m kernel radius used by the published case"
+    },
+    "flow_thickness_relative_l2": {
+      "maximum": 0.5,
+      "definition": "AvaFrame ana1Tests.analysisTools.normL2Scal relative L2 norm",
+      "tolerance_basis": "conservative envelope above the published Figure 4 t=20 s thickness RL2 curve"
+    },
+    "flow_thickness_relative_linf": {
+      "maximum": 0.75,
+      "definition": "AvaFrame ana1Tests.analysisTools.normL2Scal relative maximum norm",
+      "tolerance_basis": "conservative envelope above the published Figure 4 t=20 s thickness RLmax curve"
+    },
+    "momentum_relative_l2": {
+      "maximum": 0.5,
+      "definition": "AvaFrame ana1Tests.analysisTools.normL2Vect relative L2 norm of slope-normal thickness times Cartesian velocity",
+      "tolerance_basis": "conservative envelope above the published Figure 4 t=20 s momentum RL2 curve"
+    },
+    "momentum_relative_linf": {
+      "maximum": 0.75,
+      "definition": "AvaFrame ana1Tests.analysisTools.normL2Vect relative maximum norm",
+      "tolerance_basis": "conservative envelope above the published Figure 4 t=20 s momentum RLmax curve"
+    },
+    "flow_velocity_relative_l2": {
+      "maximum": null,
+      "acceptance_role": "diagnostic_no_upstream_threshold",
+      "definition": "relative L2 norm of scalar speed, reported only where either solution has positive thickness",
+      "tolerance_basis": "upstream evaluates momentum rather than standalone velocity because velocity at a zero-thickness front is not a stable conserved comparison quantity"
+    },
+    "solver_mass_balance_relative_error": {
+      "maximum": 1e-12,
+      "definition": "absolute(final particle mass - initial particle mass) / initial particle mass",
+      "tolerance_basis": "the published governing case has no mass source; this is a Lagrangian particle-mass conservation invariant with a floating-point allowance"
+    },
+    "initial_volume_relative_error": {
+      "maximum": 0.05,
+      "definition": "absolute(numerical initialized volume - pi*Lx*Ly*H/2) / analytical volume",
+      "tolerance_basis": "one-boundary-cell quadrature allowance for a 3 m grid over 80 m release semiaxes"
+    },
+    "grid": {
+      "shape_match": true,
+      "transform_match": true,
+      "cell_size_m": 3.0,
+      "absolute_tolerance_m": 1e-9,
+      "origin_semantics": "lower_left_cell_center_in_upstream_ASC_and_field_header"
+    },
+    "units": {
+      "flow_thickness": "m",
+      "flow_velocity": "m s-1",
+      "momentum": "m2 s-1",
+      "mass": "kg",
+      "coordinates": "m"
+    },
+    "crs": {
+      "expected_status": "undefined_local_cartesian",
+      "acceptance": "must remain explicitly undefined; the upstream analytical DEM has no CRS and must not be assigned the REL/rel1.prj metadata"
+    },
+    "masks": {
+      "expected_invalid_cell_count": 0,
+      "analytical_zero_thickness_is_valid": true,
+      "all_compared_fields_share_mask": true
+    },
+    "domain_boundary": {
+      "positive_thickness_must_not_touch_boundary": true
+    }
+  },
+  "overall_rule": "pass only when every metric with a non-null threshold and every exact grid/unit/CRS/mask/domain invariant passes; diagnostic metrics must be finite but do not control pass/fail",
+  "not_applicable": {
+    "pressure": "The Hutter similarity solution and AvaFrame upstream analyzer provide no analytical pressure target.",
+    "field_validation": "An analytical model-verification case is not an observation and cannot establish physical or local accuracy."
+  },
+  "sources": [
+    {
+      "role": "exact_v2_1_source_and_inputs",
+      "url": "https://github.com/OpenNHM/AvaFrame/tree/9c3cefb89d626f5c0fb4c0329b41bc0c492ce175/avaframe/data/avaSimilaritySol"
+    },
+    {
+      "role": "official_similarity_documentation",
+      "url": "https://docs.avaframe.org/en/2.1/moduleAna1Tests.html#similarity-solution"
+    },
+    {
+      "role": "metric_definitions_and_published_case",
+      "doi": "10.5194/gmd-16-7013-2023",
+      "url": "https://gmd.copernicus.org/articles/16/7013/2023/"
+    },
+    {
+      "role": "semi_analytical_solution",
+      "doi": "10.1007/BF01176861",
+      "url": "https://doi.org/10.1007/BF01176861"
+    }
+  ]
+}

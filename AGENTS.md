@@ -48,6 +48,8 @@ Read these before changing scientific behavior:
 
 - `mount-hosmer-digital-twin/docs/limitations.md`
 - `mount-hosmer-digital-twin/docs/architecture.md`
+- `mount-hosmer-digital-twin/docs/prediction-products.md`
+- `mount-hosmer-digital-twin/docs/runout-engines.md`
 - `docs/data-footprint.md`
 
 ## Code map
@@ -56,6 +58,9 @@ Read these before changing scientific behavior:
 |---|---|
 | Release scoring and zone extraction | `packages/avycore/src/avycore/hazard/risk.py` |
 | Runout engines | `packages/avycore/src/avycore/hazard/runout.py` |
+| External engine contracts and comparison | `packages/avycore/src/avycore/engines/` |
+| Offline engine adapters | `backend/app/processing/runout/` |
+| Offline pipeline and prediction products | `backend/app/pipeline.py`, `packages/avycore/src/avycore/products.py`, `backend/app/predictions.py` |
 | Geometry conversion | `packages/avycore/src/avycore/hazard/geometry.py` |
 | Full assessment orchestration | `backend/app/assess.py` |
 | Offline terrain bake | `backend/app/bake.py`, `backend/app/processing/` |
@@ -111,4 +116,9 @@ backend and frontend checks.
 - Update documentation only when a durable contract, limitation, or operating
   procedure changed. Do not create session logs, handoff notes, progress journals,
   presentation files, or speculative planning documents in the repository.
+
+## Communication style
+
+- Keep responses detailed enough to be useful, but short, simple, direct, and
+  straightforward. Avoid long explanations unless the user asks for them.
 

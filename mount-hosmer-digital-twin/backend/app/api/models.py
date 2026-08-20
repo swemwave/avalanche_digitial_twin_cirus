@@ -474,6 +474,21 @@ class CalibrationStatus(ApiModel):
     reason: str
 
 
+class ComponentFieldValidationEntry(ApiModel):
+    component_tested: Literal["release", "conditional_runout", "end_to_end"]
+    evidence_profile: Literal["R", "C", "E"]
+    status: Literal["unavailable"]
+    eligible_observation_count: Literal[0]
+    trusted_dataset_count: Literal[0]
+    reason: str
+
+
+class ComponentFieldValidationStatus(ApiModel):
+    release: ComponentFieldValidationEntry
+    conditional_runout: ComponentFieldValidationEntry
+    end_to_end: ComponentFieldValidationEntry
+
+
 class SoftwareVerificationStatus(ApiModel):
     status: Literal["characterized_benchmarks"]
     benchmark_version: str
@@ -484,18 +499,25 @@ class SoftwareVerificationStatus(ApiModel):
 class ValidationDataContractStatus(ApiModel):
     status: Literal["ingestion_scaffolding"]
     schema_version: str
+    legacy_read_versions: list[str]
     normalized_projected_coordinates_required: Literal[True]
     explicit_calibration_holdout_partitions: Literal[True]
     canonical_geometry_rasterization: Literal[True]
     prediction_identity_required: Literal[True]
     code_reviewed_dataset_registry_required: Literal[True]
     trusted_dataset_count: int
+    trusted_dataset_count_by_component: dict[
+        Literal["release", "conditional_runout", "end_to_end"], int
+    ]
+    component_specific_evidence_profiles: Literal[True]
+    positive_unlabelled_state_is_explicit: Literal[True]
     end_to_end_field_validation_ready: Literal[False]
 
 
 class AssessmentValidation(ApiModel):
     field_validation: FieldValidationStatus
     calibration: CalibrationStatus
+    component_field_validation: ComponentFieldValidationStatus
     software_verification: SoftwareVerificationStatus
     validation_data_contract: ValidationDataContractStatus
 
@@ -730,3 +752,193 @@ class ChatResult(ApiModel):
     disclaimer: str
     model: str
     is_operational_forecast: Literal[False]
+
+
+# --- Offline prediction products -------------------------------------------
+#
+# These mirror ``avycore.products`` for the HTTP surface. They are deliberately
+# flat and explicit: a field that an engine or stage could not produce is served
+# as null *next to a reason*, so a client can render "unavailable" rather than
+# guessing that a missing number means zero.
+
+
+class PredictionStageStatus(ApiModel):
+    stage: str
+    status: Literal["completed", "skipped", "unavailable", "failed"]
+    reason: str
+
+
+class PredictionStageRecord(PredictionStageStatus):
+    engine_id: str | None = None
+    result_id: str | None = None
+    artifact_root: str | None = None
+
+
+class PredictionProductSummary(ApiModel):
+    product_id: str
+    site_id: str
+    regime: str
+    generated_from: Literal["synthetic_case", "mountain_pack"]
+    pipeline_version: str
+    engine_ids: list[str]
+    comparison_ids: list[str]
+    has_release: bool
+    has_snow_state: bool
+    unavailable_stages: list[PredictionStageStatus]
+    validation_level: str
+    eligible_field_events: int
+    disclaimer: str
+
+
+class PredictionProductList(ApiModel):
+    products: list[PredictionProductSummary]
+    statement: str
+
+
+class UnsupportedOutputRecord(ApiModel):
+    quantity: str
+    reason: str
+
+
+class PredictionEngineOutput(ApiModel):
+    engine_id: str
+    engine_version: str
+    license_spdx: str
+    result_id: str
+    artifact_root: str
+    runout_area_m2: float
+    aoi_status: Literal["complete_within_domain", "truncated_at_domain", "unknown"]
+    available_outputs: list[str]
+    unsupported_outputs: list[UnsupportedOutputRecord]
+    warnings: list[str]
+    limitations: list[str]
+    seed: int | None
+    configuration_sha256: str
+    environment_sha256: str
+
+
+class PredictionReleaseSummary(ApiModel):
+    result_id: str
+    engine_id: str
+    artifact_root: str
+    release_area_m2: float
+    release_volume_m3: float | None
+    has_release_index: bool
+    has_release_thickness: bool
+    has_release_density: bool
+    release_probability: None = Field(
+        default=None,
+        description=(
+            "Always null. A release probability may only be non-null after a calibrated "
+            "probabilistic model and independent validation exist."
+        ),
+    )
+    release_probability_unavailable_reason: str
+    limitations: list[str]
+
+
+class PredictionUncertaintyBound(ApiModel):
+    parameter: str
+    unit: str
+    lower: float
+    central: float
+    upper: float
+    basis: Literal["source", "literature", "expert", "numerical"]
+    source: str
+    interpretation: Literal["bounded_sensitivity_not_probability"]
+
+
+class PredictionEnsembleMember(ApiModel):
+    member_id: str
+    parameter: str
+    unit: str
+    value: float
+    is_central: bool
+    result_id: str
+    runout_area_m2: float
+    aoi_status: Literal["complete_within_domain", "truncated_at_domain", "unknown"]
+
+
+class PredictionUnsupportedSweep(ApiModel):
+    """A span the pipeline was asked for and deliberately did not run."""
+
+    engine_id: str
+    parameter: str
+    reason: str
+    required_to_enable: str
+
+
+class PredictionEnsembleSummary(ApiModel):
+    engine_id: str
+    parameter: str
+    unit: str
+    varies: Literal["engine_parameter", "release_input"]
+    basis: Literal["source", "literature", "expert", "numerical"]
+    source: str
+    members: list[PredictionEnsembleMember]
+    central_runout_area_m2: float
+    minimum_runout_area_m2: float
+    maximum_runout_area_m2: float
+    envelope_area_m2: float
+    envelope_artifact_root: str
+    area_spread_m2: float
+    interpretation: Literal["bounded_sensitivity_not_probability"]
+    member_frequency_note: str
+
+
+class PredictionProvenance(ApiModel):
+    mountain_pack_sha256: str
+    bake_sha256: str | None
+    condition_pack_id: str | None
+    snow_state_pack_id: str | None
+    pipeline_version: str
+    pipeline_sha256: str
+    configuration_sha256: str
+    seed: int | None
+
+
+class PredictionComparisonSummary(ApiModel):
+    comparison_id: str
+    left_engine_id: str
+    right_engine_id: str
+    comparator_version: str
+
+
+class PredictionProductDetail(ApiModel):
+    summary: PredictionProductSummary
+    stages: list[PredictionStageRecord]
+    release: PredictionReleaseSummary | None
+    engines: list[PredictionEngineOutput]
+    comparisons: list[PredictionComparisonSummary]
+    uncertainty: list[PredictionUncertaintyBound]
+    ensembles: list[PredictionEnsembleSummary]
+    unsupported_ensembles: list[PredictionUnsupportedSweep]
+    dominant_uncertainty_contributor: str | None
+    provenance: PredictionProvenance
+    warnings: list[str]
+    limitations: list[str]
+
+
+class RunoutComparisonMetric(ApiModel):
+    name: str
+    quantity: str
+    unit: str
+    status: Literal["available", "not_applicable", "unsupported"]
+    value: float | None
+    valid_cells: int
+    semantics: str
+
+
+class RunoutComparisonDetail(ApiModel):
+    comparison_id: str
+    left_engine_id: str
+    right_engine_id: str
+    left_result_id: str
+    right_result_id: str
+    comparator_version: str
+    common_valid_cells: int
+    common_masked_cells: int
+    metrics: list[RunoutComparisonMetric]
+    warnings: list[str]
+    limitations: list[str]
+    disclaimer: str

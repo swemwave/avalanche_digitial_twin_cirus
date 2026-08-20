@@ -148,7 +148,7 @@
           "release_required_valid_fraction": 1.0,
           "runout_required_valid_fraction": 1.0
         },
-        "output_sha256": "ab0b7e5487090d6186f45df5443259c62ddcea4c312566f9e3a707f68835692c",
+        "output_sha256": "f8e45192a281891f988e6385032b69448b529231fc48c10bcabe4e8cc84a3a54",
         "summary": {
           "release_valid_cells": 1488,
           "release_min": 14.875,
@@ -177,17 +177,17 @@
           "release_required_valid_fraction": 1.0,
           "runout_required_valid_fraction": 1.0
         },
-        "output_sha256": "0bf74845d904d4d6e17782b6f64d95d5ad4e5bee7cab3928ff1e4a3b01f9e458",
+        "output_sha256": "89cae4d1ba2c498587bd33d1e821aacbea319c5857b9b6040b2d6cfc17e020e3",
         "summary": {
           "release_valid_cells": 1488,
           "release_min": 74.375,
           "release_max": 74.375,
           "release_mean": 74.375,
-          "reached_cells": 227,
-          "uncertainty_cells": 375,
-          "runout_area_m2": 5675.0,
-          "uncertainty_area_m2": 9375.0,
-          "maximum_velocity_ms": 21.547728,
+          "reached_cells": 217,
+          "uncertainty_cells": 358,
+          "runout_area_m2": 5425.0,
+          "uncertainty_area_m2": 8950.0,
+          "maximum_velocity_ms": 21.666599,
           "particles_left_the_aoi": 300
         }
       },
@@ -206,18 +206,18 @@
           "release_required_valid_fraction": 0.884409,
           "runout_required_valid_fraction": 0.905914
         },
-        "output_sha256": "638e6ad1ad86669b3ae5686177f1ebe0320f7536c4a6ae20f8766407540dccb6",
+        "output_sha256": "4eabef8c9c6d25d97d289e3288e5e904b2149d1df6ffb4e651027454120d1b8a",
         "summary": {
           "release_valid_cells": 1316,
           "release_min": 74.375,
           "release_max": 74.375,
           "release_mean": 74.375,
-          "reached_cells": 65,
-          "uncertainty_cells": 107,
-          "runout_area_m2": 1625.0,
-          "uncertainty_area_m2": 2675.0,
-          "maximum_velocity_ms": 19.695065,
-          "particles_left_the_aoi": 0
+          "reached_cells": 128,
+          "uncertainty_cells": 214,
+          "runout_area_m2": 3200.0,
+          "uncertainty_area_m2": 5350.0,
+          "maximum_velocity_ms": 23.243616,
+          "particles_left_the_aoi": 26
         }
       },
       "aoi_boundary": {
@@ -235,17 +235,17 @@
           "release_required_valid_fraction": 1.0,
           "runout_required_valid_fraction": 1.0
         },
-        "output_sha256": "225b3005cc0edabf4798f7df654d15fb7cfb4621e2104c19f2f9f67eb3a422af",
+        "output_sha256": "f8c98dc40bc1b1a461579a71ba8aa8ae78f182a4e4f1c860aabdf2f829c33df4",
         "summary": {
           "release_valid_cells": 1302,
           "release_min": 74.375,
           "release_max": 74.375,
           "release_mean": 74.375,
-          "reached_cells": 187,
-          "uncertainty_cells": 311,
-          "runout_area_m2": 4675.0,
-          "uncertainty_area_m2": 7775.0,
-          "maximum_velocity_ms": 22.4603,
+          "reached_cells": 183,
+          "uncertainty_cells": 301,
+          "runout_area_m2": 4575.0,
+          "uncertainty_area_m2": 7525.0,
+          "maximum_velocity_ms": 22.776915,
           "particles_left_the_aoi": 300
         }
       }
@@ -266,7 +266,7 @@
           "release_required_valid_fraction": 1.0,
           "runout_required_valid_fraction": 1.0
         },
-        "output_sha256": "ab0b7e5487090d6186f45df5443259c62ddcea4c312566f9e3a707f68835692c",
+        "output_sha256": "08874be0689e80e255594813dbe38374aa23c52e2fab113f3cfcc3010e57c844",
         "summary": {
           "release_valid_cells": 1488,
           "release_min": 14.875,
@@ -295,7 +295,7 @@
           "release_required_valid_fraction": 1.0,
           "runout_required_valid_fraction": 1.0
         },
-        "output_sha256": "4528961b9a90e19206247ea397f8d29dabaf3e4c10a70bc305512a34bc5765ba",
+        "output_sha256": "4e046e033a97808ae684cf612b6fa67124c61aedc707e89f95aedc9de470971d",
         "summary": {
           "release_valid_cells": 1488,
           "release_min": 74.375,
@@ -324,7 +324,7 @@
           "release_required_valid_fraction": 0.884409,
           "runout_required_valid_fraction": 0.905914
         },
-        "output_sha256": "dfad2548ee111e23d8c94d9b0f7fc9fdf06ff8ee1947f255538e540616b9802a",
+        "output_sha256": "90d5af9d8be02a7ad0f0e1e1215cc40ca446c063609ccf8b07045b60f791f6b2",
         "summary": {
           "release_valid_cells": 1316,
           "release_min": 74.375,
@@ -353,7 +353,7 @@
           "release_required_valid_fraction": 1.0,
           "runout_required_valid_fraction": 1.0
         },
-        "output_sha256": "0ec87966f030e585b48fc80f588321615a9547f802e0cb9658ddea3afa7d523b",
+        "output_sha256": "945f71a9bae39b26ee533a105ab6fa252b6a9b14a3f3a7cb0b8b8df963df65ec",
         "summary": {
           "release_valid_cells": 1302,
           "release_min": 74.375,

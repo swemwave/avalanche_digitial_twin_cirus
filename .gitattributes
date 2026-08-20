@@ -1,0 +1,12 @@
+# Every frozen scientific identity in this repository is a SHA-256 over file
+# bytes. A checkout must therefore hand back exactly the bytes git stores, on
+# every platform: with core.autocrlf=true an unpinned text file arrives as CRLF
+# and its recorded digest stops reproducing.
+#
+# The rule is repository-wide on purpose. A per-file allowlist only covers the
+# files someone remembered to add, and silently breaks the next time a hash is
+# frozen over a file that is not on it.
+* text=auto eol=lf
+
+# Binary evidence must never be line-ending filtered.
+*.npz binary

@@ -1,0 +1,459 @@
+{
+  "cache_reference": ".validation-cache/blinded-observation-packets-v2",
+  "claim_boundary": "Released packets are blinded annotation inputs, not reviewed observations. Unresolved masks remain explicit and no missing area is treated as clear.",
+  "counts": {
+    "accepted_quantitative_observations": 0,
+    "human_reviews_complete": 0,
+    "packets_built": 26,
+    "packets_released": 25
+  },
+  "evaluated_outputs_accessed": false,
+  "frozen_at_utc": "2026-08-14T00:00:00Z",
+  "normalized_artifact_sha256": "d623328da6e121a7c6ef2c488e8e46c37c1d4603f7d07fa9598c97523dfe087f",
+  "packet_set_id": "public-event-blinded-observation-packets-v2",
+  "packets": [
+    {
+      "accepted_as_quantitative_evidence": false,
+      "archive_bytes": 27945296,
+      "archive_path": ".validation-cache/blinded-observation-packets-v2/blind-9632da0c0def9d4e1b2a.zip",
+      "archive_sha256": "be24e23d5ca35812bf0301473d0807bb919e9e70ec1d9461d6d5910f490de4db",
+      "candidate_id": "regobs-330446",
+      "human_review_complete": false,
+      "packet_content_sha256": "919ab9e4bb781dbe69894fc2bfa6b16a5519f702acfff6d20ef7df6d95a0c47f",
+      "packet_id": "blind-9632da0c0def9d4e1b2a",
+      "packet_status": "released_for_independent_human_annotation",
+      "released": true,
+      "source_file_count": 42,
+      "technical_qa_sensors": [
+        "sentinel_1_grd",
+        "sentinel_2_l2a"
+      ]
+    },
+    {
+      "accepted_as_quantitative_evidence": false,
+      "archive_bytes": 27855396,
+      "archive_path": ".validation-cache/blinded-observation-packets-v2/blind-673916b3df90f959fd78.zip",
+      "archive_sha256": "c52c9d391f5f4e8bd46370a5e2daa022b98f50fc87d27dc83e3a3e90815d1856",
+      "candidate_id": "regobs-331395",
+      "human_review_complete": false,
+      "packet_content_sha256": "3cb5179b7cdc304b3b29b39d18750d3fb5c0b47a447049ec120d11c35c6d7963",
+      "packet_id": "blind-673916b3df90f959fd78",
+      "packet_status": "released_for_independent_human_annotation",
+      "released": true,
+      "source_file_count": 41,
+      "technical_qa_sensors": [
+        "sentinel_1_grd",
+        "sentinel_2_l2a"
+      ]
+    },
+    {
+      "accepted_as_quantitative_evidence": false,
+      "archive_bytes": 30401755,
+      "archive_path": ".validation-cache/blinded-observation-packets-v2/blind-10e5c836937f6ff7fa31.zip",
+      "archive_sha256": "4f8b26cb5fc14fd52f61ddfaa32272ffec348791c292e7a24dbab86c5487f8be",
+      "candidate_id": "regobs-334839",
+      "human_review_complete": false,
+      "packet_content_sha256": "2871479596d0f4d69bd9b1e8881599f24a5e4eaaf42e56b6a7a7d8e7884d73e0",
+      "packet_id": "blind-10e5c836937f6ff7fa31",
+      "packet_status": "released_for_independent_human_annotation",
+      "released": true,
+      "source_file_count": 42,
+      "technical_qa_sensors": [
+        "sentinel_1_grd",
+        "sentinel_2_l2a"
+      ]
+    },
+    {
+      "accepted_as_quantitative_evidence": false,
+      "archive_bytes": 28435586,
+      "archive_path": ".validation-cache/blinded-observation-packets-v2/blind-2c186630f6d54facd5ac.zip",
+      "archive_sha256": "5a9a6d45d40a235f25cf18a369d48a82cba31c9a69d39ab7c78affcd6e901d64",
+      "candidate_id": "regobs-335278",
+      "human_review_complete": false,
+      "packet_content_sha256": "8985b6758c41813babcb24e6b06af7444fbc52e7ef1d132eaa6302e045ce9415",
+      "packet_id": "blind-2c186630f6d54facd5ac",
+      "packet_status": "released_for_independent_human_annotation",
+      "released": true,
+      "source_file_count": 40,
+      "technical_qa_sensors": [
+        "sentinel_1_grd",
+        "sentinel_2_l2a"
+      ]
+    },
+    {
+      "accepted_as_quantitative_evidence": false,
+      "archive_bytes": 26461828,
+      "archive_path": ".validation-cache/blinded-observation-packets-v2/blind-6ceff42a6afe29a21524.zip",
+      "archive_sha256": "1cef79e1caf04cdc3e46cf539d080f1b9903a076c70287b0cbc9f88d8e440043",
+      "candidate_id": "regobs-338556",
+      "human_review_complete": false,
+      "packet_content_sha256": "f160d03a0ad53eb265c9aa99309febd090173dafdec4cbf2afcaa486b2022268",
+      "packet_id": "blind-6ceff42a6afe29a21524",
+      "packet_status": "released_for_independent_human_annotation",
+      "released": true,
+      "source_file_count": 38,
+      "technical_qa_sensors": [
+        "sentinel_1_grd",
+        "sentinel_2_l2a"
+      ]
+    },
+    {
+      "accepted_as_quantitative_evidence": false,
+      "archive_bytes": 29903163,
+      "archive_path": ".validation-cache/blinded-observation-packets-v2/blind-6da3556f6319137c5354.zip",
+      "archive_sha256": "ef141ea31093a6a6a9be2f418db6cbeb0daf2a28b2b78fce5ae92f2a173e4936",
+      "candidate_id": "regobs-339023",
+      "human_review_complete": false,
+      "packet_content_sha256": "6d7621d54742bf23cb508468d5182d4e2070232752305397a6c2081f66e313ed",
+      "packet_id": "blind-6da3556f6319137c5354",
+      "packet_status": "released_for_independent_human_annotation",
+      "released": true,
+      "source_file_count": 40,
+      "technical_qa_sensors": [
+        "sentinel_1_grd",
+        "sentinel_2_l2a"
+      ]
+    },
+    {
+      "accepted_as_quantitative_evidence": false,
+      "archive_bytes": 26370962,
+      "archive_path": ".validation-cache/blinded-observation-packets-v2/blind-1870ca3fbbfa25ed3e95.zip",
+      "archive_sha256": "b7b991beebc69f5b17f6b3ab1018269e6459b086d5a787342d0577893dd24a6c",
+      "candidate_id": "regobs-340048",
+      "human_review_complete": false,
+      "packet_content_sha256": "d54dfe136b77793a8787b3478f97a686e02f9f8bbd7c15fbc02531eb06602c51",
+      "packet_id": "blind-1870ca3fbbfa25ed3e95",
+      "packet_status": "released_for_independent_human_annotation",
+      "released": true,
+      "source_file_count": 43,
+      "technical_qa_sensors": [
+        "sentinel_1_grd",
+        "sentinel_2_l2a"
+      ]
+    },
+    {
+      "accepted_as_quantitative_evidence": false,
+      "archive_bytes": 31467945,
+      "archive_path": ".validation-cache/blinded-observation-packets-v2/blind-94fb6cc8e014d171457a.zip",
+      "archive_sha256": "a635d8742b8788fa291d9b1132a350bfa8649aa6785136fe632e84fa4b0b5b0e",
+      "candidate_id": "regobs-341799",
+      "human_review_complete": false,
+      "packet_content_sha256": "91103c4765b4e7964c58effbabd01d6735997d671984c4c65afd5cdeb302df61",
+      "packet_id": "blind-94fb6cc8e014d171457a",
+      "packet_status": "released_for_independent_human_annotation",
+      "released": true,
+      "source_file_count": 43,
+      "technical_qa_sensors": [
+        "sentinel_1_grd",
+        "sentinel_2_l2a"
+      ]
+    },
+    {
+      "accepted_as_quantitative_evidence": false,
+      "archive_bytes": 20123472,
+      "archive_path": ".validation-cache/blinded-observation-packets-v2/blind-10fac4e9bc8d6d27cd6f.zip",
+      "archive_sha256": "962462ed34c209e98ade8607de75867d00e0913d9452985eed10c97813a5909f",
+      "candidate_id": "regobs-354318",
+      "human_review_complete": false,
+      "packet_content_sha256": "071a1d7fa2a1e0d5d2e7f0fc758d917b88bb44ac2e061d88959f6cbe9514c1d8",
+      "packet_id": "blind-10fac4e9bc8d6d27cd6f",
+      "packet_status": "released_for_independent_human_annotation",
+      "released": true,
+      "source_file_count": 27,
+      "technical_qa_sensors": [
+        "sentinel_1_grd"
+      ]
+    },
+    {
+      "accepted_as_quantitative_evidence": false,
+      "archive_bytes": 21186550,
+      "archive_path": ".validation-cache/blinded-observation-packets-v2/blind-ac7f3f3fe70ef2525db9.zip",
+      "archive_sha256": "14a85d289e7118bf0031960684274a7be8ad4d249c921142ad8f6cc56abee962",
+      "candidate_id": "regobs-358192",
+      "human_review_complete": false,
+      "packet_content_sha256": "6d44a0bac3b487368f2fe67d3cea9c6ad2fc0f413b4a4dd8c5a26d0eeeaa3583",
+      "packet_id": "blind-ac7f3f3fe70ef2525db9",
+      "packet_status": "released_for_independent_human_annotation",
+      "released": true,
+      "source_file_count": 24,
+      "technical_qa_sensors": [
+        "sentinel_1_grd"
+      ]
+    },
+    {
+      "accepted_as_quantitative_evidence": false,
+      "archive_bytes": 31221314,
+      "archive_path": ".validation-cache/blinded-observation-packets-v2/blind-086140a9d9f4a60c881f.zip",
+      "archive_sha256": "1914efbc08cae391571fc4f7be87fc4474bf2a7f2551bfa734dd1ef15d1b6a03",
+      "candidate_id": "regobs-369343",
+      "human_review_complete": false,
+      "packet_content_sha256": "e486db93ff3f28580f945dd6ad3551bea2e6659153cbba40746db2c1130aa79d",
+      "packet_id": "blind-086140a9d9f4a60c881f",
+      "packet_status": "released_for_independent_human_annotation",
+      "released": true,
+      "source_file_count": 42,
+      "technical_qa_sensors": [
+        "sentinel_1_grd",
+        "sentinel_2_l2a"
+      ]
+    },
+    {
+      "accepted_as_quantitative_evidence": false,
+      "archive_bytes": 26057401,
+      "archive_path": ".validation-cache/blinded-observation-packets-v2/blind-7e2f03897222a40e1a97.zip",
+      "archive_sha256": "2882f0af42593fca3e24d6cfeafe3761ed70267bd4ab8899ea04db523d71e8c5",
+      "candidate_id": "regobs-376510",
+      "human_review_complete": false,
+      "packet_content_sha256": "a834d42b9cf14958bfb2f5ea8447df3121badb3b0783565c310942a5ea9bcf69",
+      "packet_id": "blind-7e2f03897222a40e1a97",
+      "packet_status": "released_for_independent_human_annotation",
+      "released": true,
+      "source_file_count": 39,
+      "technical_qa_sensors": [
+        "sentinel_1_grd",
+        "sentinel_2_l2a"
+      ]
+    },
+    {
+      "accepted_as_quantitative_evidence": false,
+      "archive_bytes": 47390266,
+      "archive_path": ".validation-cache/blinded-observation-packets-v2/blind-2bb809ec3e37e4edfda6.zip",
+      "archive_sha256": "51022b79f4f8a35eee70bb106244c9a6a1f2c3f512e6e22b2361a81692d0b0fe",
+      "candidate_id": "regobs-382585",
+      "human_review_complete": false,
+      "packet_content_sha256": "1cdb9ebf8f5ccd7ffbf873be21df4f94853ed250a965348fe526229e71acd8da",
+      "packet_id": "blind-2bb809ec3e37e4edfda6",
+      "packet_status": "released_for_independent_human_annotation",
+      "released": true,
+      "source_file_count": 42,
+      "technical_qa_sensors": [
+        "sentinel_1_grd",
+        "sentinel_2_l2a"
+      ]
+    },
+    {
+      "accepted_as_quantitative_evidence": false,
+      "archive_bytes": 31220982,
+      "archive_path": ".validation-cache/blinded-observation-packets-v2/blind-541d58c902348c8a44f2.zip",
+      "archive_sha256": "d4b0f8bff6dadaf2b83ec2bb55e5a2c9e29d8a90061c8701e7e19f24a251ce58",
+      "candidate_id": "regobs-389737",
+      "human_review_complete": false,
+      "packet_content_sha256": "679f5b26a85bc743f60ea5c473ff28866893e3726ad6d490d03b7c69f26ec02e",
+      "packet_id": "blind-541d58c902348c8a44f2",
+      "packet_status": "released_for_independent_human_annotation",
+      "released": true,
+      "source_file_count": 43,
+      "technical_qa_sensors": [
+        "sentinel_1_grd",
+        "sentinel_2_l2a"
+      ]
+    },
+    {
+      "accepted_as_quantitative_evidence": false,
+      "archive_bytes": 28014500,
+      "archive_path": ".validation-cache/blinded-observation-packets-v2/blind-c7aa83efe07156f24834.zip",
+      "archive_sha256": "e41a55d530199a85783cf98b95937b35e318c0d0163007e545662d864ccb296d",
+      "candidate_id": "regobs-420503",
+      "human_review_complete": false,
+      "packet_content_sha256": "c833aee596b92bd7f3996c6e3117fd9736417e48c2d9d6576823a71f363d3aa3",
+      "packet_id": "blind-c7aa83efe07156f24834",
+      "packet_status": "released_for_independent_human_annotation",
+      "released": true,
+      "source_file_count": 42,
+      "technical_qa_sensors": [
+        "sentinel_1_grd",
+        "sentinel_2_l2a"
+      ]
+    },
+    {
+      "accepted_as_quantitative_evidence": false,
+      "archive_bytes": 28792108,
+      "archive_path": ".validation-cache/blinded-observation-packets-v2/blind-285ed36c05bcccb9f8bf.zip",
+      "archive_sha256": "7b1afbefd80d7a814ea5318c685c595310d5f6bff8d64cd391ef6132d40b1402",
+      "candidate_id": "regobs-422102",
+      "human_review_complete": false,
+      "packet_content_sha256": "80278ef4f506116e57b74f5523e9e3b5fd8545367ea3544374be061eca3687f6",
+      "packet_id": "blind-285ed36c05bcccb9f8bf",
+      "packet_status": "released_for_independent_human_annotation",
+      "released": true,
+      "source_file_count": 42,
+      "technical_qa_sensors": [
+        "sentinel_1_grd",
+        "sentinel_2_l2a"
+      ]
+    },
+    {
+      "accepted_as_quantitative_evidence": false,
+      "archive_bytes": 28855262,
+      "archive_path": ".validation-cache/blinded-observation-packets-v2/blind-8f7496215d691600a6cd.zip",
+      "archive_sha256": "d5768ce37bbcdcab90f7560e4373ec249b0fe54e3c2f2d7030be9b4613797301",
+      "candidate_id": "regobs-427508",
+      "human_review_complete": false,
+      "packet_content_sha256": "eec4b3dcc05aa695136578747f2ce978a7e94be75ef5e8ce5e2f9062340cea2d",
+      "packet_id": "blind-8f7496215d691600a6cd",
+      "packet_status": "released_for_independent_human_annotation",
+      "released": true,
+      "source_file_count": 40,
+      "technical_qa_sensors": [
+        "sentinel_1_grd",
+        "sentinel_2_l2a"
+      ]
+    },
+    {
+      "accepted_as_quantitative_evidence": false,
+      "archive_bytes": 40088444,
+      "archive_path": ".validation-cache/blinded-observation-packets-v2/blind-32efdfd2cac000f76108.zip",
+      "archive_sha256": "34a91e988f94a86aa459c4823afa594fc9f7e39e404d96d1765b854c51b1d2b0",
+      "candidate_id": "regobs-442413",
+      "human_review_complete": false,
+      "packet_content_sha256": "742be529235f262bf823de0a509b1fcbdb973faa43f302bb60ce57081b283652",
+      "packet_id": "blind-32efdfd2cac000f76108",
+      "packet_status": "released_for_independent_human_annotation",
+      "released": true,
+      "source_file_count": 55,
+      "technical_qa_sensors": [
+        "sentinel_1_grd",
+        "sentinel_2_l2a"
+      ]
+    },
+    {
+      "accepted_as_quantitative_evidence": false,
+      "archive_bytes": 31891484,
+      "archive_path": ".validation-cache/blinded-observation-packets-v2/blind-4a5af0f7a4e23168f36e.zip",
+      "archive_sha256": "acf6ad88df452deb85a83c4d3676343e543d1ad3728a6914338a37ddf3449d37",
+      "candidate_id": "regobs-442574",
+      "human_review_complete": false,
+      "packet_content_sha256": "8b90a3809757f7e51c3824dbc33adc0bd809c2fbd8eae4efbd965036fa6031c2",
+      "packet_id": "blind-4a5af0f7a4e23168f36e",
+      "packet_status": "released_for_independent_human_annotation",
+      "released": true,
+      "source_file_count": 45,
+      "technical_qa_sensors": [
+        "sentinel_1_grd",
+        "sentinel_2_l2a"
+      ]
+    },
+    {
+      "accepted_as_quantitative_evidence": false,
+      "archive_bytes": 19614347,
+      "archive_path": ".validation-cache/blinded-observation-packets-v2/blind-b51d1b251131021aba41.zip",
+      "archive_sha256": "031795095131af8f46b377c41ca1563a6a49cfe56f283d4b4dfb54092f5cbf6b",
+      "candidate_id": "regobs-448389",
+      "human_review_complete": false,
+      "packet_content_sha256": "0be3c8a996c3f3a106f0385ffc2beff3138ef4f2720a868567a071f579f75fd2",
+      "packet_id": "blind-b51d1b251131021aba41",
+      "packet_status": "withheld_missing_technical_source_payload",
+      "released": false,
+      "source_file_count": 20,
+      "technical_qa_sensors": []
+    },
+    {
+      "accepted_as_quantitative_evidence": false,
+      "archive_bytes": 30364326,
+      "archive_path": ".validation-cache/blinded-observation-packets-v2/blind-31f428915529eee40342.zip",
+      "archive_sha256": "038b39ab1fab52fc418c3d4980ae152246529a59302bf3c6a13964d5b9e3c321",
+      "candidate_id": "regobs-449426",
+      "human_review_complete": false,
+      "packet_content_sha256": "310917b7fd73694e1e021a5a5de1fcc9f6a365dbe74046e61d3c045f81865ffc",
+      "packet_id": "blind-31f428915529eee40342",
+      "packet_status": "released_for_independent_human_annotation",
+      "released": true,
+      "source_file_count": 40,
+      "technical_qa_sensors": [
+        "sentinel_1_grd",
+        "sentinel_2_l2a"
+      ]
+    },
+    {
+      "accepted_as_quantitative_evidence": false,
+      "archive_bytes": 32267086,
+      "archive_path": ".validation-cache/blinded-observation-packets-v2/blind-31dd0d6e121f3e119207.zip",
+      "archive_sha256": "b815d01fc20c8646b8832fa0760f3ed49869fe745fa983feda3ddc1ab50d57b6",
+      "candidate_id": "regobs-449728",
+      "human_review_complete": false,
+      "packet_content_sha256": "070655bacc2bc7a7446244d7171556de7c26c3cfa3d6d3a415a8fd8a3d644abe",
+      "packet_id": "blind-31dd0d6e121f3e119207",
+      "packet_status": "released_for_independent_human_annotation",
+      "released": true,
+      "source_file_count": 45,
+      "technical_qa_sensors": [
+        "sentinel_1_grd",
+        "sentinel_2_l2a"
+      ]
+    },
+    {
+      "accepted_as_quantitative_evidence": false,
+      "archive_bytes": 35674229,
+      "archive_path": ".validation-cache/blinded-observation-packets-v2/blind-78f49beff7a9a8e3d487.zip",
+      "archive_sha256": "4b02f9e66637d2a2d633181cb6222077094c355ae01c0635e2834095ce23b04e",
+      "candidate_id": "regobs-453367",
+      "human_review_complete": false,
+      "packet_content_sha256": "8a1648c7eadc391c7c67d66e481d63cb9a7c612afe18fad0620ba7c315cb3c31",
+      "packet_id": "blind-78f49beff7a9a8e3d487",
+      "packet_status": "released_for_independent_human_annotation",
+      "released": true,
+      "source_file_count": 55,
+      "technical_qa_sensors": [
+        "sentinel_1_grd",
+        "sentinel_2_l2a"
+      ]
+    },
+    {
+      "accepted_as_quantitative_evidence": false,
+      "archive_bytes": 33658634,
+      "archive_path": ".validation-cache/blinded-observation-packets-v2/blind-32a2c89973c76a984b54.zip",
+      "archive_sha256": "626e5e6b38f07147788a215f7cab992d6d99be193e0eedb2d94996a06aae31e5",
+      "candidate_id": "regobs-455982",
+      "human_review_complete": false,
+      "packet_content_sha256": "2f5761416071578cd446af6fda9cb0f2d3464f3422403e7da77e27c7e3762a2b",
+      "packet_id": "blind-32a2c89973c76a984b54",
+      "packet_status": "released_for_independent_human_annotation",
+      "released": true,
+      "source_file_count": 45,
+      "technical_qa_sensors": [
+        "sentinel_1_grd",
+        "sentinel_2_l2a"
+      ]
+    },
+    {
+      "accepted_as_quantitative_evidence": false,
+      "archive_bytes": 30507706,
+      "archive_path": ".validation-cache/blinded-observation-packets-v2/blind-714d07cf881466b20f79.zip",
+      "archive_sha256": "aeb682e3ac2f8696b5e75392de4cbb2b51d7128f4789e4107d08a826477c41f6",
+      "candidate_id": "regobs-457182",
+      "human_review_complete": false,
+      "packet_content_sha256": "bfe082aee76e62002d47a0f124353c16222ea0c12481cf642f24474e6f9a3d27",
+      "packet_id": "blind-714d07cf881466b20f79",
+      "packet_status": "released_for_independent_human_annotation",
+      "released": true,
+      "source_file_count": 54,
+      "technical_qa_sensors": [
+        "sentinel_1_grd",
+        "sentinel_2_l2a"
+      ]
+    },
+    {
+      "accepted_as_quantitative_evidence": false,
+      "archive_bytes": 26758370,
+      "archive_path": ".validation-cache/blinded-observation-packets-v2/blind-0de12363f792c279e567.zip",
+      "archive_sha256": "8f49473447b4119e04db33ddeea57d092ccb0f34a9c24671a322479ce53cb4d3",
+      "candidate_id": "regobs-458220",
+      "human_review_complete": false,
+      "packet_content_sha256": "061f8332c82afb102f0b5e7fa62412ebd133b0876be5e3868865cfe163de4517",
+      "packet_id": "blind-0de12363f792c279e567",
+      "packet_status": "released_for_independent_human_annotation",
+      "released": true,
+      "source_file_count": 40,
+      "technical_qa_sensors": [
+        "sentinel_1_grd",
+        "sentinel_2_l2a"
+      ]
+    }
+  ],
+  "peer_reviews_bundled": false,
+  "predictions_generated": false,
+  "schema": "avycore-blinded-observation-packets-v2",
+  "source_acquisition_sha256": "4a019bb04ff5b74766942a4b8376218597bd80b2c4b30e3fc5dbf8853da731a9",
+  "source_evidence_sha256": "87ea8956f8d5340de7d9eb3dd82f3d674022f2c487e0462e5b0d964b24086fe5",
+  "source_pixel_qa_sha256": "e38f3048b47792249b6c56d02fe36b0f7567d49f5c9de1039b7cfbbfc0ec2f0e"
+}

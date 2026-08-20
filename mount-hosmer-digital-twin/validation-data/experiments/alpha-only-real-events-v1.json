@@ -1,0 +1,180 @@
+{
+  "schema": "avycore-qualitative-alpha-experiment-v1",
+  "experiment_id": "alpha-only-real-events-v1",
+  "frozen_before_results": true,
+  "frozen_date": "2026-08-12",
+  "post_freeze_metadata_amendments": [
+    {
+      "date": "2026-08-12",
+      "scope": "schema_label_only",
+      "original_frozen_spec_sha256": "ec7f104cb68b9bdba064ba2e5806fe126cb342da1a0a5ee0ecac434eefff7f85",
+      "change": "Renamed mountain_area to analysis_group and mountain_area_count to analysis_group_count because these labels are analysis groupings, not evidence of independent mountains.",
+      "unchanged": "Event IDs, group memberships, calibration/check assignments, sensitivity parameters, release rules, mapped-positive rules, and scoring rules are unchanged.",
+      "result_informed": false
+    }
+  ],
+  "scientific_use": "qualitative_comparison",
+  "component_tested": "empirical_alpha_angle_plus_routing",
+  "engine": "fast_routing_alpha",
+  "engine_mode": "alpha_only",
+  "claim_boundary": "Mapped-positive coverage tests whether alpha-angle-constrained downslope routing reaches mapped avalanche-positive area. It is not IoU, field validation, a false-positive rate, or a validation of Voellmy dynamics.",
+  "fixed_model": {
+    "parameter_manifest": "backend/config/m0-baseline.json:model.parameter_manifest",
+    "parameter_manifest_sha256": "aaafd6f9fc6e8d598cb56c479bcc072374ee94ba17613c0ac2df0594f8059628",
+    "flow_regime": "dry_slab",
+    "fast_mode_spreading": 0.35,
+    "fast_mode_max_path_length_m": 4000.0,
+    "fast_mode_minimum_flux": 0.02,
+    "random_seed": null,
+    "determinism": "FastRunoutEngine makes no stochastic draws.",
+    "parameter_tuning_permitted": false
+  },
+  "sensitivity_grid": {
+    "release_size": [
+      "small",
+      "medium",
+      "large",
+      "very_large"
+    ],
+    "alpha_angle_deg": {
+      "small": 32.0,
+      "medium": 27.0,
+      "large": 23.0,
+      "very_large": 19.0
+    },
+    "release_depth": {
+      "status": "unsupported",
+      "reason": "FastRunoutEngine has no release-depth input; release_size changes the empirical alpha angle and must not be described as a depth sweep."
+    }
+  },
+  "grid_rule": {
+    "crs": "EPSG:2056",
+    "resolution_m": 10.0,
+    "dem_resampling": "bilinear",
+    "polygon_rasterization": "cell_center",
+    "nodata_policy": "masked; never replaced with a safe-looking zero",
+    "aoi_rule": "Brama events use the complete published DTM extent. SPOT AOIs are each mapped-footprint bounds plus 4500 m and must be completely covered by the acquired DEM.",
+    "boundary_rule": "A run whose reached or uncertainty cells touch the raster or valid-data boundary is unscoreable even when FastRunoutEngine reports particles_left_the_aoi=0."
+  },
+  "release_geometry_rules": {
+    "brama": "Rasterize the published event release polygon without alteration.",
+    "spot": "Derived proxy only: within the mapped exact SLAB footprint, select 10 m cells whose elevation is at least min_elevation + 0.8*(max_elevation-min_elevation) and whose terrain slope is at least 27 degrees. Use all qualifying cells. If none qualify, mark the event unscoreable; do not introduce a fallback after seeing results."
+  },
+  "mapped_positive_rules": {
+    "brama": "Published dense-deposit polygon.",
+    "spot": "Published SPOT avalanche footprint (start through deposit), aval_shape=1 and typ=SLAB. This is not a deposit-only polygon."
+  },
+  "metrics": [
+    {
+      "name": "mapped_positive_coverage",
+      "definition": "area(predicted_reached AND mapped_positive) / area(mapped_positive)",
+      "interpretation": "sensitivity on mapped avalanche-positive cells only"
+    },
+    {
+      "name": "predicted_to_mapped_area_ratio",
+      "definition": "area(predicted_reached) / area(mapped_positive)",
+      "interpretation": "extent scale diagnostic; not a precision or false-positive metric"
+    }
+  ],
+  "sources": {
+    "brama": {
+      "doi": "10.5281/zenodo.15796703",
+      "url": "https://zenodo.org/records/15796703",
+      "license": "CC-BY-4.0",
+      "dem_file": "Braemabuehl_DTM_1m.tif",
+      "dem_md5": "680930cdd4af3410551909810a66ca54",
+      "lineage_limit": "Release and deposit outlines were interpreted from drone orthophotography one day after the 2019-01-15 events; no quantified positional uncertainty or complete surveyed-domain declaration is available."
+    },
+    "spot": {
+      "doi": "10.16904/envidat.202",
+      "url": "https://www.envidat.ch/metadata/satellite-avalanche-mapping-validation",
+      "license": "ODbL-1.0",
+      "source_archive_sha256": "5529482a35823f4b3f2d870df7da52e2c73af151f6eb9c12d3869353379368bb",
+      "source_layer": "SPOT_2019_perimeter",
+      "lineage_limit": "Remote-sensing interpretations are mapped positives, not a complete surveyed negative domain; the source provides full avalanche footprints but no separate release polygons for these records."
+    },
+    "spot_dem": {
+      "status": "to_be_acquired_without_examining_model_output",
+      "requirements": "Public plain DEM, source URL and checksum recorded in results; full buffered AOI coverage in EPSG:2056."
+    }
+  },
+  "partitions": {
+    "qualitative_calibration": [
+      "braemabuehl-2019-wildi",
+      "davos-spot-2019-732",
+      "davos-spot-2019-820",
+      "davos-spot-2019-837"
+    ],
+    "qualitative_check": [
+      "braemabuehl-2019-ruechi",
+      "davos-spot-2019-754",
+      "davos-spot-2019-840",
+      "davos-spot-2019-1034"
+    ],
+    "note": "The check partition is a preassigned lower-rigor diagnostic set, not a field-validation holdout. No parameters may be selected from either partition in this experiment."
+  },
+  "events": [
+    {
+      "event_id": "braemabuehl-2019-wildi",
+      "analysis_group": "Braemabuehl",
+      "partition": "qualitative_calibration",
+      "release_source": "published_release_polygon",
+      "mapped_positive_source": "published_deposit_polygon"
+    },
+    {
+      "event_id": "braemabuehl-2019-ruechi",
+      "analysis_group": "Braemabuehl",
+      "partition": "qualitative_check",
+      "release_source": "published_release_polygon",
+      "mapped_positive_source": "published_deposit_polygon"
+    },
+    {
+      "event_id": "davos-spot-2019-732",
+      "source_objectid": 732,
+      "analysis_group": "Stillbergalp sector",
+      "partition": "qualitative_calibration",
+      "release_source": "derived_upper_steep_proxy",
+      "mapped_positive_source": "published_exact_slab_footprint"
+    },
+    {
+      "event_id": "davos-spot-2019-754",
+      "source_objectid": 754,
+      "analysis_group": "Stillbergalp sector",
+      "partition": "qualitative_check",
+      "release_source": "derived_upper_steep_proxy",
+      "mapped_positive_source": "published_exact_slab_footprint"
+    },
+    {
+      "event_id": "davos-spot-2019-820",
+      "source_objectid": 820,
+      "analysis_group": "Totalp sector",
+      "partition": "qualitative_calibration",
+      "release_source": "derived_upper_steep_proxy",
+      "mapped_positive_source": "published_exact_slab_footprint"
+    },
+    {
+      "event_id": "davos-spot-2019-837",
+      "source_objectid": 837,
+      "analysis_group": "Schwarzseealp sector",
+      "partition": "qualitative_calibration",
+      "release_source": "derived_upper_steep_proxy",
+      "mapped_positive_source": "published_exact_slab_footprint"
+    },
+    {
+      "event_id": "davos-spot-2019-840",
+      "source_objectid": 840,
+      "analysis_group": "Totalp sector",
+      "partition": "qualitative_check",
+      "release_source": "derived_upper_steep_proxy",
+      "mapped_positive_source": "published_exact_slab_footprint"
+    },
+    {
+      "event_id": "davos-spot-2019-1034",
+      "source_objectid": 1034,
+      "analysis_group": "Totalp sector",
+      "partition": "qualitative_check",
+      "release_source": "derived_upper_steep_proxy",
+      "mapped_positive_source": "published_exact_slab_footprint"
+    }
+  ]
+}

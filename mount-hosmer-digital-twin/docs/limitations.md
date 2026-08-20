@@ -10,8 +10,9 @@ operational tool.
   never a forecast**, and carries a disclaimer attached in code (`app/core/model_config.py::DISCLAIMER`).
 - **Nothing is calibrated.** The risk model, the release threshold, and the runout alpha angles are
   UNCALIBRATED values from the avalanche-terrain literature and Canadian Rockies practice. **None** is
-  fitted to an observed Mount Hosmer avalanche, because **no eligible local avalanche-observation dataset
-  is currently available to this project** — so the model has not been field-validated against ground truth.
+  fitted to an eligible field-observation cohort. Eight reviewed Davos-area events provide qualitative
+  mapped-positive comparisons only; the strict independent holdout remains N=0, so the model is not
+  field-validated against ground truth.
 
 ## Validation evidence
 
@@ -26,9 +27,10 @@ operational tool.
   imagery, synthetic data, and model output when labelled as field validation, inconsistent event dates or
   scenarios, and any event that leaks across calibration and holdout partitions.
 - The accompanying overlap evaluator rasterizes the registered target, survey-coverage, and positional-
-  uncertainty geometries itself on an exact bake-bound EPSG:26911 grid; callers cannot substitute arbitrary
-  observation or survey masks. It requires the complete compatible holdout cohort and binds predictions to
-  model/config/bake/engine/seed/scenario identities and deterministic artifact hashes. Endpoint metrics bind
+  uncertainty geometries itself on an exact bake-bound, metre-based projected grid matching the evidence;
+  callers cannot substitute arbitrary observation or survey masks. It requires the complete compatible
+  holdout cohort and binds predictions to model/config/bake/engine/seed/scenario identities and
+  deterministic artifact hashes. Endpoint metrics bind
   predictions to every registered observation ID, require characterized field uncertainty, and report
   missing predictions to prevent survivorship bias. Missing model inputs remain excluded and visible.
 - Contract-valid field data still cannot claim independent validation until its exact immutable dataset
@@ -36,6 +38,25 @@ operational tool.
   ingestion/evaluation scaffolding, not a claim of end-to-end field-validation readiness. Until eligible
   observations are obtained and reviewed, API results label the available evidence as **software
   verification only**, with field validation unavailable and zero eligible events.
+- The anonymous-public RegObs/Sentinel/Høydedata route was executed through its frozen gate 8 and failed:
+  26 candidates were evaluated, zero passed complete observation QA, zero received independent human review,
+  zero had eligible normal-to-slope release thickness, and zero had an event-surface-eligible DEM. Twenty-five
+  immutable source packets are released for external annotation, but packet release is not evidence acceptance.
+  The resulting Profile R/C/E counts remain 0/0/0. Because the required 12 events across six paths, two
+  mountains, and three storms were unavailable, no split, AvaFrame integration, calibration, or holdout run
+  was performed. See `docs/validation-report.md`, `docs/public-event-human-review-procedure.md`, and
+  `validation-data/candidates/public-event-strict-funnel-v5.json`.
+- Owner-data intake now has a strict immutable-file/licence schema, byte/hash preflight, two-human blinded
+  adjudication with third-human conflict resolution, complete-candidate decision gate, and a preregistered
+  leakage-safe path/mountain/storm split. The split artifact contains no event assignments, and prediction
+  and field-metric modules remain sealed while the eligible cohort is 0 events, 0 paths, 0 mountains and
+  0 storm cycles. These controls improve reproducibility and prevent selection leakage; they are not field
+  evidence and do not improve or establish model accuracy.
+- A separate positive-only evaluator accepts qualitative or calibration evidence whose unmapped space is
+  explicitly unknown. It reports mapped-positive coverage but deliberately has no IoU, precision, F1, or
+  independent-validation flag. The frozen 32-run Davos-area comparison shows both misses and strong
+  sensitivity/overprediction signals; see `docs/validation-report.md`. Those results do not change the
+  field-validation status or populate the trust registry.
 
 ## The risk model
 
@@ -72,6 +93,22 @@ operational tool.
   model cannot see them and that standard practice treats such evidence as outranking a terrain model;
   persistent weak layers and propagating stability tests do the same. Every advisory carries
   `changed_the_number: false`, because it is true.
+- **A coupling contract now exists, and nothing satisfies it.**
+  `avycore.release_coupling` defines what a modelled snow state must supply before
+  a dry-slab release model may be coupled to terrain: slab depth and density, a
+  candidate weak layer, a failure-initiation diagnostic, a crack-propagation
+  diagnostic, a loading rate over a declared window, and a bounded uncertainty span
+  and declared unit for each. It requires the simulation to start before the valid
+  time it describes, so a profile invented at the requested time is refused. Three
+  rules are encoded rather than left to callers: there is **no code path from
+  terrain capability to an instability result without a snow-state term**; an
+  ineligible terrain class is **removed from supported coverage** and the contract
+  has no way to express "missing snow state, lower score"; and non-dry-slab regimes
+  are refused as separate model types rather than approximated. Since no eligible
+  Snow State Pack exists, every terrain class is currently ineligible. This is
+  scaffolding that makes a future coupling checkable — it is not a physics-informed
+  release model, and it changes no number today.
+
 - **This is deliberate, not unfinished.** Mapping a stability-test score or a weak-layer type onto this
   index would require a coefficient, and there is no published mapping for this model and no local
   calibration from which to fit one. Such a coefficient would be invented, and an index that silently
@@ -236,21 +273,233 @@ operational tool.
   independent snow-depth/SWE comparison exists. No Hosmer SNOWPACK output or physical-improvement claim
   exists.
 
+## Research-only hourly snow and release-regime hindcast
+
+- `avycore.snowpack` is a deterministic, runtime-safe research library used by
+  the frozen Swiss hindcast. It is not connected to `/api/assess`, the Mount
+  Hosmer bake, sliders, or operational conditions. Its addition does not make
+  the serving model more accurate.
+- CERRA input is hourly regional reanalysis at 5.5 km. Nearest-sample
+  assignment makes its coarse footprint explicit; the 30 m output grid contains
+  no 30 m meteorological information. The API-reported elevation used for
+  lapse transfer is not exposed model orography, and the lapse rate is fixed
+  rather than observed for each storm.
+- Recent-snow settlement, excess-wind drift potential, wetting thresholds,
+  degree-hour scales and regime score curves are deterministic,
+  literature-informed but uncalibrated relative indices. Drift potential is
+  not transported mass. Provider snowfall remains diagnostic and cannot be
+  added to temperature-partitioned precipitation.
+- The buried-interface field is only a weather proxy. It observes no grain
+  type, weak layer, snow profile or stability test and has no numerical effect
+  on release. The wet-snow field is a surface-wetting susceptibility proxy; it
+  has no internal snow liquid-water state and cannot distinguish wet slab from
+  wet loose.
+- Full-depth/glide release is explicitly unsupported because basal liquid
+  water, smooth-ground class and glide cracks are absent. Other regimes can
+  spatially intersect a mapped full-depth outline; such an intersection is not
+  evidence that glide physics was represented.
+- The frozen 1999 result captured 24.81% of positive mapped events and failed
+  its capture, completeness and same-budget baseline rules. Positive-only
+  outlines provide no verified negatives. The library is therefore neither
+  calibrated nor field validated for any regime; see `validation-report.md`.
+
 ## Runout simulation
 
-- Two engines (fast alpha-angle routing; advanced particle ensemble). Neither is field-validated against an
-  observed Mount Hosmer runout. Alpha angles are published Canadian Rockies ranges, not local
-  back-analysis. Every runout carries an explicit sensitivity envelope. Its reported area includes the
-  central footprint and is not a band-only area or a statistical confidence interval; a line drawn with
-  false precision is worse than no line. Advanced runout treats missing elevation, forest, or plan-curvature
-  friction inputs as barriers rather than silently assuming open/neutral terrain.
+- A version-bound offline adapter now runs AvaFrame 2.1 `com1DFA` for declared
+  `dense_dry` scenarios only. The current slice supports one release collection,
+  projected metre-based input, explicit positive release thickness/density,
+  explicit Voellmy `mu`/`xi`, a fixed timestep and `entrainment_enabled=false`.
+  These positivity checks are execution constraints, not physically validated
+  parameter ranges. No missing thickness, density, friction or entrainment value
+  is synthesized.
+- The synthetic PRA-style release-to-com1DFA case verifies process isolation,
+  unit mapping, output normalization, mask/CRS preservation and same-machine
+  deterministic replay. Its synthetic values and outputs provide no evidence of
+  accuracy, calibration or end-to-end field validity. No bounded sensitivity
+  ensemble has been run, so normalized output reports no propagated uncertainty
+  bounds and says so explicitly.
+- **Flow-Py now runs, through AvaFrame's `com4FlowPy` port, and is a different
+  model from com1DFA rather than a second opinion about the same one.** com1DFA
+  solves a depth-averaged dense-flow problem; Flow-Py routes a dimensionless flux
+  along an energy line. Neither consumes the other's output. See
+  [`runout-engines.md`](runout-engines.md).
+- **Flow-Py produces no flow depth, velocity, pressure, or arrival time, and those
+  outputs are published as `unsupported` with a reason rather than omitted or
+  zeroed.** Its `z_delta` is an **energy-line height**, not a depth. Upstream's own
+  configuration documents the sliding-block bound `max_v = sqrt(max_z * 19.62)`;
+  that is a limit derived from an assumed friction model, not a simulated flow
+  velocity, so it is not published as one.
+- **AvaFrame documents com4FlowPy as under heavy development and outside its
+  automatic test coverage.** That has not changed, and it is why the module's
+  executed file hashes are recorded with every result.
+- **com1DFA's peak travel angle `pta` is not Flow-Py's `fpTravelAngleMax`, and
+  the cross-engine travel-angle comparison stays unsupported because of it.**
+  Both are `arctan(drop / horizontal path length)` in degrees, but com1DFA
+  divides by each particle's own realized trajectory length accumulated over the
+  simulation and takes a maximum over particles *and over time*, while com4FlowPy
+  divides by the **shortest** 8-connected raster path from the release cell and
+  takes a maximum over release cells with no time dimension. The two also differ
+  in what sets the path (Voellmy friction and the SPH pressure gradient versus
+  routing persistence and alpha), in discretization bias, and in how an unreached
+  cell is written (`0`, indistinguishable from a real 0°, versus `-9999`). This
+  was read from the pinned AvaFrame 2.1 sources, not inferred from whether the
+  numbers agree; the derivation and the source digests are in
+  [`runout-engines.md`](runout-engines.md) §2.1. Publishing them as one quantity
+  would compare a time-peak of a dynamics-dependent trajectory against a static
+  shortest-path extremum.
+- **The canonical standalone Flow-Py distribution is a separate engine identity
+  (`runout.flowpy_upstream`) and remains fail-closed.** The repository
+  ([github.com/avaframe/FlowPy](https://github.com/avaframe/FlowPy), GPL-3.0-or-later)
+  is archived read-only since 2024-09-17, and its latest release `v1.0.3`
+  (commit `7b061599355cef584491d69eae2686307d286901`) **reassigns `argv` to a
+  hardcoded example inside `main.py`, so the released command line ignores its
+  arguments.** Only the later untagged master commit
+  `27ad81d3e804e4e9d85a9773fca10ee7dc428183` comments that out, and `main.py`
+  imports PyQt5 unconditionally. The adapter hashes an operator-supplied
+  checkout's `main.py` against both reviewed commits and never substitutes the
+  AvaFrame port for the standalone distribution.
+- The Flow-Py adapter runs a single tile in a single process. Upstream otherwise
+  tiles the domain and merges overlapping tiles with max/sum reductions, and
+  distributes release cells over a multiprocessing pool; both settings are what
+  make byte-identical replay achievable. Forest, infrastructure, variable-alpha,
+  variable-exponent and variable-uMax modules are disabled because this slice
+  supplies no layer for them.
+- The **Flow-Py planar energy-line analytical case passes** its preregistered
+  limits: energy-line height error 3.34e-06 m (limit 0.01), stopping-cell
+  difference 0 cells (limit 0), straight-line travel-angle error 1.90e-06 degrees
+  (limit 0.01), travel-length error 0.0 m (limit 0.01), with unit, CRS,
+  coordinate-order, mask, truncation and unsupported-output invariants passing and
+  identical replay identity across two runs. The frozen record is under
+  `validation-data/benchmarks/flowpy-energy-line/`. **This verifies one idealized
+  planar case in software.** It is not calibration and not field validation.
+- **The two engines disagree substantially on the synthetic case**, which is the
+  point of running both. At the comparison script's default settings (40 s
+  simulation time, seed 12345): extent IoU 0.429, symmetric-difference area 52 100 m²,
+  and a maximum-reach difference of 142.2 m (com1DFA 455.4 m, Flow-Py 313.2 m) on
+  identical release and terrain inputs. **Disagreement is not a measurement of
+  either engine's accuracy, and agreement between two uncalibrated models would
+  not be evidence either.** Both remain uncalibrated for any real site.
+- r.avaflow still returns `unavailable` until a version-bound image/executable,
+  exact redistribution licence record, configuration mapping and normalized output
+  parser are reviewed. It returns no placeholder physics.
+- The published BC PRA [paper](https://nhess.copernicus.org/articles/22/3247/2022/)
+  and [OSF project](https://doi.org/10.17605/OSF.IO/YQ5S3) (`yq5s3`) were located.
+  The OSF
+  project declares GPL-3.0, but its principal grid-search bundle is about 1.52 GB
+  and the contained source files/file-level notices have not been inspected. No
+  published PRA code was copied; the current AvyCore relative-index release model
+  remains the explicit uncalibrated baseline.
+- The AvaFrame 2.1 `avaSimilaritySol` analytical case now passes the locked
+  software-verification gate through the isolated adapter. At 20.04 s on the
+  upstream 3 m local Cartesian grid, downstream-front error was 0 m, relative
+  L2/L-infinity errors were 0.04435/0.07951 for thickness and
+  0.04182/0.06700 for momentum, solver mass-balance error was 0, and initial
+  volume error was 0.000933. All were below the pre-run limits of 6 m,
+  0.5/0.75, 0.5/0.75, 1e-12 and 0.05 respectively. Units, grid, undefined local
+  CRS, masks and no-boundary-touch invariants also passed. The frozen acceptance
+  record and immutable run are under
+  `validation-data/benchmarks/avaframe-2.1-avaSimilaritySol/`. This verifies one
+  idealized analytical case, not Mount Hosmer accuracy. Direct scalar speed is
+  diagnostic because the upstream reference evaluates momentum at the
+  zero-thickness front; pressure has no analytical target in this case.
+- com1DFA must not replace the default assessment engine or support a field-
+  accuracy claim. The exact next evidence requirement is the independently
+  reviewed, licence-compatible 12-event cohort frozen in
+  `validation-data/experiments/public-data-field-validation-v2.json`: at least
+  six paths, two mountains and three storms, with separate calibration and
+  untouched holdout groups and complete release-state, event-surface, target,
+  uncertainty, CRS, lineage and surveyed-coverage evidence for every event.
+
+- The runout library exposes three scientific component modes: `alpha_only` fast routing,
+  `dynamics_only` particle integration without the alpha stop, and the serving application's `hybrid`
+  particle mode with its alpha energy line. Extent from `alpha_only` and `hybrid` primarily tests the
+  empirical alpha angle; velocity and path shape test particle dynamics. None is field-validated.
+  Alpha angles are published Canadian Rockies ranges, not local back-analysis. Every runout carries an
+  explicit sensitivity envelope. Its reported area includes the central footprint and is not a band-only
+  area or a statistical confidence interval; a line drawn with false precision is worse than no line.
+  Advanced runout treats missing elevation, forest, or plan-curvature friction inputs as barriers rather
+  than silently assuming open/neutral terrain.
 - For interactivity, a synchronous assessment simulates runout only for the highest-scoring zones
   (top-12 fast / top-6 advanced). All release zones are still shown; the others are simply not run out.
 
+## Offline pipeline and prediction products
+
+- `python -m app.pipeline` is **offline**. External engines never run inside
+  `POST /api/assess`, and the serving routes over `runtime\predictions\` open
+  files and validate them without importing any engine. The interactive
+  slider-driven assessment is unchanged and remains the named baseline.
+- **Only the synthetic case is runnable.** `--case mount-hosmer` is refused with a
+  stage-attributed error: a real-site case requires an eligible Snow State Pack and
+  reviewed release thickness, density and friction parameters, none of which exist.
+  The pipeline will not substitute synthetic values for a real site.
+- The release stage runs the **existing uncalibrated AvyCore terrain/loading
+  relative-index baseline**. It contains no modelled snow instability, no slab
+  depth, and no weak-layer term, so a product's release extent inherits every
+  limitation of that baseline.
+- **The Snow State stage is always `unavailable`.** Where a Condition Pack is
+  selected, the reason names the missing variables or masked hours; the authoritative
+  ECCC pack still has no shortwave or longwave radiation at all. Where forcing were
+  complete, the reason would be the absent reviewed initial snow/soil state, ground
+  boundary, roughness, canopy classification and site configuration.
+- **`release_probability` is always null**, and travels with a machine-readable
+  reason. It may become non-null only after a calibrated probabilistic release model
+  and eligible independent validation exist.
+- Products publish `validation_level: software_verification_only` with
+  `eligible_field_events: 0`. Nothing in a product is calibrated or field validated.
+- **`--resume` reuses a stored engine run, and it is bound to one machine.** Its
+  key includes the isolated interpreter's own bytes and that environment's
+  installed-distribution manifest, so a cache written on one machine is a
+  guaranteed miss on another — by construction, not by accident. A miss is also
+  the default whenever any identity component cannot be resolved, and a hit is
+  re-verified against the stored checksums and against the result's own recorded
+  provenance before it is used. Reuse changes execution only: a resumed run
+  publishes the identical `product_id`. Measured on the development machine, the
+  full two-engine ensemble took about 50 minutes cold and 13.6 s with 14 of 14
+  cache hits.
+- **Bounded sensitivity ensembles are sweeps of assumed ranges, not fitted
+  values.** `--ensemble` now sweeps six spans: Flow-Py's angle of reach (±3°) and
+  release extent (±5 m), and com1DFA's Voellmy `mu` (±0.03), release thickness
+  (±0.3 m), release density (±50 kg m⁻³) and release extent (±5 m). Runout-area
+  spread on the synthetic case at the pipeline defaults: angle of reach 35 075 m²,
+  release thickness 24 950 m², com1DFA release extent 15 050 m², `mu` 13 400 m²,
+  Flow-Py release extent 10 600 m², release density **0 m²**. **Member frequency is
+  model frequency over a deterministic sweep — never a probability, a confidence
+  level, or a calibrated likelihood** — and the contract stores that sentence with
+  every sweep so it cannot be dropped downstream. The envelope is the union of
+  member footprints, not a statistical confidence region.
+- **A span with no stated basis cannot be declared.** `SweepSpecification`
+  requires a `basis` and a `source` statement, and requires offsets that bracket
+  the central value; the construction fails before any member is computed, so an
+  unjustified span cannot reach a published envelope. Five of the six spans are
+  assumed literature ranges; the release-extent span is labelled `numerical`,
+  because moving a thresholded boundary by one 5 m cell is a sensitivity to a
+  discretization and there is no literature about this project's uncalibrated
+  index cutoff.
+- **The zero density spread is a model property, not a missing number.** With
+  entrainment disabled and Voellmy friction, density cancels out of com1DFA's
+  depth-averaged momentum balance, so the three members are byte-identical in
+  depth (max 1.4263 m) and velocity (max 31.6760 m s⁻¹) and differ only in peak
+  pressure — 150.50 / 200.67 / 250.84 kPa, exactly proportional to the density,
+  because `p = rho*v^2`. It means density does not move *this engine's footprint in
+  this configuration*; it does not mean density does not matter.
+- **Entrainment is still not swept, and is published as a refusal rather than
+  omitted.** com1DFA entrainment requires an `ENT` entrainment-area shapefile with
+  a per-feature entrainment thickness, and this slice supplies no entrainment
+  layer and runs `simTypeList=null`. Flow-Py release thickness and density are
+  refused for a different reason: com4FlowPy routes a dimensionless flux and
+  carries neither quantity. All three appear in the product's
+  `unsupported_ensembles` with a reason and the exact action that would enable
+  them.
+- Forcing and snow state are still **not** varied, and the sweeps remain
+  one-at-a-time with no interaction terms, so the published envelope is a lower
+  bound on sensitivity, not a total uncertainty budget.
+
 ## Terrain and the bake
 
-- The 3D mesh and all terrain layers are **baked once, offline**, from 5 m BC-LiDAR (mosaicked to ~99.9 %
-  AOI coverage), with Copernicus GLO-30 as gap-fill only. The running service reads no source data.
+- The default Mount Hosmer 3D mesh and terrain layers are **baked once, offline**, from 5 m BC-LiDAR
+  (mosaicked to ~99.9 % AOI coverage), with Copernicus GLO-30 as gap-fill only. An alternate Mountain Pack
+  may instead declare a provider-neutral `single_raster` primary DEM and its own generated runtime root.
+  The running service reads no source data.
 - The 171 `.laz` point clouds are not used (the DEM rasters are already derived from them). Re-deriving a
   finer-than-1 m surface is out of scope.
 - Baked layers load as masked arrays, so a masked/NaN pixel stays missing, not zero. Terrain and forest
@@ -288,6 +537,37 @@ operational tool.
   versions used to freeze it** (2.2.6 / 1.16.3), which rules out package drift as the cause. The
   remaining candidates are the BLAS/LAPACK build and the CPU instruction set the wheels dispatch to;
   neither has been isolated yet.
+- **Frozen digests are taken over LF bytes, and that is now enforced rather than
+  assumed.** This repository is authored on Windows with `core.autocrlf=true`, so
+  an unpinned text file is checked out as CRLF while git stores it as LF. Nine
+  frozen-evidence tests used to fail on that alone, in both directions: a digest
+  frozen over CRLF bytes for a file that had since been pinned to LF, and a digest
+  frozen over LF bytes for a file still delivered as CRLF. `.gitattributes` now
+  pins the whole repository with `* text=auto eol=lf` (plus `*.npz binary`), the
+  affected digests were re-derived over the canonical LF bytes, and
+  `test_frozen_identity_line_endings.py` fails if the pin is removed, if any
+  tracked text file carries CRLF, or if any recorded digest matches the CRLF
+  rendering of a repository file. No committed blob in this repository has ever
+  contained a CR byte, so no number changed; see
+  [`validation-report.md`](validation-report.md) for the neutrality evidence.
+- **One frozen whole-file digest is unreproducible, and the binding has been
+  moved to the subtree it names.** The GEODAR result recorded
+  `parameter_file_sha256 = eb95b69f…` for `backend/config/m0-baseline.json`, which
+  matches no committed state of that file in any line-ending form — nor any object
+  in the repository at all. It names a working tree that was never committed. That
+  digest was the wrong granularity: it also covers a baseline-results block that
+  `4edc0cf` legitimately refroze after the particle coordinate-integration
+  correction, changing no parameter. The result declares it consumed
+  `backend/config/m0-baseline.json:model.parameter_manifest`, and that subtree is
+  byte-identical across every committed revision, canonical digest `aaafd6f9…`
+  under the repository's established `parameter_manifest_sha256` encoding — the
+  same binding every other frozen experiment already uses. The result now records
+  `parameter_manifest_sha256` and is checked against it, the superseded whole-file
+  digest is retained verbatim as `parameter_file_sha256_at_run` and is explicitly
+  not re-asserted, and the spec's frozen `_at_freeze` twin is untouched. The
+  digest was not rewritten to today's file: that would assert the result was
+  produced under the current M0 baseline, which is false.
+
 - **What did reproduce is the science.** On the same runs, the release field and every published summary
   were identical — `release_valid_cells` 1302 and release min/max/mean 74.375 on both sides — with only
   the runout ensemble's array hashes differing. So this is last-place floating-point movement, **not** a

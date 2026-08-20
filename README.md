@@ -3,7 +3,12 @@
 An offline-first research prototype for exploring avalanche release and runout on
 Mount Hosmer near Fernie, British Columbia. It bakes a fixed 12 x 12 km terrain
 model from local geospatial sources, then serves a 3D map, deterministic scenario
-assessment, two runout engines, and an optional local AI explanation layer.
+assessment, two in-process runout baselines, and an optional local AI explanation
+layer. A separate offline pipeline runs the external AvaFrame com1DFA and Flow-Py
+engines in isolated environments and publishes immutable prediction products the
+serving app reads read-only; see
+[`mount-hosmer-digital-twin/docs/prediction-products.md`](mount-hosmer-digital-twin/docs/prediction-products.md)
+and [`mount-hosmer-digital-twin/docs/runout-engines.md`](mount-hosmer-digital-twin/docs/runout-engines.md).
 
 > This is not an operational avalanche forecast. Scores are uncalibrated relative
 > indices, not probabilities, and must not replace Avalanche Canada guidance or
@@ -32,7 +37,7 @@ Avalanche/
 |   |-- packages/avycore/         canonical hazard and runout library source
 |   |-- tests/                    hermetic numerical and API tests
 |   |-- launcher/                 optional Windows launcher source
-|   `-- runtime/                  generated bake and logs; ignored
+|   `-- runtime/                  generated bake, prediction products, logs; ignored
 |-- archive/                      superseded local material; ignored
 `-- Tools/                        vendored QGIS tooling; ignored
 ```

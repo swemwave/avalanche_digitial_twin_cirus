@@ -1,0 +1,61 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "stac_version": "1.1.0",
+      "id": "S2_PRE_MISSING_CLOUD",
+      "collection": "sentinel-2-l2a",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[9.0, 59.0], [11.0, 59.0], [11.0, 61.0], [9.0, 61.0], [9.0, 59.0]]]
+      },
+      "properties": {
+        "datetime": "2023-12-30T10:00:00Z",
+        "platform": "sentinel-2a",
+        "product:type": "S2MSI2A",
+        "processing:level": "L2",
+        "grid:code": "MGRS-32VNM"
+      }
+    },
+    {
+      "type": "Feature",
+      "stac_version": "1.1.0",
+      "id": "S2_POST_SAME_TILE_CLOUDY",
+      "collection": "sentinel-2-l2a",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[9.0, 59.0], [11.0, 59.0], [11.0, 61.0], [9.0, 61.0], [9.0, 59.0]]]
+      },
+      "properties": {
+        "datetime": "2024-01-04T10:00:00Z",
+        "platform": "sentinel-2b",
+        "product:type": "S2MSI2A",
+        "processing:level": "L2",
+        "grid:code": "MGRS-32VNM",
+        "eo:cloud_cover": 92.5
+      }
+    },
+    {
+      "type": "Feature",
+      "stac_version": "1.1.0",
+      "id": "S2_POST_DIFFERENT_TILE",
+      "collection": "sentinel-2-l2a",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[9.0, 59.0], [11.0, 59.0], [11.0, 61.0], [9.0, 61.0], [9.0, 59.0]]]
+      },
+      "properties": {
+        "datetime": "2024-01-06T10:00:00Z",
+        "platform": "sentinel-2a",
+        "product:type": "S2MSI2A",
+        "processing:level": "L2",
+        "grid:code": "MGRS-32VNN",
+        "eo:cloud_cover": 1.0
+      }
+    }
+  ],
+  "links": [],
+  "numberMatched": 3,
+  "numberReturned": 3
+}

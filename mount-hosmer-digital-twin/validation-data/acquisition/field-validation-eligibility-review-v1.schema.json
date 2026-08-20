@@ -1,0 +1,267 @@
+{
+  "$defs": {
+    "AdjudicatedGrouping": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_basis": {
+          "minLength": 1,
+          "title": "Evidence Basis",
+          "type": "string"
+        },
+        "mountain_id": {
+          "pattern": "^[a-z0-9][a-z0-9._-]{1,127}$",
+          "title": "Mountain Id",
+          "type": "string"
+        },
+        "path_id": {
+          "pattern": "^[a-z0-9][a-z0-9._-]{1,127}$",
+          "title": "Path Id",
+          "type": "string"
+        },
+        "storm_cycle_id": {
+          "pattern": "^[a-z0-9][a-z0-9._-]{1,127}$",
+          "title": "Storm Cycle Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "mountain_id",
+        "path_id",
+        "storm_cycle_id",
+        "evidence_basis"
+      ],
+      "title": "AdjudicatedGrouping",
+      "type": "object"
+    },
+    "EligibilityCriteria": {
+      "additionalProperties": false,
+      "properties": {
+        "dry_dense_slab_regime_supported": {
+          "title": "Dry Dense Slab Regime Supported",
+          "type": "boolean"
+        },
+        "event_surface_dem_crs_datum_lineage_complete": {
+          "title": "Event Surface Dem Crs Datum Lineage Complete",
+          "type": "boolean"
+        },
+        "immutable_source_hashes_and_licences": {
+          "title": "Immutable Source Hashes And Licences",
+          "type": "boolean"
+        },
+        "no_missing_inferred_substituted_or_model_derived_required_values": {
+          "title": "No Missing Inferred Substituted Or Model Derived Required Values",
+          "type": "boolean"
+        },
+        "observation_uncertainties_complete": {
+          "title": "Observation Uncertainties Complete",
+          "type": "boolean"
+        },
+        "path_mountain_storm_grouping_supported": {
+          "title": "Path Mountain Storm Grouping Supported",
+          "type": "boolean"
+        },
+        "release_density_event_specific_with_uncertainty": {
+          "title": "Release Density Event Specific With Uncertainty",
+          "type": "boolean"
+        },
+        "release_geometry_independently_observed": {
+          "title": "Release Geometry Independently Observed",
+          "type": "boolean"
+        },
+        "release_thickness_event_specific_normal_to_slope": {
+          "title": "Release Thickness Event Specific Normal To Slope",
+          "type": "boolean"
+        },
+        "survey_coverage_detection_masks_complete": {
+          "title": "Survey Coverage Detection Masks Complete",
+          "type": "boolean"
+        },
+        "terminal_dense_flow_observation_component_attributed": {
+          "title": "Terminal Dense Flow Observation Component Attributed",
+          "type": "boolean"
+        },
+        "utc_event_time_supported": {
+          "title": "Utc Event Time Supported",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "immutable_source_hashes_and_licences",
+        "utc_event_time_supported",
+        "event_surface_dem_crs_datum_lineage_complete",
+        "release_geometry_independently_observed",
+        "release_thickness_event_specific_normal_to_slope",
+        "release_density_event_specific_with_uncertainty",
+        "terminal_dense_flow_observation_component_attributed",
+        "observation_uncertainties_complete",
+        "survey_coverage_detection_masks_complete",
+        "no_missing_inferred_substituted_or_model_derived_required_values",
+        "path_mountain_storm_grouping_supported",
+        "dry_dense_slab_regime_supported"
+      ],
+      "title": "EligibilityCriteria",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "ai_generated_or_ai_assisted": {
+      "const": false,
+      "title": "Ai Generated Or Ai Assisted",
+      "type": "boolean"
+    },
+    "blinded_to_model_predictions": {
+      "const": true,
+      "title": "Blinded To Model Predictions",
+      "type": "boolean"
+    },
+    "blinded_to_other_reviews": {
+      "const": true,
+      "title": "Blinded To Other Reviews",
+      "type": "boolean"
+    },
+    "criteria": {
+      "$ref": "#/$defs/EligibilityCriteria"
+    },
+    "decision": {
+      "enum": [
+        "eligible",
+        "ineligible"
+      ],
+      "title": "Decision",
+      "type": "string"
+    },
+    "delivery_manifest_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Delivery Manifest Sha256",
+      "type": "string"
+    },
+    "event_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{1,127}$",
+      "title": "Event Id",
+      "type": "string"
+    },
+    "exclusion_reasons": {
+      "items": {
+        "enum": [
+          "source_identity_or_licence_incomplete",
+          "event_time_not_utc_or_not_independently_supported",
+          "event_surface_dem_lineage_or_uncertainty_incomplete",
+          "release_geometry_not_independently_observed",
+          "release_thickness_not_event_specific_normal_to_slope",
+          "release_density_not_event_specific_or_uncertain",
+          "terminal_dense_flow_observation_incomplete_or_unattributed",
+          "observation_uncertainty_incomplete",
+          "survey_coverage_or_detection_semantics_incomplete",
+          "required_value_missing_inferred_substituted_or_model_derived",
+          "path_mountain_or_storm_grouping_unsupported",
+          "avalanche_regime_not_dry_dense_slab",
+          "other_protocol_exclusion"
+        ],
+        "type": "string"
+      },
+      "title": "Exclusion Reasons",
+      "type": "array"
+    },
+    "grouping": {
+      "$ref": "#/$defs/AdjudicatedGrouping"
+    },
+    "holdout_assignment_unavailable": {
+      "const": true,
+      "title": "Holdout Assignment Unavailable",
+      "type": "boolean"
+    },
+    "human_identity_verified": {
+      "const": true,
+      "title": "Human Identity Verified",
+      "type": "boolean"
+    },
+    "identity_verification_record_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Identity Verification Record Sha256",
+      "type": "string"
+    },
+    "notes": {
+      "minLength": 1,
+      "title": "Notes",
+      "type": "string"
+    },
+    "owner_delivery_schema_version": {
+      "const": "avycore-field-validation-owner-delivery-v1",
+      "title": "Owner Delivery Schema Version",
+      "type": "string"
+    },
+    "protocol_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Protocol Sha256",
+      "type": "string"
+    },
+    "review_id": {
+      "pattern": "^[a-z0-9][a-z0-9._-]{2,127}$",
+      "title": "Review Id",
+      "type": "string"
+    },
+    "review_started_utc": {
+      "format": "date-time",
+      "title": "Review Started Utc",
+      "type": "string"
+    },
+    "review_submitted_utc": {
+      "format": "date-time",
+      "title": "Review Submitted Utc",
+      "type": "string"
+    },
+    "reviewer_identity_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Reviewer Identity Sha256",
+      "type": "string"
+    },
+    "reviewer_independent": {
+      "const": true,
+      "title": "Reviewer Independent",
+      "type": "boolean"
+    },
+    "reviewer_kind": {
+      "const": "human",
+      "title": "Reviewer Kind",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "avycore-field-eligibility-review-v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_audit_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Source Audit Sha256",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "review_id",
+    "event_id",
+    "delivery_manifest_sha256",
+    "protocol_sha256",
+    "source_audit_sha256",
+    "owner_delivery_schema_version",
+    "reviewer_identity_sha256",
+    "human_identity_verified",
+    "identity_verification_record_sha256",
+    "reviewer_kind",
+    "reviewer_independent",
+    "ai_generated_or_ai_assisted",
+    "blinded_to_model_predictions",
+    "blinded_to_other_reviews",
+    "holdout_assignment_unavailable",
+    "review_started_utc",
+    "review_submitted_utc",
+    "grouping",
+    "criteria",
+    "decision",
+    "exclusion_reasons",
+    "notes"
+  ],
+  "title": "EligibilityReview",
+  "type": "object"
+}

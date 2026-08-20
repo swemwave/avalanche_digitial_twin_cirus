@@ -12,8 +12,9 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import re
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, datetime, timezone
 from pathlib import Path
 from types import MappingProxyType
 from typing import Any, Literal, Mapping
@@ -23,15 +24,22 @@ from shapely.geometry import shape
 
 from .status import VALIDATION_CONTRACT_VERSION
 
+ValidationComponent = Literal["release", "conditional_runout", "end_to_end"]
+EvidenceProfile = Literal["R", "C", "E"]
+LabelState = Literal["positive_unlabelled", "surveyed_positive_and_known_absence"]
+AvalancheRegime = Literal["dry_dense_slab"]
 ObservationType = Literal[
     "release_polygon",
     "deposit_polygon",
+    "avalanche_footprint",
     "runout_endpoint",
     "survey_coverage_polygon",
+    "invalid_observation_mask",
 ]
 EvidenceType = Literal[
     "field_observation",
     "authoritative_inventory",
+    "reviewed_remote_sensing",
     "remote_sensing_interpretation",
     "synthetic",
     "model_output",
@@ -48,10 +56,23 @@ ObservationMethodClass = Literal[
     "ground_survey",
     "professional_field_mapping",
     "authoritative_occurrence_record",
+    "reviewed_remote_sensing",
     "remote_sensing_interpretation",
     "synthetic_fixture",
     "model_output",
 ]
+
+# This is deliberately an allowlist, not an EPSG-code parser. Membership says
+# only that a maintainer reviewed the CRS definition as projected with horizontal
+# metre units for this validation contract. It does not establish that a
+# particular dataset used the correct datum, epoch, axis order, or transform.
+REVIEWED_PROJECTED_METRE_CRS = frozenset(
+    {
+        "EPSG:2056",  # CH1903+ / LV95
+        "EPSG:26911",  # NAD83 / UTM zone 11N
+        "EPSG:32613",  # WGS 84 / UTM zone 13N
+    }
+)
 
 
 class ValidationContractError(ValueError):
@@ -124,6 +145,157 @@ class PositionalUncertainty(StrictModel):
         return self
 
 
+class PhysicalQuantityEvidence(StrictModel):
+    """Observed, bounded, or predeclared-distribution release-state evidence."""
+
+    quantity: Literal["release_thickness", "release_density"]
+    representation: Literal["measured_value", "bounded_interval", "distribution"]
+    units: Literal["metre", "kilogram_per_cubic_metre"]
+    value: float | None = None
+    lower: float | None = None
+    upper: float | None = None
+    distribution_name: str | None = None
+    distribution_parameters: Mapping[str, float] | None = None
+    source_uri: str = Field(min_length=1)
+    source_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    provenance: str = Field(min_length=1)
+    uncertainty_statement: str = Field(min_length=1)
+    frozen_without_runout_target: bool
+
+    @model_validator(mode="after")
+    def validate_quantity(self) -> "PhysicalQuantityEvidence":
+        expected_units = {
+            "release_thickness": "metre",
+            "release_density": "kilogram_per_cubic_metre",
+        }[self.quantity]
+        if self.units != expected_units:
+            raise ValueError(
+                f"{self.quantity} requires units={expected_units!r}; unit conversion must be "
+                "completed and recorded before ingestion."
+            )
+        numeric = (self.value, self.lower, self.upper)
+        if any(value is not None and not math.isfinite(value) for value in numeric):
+            raise ValueError("Release-state values and bounds must be finite.")
+        if any(value is not None and value <= 0 for value in numeric):
+            raise ValueError("Release thickness and density evidence must be positive.")
+        if self.representation == "measured_value":
+            if self.value is None or any(value is not None for value in (self.lower, self.upper)):
+                raise ValueError("measured_value requires only value.")
+            if self.distribution_name is not None or self.distribution_parameters is not None:
+                raise ValueError("measured_value must not carry distribution fields.")
+        elif self.representation == "bounded_interval":
+            if self.value is not None or self.lower is None or self.upper is None:
+                raise ValueError("bounded_interval requires lower and upper, and no value.")
+            if self.upper <= self.lower:
+                raise ValueError("Release-state upper bound must exceed the lower bound.")
+            if self.distribution_name is not None or self.distribution_parameters is not None:
+                raise ValueError("bounded_interval must not carry distribution fields.")
+        else:
+            if self.value is not None or self.lower is not None or self.upper is not None:
+                raise ValueError("distribution uses distribution fields, not value/bounds.")
+            if not isinstance(self.distribution_name, str) or not self.distribution_name.strip():
+                raise ValueError("distribution requires a named distribution.")
+            if not self.distribution_parameters:
+                raise ValueError("distribution requires finite numeric parameters.")
+            if any(
+                isinstance(value, bool)
+                or not isinstance(value, (int, float))
+                or not math.isfinite(float(value))
+                for value in self.distribution_parameters.values()
+            ):
+                raise ValueError("Distribution parameters must be finite numbers.")
+        return self
+
+
+class TerrainSurfaceMetadata(StrictModel):
+    source_uri: str = Field(min_length=1)
+    source_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    acquisition_start_date: date
+    acquisition_end_date: date
+    acquisition_epoch_statement: str = Field(min_length=1)
+    crs: str = Field(pattern=r"^EPSG:[1-9][0-9]*$")
+    horizontal_units: Literal["metre"]
+    vertical_units: Literal["metre"]
+    vertical_datum: str = Field(min_length=1)
+    surface_type: Literal["bare_earth", "snow_surface", "digital_surface_model"]
+    event_surface_mismatch_statement: str = Field(min_length=1)
+    transformation_lineage: tuple[str, ...] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def validate_surface(self) -> "TerrainSurfaceMetadata":
+        if self.acquisition_end_date < self.acquisition_start_date:
+            raise ValueError("DEM acquisition_end_date precedes acquisition_start_date.")
+        if self.crs not in REVIEWED_PROJECTED_METRE_CRS:
+            raise ValueError("DEM CRS must be a code-reviewed projected metre CRS.")
+        return self
+
+
+class EventInputEvidence(StrictModel):
+    input_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]{1,127}$")
+    category: Literal["event_forcing", "snow_state"]
+    parameter: str = Field(min_length=1)
+    units: str = Field(min_length=1)
+    valid_start_utc: datetime
+    valid_end_utc: datetime
+    source_uri: str = Field(min_length=1)
+    source_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    provenance: str = Field(min_length=1)
+    uncertainty_statement: str = Field(min_length=1)
+    spatial_representativeness: str = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def validate_interval(self) -> "EventInputEvidence":
+        for name, value in (
+            ("valid_start_utc", self.valid_start_utc),
+            ("valid_end_utc", self.valid_end_utc),
+        ):
+            if value.tzinfo is None or value.utcoffset() != timezone.utc.utcoffset(value):
+                raise ValueError(f"{name} must carry an explicit UTC offset.")
+        if self.valid_end_utc < self.valid_start_utc:
+            raise ValueError("Event input valid_end_utc precedes valid_start_utc.")
+        return self
+
+
+class ValidationEventMetadata(StrictModel):
+    event_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]{1,127}$")
+    mountain_id: str = Field(pattern=r"^[a-z0-9][a-z0-9._-]{1,127}$")
+    path_id: str = Field(pattern=r"^[a-z0-9][a-z0-9._-]{1,127}$")
+    storm_cycle_id: str = Field(pattern=r"^[a-z0-9][a-z0-9._-]{1,127}$")
+    avalanche_regime: AvalancheRegime
+    event_start_utc: datetime
+    event_end_utc: datetime
+    event_time_confidence: str = Field(min_length=1)
+    terrain_surface: TerrainSurfaceMetadata
+    release_thickness: PhysicalQuantityEvidence | None = None
+    release_density: PhysicalQuantityEvidence | None = None
+    model_inputs: tuple[EventInputEvidence, ...] = ()
+    release_to_runout_rule_sha256: str | None = Field(
+        default=None,
+        pattern=r"^[0-9a-f]{64}$",
+    )
+
+    @model_validator(mode="after")
+    def validate_event(self) -> "ValidationEventMetadata":
+        for name, value in (
+            ("event_start_utc", self.event_start_utc),
+            ("event_end_utc", self.event_end_utc),
+        ):
+            if value.tzinfo is None or value.utcoffset() != timezone.utc.utcoffset(value):
+                raise ValueError(f"{name} must carry an explicit UTC offset.")
+        if self.event_end_utc < self.event_start_utc:
+            raise ValueError("event_end_utc precedes event_start_utc.")
+        if self.release_thickness is not None and (
+            self.release_thickness.quantity != "release_thickness"
+        ):
+            raise ValueError("release_thickness carries the wrong physical quantity.")
+        if self.release_density is not None and self.release_density.quantity != "release_density":
+            raise ValueError("release_density carries the wrong physical quantity.")
+        input_ids = [item.input_id for item in self.model_inputs]
+        if len(set(input_ids)) != len(input_ids):
+            raise ValueError("Event model-input IDs must be unique.")
+        return self
+
+
 class SpatialCoverage(StrictModel):
     west: float
     south: float
@@ -142,7 +314,10 @@ class SpatialCoverage(StrictModel):
 
 
 class ValidationDatasetManifest(StrictModel):
-    schema_version: Literal[VALIDATION_CONTRACT_VERSION]
+    schema_version: Literal[
+        "avycore-validation-dataset-v2",
+        "avycore-validation-dataset-v3",
+    ]
     dataset_id: str = Field(pattern=r"^[a-z0-9][a-z0-9._-]{2,127}$")
     title: str = Field(min_length=1)
     source: SourceMetadata
@@ -150,13 +325,21 @@ class ValidationDatasetManifest(StrictModel):
     evidence_type: EvidenceType
     scientific_use: ScientificUse
     independent_of_model: bool
+    component_tested: ValidationComponent | None = None
+    evidence_profile: EvidenceProfile | None = None
+    label_state: LabelState | None = None
+    events: tuple[ValidationEventMetadata, ...] | None = None
     observation_types: tuple[ObservationType, ...] = Field(min_length=1)
     original_crs: str = Field(
         min_length=1,
         description="CRS of the immutable source evidence before normalization.",
     )
-    crs: Literal["EPSG:26911"] = Field(
-        description="Normalized Mount Hosmer analysis CRS (NAD83 / UTM zone 11N)."
+    crs: str = Field(
+        pattern=r"^EPSG:[1-9][0-9]*$",
+        description=(
+            "Normalized projected EPSG CRS. Coordinates must use easting/northing axis order "
+            "and metre units; the loader deliberately performs no CRS inference or transform."
+        ),
     )
     horizontal_units: Literal["metre"]
     axis_order: Literal["easting_northing"]
@@ -178,9 +361,24 @@ class ValidationDatasetManifest(StrictModel):
     observations_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
     limitations: tuple[str, ...] = Field(min_length=1)
 
+    @field_validator("crs")
+    @classmethod
+    def require_reviewed_projected_metre_crs(cls, value: str) -> str:
+        if value not in REVIEWED_PROJECTED_METRE_CRS:
+            supported = ", ".join(sorted(REVIEWED_PROJECTED_METRE_CRS))
+            raise ValueError(
+                f"crs must be a code-reviewed projected metre CRS; reviewed values are "
+                f"{supported}. Before adding another EPSG code, review its projection, "
+                "horizontal units, axis order, and datum/epoch compatibility."
+            )
+        return value
+
     @model_validator(mode="after")
     def validate_scientific_use(self) -> "ValidationDatasetManifest":
+        is_v3 = self.schema_version == "avycore-validation-dataset-v3"
         trusted = {"field_observation", "authoritative_inventory"}
+        if is_v3:
+            trusted.add("reviewed_remote_sensing")
         if self.scientific_use in {"field_validation", "calibration_only"}:
             if self.evidence_type not in trusted:
                 raise ValueError(
@@ -199,6 +397,17 @@ class ValidationDatasetManifest(StrictModel):
             and self.scientific_use not in {"qualitative_comparison", "excluded"}
         ):
             raise ValueError("Imagery interpretation may be qualitative context, not ground truth.")
+        if self.evidence_type == "reviewed_remote_sensing" and not is_v3:
+            raise ValueError("Reviewed remote-sensing evidence requires validation contract v3.")
+        if self.evidence_type == "reviewed_remote_sensing" and self.scientific_use not in {
+            "field_validation",
+            "calibration_only",
+            "excluded",
+        }:
+            raise ValueError(
+                "Reviewed remote sensing is a quantitative v3 evidence class; unreviewed or "
+                "qualitative interpretation must use remote_sensing_interpretation."
+            )
         if self.scientific_use in {"field_validation", "calibration_only"} and (
             self.acquisition.status == "unknown"
         ):
@@ -234,6 +443,106 @@ class ValidationDatasetManifest(StrictModel):
             raise ValueError("Different original/normalized CRS requires a coordinate operation.")
         if not same_crs and self.normalization_software.strip().lower() in {"none", "n/a"}:
             raise ValueError("A coordinate operation must identify the normalization software.")
+        if is_v3:
+            if self.component_tested is None or self.evidence_profile is None:
+                raise ValueError("Validation contract v3 requires component_tested and evidence_profile.")
+            expected_profile = {
+                "release": "R",
+                "conditional_runout": "C",
+                "end_to_end": "E",
+            }[self.component_tested]
+            if self.evidence_profile != expected_profile:
+                raise ValueError(
+                    f"component_tested={self.component_tested!r} requires evidence_profile="
+                    f"{expected_profile!r}."
+                )
+            if self.label_state is None:
+                raise ValueError("Validation contract v3 requires an explicit label_state.")
+            if not self.events:
+                raise ValueError("Validation contract v3 requires non-empty event metadata.")
+            event_ids = [event.event_id for event in self.events]
+            if len(set(event_ids)) != len(event_ids):
+                raise ValueError("Validation contract v3 event_id values must be unique.")
+            if any(event.terrain_surface.crs != self.crs for event in self.events):
+                raise ValueError("Every v3 DEM CRS must match the normalized dataset CRS.")
+            required_observation_types = {
+                "R": {"release_polygon"},
+                "C": {"release_polygon"},
+                "E": {"release_polygon"},
+            }[self.evidence_profile]
+            if not required_observation_types.issubset(self.observation_types):
+                raise ValueError(
+                    f"Evidence profile {self.evidence_profile} requires observation types "
+                    f"{sorted(required_observation_types)}."
+                )
+            if self.evidence_profile in {"C", "E"} and not {
+                "deposit_polygon",
+                "runout_endpoint",
+            }.intersection(self.observation_types):
+                raise ValueError(
+                    f"Evidence profile {self.evidence_profile} requires a dense-flow deposit "
+                    "polygon and/or terminal endpoint."
+                )
+            if self.evidence_profile in {"C", "E"}:
+                incomplete_release_state = [
+                    event.event_id
+                    for event in self.events
+                    if event.release_thickness is None
+                    or event.release_density is None
+                    or not event.release_thickness.frozen_without_runout_target
+                    or not event.release_density.frozen_without_runout_target
+                ]
+                if incomplete_release_state:
+                    raise ValueError(
+                        "Profiles C/E require thickness and density evidence frozen without "
+                        f"the observed runout target; incomplete events={incomplete_release_state}."
+                    )
+            if self.evidence_profile == "E":
+                missing_inputs = [event.event_id for event in self.events if not event.model_inputs]
+                missing_rules = [
+                    event.event_id
+                    for event in self.events
+                    if event.release_to_runout_rule_sha256 is None
+                ]
+                if missing_inputs or missing_rules:
+                    raise ValueError(
+                        "Profile E requires provenance-bearing release-model inputs and a frozen "
+                        "release-to-runout rule for every event; "
+                        f"missing_inputs={missing_inputs}, missing_rules={missing_rules}."
+                    )
+            elif any(event.release_to_runout_rule_sha256 is not None for event in self.events):
+                raise ValueError("release_to_runout_rule_sha256 is valid only for Profile E.")
+            surveyed = self.label_state == "surveyed_positive_and_known_absence"
+            if surveyed != (self.coverage_semantics == "surveyed_domain"):
+                raise ValueError(
+                    "label_state and coverage_semantics disagree; positive/unlabelled evidence "
+                    "cannot claim a surveyed negative domain."
+                )
+            if surveyed and (
+                self.absence_semantics != "surveyed_domain_supports_known_absence"
+                or self.survey_completeness != "complete_for_declared_target"
+            ):
+                raise ValueError(
+                    "surveyed_positive_and_known_absence requires complete-search known-absence "
+                    "semantics."
+                )
+            if not surveyed and (
+                self.absence_semantics != "unknown_unless_explicitly_observed"
+                or self.survey_completeness == "complete_for_declared_target"
+            ):
+                raise ValueError(
+                    "positive_unlabelled evidence must preserve unknown absence explicitly."
+                )
+        elif any(
+            value is not None
+            for value in (
+                self.component_tested,
+                self.evidence_profile,
+                self.label_state,
+                self.events,
+            )
+        ):
+            raise ValueError("Component profiles and grouped event metadata require contract v3.")
         return self
 
 
@@ -354,6 +663,7 @@ def _validate_feature(
     allowed_verification = {
         "field_verified",
         "professionally_verified",
+        "reviewed_remote_sensing",
         "unverified",
         "synthetic",
     }
@@ -362,7 +672,8 @@ def _validate_feature(
             f"Feature {index} has unknown verification_status {verification_status!r}."
         )
     if manifest.scientific_use in {"field_validation", "calibration_only"} and (
-        verification_status not in {"field_verified", "professionally_verified"}
+        verification_status
+        not in {"field_verified", "professionally_verified", "reviewed_remote_sensing"}
     ):
         raise ValidationContractError(
             f"Feature {index} is not field/professionally verified and cannot support "
@@ -377,6 +688,7 @@ def _validate_feature(
         "ground_survey",
         "professional_field_mapping",
         "authoritative_occurrence_record",
+        "reviewed_remote_sensing",
         "remote_sensing_interpretation",
         "synthetic_fixture",
         "model_output",
@@ -389,6 +701,7 @@ def _validate_feature(
         "ground_survey",
         "professional_field_mapping",
         "authoritative_occurrence_record",
+        "reviewed_remote_sensing",
     }
     if manifest.scientific_use in {"field_validation", "calibration_only"} and (
         method_class not in quantitative_methods
@@ -398,6 +711,7 @@ def _validate_feature(
             "calibration or validation."
         )
     evidence_method = {
+        "reviewed_remote_sensing": "reviewed_remote_sensing",
         "remote_sensing_interpretation": "remote_sensing_interpretation",
         "synthetic": "synthetic_fixture",
         "model_output": "model_output",
@@ -444,18 +758,21 @@ def _validate_feature(
                 f"Feature {index} single-day events require event_date_status='known'."
             )
     scenario_status = properties["scenario_status"]
-    if scenario_status not in {"documented", "unknown"}:
+    if scenario_status not in {"documented", "partially_documented", "unknown"}:
         raise ValidationContractError(
-            f"Feature {index} scenario_status must be 'documented' or 'unknown'."
+            f"Feature {index} scenario_status must be 'documented', "
+            "'partially_documented', or 'unknown'."
         )
     scenario = properties.get("scenario_inputs")
-    if scenario_status == "documented":
+    if scenario_status in {"documented", "partially_documented"}:
         if not isinstance(scenario, dict):
             raise ValidationContractError(
                 f"Feature {index} documented scenario requires scenario_inputs."
             )
         numeric_fields = ("new_snow_cm", "wind_speed_kmh", "wind_direction_deg")
         for field_name in numeric_fields:
+            if scenario_status == "partially_documented" and field_name not in scenario:
+                continue
             value = scenario.get(field_name)
             if (
                 isinstance(value, bool)
@@ -465,18 +782,35 @@ def _validate_feature(
                 raise ValidationContractError(
                     f"Feature {index} scenario_inputs.{field_name} must be finite."
                 )
-        if scenario["new_snow_cm"] < 0 or scenario["wind_speed_kmh"] < 0:
+        if (
+            ("new_snow_cm" in scenario and scenario["new_snow_cm"] < 0)
+            or ("wind_speed_kmh" in scenario and scenario["wind_speed_kmh"] < 0)
+        ):
             raise ValidationContractError(
                 f"Feature {index} scenario snow and wind speed cannot be negative."
             )
-        if not 0 <= scenario["wind_direction_deg"] < 360:
+        if (
+            "wind_direction_deg" in scenario
+            and not 0 <= scenario["wind_direction_deg"] < 360
+        ):
             raise ValidationContractError(
                 f"Feature {index} scenario wind direction must be in [0, 360) degrees using "
                 "the meteorological wind-from convention."
             )
-        if scenario.get("release_size") not in {"small", "medium", "large", "very_large"}:
+        if (
+            (scenario_status == "documented" or "release_size" in scenario)
+            and scenario.get("release_size")
+            not in {"small", "medium", "large", "very_large"}
+        ):
             raise ValidationContractError(
                 f"Feature {index} scenario_inputs.release_size is invalid."
+            )
+        if scenario_status == "partially_documented" and not any(
+            field_name in scenario for field_name in (*numeric_fields, "release_size")
+        ):
+            raise ValidationContractError(
+                f"Feature {index} partially documented scenario requires at least one observed "
+                "scenario input."
             )
         if not isinstance(scenario.get("source"), str) or not scenario["source"].strip():
             raise ValidationContractError(
@@ -494,6 +828,115 @@ def _validate_feature(
             f"Feature {index} with unknown scenario status must not carry scenario_inputs."
         )
 
+    is_v3 = manifest.schema_version == "avycore-validation-dataset-v3"
+    if is_v3:
+        v3_required = (
+            "mountain_id",
+            "path_id",
+            "storm_cycle_id",
+            "observation_confidence",
+            "confidence_basis",
+            "survey_date",
+            "source_resolution_m",
+            "detection_limitations",
+            "horizontal_uncertainty_confidence_level",
+            "horizontal_uncertainty_method",
+            "annotation_blind_to_model_output",
+        )
+        missing_v3 = [name for name in v3_required if properties.get(name) is None]
+        if missing_v3:
+            raise ValidationContractError(
+                f"Feature {index} is missing validation-contract-v3 properties: {missing_v3}."
+            )
+        event_index = {event.event_id: event for event in manifest.events or ()}
+        event = event_index.get(properties["event_id"])
+        if event is None:
+            raise ValidationContractError(
+                f"Feature {index} event_id is not registered in manifest.events."
+            )
+        for name in ("mountain_id", "path_id", "storm_cycle_id"):
+            if properties[name] != getattr(event, name):
+                raise ValidationContractError(
+                    f"Feature {index} {name} does not match manifest event metadata."
+                )
+        if properties["observation_confidence"] not in {"high", "medium", "low"}:
+            raise ValidationContractError(
+                f"Feature {index} observation_confidence must be high, medium, or low."
+            )
+        for name in (
+            "confidence_basis",
+            "detection_limitations",
+            "horizontal_uncertainty_method",
+        ):
+            if not isinstance(properties[name], str) or not properties[name].strip():
+                raise ValidationContractError(f"Feature {index} {name} must be non-empty.")
+        try:
+            date.fromisoformat(properties["survey_date"])
+        except (TypeError, ValueError) as exc:
+            raise ValidationContractError(
+                f"Feature {index} survey_date must be an ISO 8601 calendar date."
+            ) from exc
+        for name, allow_zero in (
+            ("source_resolution_m", False),
+            ("horizontal_uncertainty_m", True),
+            ("horizontal_uncertainty_confidence_level", False),
+        ):
+            value = properties.get(name)
+            if (
+                isinstance(value, bool)
+                or not isinstance(value, (int, float))
+                or not math.isfinite(float(value))
+                or (float(value) < 0 if allow_zero else float(value) <= 0)
+            ):
+                raise ValidationContractError(
+                    f"Feature {index} {name} must be a finite "
+                    f"{'non-negative' if allow_zero else 'positive'} number."
+                )
+        if not 0 < float(properties["horizontal_uncertainty_confidence_level"]) <= 1:
+            raise ValidationContractError(
+                f"Feature {index} horizontal uncertainty confidence must be in (0, 1]."
+            )
+        blind = properties["annotation_blind_to_model_output"]
+        if not isinstance(blind, bool):
+            raise ValidationContractError(
+                f"Feature {index} annotation_blind_to_model_output must be boolean."
+            )
+        protocol_sha = properties.get("annotation_protocol_sha256")
+        if method_class == "reviewed_remote_sensing":
+            if verification_status != "reviewed_remote_sensing":
+                raise ValidationContractError(
+                    f"Feature {index} reviewed remote sensing requires matching verification status."
+                )
+            if not blind:
+                raise ValidationContractError(
+                    f"Feature {index} remote-sensing annotation was not blind to model output."
+                )
+            if not isinstance(protocol_sha, str) or not re.fullmatch(r"[0-9a-f]{64}", protocol_sha):
+                raise ValidationContractError(
+                    f"Feature {index} reviewed remote sensing requires annotation_protocol_sha256."
+                )
+        elif protocol_sha is not None and (
+            not isinstance(protocol_sha, str) or not re.fullmatch(r"[0-9a-f]{64}", protocol_sha)
+        ):
+            raise ValidationContractError(
+                f"Feature {index} annotation_protocol_sha256 must be a lowercase SHA-256."
+            )
+        if observation_type == "release_polygon" and manifest.evidence_profile in {"C", "E"}:
+            if properties.get("release_geometry_independent") is not True:
+                raise ValidationContractError(
+                    f"Feature {index} Profiles C/E require an independent release polygon."
+                )
+        if observation_type == "deposit_polygon" and manifest.evidence_profile in {"C", "E"}:
+            if properties.get("flow_observation_scope") != "dense_flow_deposit":
+                raise ValidationContractError(
+                    f"Feature {index} Profiles C/E require a dense-flow deposit target."
+                )
+        if observation_type == "runout_endpoint" and manifest.evidence_profile in {"C", "E"}:
+            if properties.get("terminal_dense_flow_toe") is not True:
+                raise ValidationContractError(
+                    f"Feature {index} Profiles C/E require a terminal dense-flow toe."
+                )
+
     try:
         parsed = shape(geometry)
     except Exception as exc:  # shapely provides several parse exception types
@@ -501,8 +944,10 @@ def _validate_feature(
     expected_geometry = {
         "release_polygon": {"Polygon", "MultiPolygon"},
         "deposit_polygon": {"Polygon", "MultiPolygon"},
+        "avalanche_footprint": {"Polygon", "MultiPolygon"},
         "runout_endpoint": {"Point"},
         "survey_coverage_polygon": {"Polygon", "MultiPolygon"},
+        "invalid_observation_mask": {"Polygon", "MultiPolygon"},
     }[observation_type]
     if parsed.geom_type not in expected_geometry:
         raise ValidationContractError(
@@ -541,7 +986,12 @@ def _validate_feature(
         )
     coverage_targets = properties.get("target_observation_types")
     if observation_type == "survey_coverage_polygon":
-        allowed_targets = {"release_polygon", "deposit_polygon", "runout_endpoint"}
+        allowed_targets = {
+            "release_polygon",
+            "deposit_polygon",
+            "avalanche_footprint",
+            "runout_endpoint",
+        }
         if (
             not isinstance(coverage_targets, list)
             or not coverage_targets
@@ -550,11 +1000,33 @@ def _validate_feature(
         ):
             raise ValidationContractError(
                 f"Feature {index} survey coverage requires unique target_observation_types "
-                "chosen from release_polygon, deposit_polygon, and runout_endpoint."
+                "chosen from release_polygon, deposit_polygon, avalanche_footprint, and "
+                "runout_endpoint."
             )
+        if is_v3:
+            if not isinstance(properties.get("detection_mask_observation_ids"), list):
+                raise ValidationContractError(
+                    f"Feature {index} v3 survey coverage requires detection_mask_observation_ids."
+                )
+            complete_search = properties.get("complete_search_semantics")
+            expected_complete_search = (
+                manifest.label_state == "surveyed_positive_and_known_absence"
+            )
+            if complete_search is not expected_complete_search:
+                raise ValidationContractError(
+                    f"Feature {index} complete_search_semantics conflicts with label_state."
+                )
     elif coverage_targets is not None:
         raise ValidationContractError(
             f"Feature {index} target_observation_types is valid only on survey coverage polygons."
+        )
+    if observation_type != "survey_coverage_polygon" and (
+        properties.get("detection_mask_observation_ids") is not None
+        or properties.get("complete_search_semantics") is not None
+    ):
+        raise ValidationContractError(
+            f"Feature {index} detection-mask links and complete-search semantics belong only "
+            "on survey coverage polygons."
         )
     return NormalizedObservation(
         observation_id=properties["observation_id"],
@@ -613,6 +1085,8 @@ def load_validation_dataset(manifest_path: str | Path) -> ValidationDataset:
         raise ValidationContractError("observation_id values must be unique within a dataset.")
 
     event_partitions: dict[str, str] = {}
+    path_partitions: dict[str, str] = {}
+    storm_partitions: dict[str, str] = {}
     event_metadata: dict[str, tuple[Any, ...]] = {}
     counts: dict[str, int] = {}
     for item in observations:
@@ -639,6 +1113,18 @@ def load_validation_dataset(manifest_path: str | Path) -> ValidationDataset:
                 f"Event {item.event_id!r} has inconsistent dates or scenario inputs across its "
                 "registered observations."
             )
+        if manifest.schema_version == "avycore-validation-dataset-v3":
+            for group_name, partitions in (
+                ("path_id", path_partitions),
+                ("storm_cycle_id", storm_partitions),
+            ):
+                group_id = item.properties[group_name]
+                previous_partition = partitions.setdefault(group_id, item.partition)
+                if previous_partition != item.partition:
+                    raise ValidationContractError(
+                        f"{group_name} {group_id!r} appears in both {previous_partition!r} and "
+                        f"{item.partition!r}; grouped holdout leakage is not permitted."
+                    )
         if manifest.scientific_use in {"field_validation", "calibration_only"} and (
             item.properties["event_date_status"] == "unknown"
         ):
@@ -659,11 +1145,15 @@ def load_validation_dataset(manifest_path: str | Path) -> ValidationDataset:
                 )
         counts[item.partition] = counts.get(item.partition, 0) + 1
     target_observations = [
-        item for item in observations if item.observation_type != "survey_coverage_polygon"
+        item
+        for item in observations
+        if item.observation_type
+        not in {"survey_coverage_polygon", "invalid_observation_mask"}
     ]
     if not target_observations:
         raise ValidationContractError(
-            "A validation dataset requires at least one release, deposit, or endpoint observation."
+            "A validation dataset requires at least one release, deposit, whole-avalanche "
+            "footprint, or endpoint observation."
         )
     if manifest.coverage_semantics == "surveyed_domain":
         feature_partitions = {item.partition for item in observations}
@@ -678,6 +1168,83 @@ def load_validation_dataset(manifest_path: str | Path) -> ValidationDataset:
                 "Every partition in a surveyed-domain dataset requires a survey coverage polygon; "
                 f"missing for {missing_coverage}."
             )
+    if manifest.schema_version == "avycore-validation-dataset-v3":
+        event_records = {event.event_id: event for event in manifest.events or ()}
+        observed_event_ids = {item.event_id for item in observations}
+        if observed_event_ids != set(event_records):
+            raise ValidationContractError(
+                "Manifest event metadata and observation event membership must match exactly; "
+                f"missing_observations={sorted(set(event_records) - observed_event_ids)}, "
+                f"unregistered_events={sorted(observed_event_ids - set(event_records))}."
+            )
+        by_event: dict[str, list[NormalizedObservation]] = {}
+        for item in observations:
+            by_event.setdefault(item.event_id, []).append(item)
+        for event_id, event_features in by_event.items():
+            event_types = {item.observation_type for item in event_features}
+            if "release_polygon" not in event_types:
+                raise ValidationContractError(
+                    f"Profile {manifest.evidence_profile} event {event_id!r} lacks a release polygon."
+                )
+            if manifest.evidence_profile in {"C", "E"} and not {
+                "deposit_polygon",
+                "runout_endpoint",
+            }.intersection(event_types):
+                raise ValidationContractError(
+                    f"Profile {manifest.evidence_profile} event {event_id!r} lacks a dense-flow "
+                    "deposit polygon or terminal endpoint."
+                )
+            if manifest.label_state == "surveyed_positive_and_known_absence":
+                component_targets = {
+                    "release": {"release_polygon"},
+                    "conditional_runout": {"deposit_polygon", "runout_endpoint"},
+                    "end_to_end": {
+                        "release_polygon",
+                        "deposit_polygon",
+                        "runout_endpoint",
+                    },
+                }[manifest.component_tested]
+                target_types = {
+                    item.observation_type
+                    for item in event_features
+                    if item.observation_type
+                    not in {"survey_coverage_polygon", "invalid_observation_mask"}
+                    and item.observation_type in component_targets
+                }
+                covered_types: set[str] = set()
+                for coverage in (
+                    item
+                    for item in event_features
+                    if item.observation_type == "survey_coverage_polygon"
+                ):
+                    covered_types.update(coverage.properties["target_observation_types"])
+                missing_target_coverage = sorted(target_types - covered_types)
+                if missing_target_coverage:
+                    raise ValidationContractError(
+                        f"Event {event_id!r} lacks complete-search coverage for targets "
+                        f"{missing_target_coverage}."
+                    )
+        feature_index = {item.observation_id: item for item in observations}
+        for coverage in (
+            item for item in observations if item.observation_type == "survey_coverage_polygon"
+        ):
+            mask_ids = coverage.properties.get("detection_mask_observation_ids", ())
+            if len(set(mask_ids)) != len(mask_ids):
+                raise ValidationContractError(
+                    f"Coverage {coverage.observation_id!r} repeats detection-mask IDs."
+                )
+            for mask_id in mask_ids:
+                mask = feature_index.get(mask_id)
+                if mask is None or mask.observation_type != "invalid_observation_mask":
+                    raise ValidationContractError(
+                        f"Coverage {coverage.observation_id!r} references missing/non-mask "
+                        f"observation {mask_id!r}."
+                    )
+                if mask.event_id != coverage.event_id or mask.partition != coverage.partition:
+                    raise ValidationContractError(
+                        f"Coverage {coverage.observation_id!r} detection masks must share its "
+                        "event and partition."
+                    )
     if manifest.scientific_use == "field_validation" and not any(
         item.partition == "holdout" for item in target_observations
     ):
@@ -688,7 +1255,7 @@ def load_validation_dataset(manifest_path: str | Path) -> ValidationDataset:
 
     identity_payload = "\0".join(
         (
-            VALIDATION_CONTRACT_VERSION,
+            manifest.schema_version,
             manifest_sha256,
             actual_sha,
             manifest.original_source_sha256,

@@ -1,0 +1,1867 @@
+{
+  "acceptance_rule": {
+    "all_predeclared_groups_must_qualify": true,
+    "maximum_flagged_eligible_terrain_fraction": 0.2,
+    "minimum_event_capture_fraction": 0.7,
+    "minimum_mapped_events_per_group": 5,
+    "minimum_qualifying_group_count": 2,
+    "must_exceed_same_area_random_97_5_percentile_in_every_qualifying_group": true,
+    "must_exceed_same_area_slope_only_in_every_qualifying_group": true,
+    "require_complete_inputs": true,
+    "require_no_domain_escape": true
+  },
+  "baselines": {
+    "random_replicate_count": 1000,
+    "random_seed_by_block": {
+      "development_albula": 310003,
+      "development_glarus": 310002,
+      "development_gotthard": 310001,
+      "development_silvretta": 310004,
+      "development_western_bernese": 310000,
+      "holdout_1999_c03r01": 310008,
+      "holdout_1999_c04r03": 310009,
+      "holdout_1999_c04r04": 310005,
+      "holdout_1999_c05r04": 310007,
+      "holdout_1999_c09r05": 310006
+    },
+    "same_area_budget": true
+  },
+  "experiment_id": "regime-hindcast-v1",
+  "fixed_model": {
+    "alpha_only_zone_cap": 12,
+    "dry_loose_runout_mapping": "dry_slab flow factors; no calibrated loose-snow runout factors exist",
+    "dynamics_only_zone_cap": 6,
+    "hybrid_zone_cap": 6,
+    "maximum_zones_per_regime": 40,
+    "random_seed": 20260813,
+    "release_size": "medium",
+    "unsupported_regimes": [
+      "full_depth_glide"
+    ]
+  },
+  "frozen_at_utc": "2026-08-13T23:00:00Z",
+  "landcover": {
+    "forest_classes": [
+      40,
+      50,
+      60,
+      70,
+      90,
+      100,
+      160,
+      170
+    ],
+    "mosaic_class_fraction": {
+      "110": 0.6,
+      "120": 0.3
+    },
+    "source_id": "globcover_2009_tif"
+  },
+  "leakage_controls": {
+    "development_targets": "2018 and 2019 SPOT campaigns; all prior outcomes already viewed",
+    "holdout_block_selection_used_avalanche_outlines": false,
+    "holdout_target": "1999 panchromatic aerial mapping campaign; different campaign, years and fixed terrain cores",
+    "mapped_type_size_geometry_used_by_prediction": false,
+    "negative_evidence_used": false,
+    "post_holdout_parameter_changes_permitted": false,
+    "prediction_command_resolves_evaluation_targets": false,
+    "score_requires_prediction_bound_to_exact_spec_sha256": true
+  },
+  "limitations": [
+    "CERRA is reanalysis at 5.5 km, not an observation or a 30 m meteorological field.",
+    "CERRA snow depth is a modelled grid-cell mean; no observed snow profile, weak layer, stability test or basal liquid-water state is available.",
+    "The buried-interface proxy is diagnostic only and cannot change release scores.",
+    "Wet-snow scoring is a surface-wetting susceptibility proxy and does not distinguish wet slab from wet loose.",
+    "Full-depth/glide release is explicitly unsupported.",
+    "Positive-only mapped outlines provide no verified negatives and cannot validate specificity or false-alarm rate.",
+    "The 1999 mapping is cumulative across three avalanche cycles and does not provide an exact release timestamp for every outline.",
+    "Fixed terrain blocks are bootstrap units, not statistically independent mountain ranges."
+  ],
+  "metrics": {
+    "event_capture_minimum_overlap_fraction": 0.05,
+    "mountain_block_bootstrap": {
+      "confidence_level": 0.95,
+      "random_seed": 20260814,
+      "replicate_count": 10000
+    },
+    "positive_only": true
+  },
+  "model_identity": {
+    "runout_parameter_sha256": "aaafd6f9fc6e8d598cb56c479bcc072374ee94ba17613c0ac2df0594f8059628",
+    "snowpack_parameter_manifest": {
+      "release_regimes": {
+        "dry_loose": {
+          "activation_new_snow_cm": 5.0,
+          "forest_damping_max": 0.5,
+          "loading_base": 0.25,
+          "max_temperature_c": -2.0,
+          "new_snow_full_cm": 25.0,
+          "slope_breakpoints_deg": [
+            0,
+            30,
+            35,
+            40,
+            45,
+            50,
+            60,
+            70,
+            90
+          ],
+          "slope_max_deg": 75.0,
+          "slope_min_deg": 33.0,
+          "slope_scores": [
+            0,
+            0,
+            20,
+            60,
+            95,
+            100,
+            80,
+            40,
+            0
+          ]
+        },
+        "dry_slab": {
+          "activation_new_snow_cm": 5.0,
+          "forest_damping_max": 0.7,
+          "loading_base": 0.2,
+          "max_mean_temperature_c": 1.0,
+          "new_snow_full_cm": 50.0,
+          "slope_breakpoints_deg": [
+            0,
+            20,
+            25,
+            30,
+            34,
+            40,
+            45,
+            50,
+            55,
+            65,
+            90
+          ],
+          "slope_max_deg": 60.0,
+          "slope_min_deg": 25.0,
+          "slope_scores": [
+            0,
+            0,
+            15,
+            55,
+            85,
+            100,
+            95,
+            75,
+            45,
+            15,
+            0
+          ],
+          "snow_loading_weight": 0.6,
+          "wind_loading_weight": 0.75
+        },
+        "full_depth_glide": {
+          "activation_positive_degree_hours": 24.0,
+          "activation_rain_on_snow_mm": 10.0,
+          "activation_snow_depth_m": 0.8,
+          "implemented": false,
+          "loading_base": 0.2,
+          "max_forest_fraction": 0.3,
+          "positive_degree_hours_full": 72.0,
+          "rain_full_mm": 20.0,
+          "reason": "The available forcing has no basal liquid-water observation and the terrain has no smooth-ground or glide-crack observation.",
+          "slope_breakpoints_deg": [
+            0,
+            25,
+            28,
+            35,
+            42,
+            50,
+            55,
+            90
+          ],
+          "slope_max_deg": 52.0,
+          "slope_min_deg": 26.0,
+          "slope_scores": [
+            0,
+            0,
+            30,
+            100,
+            100,
+            60,
+            20,
+            0
+          ],
+          "snow_depth_full_m": 2.0
+        },
+        "regimes": [
+          "dry_slab",
+          "wet_snow",
+          "dry_loose",
+          "full_depth_glide"
+        ],
+        "release_threshold": 55.0,
+        "wet_snow": {
+          "activation_positive_degree_hours": 12.0,
+          "activation_rain_on_snow_mm": 5.0,
+          "forest_damping_max": 0.6,
+          "insolation_clip": [
+            0.0,
+            2.0
+          ],
+          "loading_base": 0.2,
+          "positive_degree_hours_full": 48.0,
+          "rain_full_mm": 20.0,
+          "slope_breakpoints_deg": [
+            0,
+            20,
+            25,
+            30,
+            35,
+            40,
+            45,
+            50,
+            60,
+            90
+          ],
+          "slope_max_deg": 55.0,
+          "slope_min_deg": 22.0,
+          "slope_scores": [
+            0,
+            0,
+            20,
+            70,
+            100,
+            100,
+            90,
+            70,
+            25,
+            0
+          ]
+        }
+      },
+      "snow_state": {
+        "drift_available_min_new_snow_cm": 0.5,
+        "drift_index_full_m3_s3_h": 2000.0,
+        "drift_settlement_time_h": 48.0,
+        "drift_threshold_dry_ms": 7.7,
+        "drift_threshold_wet_ms": 9.9,
+        "new_snow_density_kg_m3": 100.0,
+        "new_snow_settlement_time_h": 48.0,
+        "rain_snow_lower_c": 0.0,
+        "rain_snow_upper_c": 2.0,
+        "snow_present_depth_m": 0.05,
+        "temperature_lapse_c_per_km": 6.5,
+        "weakness_burial_min_new_snow_cm": 10.0,
+        "weakness_full_hours": 120.0,
+        "weakness_max_precipitation_mm": 0.05,
+        "weakness_max_temperature_c": -3.0,
+        "weakness_max_wind_kmh": 10.0
+      }
+    },
+    "snowpack_parameter_sha256": "33333704b688d817fc5bd528a0cea259f0fff59b961f37df71e2ca81273c5323",
+    "source_sha256": {
+      "packages/avycore/src/avycore/hazard/runout.py": "fa2c5e1c912bf9a5865494501bdb4e5d1c6da05e04b1b9aaf303afbffed0ab27",
+      "packages/avycore/src/avycore/snowpack/forcing.py": "4815811a827d32ac8b192fc65f8c03ec8513546820577ccc0310ad46eef892a4",
+      "packages/avycore/src/avycore/snowpack/regimes.py": "40c3b46dfc0349c72126a4097630c5a874ed452cfc6365de5d7a153be2a5b1aa",
+      "packages/avycore/src/avycore/snowpack/solar.py": "77dd6d50afd3f876c0becb90f0075b1b5b1ee1a62d7b7c246b0767680b659d77",
+      "packages/avycore/src/avycore/snowpack/state.py": "cdfefed8b99188839e128bfee8e75ea8f7773746eea8c908bda674db48e99fcd",
+      "packages/avycore/src/avycore/snowpack/zones.py": "643f71b9798435bad35221198f522711b281a20e8a2c1791526ac2ce0c21eb0a",
+      "scripts/validation/run_regime_hindcast.py": "6ed6bb2666ae5e4d0c46cd5e914cee6960d049344d04400814580b2389701490"
+    }
+  },
+  "partitions": {
+    "development": {
+      "blocks": [
+        {
+          "block_id": "development_western_bernese",
+          "campaign_year": 2018,
+          "core_grid": {
+            "bounds": [
+              2600000.0,
+              1140000.0,
+              2620100.0,
+              1160100.0
+            ],
+            "crs": "EPSG:2056",
+            "resolution_m": 30.0,
+            "shape": [
+              670,
+              670
+            ]
+          },
+          "core_window_rowcol": [
+            170,
+            840,
+            170,
+            840
+          ],
+          "dem_source_ids": [
+            "Copernicus_DSM_COG_10_N46_00_E007_00_DEM"
+          ],
+          "flow_regime": "multi_regime_target_independent",
+          "forcing_period": {
+            "end_date": "2018-01-24",
+            "start_date": "2018-01-14"
+          },
+          "meteorology_source_id": "cerra_development_western_bernese",
+          "mountain_group": "Western Bernese Alps fixed tile",
+          "outline_shapefile_source_id": "spot_2018_shp",
+          "partition": "development",
+          "release_size": "medium",
+          "simulation_grid": {
+            "bounds": [
+              2594900.0,
+              1134900.0,
+              2625200.0,
+              1165200.0
+            ],
+            "crs": "EPSG:2056",
+            "resolution_m": 30.0,
+            "shape": [
+              1010,
+              1010
+            ]
+          },
+          "storm_cycles": [
+            {
+              "antecedent_start_exclusive_utc": "2018-01-13T23:00",
+              "api_bin_semantics": "72 preceding-hour snowfall/precipitation bins labelled (start, end]; instantaneous temperature and wind use the same labels",
+              "cycle_id": "2018-01",
+              "end_utc": "2018-01-24T06:00",
+              "hour_count": 72,
+              "start_utc": "2018-01-21T06:00"
+            }
+          ]
+        },
+        {
+          "block_id": "development_gotthard",
+          "campaign_year": 2019,
+          "core_grid": {
+            "bounds": [
+              2680000.0,
+              1158000.0,
+              2700100.0,
+              1178100.0
+            ],
+            "crs": "EPSG:2056",
+            "resolution_m": 30.0,
+            "shape": [
+              670,
+              670
+            ]
+          },
+          "core_window_rowcol": [
+            170,
+            840,
+            170,
+            840
+          ],
+          "dem_source_ids": [
+            "Copernicus_DSM_COG_10_N46_00_E008_00_DEM"
+          ],
+          "flow_regime": "multi_regime_target_independent",
+          "forcing_period": {
+            "end_date": "2019-01-16",
+            "start_date": "2019-01-06"
+          },
+          "meteorology_source_id": "cerra_development_gotthard",
+          "mountain_group": "Gotthard Alps fixed tile",
+          "outline_shapefile_source_id": "spot_2019_shp",
+          "partition": "development",
+          "release_size": "medium",
+          "simulation_grid": {
+            "bounds": [
+              2674900.0,
+              1152900.0,
+              2705200.0,
+              1183200.0
+            ],
+            "crs": "EPSG:2056",
+            "resolution_m": 30.0,
+            "shape": [
+              1010,
+              1010
+            ]
+          },
+          "storm_cycles": [
+            {
+              "antecedent_start_exclusive_utc": "2019-01-05T23:00",
+              "api_bin_semantics": "72 preceding-hour snowfall/precipitation bins labelled (start, end]; instantaneous temperature and wind use the same labels",
+              "cycle_id": "2019-01",
+              "end_utc": "2019-01-16T06:00",
+              "hour_count": 72,
+              "start_utc": "2019-01-13T06:00"
+            }
+          ]
+        },
+        {
+          "block_id": "development_glarus",
+          "campaign_year": 2019,
+          "core_grid": {
+            "bounds": [
+              2700000.0,
+              1190000.0,
+              2720100.0,
+              1210100.0
+            ],
+            "crs": "EPSG:2056",
+            "resolution_m": 30.0,
+            "shape": [
+              670,
+              670
+            ]
+          },
+          "core_window_rowcol": [
+            170,
+            840,
+            170,
+            840
+          ],
+          "dem_source_ids": [
+            "Copernicus_DSM_COG_10_N46_00_E008_00_DEM",
+            "Copernicus_DSM_COG_10_N46_00_E009_00_DEM",
+            "Copernicus_DSM_COG_10_N47_00_E008_00_DEM",
+            "Copernicus_DSM_COG_10_N47_00_E009_00_DEM"
+          ],
+          "flow_regime": "multi_regime_target_independent",
+          "forcing_period": {
+            "end_date": "2019-01-16",
+            "start_date": "2019-01-06"
+          },
+          "meteorology_source_id": "cerra_development_glarus",
+          "mountain_group": "Glarus Alps fixed tile",
+          "outline_shapefile_source_id": "spot_2019_shp",
+          "partition": "development",
+          "release_size": "medium",
+          "simulation_grid": {
+            "bounds": [
+              2694900.0,
+              1184900.0,
+              2725200.0,
+              1215200.0
+            ],
+            "crs": "EPSG:2056",
+            "resolution_m": 30.0,
+            "shape": [
+              1010,
+              1010
+            ]
+          },
+          "storm_cycles": [
+            {
+              "antecedent_start_exclusive_utc": "2019-01-05T23:00",
+              "api_bin_semantics": "72 preceding-hour snowfall/precipitation bins labelled (start, end]; instantaneous temperature and wind use the same labels",
+              "cycle_id": "2019-01",
+              "end_utc": "2019-01-16T06:00",
+              "hour_count": 72,
+              "start_utc": "2019-01-13T06:00"
+            }
+          ]
+        },
+        {
+          "block_id": "development_albula",
+          "campaign_year": 2019,
+          "core_grid": {
+            "bounds": [
+              2760000.0,
+              1158000.0,
+              2780100.0,
+              1178100.0
+            ],
+            "crs": "EPSG:2056",
+            "resolution_m": 30.0,
+            "shape": [
+              670,
+              670
+            ]
+          },
+          "core_window_rowcol": [
+            170,
+            840,
+            170,
+            840
+          ],
+          "dem_source_ids": [
+            "Copernicus_DSM_COG_10_N46_00_E009_00_DEM"
+          ],
+          "flow_regime": "multi_regime_target_independent",
+          "forcing_period": {
+            "end_date": "2019-01-16",
+            "start_date": "2019-01-06"
+          },
+          "meteorology_source_id": "cerra_development_albula",
+          "mountain_group": "Albula Alps fixed tile",
+          "outline_shapefile_source_id": "spot_2019_shp",
+          "partition": "development",
+          "release_size": "medium",
+          "simulation_grid": {
+            "bounds": [
+              2754900.0,
+              1152900.0,
+              2785200.0,
+              1183200.0
+            ],
+            "crs": "EPSG:2056",
+            "resolution_m": 30.0,
+            "shape": [
+              1010,
+              1010
+            ]
+          },
+          "storm_cycles": [
+            {
+              "antecedent_start_exclusive_utc": "2019-01-05T23:00",
+              "api_bin_semantics": "72 preceding-hour snowfall/precipitation bins labelled (start, end]; instantaneous temperature and wind use the same labels",
+              "cycle_id": "2019-01",
+              "end_utc": "2019-01-16T06:00",
+              "hour_count": 72,
+              "start_utc": "2019-01-13T06:00"
+            }
+          ]
+        },
+        {
+          "block_id": "development_silvretta",
+          "campaign_year": 2019,
+          "core_grid": {
+            "bounds": [
+              2800000.0,
+              1180000.0,
+              2820100.0,
+              1200100.0
+            ],
+            "crs": "EPSG:2056",
+            "resolution_m": 30.0,
+            "shape": [
+              670,
+              670
+            ]
+          },
+          "core_window_rowcol": [
+            170,
+            840,
+            170,
+            840
+          ],
+          "dem_source_ids": [
+            "Copernicus_DSM_COG_10_N46_00_E009_00_DEM",
+            "Copernicus_DSM_COG_10_N46_00_E010_00_DEM"
+          ],
+          "flow_regime": "multi_regime_target_independent",
+          "forcing_period": {
+            "end_date": "2019-01-16",
+            "start_date": "2019-01-06"
+          },
+          "meteorology_source_id": "cerra_development_silvretta",
+          "mountain_group": "Silvretta and Lower Engadine fixed tile",
+          "outline_shapefile_source_id": "spot_2019_shp",
+          "partition": "development",
+          "release_size": "medium",
+          "simulation_grid": {
+            "bounds": [
+              2794900.0,
+              1174900.0,
+              2825200.0,
+              1205200.0
+            ],
+            "crs": "EPSG:2056",
+            "resolution_m": 30.0,
+            "shape": [
+              1010,
+              1010
+            ]
+          },
+          "storm_cycles": [
+            {
+              "antecedent_start_exclusive_utc": "2019-01-05T23:00",
+              "api_bin_semantics": "72 preceding-hour snowfall/precipitation bins labelled (start, end]; instantaneous temperature and wind use the same labels",
+              "cycle_id": "2019-01",
+              "end_utc": "2019-01-16T06:00",
+              "hour_count": 72,
+              "start_utc": "2019-01-13T06:00"
+            }
+          ]
+        }
+      ],
+      "split_description": "Previously viewed 24 Jan 2018 and 16 Jan 2019 SPOT campaigns; five fixed blocks; development only."
+    },
+    "holdout": {
+      "block_selection_artifact": "validation-data/experiments/regime-hindcast-v1-holdout-blocks.json",
+      "blocks": [
+        {
+          "acquisition_coverage_fraction": 0.9235742958096829,
+          "avalanche_terrain_fraction": 0.15226999331699712,
+          "block_id": "holdout_1999_c04r04",
+          "campaign_year": 1999,
+          "cloud_source_id": "cloud_1999_shp",
+          "core_grid": {
+            "bounds": [
+              2620400.0,
+              1160400.0,
+              2640500.0,
+              1180500.0
+            ],
+            "crs": "EPSG:2056",
+            "resolution_m": 30.0,
+            "shape": [
+              670,
+              670
+            ]
+          },
+          "core_window_rowcol": [
+            170,
+            840,
+            170,
+            840
+          ],
+          "coverage_source_id": "coverage_1999_shp",
+          "dem_source_ids": [
+            "Copernicus_DSM_COG_10_N46_00_E007_00_DEM",
+            "Copernicus_DSM_COG_10_N46_00_E008_00_DEM"
+          ],
+          "flow_regime": "multi_regime_target_independent",
+          "forcing_period": {
+            "end_date": "1999-02-25",
+            "start_date": "1999-01-19"
+          },
+          "lattice_column": 4,
+          "lattice_row": 4,
+          "mean_elevation_m": 1246.7293701171875,
+          "meteorology_source_id": "cerra_holdout_1999_c04r04",
+          "mountain_group": "Grimsel and Haslital",
+          "outline_shapefile_source_id": "spot_1999_shp",
+          "partition": "holdout",
+          "release_size": "medium",
+          "simulation_grid": {
+            "bounds": [
+              2615300.0,
+              1155300.0,
+              2645600.0,
+              1185600.0
+            ],
+            "crs": "EPSG:2056",
+            "resolution_m": 30.0,
+            "shape": [
+              1010,
+              1010
+            ]
+          },
+          "storm_cycles": [
+            {
+              "antecedent_start_exclusive_utc": "1999-01-18T23:00",
+              "cycle_id": "1999-cycle-1",
+              "end_utc": "1999-01-30T06:00",
+              "start_utc": "1999-01-25T23:00"
+            },
+            {
+              "antecedent_start_exclusive_utc": "1999-01-29T23:00",
+              "cycle_id": "1999-cycle-2",
+              "end_utc": "1999-02-11T06:00",
+              "start_utc": "1999-02-04T23:00"
+            },
+            {
+              "antecedent_start_exclusive_utc": "1999-02-10T23:00",
+              "cycle_id": "1999-cycle-3",
+              "end_utc": "1999-02-25T06:00",
+              "start_utc": "1999-02-16T23:00"
+            }
+          ],
+          "terrain_input_coverage_fraction": 1.0
+        },
+        {
+          "acquisition_coverage_fraction": 0.8683172910322482,
+          "avalanche_terrain_fraction": 0.2847516150590332,
+          "block_id": "holdout_1999_c09r05",
+          "campaign_year": 1999,
+          "cloud_source_id": "cloud_1999_shp",
+          "core_grid": {
+            "bounds": [
+              2720900.0,
+              1180500.0,
+              2741000.0,
+              1200600.0
+            ],
+            "crs": "EPSG:2056",
+            "resolution_m": 30.0,
+            "shape": [
+              670,
+              670
+            ]
+          },
+          "core_window_rowcol": [
+            170,
+            840,
+            170,
+            840
+          ],
+          "coverage_source_id": "coverage_1999_shp",
+          "dem_source_ids": [
+            "Copernicus_DSM_COG_10_N46_00_E008_00_DEM",
+            "Copernicus_DSM_COG_10_N46_00_E009_00_DEM"
+          ],
+          "flow_regime": "multi_regime_target_independent",
+          "forcing_period": {
+            "end_date": "1999-02-25",
+            "start_date": "1999-01-19"
+          },
+          "lattice_column": 9,
+          "lattice_row": 5,
+          "mean_elevation_m": 1849.30712890625,
+          "meteorology_source_id": "cerra_holdout_1999_c09r05",
+          "mountain_group": "Surselva east",
+          "outline_shapefile_source_id": "spot_1999_shp",
+          "partition": "holdout",
+          "release_size": "medium",
+          "simulation_grid": {
+            "bounds": [
+              2715800.0,
+              1175400.0,
+              2746100.0,
+              1205700.0
+            ],
+            "crs": "EPSG:2056",
+            "resolution_m": 30.0,
+            "shape": [
+              1010,
+              1010
+            ]
+          },
+          "storm_cycles": [
+            {
+              "antecedent_start_exclusive_utc": "1999-01-18T23:00",
+              "cycle_id": "1999-cycle-1",
+              "end_utc": "1999-01-30T06:00",
+              "start_utc": "1999-01-25T23:00"
+            },
+            {
+              "antecedent_start_exclusive_utc": "1999-01-29T23:00",
+              "cycle_id": "1999-cycle-2",
+              "end_utc": "1999-02-11T06:00",
+              "start_utc": "1999-02-04T23:00"
+            },
+            {
+              "antecedent_start_exclusive_utc": "1999-02-10T23:00",
+              "cycle_id": "1999-cycle-3",
+              "end_utc": "1999-02-25T06:00",
+              "start_utc": "1999-02-16T23:00"
+            }
+          ],
+          "terrain_input_coverage_fraction": 1.0
+        },
+        {
+          "acquisition_coverage_fraction": 0.8502029015370802,
+          "avalanche_terrain_fraction": 0.2624415237246603,
+          "block_id": "holdout_1999_c05r04",
+          "campaign_year": 1999,
+          "cloud_source_id": "cloud_1999_shp",
+          "core_grid": {
+            "bounds": [
+              2640500.0,
+              1160400.0,
+              2660600.0,
+              1180500.0
+            ],
+            "crs": "EPSG:2056",
+            "resolution_m": 30.0,
+            "shape": [
+              670,
+              670
+            ]
+          },
+          "core_window_rowcol": [
+            170,
+            840,
+            170,
+            840
+          ],
+          "coverage_source_id": "coverage_1999_shp",
+          "dem_source_ids": [
+            "Copernicus_DSM_COG_10_N46_00_E007_00_DEM",
+            "Copernicus_DSM_COG_10_N46_00_E008_00_DEM"
+          ],
+          "flow_regime": "multi_regime_target_independent",
+          "forcing_period": {
+            "end_date": "1999-02-25",
+            "start_date": "1999-01-19"
+          },
+          "lattice_column": 5,
+          "lattice_row": 4,
+          "mean_elevation_m": 1697.0634765625,
+          "meteorology_source_id": "cerra_holdout_1999_c05r04",
+          "mountain_group": "Grimsel and Haslital",
+          "outline_shapefile_source_id": "spot_1999_shp",
+          "partition": "holdout",
+          "release_size": "medium",
+          "simulation_grid": {
+            "bounds": [
+              2635400.0,
+              1155300.0,
+              2665700.0,
+              1185600.0
+            ],
+            "crs": "EPSG:2056",
+            "resolution_m": 30.0,
+            "shape": [
+              1010,
+              1010
+            ]
+          },
+          "storm_cycles": [
+            {
+              "antecedent_start_exclusive_utc": "1999-01-18T23:00",
+              "cycle_id": "1999-cycle-1",
+              "end_utc": "1999-01-30T06:00",
+              "start_utc": "1999-01-25T23:00"
+            },
+            {
+              "antecedent_start_exclusive_utc": "1999-01-29T23:00",
+              "cycle_id": "1999-cycle-2",
+              "end_utc": "1999-02-11T06:00",
+              "start_utc": "1999-02-04T23:00"
+            },
+            {
+              "antecedent_start_exclusive_utc": "1999-02-10T23:00",
+              "cycle_id": "1999-cycle-3",
+              "end_utc": "1999-02-25T06:00",
+              "start_utc": "1999-02-16T23:00"
+            }
+          ],
+          "terrain_input_coverage_fraction": 1.0
+        },
+        {
+          "acquisition_coverage_fraction": 0.8038981615039327,
+          "avalanche_terrain_fraction": 0.44165738471820004,
+          "block_id": "holdout_1999_c03r01",
+          "campaign_year": 1999,
+          "cloud_source_id": "cloud_1999_shp",
+          "core_grid": {
+            "bounds": [
+              2600300.0,
+              1100100.0,
+              2620400.0,
+              1120200.0
+            ],
+            "crs": "EPSG:2056",
+            "resolution_m": 30.0,
+            "shape": [
+              670,
+              670
+            ]
+          },
+          "core_window_rowcol": [
+            170,
+            840,
+            170,
+            840
+          ],
+          "coverage_source_id": "coverage_1999_shp",
+          "dem_source_ids": [
+            "Copernicus_DSM_COG_10_N46_00_E007_00_DEM"
+          ],
+          "flow_regime": "multi_regime_target_independent",
+          "forcing_period": {
+            "end_date": "1999-02-25",
+            "start_date": "1999-01-19"
+          },
+          "lattice_column": 3,
+          "lattice_row": 1,
+          "mean_elevation_m": 2372.238037109375,
+          "meteorology_source_id": "cerra_holdout_1999_c03r01",
+          "mountain_group": "Lotschental and upper Valais",
+          "outline_shapefile_source_id": "spot_1999_shp",
+          "partition": "holdout",
+          "release_size": "medium",
+          "simulation_grid": {
+            "bounds": [
+              2595200.0,
+              1095000.0,
+              2625500.0,
+              1125300.0
+            ],
+            "crs": "EPSG:2056",
+            "resolution_m": 30.0,
+            "shape": [
+              1010,
+              1010
+            ]
+          },
+          "storm_cycles": [
+            {
+              "antecedent_start_exclusive_utc": "1999-01-18T23:00",
+              "cycle_id": "1999-cycle-1",
+              "end_utc": "1999-01-30T06:00",
+              "start_utc": "1999-01-25T23:00"
+            },
+            {
+              "antecedent_start_exclusive_utc": "1999-01-29T23:00",
+              "cycle_id": "1999-cycle-2",
+              "end_utc": "1999-02-11T06:00",
+              "start_utc": "1999-02-04T23:00"
+            },
+            {
+              "antecedent_start_exclusive_utc": "1999-02-10T23:00",
+              "cycle_id": "1999-cycle-3",
+              "end_utc": "1999-02-25T06:00",
+              "start_utc": "1999-02-16T23:00"
+            }
+          ],
+          "terrain_input_coverage_fraction": 1.0
+        },
+        {
+          "acquisition_coverage_fraction": 0.8003803890992927,
+          "avalanche_terrain_fraction": 0.4848184450879929,
+          "block_id": "holdout_1999_c04r03",
+          "campaign_year": 1999,
+          "cloud_source_id": "cloud_1999_shp",
+          "core_grid": {
+            "bounds": [
+              2620400.0,
+              1140300.0,
+              2640500.0,
+              1160400.0
+            ],
+            "crs": "EPSG:2056",
+            "resolution_m": 30.0,
+            "shape": [
+              670,
+              670
+            ]
+          },
+          "core_window_rowcol": [
+            170,
+            840,
+            170,
+            840
+          ],
+          "coverage_source_id": "coverage_1999_shp",
+          "dem_source_ids": [
+            "Copernicus_DSM_COG_10_N46_00_E007_00_DEM",
+            "Copernicus_DSM_COG_10_N46_00_E008_00_DEM"
+          ],
+          "flow_regime": "multi_regime_target_independent",
+          "forcing_period": {
+            "end_date": "1999-02-25",
+            "start_date": "1999-01-19"
+          },
+          "lattice_column": 4,
+          "lattice_row": 3,
+          "mean_elevation_m": 2359.120849609375,
+          "meteorology_source_id": "cerra_holdout_1999_c04r03",
+          "mountain_group": "Grimsel and Haslital",
+          "outline_shapefile_source_id": "spot_1999_shp",
+          "partition": "holdout",
+          "release_size": "medium",
+          "simulation_grid": {
+            "bounds": [
+              2615300.0,
+              1135200.0,
+              2645600.0,
+              1165500.0
+            ],
+            "crs": "EPSG:2056",
+            "resolution_m": 30.0,
+            "shape": [
+              1010,
+              1010
+            ]
+          },
+          "storm_cycles": [
+            {
+              "antecedent_start_exclusive_utc": "1999-01-18T23:00",
+              "cycle_id": "1999-cycle-1",
+              "end_utc": "1999-01-30T06:00",
+              "start_utc": "1999-01-25T23:00"
+            },
+            {
+              "antecedent_start_exclusive_utc": "1999-01-29T23:00",
+              "cycle_id": "1999-cycle-2",
+              "end_utc": "1999-02-11T06:00",
+              "start_utc": "1999-02-04T23:00"
+            },
+            {
+              "antecedent_start_exclusive_utc": "1999-02-10T23:00",
+              "cycle_id": "1999-cycle-3",
+              "end_utc": "1999-02-25T06:00",
+              "start_utc": "1999-02-16T23:00"
+            }
+          ],
+          "terrain_input_coverage_fraction": 1.0
+        }
+      ],
+      "split_description": "Previously unscored 25 Feb-1 Mar 1999 aerial campaign; five fixed 20.1 km lattice blocks selected without avalanche outlines; predictions union three predeclared storm cycles (26-29 Jan, 5-10 Feb, 17-24 Feb)."
+    }
+  },
+  "purpose": "A positive-only release-plus-runout hindcast testing CERRA 5.5 km hourly forcing, an evolving snow-state representation, and target-independent dry-slab, wet-snow and dry-loose release mechanisms.",
+  "safety": {
+    "disclaimer": "Experimental research prototype; not an operational avalanche forecast and not a replacement for Avalanche Canada guidance or field assessment. Scores are relative indices, not probabilities.",
+    "is_operational_forecast": false,
+    "is_probability": false
+  },
+  "schema": "avycore-regime-hindcast-experiment-v1",
+  "source_inputs": [
+    {
+      "bytes": 157117977,
+      "doi": "10.16904/envidat.77",
+      "id": "spot_2018",
+      "licence": "ODbL with Database Contents License (DbCL)",
+      "path": "aval_outlines2018.zip",
+      "role": "evaluation_target_archive",
+      "root": "target_root",
+      "sha256": "087c036f1a3e4213c2332fad4497fd292c6af6f0df1629c5aaa887a45387c2f5",
+      "url": "https://www.envidat.ch/dataset/fa4adf13-d0e5-4479-9b46-cbb07233999f/resource/309d5260-f13e-4fd1-881e-8968c829941b/download/aval_outlines2018.zip"
+    },
+    {
+      "bytes": 5,
+      "crs": "EPSG:2056",
+      "extracted_from": "spot_2018",
+      "id": "spot_2018_cpg",
+      "path": "2018/outlines2018.cpg",
+      "role": "evaluation_target",
+      "root": "target_root",
+      "sha256": "3ad3031f5503a4404af825262ee8232cc04d4ea6683d42c5dd0a2f2a27ac9824"
+    },
+    {
+      "bytes": 8301069,
+      "crs": "EPSG:2056",
+      "extracted_from": "spot_2018",
+      "id": "spot_2018_dbf",
+      "path": "2018/outlines2018.dbf",
+      "role": "evaluation_target",
+      "root": "target_root",
+      "sha256": "f5486852fa6d929bb3229a6a17c2027a7d13089bf00c6c30810a23480d88010b"
+    },
+    {
+      "bytes": 472,
+      "crs": "EPSG:2056",
+      "extracted_from": "spot_2018",
+      "id": "spot_2018_prj",
+      "path": "2018/outlines2018.prj",
+      "role": "evaluation_target",
+      "root": "target_root",
+      "sha256": "533b4abc8e751ef5831d87f2d8257e4cc3ec40da24e732b20d2721980afe3a4f"
+    },
+    {
+      "bytes": 190964,
+      "crs": "EPSG:2056",
+      "extracted_from": "spot_2018",
+      "id": "spot_2018_sbn",
+      "path": "2018/outlines2018.sbn",
+      "role": "evaluation_target",
+      "root": "target_root",
+      "sha256": "a0b527c1f3bd40c1002fd2bd1161413f55e287566dc0ff86d7efbbd94eb47e9a"
+    },
+    {
+      "bytes": 8436,
+      "crs": "EPSG:2056",
+      "extracted_from": "spot_2018",
+      "id": "spot_2018_sbx",
+      "path": "2018/outlines2018.sbx",
+      "role": "evaluation_target",
+      "root": "target_root",
+      "sha256": "71b1176865582b163963b787bb26a61d84a0a4a3df6b90040201ddedac914616"
+    },
+    {
+      "bytes": 274592988,
+      "crs": "EPSG:2056",
+      "extracted_from": "spot_2018",
+      "id": "spot_2018_shp",
+      "path": "2018/outlines2018.shp",
+      "role": "evaluation_target",
+      "root": "target_root",
+      "sha256": "64322b7f740bc1496cb37494fbbe9926bfd0a6103ca3151a87ae71ae5ba9671e"
+    },
+    {
+      "bytes": 2810,
+      "crs": "EPSG:2056",
+      "extracted_from": "spot_2018",
+      "id": "spot_2018_xml",
+      "path": "2018/outlines2018.shp.xml",
+      "role": "evaluation_target",
+      "root": "target_root",
+      "sha256": "015d6f9d8e9d71ca5347ab02299da7420b8e3ea25d9df268f927ef6eef7e923f"
+    },
+    {
+      "bytes": 149996,
+      "crs": "EPSG:2056",
+      "extracted_from": "spot_2018",
+      "id": "spot_2018_shx",
+      "path": "2018/outlines2018.shx",
+      "role": "evaluation_target",
+      "root": "target_root",
+      "sha256": "d1c7a1e8297c0e21de4dfab3166a3ac99cd70b411fbeb75c83291c77924a7a29"
+    },
+    {
+      "bytes": 56256600,
+      "doi": "10.16904/envidat.235",
+      "id": "spot_2019",
+      "licence": "CC BY 4.0",
+      "path": "aval_outlines16012019.shp.zip",
+      "role": "evaluation_target_archive",
+      "root": "target_root",
+      "sha256": "af4099d949fb567c0bc07b3e46cbca40e6b8f7c4340a6fbe7311e2104e93251f",
+      "url": "https://www.envidat.ch/dataset/cb197291-bbfa-4d03-a24a-4f9336ecd9af/resource/33cb7780-261b-4228-8528-bf5d84f3955e/download/aval_outlines16012019.shp.zip"
+    },
+    {
+      "bytes": 5,
+      "crs": "EPSG:2056",
+      "extracted_from": "spot_2019",
+      "id": "spot_2019_cpg",
+      "path": "2019/aval_outlines16012019.cpg",
+      "role": "evaluation_target",
+      "root": "target_root",
+      "sha256": "3ad3031f5503a4404af825262ee8232cc04d4ea6683d42c5dd0a2f2a27ac9824"
+    },
+    {
+      "bytes": 2157055,
+      "crs": "EPSG:2056",
+      "extracted_from": "spot_2019",
+      "id": "spot_2019_dbf",
+      "path": "2019/aval_outlines16012019.dbf",
+      "role": "evaluation_target",
+      "root": "target_root",
+      "sha256": "933cba5ea3e60a06f2caeb629ec956ab70b5d3ce75162d826cc2630a1ebc1de4"
+    },
+    {
+      "bytes": 472,
+      "crs": "EPSG:2056",
+      "extracted_from": "spot_2019",
+      "id": "spot_2019_prj",
+      "path": "2019/aval_outlines16012019.prj",
+      "role": "evaluation_target",
+      "root": "target_root",
+      "sha256": "533b4abc8e751ef5831d87f2d8257e4cc3ec40da24e732b20d2721980afe3a4f"
+    },
+    {
+      "bytes": 60140,
+      "crs": "EPSG:2056",
+      "extracted_from": "spot_2019",
+      "id": "spot_2019_sbn",
+      "path": "2019/aval_outlines16012019.sbn",
+      "role": "evaluation_target",
+      "root": "target_root",
+      "sha256": "cf3c3870e47187040858a909c07b7741be792b23ef32667f31ee32f90df14426"
+    },
+    {
+      "bytes": 3748,
+      "crs": "EPSG:2056",
+      "extracted_from": "spot_2019",
+      "id": "spot_2019_sbx",
+      "path": "2019/aval_outlines16012019.sbx",
+      "role": "evaluation_target",
+      "root": "target_root",
+      "sha256": "9e0f8a5e00c2268fabf998898b014a2c1ce3a9dd33896234712413a62d990168"
+    },
+    {
+      "bytes": 87058752,
+      "crs": "EPSG:2056",
+      "extracted_from": "spot_2019",
+      "id": "spot_2019_shp",
+      "path": "2019/aval_outlines16012019.shp",
+      "role": "evaluation_target",
+      "root": "target_root",
+      "sha256": "5ec808bf744440cb9f02fd13ca1e1101181db8d602d20f3ba877eb2751dd2dc5"
+    },
+    {
+      "bytes": 155275,
+      "crs": "EPSG:2056",
+      "extracted_from": "spot_2019",
+      "id": "spot_2019_xml",
+      "path": "2019/aval_outlines16012019.shp.xml",
+      "role": "evaluation_target",
+      "root": "target_root",
+      "sha256": "c13deac62d97da226fcdaab1ff471e53f56cd50e268e01ec0f4359531cdbe9ad"
+    },
+    {
+      "bytes": 48428,
+      "crs": "EPSG:2056",
+      "extracted_from": "spot_2019",
+      "id": "spot_2019_shx",
+      "path": "2019/aval_outlines16012019.shx",
+      "role": "evaluation_target",
+      "root": "target_root",
+      "sha256": "6a3d84ba6123045e66764b5126018a78ad47b3ac40495f859693d735243a13cb"
+    },
+    {
+      "bytes": 150084348,
+      "doi": "10.16904/envidat.579",
+      "id": "aerial_1999",
+      "licence": "CC BY-SA 4.0",
+      "path": "avalanche_data_1999_all.zip",
+      "role": "evaluation_target_archive",
+      "root": "target_root",
+      "sha256": "7a456616f8dfd01c39c8a7b945abf9ebe46436f084b4c13a7f09f2651fd64427",
+      "url": "https://www.envidat.ch/dataset/ac52bb46-c042-429b-83e2-feb5f397db99/resource/a86944ff-6bb2-4b9d-b7d2-26b4571be620/download/avalanche_data_1999_all.zip"
+    },
+    {
+      "bytes": 5,
+      "crs": "EPSG:2056",
+      "extracted_from": "aerial_1999",
+      "id": "spot_1999_cpg",
+      "path": "1999/avalanches1999_endversion1.cpg",
+      "role": "evaluation_target",
+      "root": "target_root",
+      "sha256": "3ad3031f5503a4404af825262ee8232cc04d4ea6683d42c5dd0a2f2a27ac9824"
+    },
+    {
+      "bytes": 5927762,
+      "crs": "EPSG:2056",
+      "extracted_from": "aerial_1999",
+      "id": "spot_1999_dbf",
+      "path": "1999/avalanches1999_endversion1.dbf",
+      "role": "evaluation_target",
+      "root": "target_root",
+      "sha256": "22930eebc162f7dab52e6322ce9607bcf9c6dc222795d51610317e36d20fcf2a"
+    },
+    {
+      "bytes": 472,
+      "crs": "EPSG:2056",
+      "extracted_from": "aerial_1999",
+      "id": "spot_1999_prj",
+      "path": "1999/avalanches1999_endversion1.prj",
+      "role": "evaluation_target",
+      "root": "target_root",
+      "sha256": "533b4abc8e751ef5831d87f2d8257e4cc3ec40da24e732b20d2721980afe3a4f"
+    },
+    {
+      "bytes": 110220,
+      "crs": "EPSG:2056",
+      "extracted_from": "aerial_1999",
+      "id": "spot_1999_sbn",
+      "path": "1999/avalanches1999_endversion1.sbn",
+      "role": "evaluation_target",
+      "root": "target_root",
+      "sha256": "3009fc754d22ca208bbdc1bdfbc7f76143558cd5435bc6b05501c9c11fac076d"
+    },
+    {
+      "bytes": 4948,
+      "crs": "EPSG:2056",
+      "extracted_from": "aerial_1999",
+      "id": "spot_1999_sbx",
+      "path": "1999/avalanches1999_endversion1.sbx",
+      "role": "evaluation_target",
+      "root": "target_root",
+      "sha256": "19a2b749ca66b76153c743fda9f124a9b2e35e601eee10ce6cf6b54a222a45f7"
+    },
+    {
+      "bytes": 204860304,
+      "crs": "EPSG:2056",
+      "extracted_from": "aerial_1999",
+      "id": "spot_1999_shp",
+      "path": "1999/avalanches1999_endversion1.shp",
+      "role": "evaluation_target",
+      "root": "target_root",
+      "sha256": "eaf3a4478f6b9990d9bb4f89fac1bbfd32968e512462f484aded2b9a2c8b82e6"
+    },
+    {
+      "bytes": 23403,
+      "crs": "EPSG:2056",
+      "extracted_from": "aerial_1999",
+      "id": "spot_1999_xml",
+      "path": "1999/avalanches1999_endversion1.shp.xml",
+      "role": "evaluation_target",
+      "root": "target_root",
+      "sha256": "0ca5d6603da64f25d91748fa8ca03b35c1a7fb04daf2f0c1813a32bc4daa728f"
+    },
+    {
+      "bytes": 89060,
+      "crs": "EPSG:2056",
+      "extracted_from": "aerial_1999",
+      "id": "spot_1999_shx",
+      "path": "1999/avalanches1999_endversion1.shx",
+      "role": "evaluation_target",
+      "root": "target_root",
+      "sha256": "1851034787d832ba3687f73570a769218a2cd3b570bdd6f8a17997281eaadbad"
+    },
+    {
+      "bytes": 5,
+      "crs": "EPSG:2056",
+      "extracted_from": "aerial_1999",
+      "id": "coverage_1999_cpg",
+      "path": "1999/area_images_1999_all.cpg",
+      "role": "acquisition_footprint",
+      "root": "target_root",
+      "sha256": "3ad3031f5503a4404af825262ee8232cc04d4ea6683d42c5dd0a2f2a27ac9824"
+    },
+    {
+      "bytes": 5342,
+      "crs": "EPSG:2056",
+      "extracted_from": "aerial_1999",
+      "id": "coverage_1999_dbf",
+      "path": "1999/area_images_1999_all.dbf",
+      "role": "acquisition_footprint",
+      "root": "target_root",
+      "sha256": "916e1ecfc50ce48af4f3f86207507cb17e8095a49b9cac2f0e1ace952f48ebc3"
+    },
+    {
+      "bytes": 472,
+      "crs": "EPSG:2056",
+      "extracted_from": "aerial_1999",
+      "id": "coverage_1999_prj",
+      "path": "1999/area_images_1999_all.prj",
+      "role": "acquisition_footprint",
+      "root": "target_root",
+      "sha256": "533b4abc8e751ef5831d87f2d8257e4cc3ec40da24e732b20d2721980afe3a4f"
+    },
+    {
+      "bytes": 820,
+      "crs": "EPSG:2056",
+      "extracted_from": "aerial_1999",
+      "id": "coverage_1999_sbn",
+      "path": "1999/area_images_1999_all.sbn",
+      "role": "acquisition_footprint",
+      "root": "target_root",
+      "sha256": "fbdfe4e7a6d0574c2b37787091be7dcba7a97a8ecd86f78d77f5d4d9f5c9d85f"
+    },
+    {
+      "bytes": 172,
+      "crs": "EPSG:2056",
+      "extracted_from": "aerial_1999",
+      "id": "coverage_1999_sbx",
+      "path": "1999/area_images_1999_all.sbx",
+      "role": "acquisition_footprint",
+      "root": "target_root",
+      "sha256": "4155aebd2f1a12e71e6b2fa2bac31a8af26d4f824a2038e76a5b917bbe6e4f5a"
+    },
+    {
+      "bytes": 32718008,
+      "crs": "EPSG:2056",
+      "extracted_from": "aerial_1999",
+      "id": "coverage_1999_shp",
+      "path": "1999/area_images_1999_all.shp",
+      "role": "acquisition_footprint",
+      "root": "target_root",
+      "sha256": "ec09a902b4239b5f8275315b3f561c3a065b3ffe08480a4a128c25a720a7ae07"
+    },
+    {
+      "bytes": 12249,
+      "crs": "EPSG:2056",
+      "extracted_from": "aerial_1999",
+      "id": "coverage_1999_xml",
+      "path": "1999/area_images_1999_all.shp.xml",
+      "role": "acquisition_footprint",
+      "root": "target_root",
+      "sha256": "4e2cff6ee8c0ae6ebdac1f539b9f71695c8cc9f2edec1016c43019495a64ca88"
+    },
+    {
+      "bytes": 628,
+      "crs": "EPSG:2056",
+      "extracted_from": "aerial_1999",
+      "id": "coverage_1999_shx",
+      "path": "1999/area_images_1999_all.shx",
+      "role": "acquisition_footprint",
+      "root": "target_root",
+      "sha256": "e38b42b9d5c94c600cf347a22de8e2dda72cc1f1ca40d281ee7132bc02230966"
+    },
+    {
+      "bytes": 5,
+      "crs": "EPSG:2056",
+      "extracted_from": "aerial_1999",
+      "id": "cloud_1999_cpg",
+      "path": "1999/Clouds_1999.cpg",
+      "role": "cloud_exclusion",
+      "root": "target_root",
+      "sha256": "3ad3031f5503a4404af825262ee8232cc04d4ea6683d42c5dd0a2f2a27ac9824"
+    },
+    {
+      "bytes": 5474,
+      "crs": "EPSG:2056",
+      "extracted_from": "aerial_1999",
+      "id": "cloud_1999_dbf",
+      "path": "1999/Clouds_1999.dbf",
+      "role": "cloud_exclusion",
+      "root": "target_root",
+      "sha256": "027a4d2d99ef85f6b31706719b3ac71e2c8833afa57d9fac9eb08587082391e9"
+    },
+    {
+      "bytes": 472,
+      "crs": "EPSG:2056",
+      "extracted_from": "aerial_1999",
+      "id": "cloud_1999_prj",
+      "path": "1999/Clouds_1999.prj",
+      "role": "cloud_exclusion",
+      "root": "target_root",
+      "sha256": "533b4abc8e751ef5831d87f2d8257e4cc3ec40da24e732b20d2721980afe3a4f"
+    },
+    {
+      "bytes": 564,
+      "crs": "EPSG:2056",
+      "extracted_from": "aerial_1999",
+      "id": "cloud_1999_sbn",
+      "path": "1999/Clouds_1999.sbn",
+      "role": "cloud_exclusion",
+      "root": "target_root",
+      "sha256": "7b03c61cdeb6a0c1d2a62a45b3f402b61b03bd3b6ecc4d852a0c4e4356dd6a84"
+    },
+    {
+      "bytes": 124,
+      "crs": "EPSG:2056",
+      "extracted_from": "aerial_1999",
+      "id": "cloud_1999_sbx",
+      "path": "1999/Clouds_1999.sbx",
+      "role": "cloud_exclusion",
+      "root": "target_root",
+      "sha256": "7d0b9a132791c797e37aa4191e65f7011cffa6f7008ee49610a787b46acc3838"
+    },
+    {
+      "bytes": 7158800,
+      "crs": "EPSG:2056",
+      "extracted_from": "aerial_1999",
+      "id": "cloud_1999_shp",
+      "path": "1999/Clouds_1999.shp",
+      "role": "cloud_exclusion",
+      "root": "target_root",
+      "sha256": "53ecca6ed199d83b85b7d1a2c7496f4dcbda1d30a13b2e31c5a9ca8aca3e9075"
+    },
+    {
+      "bytes": 11408,
+      "crs": "EPSG:2056",
+      "extracted_from": "aerial_1999",
+      "id": "cloud_1999_xml",
+      "path": "1999/Clouds_1999.shp.xml",
+      "role": "cloud_exclusion",
+      "root": "target_root",
+      "sha256": "7b1abd37207a34b519845e311d43e38d9659c84499494d7b571ec067238f08b4"
+    },
+    {
+      "bytes": 484,
+      "crs": "EPSG:2056",
+      "extracted_from": "aerial_1999",
+      "id": "cloud_1999_shx",
+      "path": "1999/Clouds_1999.shx",
+      "role": "cloud_exclusion",
+      "root": "target_root",
+      "sha256": "8a32bb912b3222611632f49d16aceff8867266dfd9a0e749aef487c4bddb3536"
+    },
+    {
+      "bytes": 380992056,
+      "id": "globcover_2009",
+      "licence": "ESA GlobCover product terms; attribution required",
+      "path": "Globcover2009_V2.3_Global_.zip",
+      "role": "landcover",
+      "root": "source_root",
+      "sha256": "3a5e46b589f6b650759308d4ccb2d62d906a8ffc6f44c6595545e18702a3f7c6",
+      "url": "https://due.esrin.esa.int/files/Globcover2009_V2.3_Global_.zip"
+    },
+    {
+      "bytes": 392327352,
+      "extracted_from": "globcover_2009",
+      "id": "globcover_2009_tif",
+      "native_crs": "EPSG:4326",
+      "native_resolution": "300 m",
+      "path": "globcover2009/GLOBCOVER_L4_200901_200912_V2.3.tif",
+      "role": "landcover",
+      "root": "source_root",
+      "sha256": "db48c60d22d959a93dc4137abac9ed1946d45d2469a4e07eeed8947a68b6c06a",
+      "unit": "categorical land-cover class"
+    },
+    {
+      "bytes": 38504837,
+      "id": "Copernicus_DSM_COG_10_N46_00_E006_00_DEM",
+      "licence": "Copernicus DEM licence; free licence terms",
+      "native_crs": "EPSG:4326",
+      "native_horizontal_resolution": "1 arc-second (~30 m)",
+      "path": "copernicus-dem-30m/Copernicus_DSM_COG_10_N46_00_E006_00_DEM.tif",
+      "product": "Copernicus DEM GLO-30 Public",
+      "product_edition": "2021",
+      "role": "terrain_elevation",
+      "root": "source_root",
+      "sha256": "43372378d9fdbcba2d8acd6a2b58c8a0d19ba7d2d49e16297bc48d9365f26493",
+      "unit": "metre",
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N46_00_E006_00_DEM/Copernicus_DSM_COG_10_N46_00_E006_00_DEM.tif"
+    },
+    {
+      "bytes": 41776750,
+      "id": "Copernicus_DSM_COG_10_N46_00_E007_00_DEM",
+      "licence": "Copernicus DEM licence; free licence terms",
+      "native_crs": "EPSG:4326",
+      "native_horizontal_resolution": "1 arc-second (~30 m)",
+      "path": "copernicus-dem-30m/Copernicus_DSM_COG_10_N46_00_E007_00_DEM.tif",
+      "product": "Copernicus DEM GLO-30 Public",
+      "product_edition": "2021",
+      "role": "terrain_elevation",
+      "root": "source_root",
+      "sha256": "426e3d1492d94e4f23d444843f852ff5be675da5c4c14e661b5642006864047d",
+      "unit": "metre",
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N46_00_E007_00_DEM/Copernicus_DSM_COG_10_N46_00_E007_00_DEM.tif"
+    },
+    {
+      "bytes": 42038015,
+      "id": "Copernicus_DSM_COG_10_N46_00_E008_00_DEM",
+      "licence": "Copernicus DEM licence; free licence terms",
+      "native_crs": "EPSG:4326",
+      "native_horizontal_resolution": "1 arc-second (~30 m)",
+      "path": "copernicus-dem-30m/Copernicus_DSM_COG_10_N46_00_E008_00_DEM.tif",
+      "product": "Copernicus DEM GLO-30 Public",
+      "product_edition": "2021",
+      "role": "terrain_elevation",
+      "root": "source_root",
+      "sha256": "47769664394ee1ff3b51f5c1b43a3441d7f7bce8d086d0ed2f3a892b895fae3e",
+      "unit": "metre",
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N46_00_E008_00_DEM/Copernicus_DSM_COG_10_N46_00_E008_00_DEM.tif"
+    },
+    {
+      "bytes": 42078066,
+      "id": "Copernicus_DSM_COG_10_N46_00_E009_00_DEM",
+      "licence": "Copernicus DEM licence; free licence terms",
+      "native_crs": "EPSG:4326",
+      "native_horizontal_resolution": "1 arc-second (~30 m)",
+      "path": "copernicus-dem-30m/Copernicus_DSM_COG_10_N46_00_E009_00_DEM.tif",
+      "product": "Copernicus DEM GLO-30 Public",
+      "product_edition": "2021",
+      "role": "terrain_elevation",
+      "root": "source_root",
+      "sha256": "6a7eccb6d198f01a1fdfcca0e1cef837ef294456fb7243ec4d0966e089b1e7fc",
+      "unit": "metre",
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N46_00_E009_00_DEM/Copernicus_DSM_COG_10_N46_00_E009_00_DEM.tif"
+    },
+    {
+      "bytes": 41806592,
+      "id": "Copernicus_DSM_COG_10_N46_00_E010_00_DEM",
+      "licence": "Copernicus DEM licence; free licence terms",
+      "native_crs": "EPSG:4326",
+      "native_horizontal_resolution": "1 arc-second (~30 m)",
+      "path": "copernicus-dem-30m/Copernicus_DSM_COG_10_N46_00_E010_00_DEM.tif",
+      "product": "Copernicus DEM GLO-30 Public",
+      "product_edition": "2021",
+      "role": "terrain_elevation",
+      "root": "source_root",
+      "sha256": "d24d707f394668ef429b28b22d1afc51f7ac5047293de177e46d9dc186c6b448",
+      "unit": "metre",
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N46_00_E010_00_DEM/Copernicus_DSM_COG_10_N46_00_E010_00_DEM.tif"
+    },
+    {
+      "bytes": 43493517,
+      "id": "Copernicus_DSM_COG_10_N47_00_E006_00_DEM",
+      "licence": "Copernicus DEM licence; free licence terms",
+      "native_crs": "EPSG:4326",
+      "native_horizontal_resolution": "1 arc-second (~30 m)",
+      "path": "copernicus-dem-30m/Copernicus_DSM_COG_10_N47_00_E006_00_DEM.tif",
+      "product": "Copernicus DEM GLO-30 Public",
+      "product_edition": "2021",
+      "role": "terrain_elevation",
+      "root": "source_root",
+      "sha256": "e5bdbe746e733909f0644d69a94d5d8434fa388a3766e05400bec6a1820b8717",
+      "unit": "metre",
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N47_00_E006_00_DEM/Copernicus_DSM_COG_10_N47_00_E006_00_DEM.tif"
+    },
+    {
+      "bytes": 42939950,
+      "id": "Copernicus_DSM_COG_10_N47_00_E007_00_DEM",
+      "licence": "Copernicus DEM licence; free licence terms",
+      "native_crs": "EPSG:4326",
+      "native_horizontal_resolution": "1 arc-second (~30 m)",
+      "path": "copernicus-dem-30m/Copernicus_DSM_COG_10_N47_00_E007_00_DEM.tif",
+      "product": "Copernicus DEM GLO-30 Public",
+      "product_edition": "2021",
+      "role": "terrain_elevation",
+      "root": "source_root",
+      "sha256": "5012dc32581b4aebbe71dec6f22507a2944b5e6b7f8fa301b0876f947976298b",
+      "unit": "metre",
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N47_00_E007_00_DEM/Copernicus_DSM_COG_10_N47_00_E007_00_DEM.tif"
+    },
+    {
+      "bytes": 41746914,
+      "id": "Copernicus_DSM_COG_10_N47_00_E008_00_DEM",
+      "licence": "Copernicus DEM licence; free licence terms",
+      "native_crs": "EPSG:4326",
+      "native_horizontal_resolution": "1 arc-second (~30 m)",
+      "path": "copernicus-dem-30m/Copernicus_DSM_COG_10_N47_00_E008_00_DEM.tif",
+      "product": "Copernicus DEM GLO-30 Public",
+      "product_edition": "2021",
+      "role": "terrain_elevation",
+      "root": "source_root",
+      "sha256": "4e2917429d65e049a4f1ddee2093f7fc50f11d22d0fd7cee85f5c8334186d7fe",
+      "unit": "metre",
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N47_00_E008_00_DEM/Copernicus_DSM_COG_10_N47_00_E008_00_DEM.tif"
+    },
+    {
+      "bytes": 39943901,
+      "id": "Copernicus_DSM_COG_10_N47_00_E009_00_DEM",
+      "licence": "Copernicus DEM licence; free licence terms",
+      "native_crs": "EPSG:4326",
+      "native_horizontal_resolution": "1 arc-second (~30 m)",
+      "path": "copernicus-dem-30m/Copernicus_DSM_COG_10_N47_00_E009_00_DEM.tif",
+      "product": "Copernicus DEM GLO-30 Public",
+      "product_edition": "2021",
+      "role": "terrain_elevation",
+      "root": "source_root",
+      "sha256": "ca0b7567f5e12b8c814500bcf434855fb2a1084248bb80d3c80a91169887817c",
+      "unit": "metre",
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N47_00_E009_00_DEM/Copernicus_DSM_COG_10_N47_00_E009_00_DEM.tif"
+    },
+    {
+      "bytes": 41739228,
+      "id": "Copernicus_DSM_COG_10_N47_00_E010_00_DEM",
+      "licence": "Copernicus DEM licence; free licence terms",
+      "native_crs": "EPSG:4326",
+      "native_horizontal_resolution": "1 arc-second (~30 m)",
+      "path": "copernicus-dem-30m/Copernicus_DSM_COG_10_N47_00_E010_00_DEM.tif",
+      "product": "Copernicus DEM GLO-30 Public",
+      "product_edition": "2021",
+      "role": "terrain_elevation",
+      "root": "source_root",
+      "sha256": "81da8ebbaa01e294ebf5dac218c66db6ba9c6b6ebe6a45c19f112e339dddaa16",
+      "unit": "metre",
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N47_00_E010_00_DEM/Copernicus_DSM_COG_10_N47_00_E010_00_DEM.tif"
+    },
+    {
+      "bytes": 128517,
+      "id": "cerra_development_western_bernese",
+      "licence": "CC BY 4.0",
+      "missing_rule": "Any null required hour invalidates the block; no gap filling.",
+      "native_crs": "Lambert conformal conic; API returns native-cell WGS84 coordinates",
+      "native_resolution": "5.5 km; sampled without interpolation",
+      "path": "cerra-open-meteo/development_western_bernese.json",
+      "product": "CERRA single levels via Open-Meteo Historical Weather API",
+      "product_version": "CDS DOI 10.24381/cds.622a565a; API response retrieved 2026-08-13",
+      "role": "meteorology_and_modelled_snow_state",
+      "root": "source_root",
+      "sha256": "b07833485e32096b7e97af6d4c05cf20703ab3b7eda0d17e4ea472ae0d7e8773",
+      "temporal_resolution": "hourly",
+      "transformations": "Open-Meteo elevation=nan disables elevation downscaling; cell_selection=nearest; 3x3 interior LV95 sample lattice transformed with always_xy into WGS84 request coordinates.",
+      "units": {
+        "precipitation": "mm preceding-hour sum",
+        "shortwave_radiation": "W/m2 preceding-hour mean",
+        "snow_depth": "m instantaneous; modelled grid-cell state",
+        "snowfall": "cm preceding-hour sum; diagnostic only",
+        "temperature_2m": "degC instantaneous",
+        "wind_direction_10m": "meteorological FROM degrees clockwise from north",
+        "wind_speed_10m": "km/h instantaneous"
+      },
+      "url": "https://archive-api.open-meteo.com/v1/archive?models=cerra&timezone=GMT&start_date=2018-01-14&end_date=2018-01-24&hourly=temperature_2m,precipitation,snowfall,snow_depth,wind_speed_10m,wind_direction_10m,shortwave_radiation&wind_speed_unit=kmh&precipitation_unit=mm&cell_selection=nearest&elevation=nan,nan,nan,nan,nan,nan,nan,nan,nan&latitude=46.592616,46.592542,46.592314,46.501761,46.501686,46.501460,46.410905,46.410831,46.410604&longitude=7.437986,7.569781,7.701575,7.437989,7.569562,7.701135,7.437992,7.569345,7.700697"
+    },
+    {
+      "bytes": 129862,
+      "id": "cerra_development_gotthard",
+      "licence": "CC BY 4.0",
+      "missing_rule": "Any null required hour invalidates the block; no gap filling.",
+      "native_crs": "Lambert conformal conic; API returns native-cell WGS84 coordinates",
+      "native_resolution": "5.5 km; sampled without interpolation",
+      "path": "cerra-open-meteo/development_gotthard.json",
+      "product": "CERRA single levels via Open-Meteo Historical Weather API",
+      "product_version": "CDS DOI 10.24381/cds.622a565a; API response retrieved 2026-08-13",
+      "role": "meteorology_and_modelled_snow_state",
+      "root": "source_root",
+      "sha256": "7c2f5b294f7a5c95e37756254ef8946a054d02346631d338941108dcbc1f5c9c",
+      "temporal_resolution": "hourly",
+      "transformations": "Open-Meteo elevation=nan disables elevation downscaling; cell_selection=nearest; 3x3 interior LV95 sample lattice transformed with always_xy into WGS84 request coordinates.",
+      "units": {
+        "precipitation": "mm preceding-hour sum",
+        "shortwave_radiation": "W/m2 preceding-hour mean",
+        "snow_depth": "m instantaneous; modelled grid-cell state",
+        "snowfall": "cm preceding-hour sum; diagnostic only",
+        "temperature_2m": "degC instantaneous",
+        "wind_direction_10m": "meteorological FROM degrees clockwise from north",
+        "wind_speed_10m": "km/h instantaneous"
+      },
+      "url": "https://archive-api.open-meteo.com/v1/archive?models=cerra&timezone=GMT&start_date=2019-01-06&end_date=2019-01-16&hourly=temperature_2m,precipitation,snowfall,snow_depth,wind_speed_10m,wind_direction_10m,shortwave_radiation&wind_speed_unit=kmh&precipitation_unit=mm&cell_selection=nearest&elevation=nan,nan,nan,nan,nan,nan,nan,nan,nan&latitude=46.749745,46.748457,46.747016,46.658899,46.657613,46.656174,46.568052,46.566768,46.565332&longitude=8.484976,8.617141,8.749298,8.483217,8.615159,8.747094,8.481463,8.613184,8.744897"
+    },
+    {
+      "bytes": 128044,
+      "id": "cerra_development_glarus",
+      "licence": "CC BY 4.0",
+      "missing_rule": "Any null required hour invalidates the block; no gap filling.",
+      "native_crs": "Lambert conformal conic; API returns native-cell WGS84 coordinates",
+      "native_resolution": "5.5 km; sampled without interpolation",
+      "path": "cerra-open-meteo/development_glarus.json",
+      "product": "CERRA single levels via Open-Meteo Historical Weather API",
+      "product_version": "CDS DOI 10.24381/cds.622a565a; API response retrieved 2026-08-13",
+      "role": "meteorology_and_modelled_snow_state",
+      "root": "source_root",
+      "sha256": "86a5686772113e48b9f909f74018f17e31b1201bf215da5b9ad60618670ef781",
+      "temporal_resolution": "hourly",
+      "transformations": "Open-Meteo elevation=nan disables elevation downscaling; cell_selection=nearest; 3x3 interior LV95 sample lattice transformed with always_xy into WGS84 request coordinates.",
+      "units": {
+        "precipitation": "mm preceding-hour sum",
+        "shortwave_radiation": "W/m2 preceding-hour mean",
+        "snow_depth": "m instantaneous; modelled grid-cell state",
+        "snowfall": "cm preceding-hour sum; diagnostic only",
+        "temperature_2m": "degC instantaneous",
+        "wind_direction_10m": "meteorological FROM degrees clockwise from north",
+        "wind_speed_10m": "km/h instantaneous"
+      },
+      "url": "https://archive-api.open-meteo.com/v1/archive?models=cerra&timezone=GMT&start_date=2019-01-06&end_date=2019-01-16&hourly=temperature_2m,precipitation,snowfall,snow_depth,wind_speed_10m,wind_direction_10m,shortwave_radiation&wind_speed_unit=kmh&precipitation_unit=mm&cell_selection=nearest&elevation=nan,nan,nan,nan,nan,nan,nan,nan,nan&latitude=47.034854,47.033254,47.031501,46.944016,46.942419,46.940669,46.853177,46.851582,46.849835&longitude=8.753700,8.886559,9.019410,8.751476,8.884111,9.016738,8.749261,8.881672,9.014074"
+    },
+    {
+      "bytes": 128632,
+      "id": "cerra_development_albula",
+      "licence": "CC BY 4.0",
+      "missing_rule": "Any null required hour invalidates the block; no gap filling.",
+      "native_crs": "Lambert conformal conic; API returns native-cell WGS84 coordinates",
+      "native_resolution": "5.5 km; sampled without interpolation",
+      "path": "cerra-open-meteo/development_albula.json",
+      "product": "CERRA single levels via Open-Meteo Historical Weather API",
+      "product_version": "CDS DOI 10.24381/cds.622a565a; API response retrieved 2026-08-13",
+      "role": "meteorology_and_modelled_snow_state",
+      "root": "source_root",
+      "sha256": "d39a10ac8178c3d307cb5d5b0f85c93162321335c6b48aa95103d7cb1387de12",
+      "temporal_resolution": "hourly",
+      "transformations": "Open-Meteo elevation=nan disables elevation downscaling; cell_selection=nearest; 3x3 interior LV95 sample lattice transformed with always_xy into WGS84 request coordinates.",
+      "units": {
+        "precipitation": "mm preceding-hour sum",
+        "shortwave_radiation": "W/m2 preceding-hour mean",
+        "snow_depth": "m instantaneous; modelled grid-cell state",
+        "snowfall": "cm preceding-hour sum; diagnostic only",
+        "temperature_2m": "degC instantaneous",
+        "wind_direction_10m": "meteorological FROM degrees clockwise from north",
+        "wind_speed_10m": "km/h instantaneous"
+      },
+      "url": "https://archive-api.open-meteo.com/v1/archive?models=cerra&timezone=GMT&start_date=2019-01-06&end_date=2019-01-16&hourly=temperature_2m,precipitation,snowfall,snow_depth,wind_speed_10m,wind_direction_10m,shortwave_radiation&wind_speed_unit=kmh&precipitation_unit=mm&cell_selection=nearest&elevation=nan,nan,nan,nan,nan,nan,nan,nan,nan&latitude=46.735348,46.732847,46.730194,46.644525,46.642029,46.639381,46.553702,46.551210,46.548566&longitude=9.531599,9.663690,9.795768,9.528080,9.659949,9.791805,9.524572,9.656220,9.787855"
+    },
+    {
+      "bytes": 130182,
+      "id": "cerra_development_silvretta",
+      "licence": "CC BY 4.0",
+      "missing_rule": "Any null required hour invalidates the block; no gap filling.",
+      "native_crs": "Lambert conformal conic; API returns native-cell WGS84 coordinates",
+      "native_resolution": "5.5 km; sampled without interpolation",
+      "path": "cerra-open-meteo/development_silvretta.json",
+      "product": "CERRA single levels via Open-Meteo Historical Weather API",
+      "product_version": "CDS DOI 10.24381/cds.622a565a; API response retrieved 2026-08-13",
+      "role": "meteorology_and_modelled_snow_state",
+      "root": "source_root",
+      "sha256": "1ac46f878469dc561e9637006e5be3b5f553d38d342966b520c4ddd618deb2ce",
+      "temporal_resolution": "hourly",
+      "transformations": "Open-Meteo elevation=nan disables elevation downscaling; cell_selection=nearest; 3x3 interior LV95 sample lattice transformed with always_xy into WGS84 request coordinates.",
+      "units": {
+        "precipitation": "mm preceding-hour sum",
+        "shortwave_radiation": "W/m2 preceding-hour mean",
+        "snow_depth": "m instantaneous; modelled grid-cell state",
+        "snowfall": "cm preceding-hour sum; diagnostic only",
+        "temperature_2m": "degC instantaneous",
+        "wind_direction_10m": "meteorological FROM degrees clockwise from north",
+        "wind_speed_10m": "km/h instantaneous"
+      },
+      "url": "https://archive-api.open-meteo.com/v1/archive?models=cerra&timezone=GMT&start_date=2019-01-06&end_date=2019-01-16&hourly=temperature_2m,precipitation,snowfall,snow_depth,wind_speed_10m,wind_direction_10m,shortwave_radiation&wind_speed_unit=kmh&precipitation_unit=mm&cell_selection=nearest&elevation=nan,nan,nan,nan,nan,nan,nan,nan,nan&latitude=46.922337,46.919220,46.915949,46.831535,46.828423,46.825158,46.740732,46.737625,46.734366&longitude=10.064285,10.196807,10.329314,10.059855,10.192154,10.324437,10.055440,10.187516,10.319577"
+    },
+    {
+      "bytes": 430434,
+      "id": "cerra_holdout_1999_c04r04",
+      "licence": "CC BY 4.0",
+      "missing_rule": "Any null required hour invalidates the block; no gap filling.",
+      "native_crs": "Lambert conformal conic; API returns native-cell WGS84 coordinates",
+      "native_resolution": "5.5 km; sampled without interpolation",
+      "path": "cerra-open-meteo/holdout_1999_c04r04.json",
+      "product": "CERRA single levels via Open-Meteo Historical Weather API",
+      "product_version": "CDS DOI 10.24381/cds.622a565a; API response retrieved 2026-08-13",
+      "role": "meteorology_and_modelled_snow_state",
+      "root": "source_root",
+      "sha256": "7a19679f999c92eb352c79f9e5e353783f0068bc4ddd07932fc222f8d6614ab4",
+      "temporal_resolution": "hourly",
+      "transformations": "Open-Meteo elevation=nan disables elevation downscaling; cell_selection=nearest; 3x3 interior LV95 sample lattice transformed with always_xy into WGS84 request coordinates.",
+      "units": {
+        "precipitation": "mm preceding-hour sum",
+        "shortwave_radiation": "W/m2 preceding-hour mean",
+        "snow_depth": "m instantaneous; modelled grid-cell state",
+        "snowfall": "cm preceding-hour sum; diagnostic only",
+        "temperature_2m": "degC instantaneous",
+        "wind_direction_10m": "meteorological FROM degrees clockwise from north",
+        "wind_speed_10m": "km/h instantaneous"
+      },
+      "url": "https://archive-api.open-meteo.com/v1/archive?models=cerra&timezone=GMT&start_date=1999-01-19&end_date=1999-02-25&hourly=temperature_2m,precipitation,snowfall,snow_depth,wind_speed_10m,wind_direction_10m,shortwave_radiation&wind_speed_unit=kmh&precipitation_unit=mm&cell_selection=nearest&elevation=nan,nan,nan,nan,nan,nan,nan,nan,nan&latitude=46.775815,46.775431,46.774894,46.684962,46.684578,46.684042,46.594108,46.593725,46.593189&longitude=7.705086,7.837328,7.969567,7.704639,7.836658,7.968675,7.704194,7.835990,7.967785"
+    },
+    {
+      "bytes": 433950,
+      "id": "cerra_holdout_1999_c09r05",
+      "licence": "CC BY 4.0",
+      "missing_rule": "Any null required hour invalidates the block; no gap filling.",
+      "native_crs": "Lambert conformal conic; API returns native-cell WGS84 coordinates",
+      "native_resolution": "5.5 km; sampled without interpolation",
+      "path": "cerra-open-meteo/holdout_1999_c09r05.json",
+      "product": "CERRA single levels via Open-Meteo Historical Weather API",
+      "product_version": "CDS DOI 10.24381/cds.622a565a; API response retrieved 2026-08-13",
+      "role": "meteorology_and_modelled_snow_state",
+      "root": "source_root",
+      "sha256": "fc73b0789c286fd03ab1a2101eead329112ff57ef88e674a5d5b0bd6ed782657",
+      "temporal_resolution": "hourly",
+      "transformations": "Open-Meteo elevation=nan disables elevation downscaling; cell_selection=nearest; 3x3 interior LV95 sample lattice transformed with always_xy into WGS84 request coordinates.",
+      "units": {
+        "precipitation": "mm preceding-hour sum",
+        "shortwave_radiation": "W/m2 preceding-hour mean",
+        "snow_depth": "m instantaneous; modelled grid-cell state",
+        "snowfall": "cm preceding-hour sum; diagnostic only",
+        "temperature_2m": "degC instantaneous",
+        "wind_direction_10m": "meteorological FROM degrees clockwise from north",
+        "wind_speed_10m": "km/h instantaneous"
+      },
+      "url": "https://archive-api.open-meteo.com/v1/archive?models=cerra&timezone=GMT&start_date=1999-01-19&end_date=1999-02-25&hourly=temperature_2m,precipitation,snowfall,snow_depth,wind_speed_10m,wind_direction_10m,shortwave_radiation&wind_speed_unit=kmh&precipitation_unit=mm&cell_selection=nearest&elevation=nan,nan,nan,nan,nan,nan,nan,nan,nan&latitude=46.945938,46.944023,46.941954,46.855104,46.853192,46.851127,46.764269,46.762361,46.760299&longitude=9.026089,9.158719,9.291340,9.023409,9.155816,9.288213,9.020739,9.152922,9.285096"
+    },
+    {
+      "bytes": 434689,
+      "id": "cerra_holdout_1999_c05r04",
+      "licence": "CC BY 4.0",
+      "missing_rule": "Any null required hour invalidates the block; no gap filling.",
+      "native_crs": "Lambert conformal conic; API returns native-cell WGS84 coordinates",
+      "native_resolution": "5.5 km; sampled without interpolation",
+      "path": "cerra-open-meteo/holdout_1999_c05r04.json",
+      "product": "CERRA single levels via Open-Meteo Historical Weather API",
+      "product_version": "CDS DOI 10.24381/cds.622a565a; API response retrieved 2026-08-13",
+      "role": "meteorology_and_modelled_snow_state",
+      "root": "source_root",
+      "sha256": "bb9770600ed7a636d305f84a32c1b9d5f36e7cef1f7eb094445c5e53c7d7b4f1",
+      "temporal_resolution": "hourly",
+      "transformations": "Open-Meteo elevation=nan disables elevation downscaling; cell_selection=nearest; 3x3 interior LV95 sample lattice transformed with always_xy into WGS84 request coordinates.",
+      "units": {
+        "precipitation": "mm preceding-hour sum",
+        "shortwave_radiation": "W/m2 preceding-hour mean",
+        "snow_depth": "m instantaneous; modelled grid-cell state",
+        "snowfall": "cm preceding-hour sum; diagnostic only",
+        "temperature_2m": "degC instantaneous",
+        "wind_direction_10m": "meteorological FROM degrees clockwise from north",
+        "wind_speed_10m": "km/h instantaneous"
+      },
+      "url": "https://archive-api.open-meteo.com/v1/archive?models=cerra&timezone=GMT&start_date=1999-01-19&end_date=1999-02-25&hourly=temperature_2m,precipitation,snowfall,snow_depth,wind_speed_10m,wind_direction_10m,shortwave_radiation&wind_speed_unit=kmh&precipitation_unit=mm&cell_selection=nearest&elevation=nan,nan,nan,nan,nan,nan,nan,nan,nan&latitude=46.774900,46.774210,46.773368,46.684048,46.683360,46.682518,46.593195,46.592508,46.591668&longitude=7.968258,8.100494,8.232726,7.967367,8.099381,8.231391,7.966480,8.098272,8.230060"
+    },
+    {
+      "bytes": 437335,
+      "id": "cerra_holdout_1999_c03r01",
+      "licence": "CC BY 4.0",
+      "missing_rule": "Any null required hour invalidates the block; no gap filling.",
+      "native_crs": "Lambert conformal conic; API returns native-cell WGS84 coordinates",
+      "native_resolution": "5.5 km; sampled without interpolation",
+      "path": "cerra-open-meteo/holdout_1999_c03r01.json",
+      "product": "CERRA single levels via Open-Meteo Historical Weather API",
+      "product_version": "CDS DOI 10.24381/cds.622a565a; API response retrieved 2026-08-13",
+      "role": "meteorology_and_modelled_snow_state",
+      "root": "source_root",
+      "sha256": "48fb995b9a2d5c423bd85b2f6b25fe22a4033114c54eb5449bf49f445d45db29",
+      "temporal_resolution": "hourly",
+      "transformations": "Open-Meteo elevation=nan disables elevation downscaling; cell_selection=nearest; 3x3 interior LV95 sample lattice transformed with always_xy into WGS84 request coordinates.",
+      "units": {
+        "precipitation": "mm preceding-hour sum",
+        "shortwave_radiation": "W/m2 preceding-hour mean",
+        "snow_depth": "m instantaneous; modelled grid-cell state",
+        "snowfall": "cm preceding-hour sum; diagnostic only",
+        "temperature_2m": "degC instantaneous",
+        "wind_direction_10m": "meteorological FROM degrees clockwise from north",
+        "wind_speed_10m": "km/h instantaneous"
+      },
+      "url": "https://archive-api.open-meteo.com/v1/archive?models=cerra&timezone=GMT&start_date=1999-01-19&end_date=1999-02-25&hourly=temperature_2m,precipitation,snowfall,snow_depth,wind_speed_10m,wind_direction_10m,shortwave_radiation&wind_speed_unit=kmh&precipitation_unit=mm&cell_selection=nearest&elevation=nan,nan,nan,nan,nan,nan,nan,nan,nan&latitude=46.233691,46.233613,46.233383,46.142836,46.142758,46.142528,46.051981,46.051903,46.051674&longitude=7.441886,7.572811,7.703735,7.441882,7.572589,7.703295,7.441878,7.572367,7.702856"
+    },
+    {
+      "bytes": 437219,
+      "id": "cerra_holdout_1999_c04r03",
+      "licence": "CC BY 4.0",
+      "missing_rule": "Any null required hour invalidates the block; no gap filling.",
+      "native_crs": "Lambert conformal conic; API returns native-cell WGS84 coordinates",
+      "native_resolution": "5.5 km; sampled without interpolation",
+      "path": "cerra-open-meteo/holdout_1999_c04r03.json",
+      "product": "CERRA single levels via Open-Meteo Historical Weather API",
+      "product_version": "CDS DOI 10.24381/cds.622a565a; API response retrieved 2026-08-13",
+      "role": "meteorology_and_modelled_snow_state",
+      "root": "source_root",
+      "sha256": "50f0adea7b1b98129a58633e8d1f90ef6fa62e1917f9f1494607eb9cf02908c9",
+      "temporal_resolution": "hourly",
+      "transformations": "Open-Meteo elevation=nan disables elevation downscaling; cell_selection=nearest; 3x3 interior LV95 sample lattice transformed with always_xy into WGS84 request coordinates.",
+      "units": {
+        "precipitation": "mm preceding-hour sum",
+        "shortwave_radiation": "W/m2 preceding-hour mean",
+        "snow_depth": "m instantaneous; modelled grid-cell state",
+        "snowfall": "cm preceding-hour sum; diagnostic only",
+        "temperature_2m": "degC instantaneous",
+        "wind_direction_10m": "meteorological FROM degrees clockwise from north",
+        "wind_speed_10m": "km/h instantaneous"
+      },
+      "url": "https://archive-api.open-meteo.com/v1/archive?models=cerra&timezone=GMT&start_date=1999-01-19&end_date=1999-02-25&hourly=temperature_2m,precipitation,snowfall,snow_depth,wind_speed_10m,wind_direction_10m,shortwave_radiation&wind_speed_unit=kmh&precipitation_unit=mm&cell_selection=nearest&elevation=nan,nan,nan,nan,nan,nan,nan,nan,nan&latitude=46.595007,46.594624,46.594088,46.504152,46.503770,46.503235,46.413297,46.412915,46.412381&longitude=7.704198,7.835997,7.967794,7.703754,7.835332,7.966907,7.703311,7.834669,7.966024"
+    }
+  ],
+  "status": "frozen_before_holdout_prediction"
+}

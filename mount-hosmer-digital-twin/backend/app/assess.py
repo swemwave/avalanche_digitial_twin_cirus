@@ -76,22 +76,29 @@ MODEL_VERSION = "stage3-1.2.0"
 #: index. These deliberately do not use the operational avalanche-danger labels
 #: Low/Moderate/Considerable/High/Extreme.
 #:
-#: The colours are a single perceptual sweep with MONOTONICALLY INCREASING
-#: lightness, so the bands stay ordered in greyscale and under colour-vision
-#: deficiency, and the highest band is the most prominent thing on a dark
-#: hillshade. The previous green/yellow/orange steps sat within 0.1 OKLCH lightness
-#: of each other and collapsed under deuteranopia. Brighter and hotter is higher
-#: here; a red-for-danger reading would require the darkest colour at the top,
-#: which is exactly what a dark basemap hides. Validated: monotone lightness,
-#: adjacent dL >= 0.06, darkest band 2.30:1 against the map background, worst
-#: all-pairs CVD separation 10.0 dE (OKLab x100). The client is still handed the
-#: colour per zone so it never re-derives a threshold.
+#: The colours are a single perceptual sweep from light blue up to bright red,
+#: with MONOTONICALLY DECREASING lightness, so the bands stay ordered in greyscale
+#: and under colour-vision deficiency. The hue path is eased through lilac and
+#: rose rather than run straight from blue to red, which would cross a muddy
+#: near-grey middle where two adjacent bands would differ by lightness alone.
+#: Validated in OKLab: monotone lightness, adjacent dL >= 0.080, adjacent dE >=
+#: 11.0, worst all-pairs separation 8.8 dE (x100) under protanopia/deuteranopia.
+#:
+#: Bright rather than dark red at the top matters on a dark hillshade: the top
+#: band still carries 4.36:1 against the map background, so the worst zones stay
+#: the most saturated thing on the map instead of sinking into it. The lightness
+#: fall across the whole ramp is shallower than a light-to-dark ramp would give
+#: (0.080 per step, not 0.12), which is the price of ending on a vivid red; that
+#: is why the map keeps band-ordinal fill opacity and line width as a second,
+#: non-colour encoding. The client is handed the colour per zone so it never
+#: re-derives a threshold, and interpolates between these five for the fill, so
+#: the index reads as a continuous climb rather than five steps.
 RISK_CLASSES = [
-    (20, "Very low index", "#7a2a86"),
-    (40, "Low index", "#bb2f6b"),
-    (60, "Elevated index", "#e35a26"),
-    (80, "High index", "#f4a93f"),
-    (100, "Very high index", "#fbe870"),
+    (20, "Very low index", "#b9f5ff"),
+    (40, "Low index", "#dfbfff"),
+    (60, "Elevated index", "#eb92cf"),
+    (80, "High index", "#ef6389"),
+    (100, "Very high index", "#ea231a"),
 ]
 
 #: A synchronous request runs runout only for the highest-scoring zones. All

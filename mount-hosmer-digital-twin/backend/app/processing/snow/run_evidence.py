@@ -7,7 +7,7 @@ import json
 import math
 from dataclasses import asdict, dataclass
 from datetime import datetime, timedelta
-from pathlib import Path
+from pathlib import Path, PurePosixPath, PureWindowsPath
 from types import MappingProxyType
 from typing import Mapping, Sequence
 
@@ -85,8 +85,27 @@ def _file_sha256(path: Path) -> str:
 
 
 def _safe_relative(value: str) -> str:
-    path = Path(value)
-    if not value or path.is_absolute() or ".." in path.parts or path.as_posix() in {"", "."}:
+    # PurePosixPath over a backslash-normalized value, never bare Path. Path is
+    # WindowsPath on Windows and PosixPath on Linux, so a backslash was a
+    # separator on one platform and an ordinary filename character on the other,
+    # and this function returned different answers for the same input. On Linux
+    # that silently weakened both guards below: "config\snowpack.ini" compared
+    # equal to its own canonical form, so the caller's forward-slash check never
+    # fired, and "..\..\etc\passwd" was a single component, so the traversal
+    # check never saw the "..". Normalizing first makes every platform agree, and
+    # agree with the stricter Windows answer.
+    # Reject on the strictest reading of either platform rather than whichever
+    # one happens to be running, so a drive letter stays rejected everywhere too.
+    path = PurePosixPath(value.replace("\\", "/"))
+    windows = PureWindowsPath(value)
+    if (
+        not value
+        or path.is_absolute()
+        or windows.is_absolute()
+        or windows.drive
+        or ".." in path.parts
+        or path.as_posix() in {"", "."}
+    ):
         raise SnowpackRunEvidenceError(f"Unsafe or empty relative input path: {value!r}.")
     return path.as_posix()
 

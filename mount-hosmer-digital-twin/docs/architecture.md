@@ -3,6 +3,8 @@
 How the Mount Hosmer digital twin is put together, and why.
 
 **Related:** [`limitations.md`](limitations.md) (what it cannot do) ·
+[`prediction-products.md`](prediction-products.md) (the offline pipeline and its products) ·
+[`runout-engines.md`](runout-engines.md) (which upstream engine runs, and what it can produce) ·
 [`../../docs/data-footprint.md`](../../docs/data-footprint.md) (the bake input contract) ·
 [`../../AGENTS.md`](../../AGENTS.md) (development objective and invariants).
 
@@ -83,8 +85,12 @@ FastAPI, ~1k LOC of runtime, plus a bake-time engine that is never imported by t
 | **Bake** | `app/bake.py` | Offline. Reuses `processing/terrain/engine.compute()` → writes `runtime\baked\`. |
 | **Baked loader** | `app/baked.py` | numpy loader for `.npy` layers (as masked arrays) + `Reprojector` (grid→WGS84 from the baked lattice, via scipy). |
 | **AvyCore — hazard** | `packages/avycore/src/avycore/hazard` | Release estimate, zone extraction, geometry and both runout engines. |
+| **AvyCore — research snow/regimes** | `packages/avycore/src/avycore/snowpack` | Runtime-safe hourly forcing contract, evolving snow-state indices, solar geometry, separate dry-slab/wet-snow/dry-loose release paths, explicit unsupported-glide result, and regime-aware zone extraction. Used by frozen validation runners only; not wired to `/api/assess`. |
 | **Scenario contract** | `packages/avycore/src/avycore/scenario.py` | Strict user inputs, status/provenance/uncertainty, spatial support, classification and canonical identity. Each parameter is `active` (enters an equation) or `advisory` (cannot). |
 | **Advisories** | `packages/avycore/src/avycore/advisories.py` | Deterministic rules turning snowpack/field records into ranked written statements. Never numeric — every advisory publishes `changed_the_number: false`. |
+| **Release coupling contract** | `packages/avycore/src/avycore/release_coupling.py` | The SnowState-to-Release input contract for dry-slab coupling. Decides eligibility and names what is missing; it computes no release value and has no path from terrain alone to an instability result. |
+| **Prediction products** | `app/predictions.py`, `app/api/predictions.py` | Runtime-safe reader and read-only routes over `runtime\predictions\`. Pydantic and the standard library only; no engine is imported or run in a request. |
+| **Offline pipeline** | `app/pipeline.py` | ⚠️ Offline. The one entry point that runs Mountain Pack → Condition Pack → Snow State → Release → Runout per engine → Comparison → Prediction Product. |
 | **Assess** | `app/assess.py` | scenario → supported-condition mask → release raster → zones → runout (top-N) → one JSON. Disclaimer attached here, in code. |
 | **AvyCore — assistant** | `packages/avycore/src/avycore/assistant` | Local Ollama. `explain` narrates an assessment; `chat` parses to sliders → runs the real `/assess` → narrates. |
 | **Compatibility facades** | `app/{risk,geo,assistant}.py`, `app/simulation/*` | Keep existing imports and monkeypatch points working while delegating to the packages. |
@@ -111,6 +117,12 @@ cwd, where `app` resolves directly — the launcher does that.)
 ```
 DATA\ (allow-list)  ──►  python -m app.bake  ──►  runtime\baked\  ──►  serve
 ```
+
+That is the unchanged Mount Hosmer default. An alternate Mountain Pack is baked
+with explicit `--pack`, `--data-root`, and `--runtime-root` arguments. Using a
+distinct root such as `runtime\mountains\mountain-id` writes that mountain to its
+own `baked\` child; the server selects one generated surface at a time through
+the matching `AVALANCHE_RUNTIME_ROOT`. See [`mountain-packs.md`](mountain-packs.md).
 
 `bake.py`:
 
@@ -206,9 +218,11 @@ Correctness and safety properties, not preferences. See [`../../AGENTS.md`](../.
 
 - **Source data is read-only, and bake-time only.** Nothing writes to `DATA\`; the running service never
   reads it. All output goes under `runtime\`.
-- **The app folder and `DATA\` must remain siblings.** `core/settings.py` and `launcher/Program.cs`
-  independently resolve `<project_root>\..\DATA\mount_hosmer_data`. This only bites at bake time now, but
-  relocating either folder still breaks the bake in two languages; `Program.cs` needs a .NET 9 rebuild.
+- **The default Mount Hosmer layout keeps the app folder and `DATA\` as siblings.**
+  `core/settings.py` and `launcher/Program.cs` independently default to
+  `<project_root>\..\DATA\mount_hosmer_data`; relocating the default layout still requires an override
+  (and the launcher retains its compiled default). Explicit alternate-pack CLI paths do not have this
+  sibling constraint. No runtime/output root may be placed inside its read-only source root.
 - **Missing data is missing — never zero, never safe.** Continuous layers mask NaN and categorical
   provenance layers mask their explicit zero NoData code. `assess.py` never reports a below-threshold day
   as a zero release-potential index: it falls
@@ -255,6 +269,9 @@ runtime\
 │   ├── exposure\features.geojson  classified WGS84 exposure vectors (optional)
 │   ├── layers\*.npy            6 model layers + 2 provenance layers (+ 2 optional exposure)
 │   └── meta.json               lineage/checksums/identity + grid/AOI/tiles/exposure/reprojection
+├── predictions\        immutable offline prediction products (python -m app.pipeline)
+│   └── prediction-product-<sha256>\  contract document + checksums + stage bundles
+├── stage-cache\runout\  --resume only; offline engine reuse, never read by the service
 ├── sources\conditions\  immutable offline ECCC/PCIC source snapshots
 ├── reports\conditions\  generated coverage, disagreement, and M2 characterization reports
 ├── reports\terrain\     generated inactive reference-elevation contracts
@@ -263,7 +280,107 @@ runtime\
 └── logs\             launcher setup and backend logs
 ```
 
+Optional alternate mountains coexist under separately selected runtime roots,
+for example `runtime\mountains\colorado-event-site\baked\`; they are generated
+surfaces, not source data. The default server continues to read `runtime\baked\`.
+
 Generated and gitignored. Delete it and run `python -m app.bake` to rebuild.
+
+### Offline plugin engine boundary
+
+`packages/avycore/src/avycore/engines/` defines dependency-light contracts for
+snow-state, release and runout plugins. Descriptors declare stage, supported
+avalanche regimes, required input kinds and units, machine-checked execution
+ranges, CRS rules, output capabilities, versions, licence, validation status and
+limitations. `EngineRegistry` applies a stable priority/ID order or a caller's
+explicit order. Missing inputs, unsupported regimes/outputs and unavailable
+engines are errors; an unavailable high-fidelity engine never silently becomes a
+baseline run unless the caller explicitly permits availability fallback.
+Every request/result also carries an explicit portable `site_id`; the caller
+supplies a site-appropriate research disclaimer whose required non-operational,
+non-probability and field-assessment warnings are contract-validated. Hosmer
+continues to use its existing full disclaimer text.
+
+External physics remains behind `backend/app/processing/`. The com1DFA adapter
+launches an exact AvaFrame 2.1 environment with `python -I`, `shell=False`, a
+timeout and bounded captured output. It verifies input size/hash, grid, mask, CRS
+and coordinate order before running, then normalizes AvaFrame `pft`, `pfv` and
+`ppr` to metre, metre-per-second and kPa arrays. Result bundles contain the
+combined unknown-data mask, vectorized positive-thickness extent, full
+configuration, engine/executable/adapter/input/output hashes, seed, validation
+status and limitations. A portable environment inventory records Python,
+platform and every installed distribution/version under its own hash. Random
+staging paths are excluded from replay identity;
+the effective numerical configuration is retained.
+
+The adjacent analytical-verification worker executes the official AvaFrame 2.1
+`avaSimilaritySol` inputs and upstream analytical solution inside the same
+isolated environment. Its acceptance document is hash- and size-checked before
+launch, so thresholds and source identities cannot be silently changed after a
+result is seen. It retains the effective configuration, environment inventory,
+analytical and numerical comparison fields, mass history, grid/unit/CRS/mask
+invariants, artifact hashes and per-metric pass/fail status in a content-addressed
+bundle. This path is offline validation tooling only and is not imported by any
+serving entry point. AvaFrame's internal simulation label hashes the disposable
+absolute avalanche-directory path; that exact label is retained as execution
+provenance but is excluded from the scientific result ID. Replay still requires
+byte-identical comparison fields, normalized configuration and environment
+artifacts and identical scientific report content.
+
+### The offline pipeline and its products
+
+`python -m app.pipeline` is the single offline entry point. It runs the compatible
+stages in order, publishes a content-addressed `PredictionProduct`, and refuses to
+substitute anything for a stage that cannot run. Products are written to
+`runtime\predictions\<product_id>\`, a **sibling generated root and deliberately
+not a child of `runtime\baked\`**: the bake validates `baked\` against
+`meta.json` and `--force` replaces that whole tree atomically, so a product stored
+inside it would be destroyed by an unrelated terrain rebuild. The durable contract
+— stage statuses, replay identity, storage layout, the read-only API, and the
+bounded sensitivity ensembles — is in
+[`prediction-products.md`](prediction-products.md).
+
+`--resume` may replace one engine execution with a stored bundle, but only when a
+key over the complete run identity — engine and adapter digests, the isolated
+interpreter's bytes and its installed-package manifest, and the engine request
+minus disposable paths — matches, and only after the stored bundle re-verifies
+against its own checksums and provenance. The cache lives at
+`runtime\stage-cache\`, a third sibling root; the serving application never reads
+it, and a resumed run publishes the identical `product_id`.
+
+`GET /api/predictions`, `GET /api/predictions/{product_id}` and
+`GET /api/predictions/{product_id}/comparisons/{comparison_id}` serve those
+products read-only. They open files and validate them; no external engine is
+imported or executed inside a request, and `POST /api/assess` is unchanged.
+
+Flow-Py now has a real, characterized adapter rather than an availability stub.
+`runout.avaframe_flowpy` executes AvaFrame's `com4FlowPy` port and records the
+hashes of the module files that ran; `runout.flowpy_upstream` is the separate
+identity for the archived GPL-3.0 standalone distribution and stays fail-closed.
+Which upstream implementation produced a result, what each engine can and cannot
+output, and the analytical energy-line verification case are documented in
+[`runout-engines.md`](runout-engines.md). r.avaflow still has an isolated
+availability boundary and no enabled runner.
+
+The reproducible integration example is:
+
+```powershell
+python -m venv .venv-avaframe
+.venv-avaframe\Scripts\python -m pip install -r backend\requirements-avaframe.txt
+python scripts\run_synthetic_avaframe.py `
+  --avaframe-python .venv-avaframe\Scripts\python.exe `
+  --output-root <new-output-directory>
+```
+
+It creates synthetic projected terrain, runs the existing uncalibrated PRA-style
+relative release index, and supplies explicit synthetic thickness, density,
+Voellmy parameters, timestep and seed to com1DFA. It is a software-integration
+case, not a Mount Hosmer scenario or a validation case.
+`scripts\run_synthetic_engine_comparison.py` extends it by driving com1DFA and
+com4FlowPy from that *same* normalized release — polygons to one, raster to the
+other, neither consuming the other's output — and reporting their disagreement.
+The existing release, alpha-angle and particle engines remain the serving
+baselines for `POST /api/assess`.
 
 ---
 

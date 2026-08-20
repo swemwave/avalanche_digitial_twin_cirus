@@ -1,0 +1,116 @@
+{
+  "schema": "avycore-portable-bake-verification-v1",
+  "recorded_at_utc": "2026-08-13T03:35:43.848776+00:00",
+  "scientific_use": "software_verification",
+  "component_tested": "provider_neutral_single_raster_offline_bake",
+  "claim_boundary": "This record verifies that the offline bake can ingest one real, published, non-BC mountain DTM through elevation_primary/single_raster, derive runtime terrain layers and tiles, preserve missing forest-cover data as missing, and pass its compatibility check. It is not avalanche field validation and does not test runout physics.",
+  "mountain": {
+    "id": "braemabuehl-2019",
+    "name": "Brämabühl 2019 event terrain",
+    "country": "Switzerland",
+    "is_synthetic": false,
+    "is_bc": false
+  },
+  "source_dem": {
+    "file": "Braemabuehl_DTM_1m.tif",
+    "source_record": "https://doi.org/10.5281/zenodo.15796703",
+    "citation": "Glaus, Julia (2025), Brämabühl_Avalanche_Jan2019_Dataset, Zenodo",
+    "licence": "CC BY 4.0",
+    "bytes": 30536128,
+    "md5": "680930cdd4af3410551909810a66ca54",
+    "sha256": "a61440091aefa455be7733d5298302484b7c24d841831cb26c8e5d7043d1c0c1",
+    "crs": "EPSG:2056",
+    "bounds": [2783000.0, 1183000.0, 2786000.0, 1186000.0],
+    "shape": [3000, 3000],
+    "native_resolution_m": 1.0,
+    "dtype": "float32",
+    "nodata": -3.4028234663852886e+38,
+    "vertical_datum": {
+      "status": "unknown",
+      "reason": "No reviewed vertical-datum statement was available in the acquired raster metadata, so the pack does not name one."
+    }
+  },
+  "inputs": {
+    "mountain_pack": {
+      "path": "validation-data/bake-verification/braemabuehl-2019/mountain.pack.json",
+      "sha256": "3c54196355236ba68974bc61b5c6b5662754dd2736755fa13d1e27a695920c22"
+    },
+    "aoi": {
+      "path": "validation-data/bake-verification/braemabuehl-2019/aoi.geojson",
+      "sha256": "16e9f5f78dce796b7c1f03856f6abe5aea7e1565595c02c7ef425e96a5aac8d0",
+      "basis": "Exact source-DTM bounds; not a surveyed avalanche domain"
+    },
+    "landcover": {
+      "status": "not_acquired",
+      "contract": "Optional declared input; absence must produce an all-masked forest layer, never non-forest zeroes."
+    }
+  },
+  "reproduction": {
+    "working_directory": "mount-hosmer-digital-twin",
+    "source_precondition": "Place the exact source DEM (matching both recorded checksums) beside mountain.pack.json and aoi.geojson. The DEM is gitignored and must not be committed.",
+    "bake_command": "python -m app.bake --pack validation-data/bake-verification/braemabuehl-2019/mountain.pack.json --data-root validation-data/bake-verification/braemabuehl-2019 --runtime-root <disposable-runtime-root> --force",
+    "check_command": "python -m app.bake --pack validation-data/bake-verification/braemabuehl-2019/mountain.pack.json --runtime-root <disposable-runtime-root> --check",
+    "raw_dem_committed": false,
+    "runtime_committed": false
+  },
+  "execution": {
+    "bake_exit_code": 0,
+    "compatibility_check_exit_code": 0,
+    "replay_bake_exit_code": 0,
+    "duration_seconds": 1.6,
+    "processing_sha256": "1267896dd482da36a263bb7792b00235e98bb1bdd9ea351e7d770049c2a8fea0",
+    "model_parameter_manifest_sha256": "aaafd6f9fc6e8d598cb56c479bcc072374ee94ba17613c0ac2df0594f8059628",
+    "bake_sha256": "4aa541789e5f2b7f4da46e6dec8b2051646ab9ac17811d9f0746c03a73d8fdc4",
+    "replay_bake_sha256": "4aa541789e5f2b7f4da46e6dec8b2051646ab9ac17811d9f0746c03a73d8fdc4",
+    "replay_identity_matched": true
+  },
+  "result": {
+    "grid": {
+      "crs": "EPSG:2056",
+      "coordinate_order": "easting,northing",
+      "resolution_m": 10.0,
+      "bounds": [2783000.0, 1183000.0, 2786000.0, 1186000.0],
+      "shape": [300, 300],
+      "cell_count": 90000
+    },
+    "terrain": {
+      "valid_cells": 90000,
+      "missing_cells": 0,
+      "valid_fraction": 1.0,
+      "lidar_fraction": null,
+      "effective_source_resolution_m": 1.0,
+      "provider_specific_adapter_used": false,
+      "source_code": 4,
+      "source_code_meaning": "Published Brämabühl single-raster primary DEM"
+    },
+    "missing_data_audit": {
+      "forest_valid_cells": 0,
+      "forest_missing_cells": 90000,
+      "forest_source_known_cells": 0,
+      "forest_source_missing_code": 0,
+      "missing_landcover_became_safe_zero": false
+    },
+    "outputs": {
+      "terrain_rgb_tile_count": 34,
+      "imagery_tile_count": 0,
+      "exposure": null,
+      "layer_count": 8,
+      "layer_sha256": {
+        "elevation": "37c91d60eaa2a9eaa59d018b0d683bbecefbc8325c72477b51fcb06cb64e9387",
+        "slope": "06c17ab5996183a8044a2c5150be0b6ee1c6bb7c08d121a02706a3e6a9a9a0c2",
+        "aspect": "580f289e2e8c179f73212e8b65a8a6e8bf3d319033a6847ffe20ec4bba646d56",
+        "plan_curvature": "70902d2b0d078c293b2225831deab8aa6e4e89f3587d44d77582092aa0764bf1",
+        "general_curvature": "150609326749943244ea6474dcf3202b8b5573b949f28937c947df8b4ee273a8",
+        "forest_mask": "edd4a76dafdc46cdc92fb8d641bb2dbe4230b4246db1db362effa6d8332fd8c7",
+        "terrain_source": "96cdaa27e90b1d709365c0434f64148d7f5c7bfa1a4b624a097891d33a7d54dd",
+        "forest_source": "5760d5d9d5fa4753f896312b4a42349e1073dc062f1e2cc46f903daeb615984a"
+      }
+    }
+  },
+  "limitations": [
+    "The pack uses the complete 3 km by 3 km published DTM extent. This bake record alone does not establish whether a particular simulated avalanche remains inside it; AOI escape is assessed per run.",
+    "Land cover and a canopy DSM were not acquired, so every forest-cover cell is unknown and condition-dependent assessments requiring forest cover are incomplete on this bake.",
+    "The model profile is uncalibrated locally and was not executed as part of this data-adapter verification.",
+    "The source DTM is not asserted to be the event-day snow surface."
+  ]
+}

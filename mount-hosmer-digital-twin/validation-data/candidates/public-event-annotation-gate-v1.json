@@ -1,0 +1,286 @@
+{
+  "ai_attachment_inspection": {
+    "contact_sheets": [
+      {
+        "bytes": 404948,
+        "path": ".validation-cache/public-regobs-blinded-evidence-v1/contact-sheets-ai-triage/sheet-01.jpg",
+        "sha256": "a75648fd5679f7968c33633eea0a4d5f601a1b0968903ed44807f6129b64aaf1"
+      },
+      {
+        "bytes": 537720,
+        "path": ".validation-cache/public-regobs-blinded-evidence-v1/contact-sheets-ai-triage/sheet-02.jpg",
+        "sha256": "c79793d2c872e23ce14c25790c2cd27c0b54aecf8260e8dc5554f2602449ecfc"
+      },
+      {
+        "bytes": 402642,
+        "path": ".validation-cache/public-regobs-blinded-evidence-v1/contact-sheets-ai-triage/sheet-03.jpg",
+        "sha256": "7ed469cec877bd8503a69cdd24035cd0ad5eb34d51395ae495d5b6520f210380"
+      },
+      {
+        "bytes": 341652,
+        "path": ".validation-cache/public-regobs-blinded-evidence-v1/contact-sheets-ai-triage/sheet-04.jpg",
+        "sha256": "f3ac14c010617d9842d7be5096e55f905bbf944673f695cd409b620d9c977f6b"
+      }
+    ],
+    "human_review": false,
+    "observed_only_for_evidence_triage": true,
+    "quantitative_annotation": false,
+    "summary": "Attachments include field context, crowns, deposits, pits and provider-drawn marks, but also oblique, distant, flat-lit, forest-obscured and local-feature views. No geometry was inferred from the contact sheets."
+  },
+  "ai_attachment_inspection_role": "AI inspection was limited to non-quantitative evidence triage. It did not create or review ground-truth geometry.",
+  "candidates": [
+    {
+      "accepted_quantitative_components": 0,
+      "annotation_status": "blocked_missing_independent_human_annotation_and_review",
+      "candidate_id": "regobs-330446",
+      "human_annotation_complete": false,
+      "independent_human_review_complete": false,
+      "template_cache_path": ".validation-cache/public-event-annotation-gate-v1/regobs-330446/annotation-template.json",
+      "template_sha256": "689fb34248685b98c8ccefc965b5cabbe3f6d2f32360e7f9bbc12a858107081e"
+    },
+    {
+      "accepted_quantitative_components": 0,
+      "annotation_status": "blocked_missing_independent_human_annotation_and_review",
+      "candidate_id": "regobs-331395",
+      "human_annotation_complete": false,
+      "independent_human_review_complete": false,
+      "template_cache_path": ".validation-cache/public-event-annotation-gate-v1/regobs-331395/annotation-template.json",
+      "template_sha256": "b927b06b9d5cf292dda3b066faba982ce2e6b4714e91771cb00693af37430b0c"
+    },
+    {
+      "accepted_quantitative_components": 0,
+      "annotation_status": "blocked_missing_independent_human_annotation_and_review",
+      "candidate_id": "regobs-334839",
+      "human_annotation_complete": false,
+      "independent_human_review_complete": false,
+      "template_cache_path": ".validation-cache/public-event-annotation-gate-v1/regobs-334839/annotation-template.json",
+      "template_sha256": "9809cd071da62e70d6955bfc5a784a3dfa56705c5c3f67e7449a47969179907b"
+    },
+    {
+      "accepted_quantitative_components": 0,
+      "annotation_status": "blocked_missing_independent_human_annotation_and_review",
+      "candidate_id": "regobs-335278",
+      "human_annotation_complete": false,
+      "independent_human_review_complete": false,
+      "template_cache_path": ".validation-cache/public-event-annotation-gate-v1/regobs-335278/annotation-template.json",
+      "template_sha256": "4839eeedf3de0b771ed7a8a2f758697408610fa4d990d9403191eebd2f9a4371"
+    },
+    {
+      "accepted_quantitative_components": 0,
+      "annotation_status": "blocked_missing_independent_human_annotation_and_review",
+      "candidate_id": "regobs-338556",
+      "human_annotation_complete": false,
+      "independent_human_review_complete": false,
+      "template_cache_path": ".validation-cache/public-event-annotation-gate-v1/regobs-338556/annotation-template.json",
+      "template_sha256": "a4bb24afd112b71bebf44d754c0a311ce40f6de29af84ff4905e5dbca72a0770"
+    },
+    {
+      "accepted_quantitative_components": 0,
+      "annotation_status": "blocked_missing_independent_human_annotation_and_review",
+      "candidate_id": "regobs-339023",
+      "human_annotation_complete": false,
+      "independent_human_review_complete": false,
+      "template_cache_path": ".validation-cache/public-event-annotation-gate-v1/regobs-339023/annotation-template.json",
+      "template_sha256": "6a149fdbc6ac991e0259bceafd3d14def8c3f0b071354d3fc36c45eab5e4caaf"
+    },
+    {
+      "accepted_quantitative_components": 0,
+      "annotation_status": "blocked_missing_independent_human_annotation_and_review",
+      "candidate_id": "regobs-340048",
+      "human_annotation_complete": false,
+      "independent_human_review_complete": false,
+      "template_cache_path": ".validation-cache/public-event-annotation-gate-v1/regobs-340048/annotation-template.json",
+      "template_sha256": "3e4b6258518f3c2ead0d1f6fc2efa69aa585be580e78025a3bac501d0e8de206"
+    },
+    {
+      "accepted_quantitative_components": 0,
+      "annotation_status": "blocked_missing_independent_human_annotation_and_review",
+      "candidate_id": "regobs-341799",
+      "human_annotation_complete": false,
+      "independent_human_review_complete": false,
+      "template_cache_path": ".validation-cache/public-event-annotation-gate-v1/regobs-341799/annotation-template.json",
+      "template_sha256": "a72f22e3abd1a3c32290ab2773cfacbf9da905b4d0e80d8abb68c82a505475c2"
+    },
+    {
+      "accepted_quantitative_components": 0,
+      "annotation_status": "blocked_missing_independent_human_annotation_and_review",
+      "candidate_id": "regobs-354318",
+      "human_annotation_complete": false,
+      "independent_human_review_complete": false,
+      "template_cache_path": ".validation-cache/public-event-annotation-gate-v1/regobs-354318/annotation-template.json",
+      "template_sha256": "8e32ead96af1f660085f9c8a681c3535cf7c66100dc9934f5a434e760e465e43"
+    },
+    {
+      "accepted_quantitative_components": 0,
+      "annotation_status": "blocked_missing_independent_human_annotation_and_review",
+      "candidate_id": "regobs-358192",
+      "human_annotation_complete": false,
+      "independent_human_review_complete": false,
+      "template_cache_path": ".validation-cache/public-event-annotation-gate-v1/regobs-358192/annotation-template.json",
+      "template_sha256": "78696a37a30c81223f381fc1f9efe2d23ff4bd3cbcfeee7bd8460307dee0ad60"
+    },
+    {
+      "accepted_quantitative_components": 0,
+      "annotation_status": "blocked_missing_independent_human_annotation_and_review",
+      "candidate_id": "regobs-369343",
+      "human_annotation_complete": false,
+      "independent_human_review_complete": false,
+      "template_cache_path": ".validation-cache/public-event-annotation-gate-v1/regobs-369343/annotation-template.json",
+      "template_sha256": "d37f6a163c3fd0811be145ebf5c507f9d0a3b355a3aae119007a16a14fc8cd63"
+    },
+    {
+      "accepted_quantitative_components": 0,
+      "annotation_status": "blocked_missing_independent_human_annotation_and_review",
+      "candidate_id": "regobs-376510",
+      "human_annotation_complete": false,
+      "independent_human_review_complete": false,
+      "template_cache_path": ".validation-cache/public-event-annotation-gate-v1/regobs-376510/annotation-template.json",
+      "template_sha256": "cac01f52cc3ce81d52f5a4829f7509ae174073f0d0f5bd01012731ebe8a4c7eb"
+    },
+    {
+      "accepted_quantitative_components": 0,
+      "annotation_status": "blocked_missing_independent_human_annotation_and_review",
+      "candidate_id": "regobs-382585",
+      "human_annotation_complete": false,
+      "independent_human_review_complete": false,
+      "template_cache_path": ".validation-cache/public-event-annotation-gate-v1/regobs-382585/annotation-template.json",
+      "template_sha256": "638a1d2a3b4f49aad4056e54d7e68be83d84115b136e00e53bc32c9d4cb61d9b"
+    },
+    {
+      "accepted_quantitative_components": 0,
+      "annotation_status": "blocked_missing_independent_human_annotation_and_review",
+      "candidate_id": "regobs-389737",
+      "human_annotation_complete": false,
+      "independent_human_review_complete": false,
+      "template_cache_path": ".validation-cache/public-event-annotation-gate-v1/regobs-389737/annotation-template.json",
+      "template_sha256": "2132b3515c26b94e148d3e99d3c87d48d43f0b21977ff66bedd2835d78533d45"
+    },
+    {
+      "accepted_quantitative_components": 0,
+      "annotation_status": "blocked_missing_independent_human_annotation_and_review",
+      "candidate_id": "regobs-420503",
+      "human_annotation_complete": false,
+      "independent_human_review_complete": false,
+      "template_cache_path": ".validation-cache/public-event-annotation-gate-v1/regobs-420503/annotation-template.json",
+      "template_sha256": "6328848ff50f11f32eae455e2fe205f5292fa69f8613802a5c0041db15e4cfed"
+    },
+    {
+      "accepted_quantitative_components": 0,
+      "annotation_status": "blocked_missing_independent_human_annotation_and_review",
+      "candidate_id": "regobs-422102",
+      "human_annotation_complete": false,
+      "independent_human_review_complete": false,
+      "template_cache_path": ".validation-cache/public-event-annotation-gate-v1/regobs-422102/annotation-template.json",
+      "template_sha256": "f6fb725b75667ee210c5ab1b0c5f7dfc57b285fdc96da42c0e82e49d57f13d4b"
+    },
+    {
+      "accepted_quantitative_components": 0,
+      "annotation_status": "blocked_missing_independent_human_annotation_and_review",
+      "candidate_id": "regobs-427508",
+      "human_annotation_complete": false,
+      "independent_human_review_complete": false,
+      "template_cache_path": ".validation-cache/public-event-annotation-gate-v1/regobs-427508/annotation-template.json",
+      "template_sha256": "35281f91ac24fdbc8df2235a7584461f49646164490c0062e4de7e7815046ff0"
+    },
+    {
+      "accepted_quantitative_components": 0,
+      "annotation_status": "blocked_missing_independent_human_annotation_and_review",
+      "candidate_id": "regobs-442413",
+      "human_annotation_complete": false,
+      "independent_human_review_complete": false,
+      "template_cache_path": ".validation-cache/public-event-annotation-gate-v1/regobs-442413/annotation-template.json",
+      "template_sha256": "6b3753c4951fb60e6ba2c61be865a46a8a56a494e0b4d635ce6b2edc76dd3df5"
+    },
+    {
+      "accepted_quantitative_components": 0,
+      "annotation_status": "blocked_missing_independent_human_annotation_and_review",
+      "candidate_id": "regobs-442574",
+      "human_annotation_complete": false,
+      "independent_human_review_complete": false,
+      "template_cache_path": ".validation-cache/public-event-annotation-gate-v1/regobs-442574/annotation-template.json",
+      "template_sha256": "79fe780e036f0c5d5fc6d312405c02f16ae386eda554c66b6218024ca13ced5b"
+    },
+    {
+      "accepted_quantitative_components": 0,
+      "annotation_status": "blocked_missing_independent_human_annotation_and_review",
+      "candidate_id": "regobs-448389",
+      "human_annotation_complete": false,
+      "independent_human_review_complete": false,
+      "template_cache_path": ".validation-cache/public-event-annotation-gate-v1/regobs-448389/annotation-template.json",
+      "template_sha256": "36deb44709b4cab0ab30019660e2b09b39efb4068a1937b39c152d5ca109acb1"
+    },
+    {
+      "accepted_quantitative_components": 0,
+      "annotation_status": "blocked_missing_independent_human_annotation_and_review",
+      "candidate_id": "regobs-449426",
+      "human_annotation_complete": false,
+      "independent_human_review_complete": false,
+      "template_cache_path": ".validation-cache/public-event-annotation-gate-v1/regobs-449426/annotation-template.json",
+      "template_sha256": "060cab4bae410505209c033c403b0739d80a0cc661242cc652c1e0edab0f93bc"
+    },
+    {
+      "accepted_quantitative_components": 0,
+      "annotation_status": "blocked_missing_independent_human_annotation_and_review",
+      "candidate_id": "regobs-449728",
+      "human_annotation_complete": false,
+      "independent_human_review_complete": false,
+      "template_cache_path": ".validation-cache/public-event-annotation-gate-v1/regobs-449728/annotation-template.json",
+      "template_sha256": "5dbcfd0ee8e8dd17456e1196524570c898e8c99f097c6631396952d22336d6d1"
+    },
+    {
+      "accepted_quantitative_components": 0,
+      "annotation_status": "blocked_missing_independent_human_annotation_and_review",
+      "candidate_id": "regobs-453367",
+      "human_annotation_complete": false,
+      "independent_human_review_complete": false,
+      "template_cache_path": ".validation-cache/public-event-annotation-gate-v1/regobs-453367/annotation-template.json",
+      "template_sha256": "d52222dfa9f224bb100fd4d85819d418cae91f2913556d15c564764a773e8835"
+    },
+    {
+      "accepted_quantitative_components": 0,
+      "annotation_status": "blocked_missing_independent_human_annotation_and_review",
+      "candidate_id": "regobs-455982",
+      "human_annotation_complete": false,
+      "independent_human_review_complete": false,
+      "template_cache_path": ".validation-cache/public-event-annotation-gate-v1/regobs-455982/annotation-template.json",
+      "template_sha256": "eb1c22cb0511be556c6282cc486386244bef0a4a7e706ffbc054bb3fb680ca13"
+    },
+    {
+      "accepted_quantitative_components": 0,
+      "annotation_status": "blocked_missing_independent_human_annotation_and_review",
+      "candidate_id": "regobs-457182",
+      "human_annotation_complete": false,
+      "independent_human_review_complete": false,
+      "template_cache_path": ".validation-cache/public-event-annotation-gate-v1/regobs-457182/annotation-template.json",
+      "template_sha256": "7836f730a7088a441fffdd18d6060048242aef1aef04dc81d2fff3f49d70c68e"
+    },
+    {
+      "accepted_quantitative_components": 0,
+      "annotation_status": "blocked_missing_independent_human_annotation_and_review",
+      "candidate_id": "regobs-458220",
+      "human_annotation_complete": false,
+      "independent_human_review_complete": false,
+      "template_cache_path": ".validation-cache/public-event-annotation-gate-v1/regobs-458220/annotation-template.json",
+      "template_sha256": "e5c69e055a91f8517331de6ef7fd075fdd440600d58eb265e5ea08794629d545"
+    }
+  ],
+  "claim_boundary": "No public event has a reviewed annotation. Empty templates and provider geometry are not quantitative ground truth.",
+  "counts": {
+    "accepted_quantitative_components": 0,
+    "ai_triage_contact_sheets": 4,
+    "candidate_templates": 26,
+    "eligible_observations": 0,
+    "human_annotations_complete": 0,
+    "independent_human_reviews_complete": 0
+  },
+  "frozen_at_utc": "2026-08-13T00:00:00Z",
+  "holdout_targets_accessed": false,
+  "model_code_imported": false,
+  "normalized_artifact_sha256": "387d34e6e12a8ac00ac623acdab5e0a392ebf2ecab879d62ead04c4d0429145d",
+  "predictions_generated": false,
+  "prototype_disclaimer": "Experimental research prototype only. It does not replace Avalanche Canada guidance or field assessment. Scores are relative indices, not probabilities.",
+  "schema": "avycore-public-event-annotation-gate-v1",
+  "source_blinded_packet_manifest_sha256": "dace0145b3612ece387792408b89b96330d39bbdc18e6890f7c2282e19f7fc80",
+  "source_regobs_evidence_manifest_sha256": "87ea8956f8d5340de7d9eb3dd82f3d674022f2c487e0462e5b0d964b24086fe5",
+  "stage": "blinded_observation_annotation_and_human_review_gate"
+}

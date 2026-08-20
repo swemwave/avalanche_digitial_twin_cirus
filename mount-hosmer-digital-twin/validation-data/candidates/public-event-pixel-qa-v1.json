@@ -1,0 +1,3351 @@
+{
+  "cache_reference": ".validation-cache/public-event-pixel-qa-v1",
+  "candidates": [
+    {
+      "candidate_id": "regobs-330446",
+      "human_review_complete": false,
+      "normalized_candidate_sha256": "d292f65106299f9495b7a1274e356a13e161b28306dc0eed889e3b33f01a34d5",
+      "prediction_or_model_overlay_accessed": false,
+      "regobs_target_geometry_accessed": false,
+      "sentinel_1_grd": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "raw_dn_change_by_polarization": {
+            "vh": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            },
+            "vv": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            }
+          },
+          "raw_dn_change_interpretation": "Diagnostic only: GCP-warped GRD digital numbers without completed radiometric terrain correction, calibration/noise processing, or local incidence correction."
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "not applicable to SAR imagery",
+          "cloud_shadow": "not applicable to SAR imagery",
+          "forest": "unresolved_conservative_invalid pending independent land-cover lineage",
+          "layover_shadow": "unresolved_conservative_invalid pending DEM-bound local incidence, layover, shadow, and radiometric terrain correction",
+          "missing_data": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "unresolved_conservative_invalid pending independent water mask"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 35142,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-330446/sentinel_1_grd-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "2c4dca132db581583d56fe947c3b5c6564485f2ac19429a95cd458752cc8e50e"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "sentinel_2_l2a": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "cloud_probability_diagnostic": {
+            "median": null,
+            "p05": null,
+            "p95": null
+          },
+          "post_scl_snow_pixels": 0,
+          "post_scl_vegetation_pixels": 0,
+          "pre_scl_snow_pixels": 0,
+          "pre_scl_vegetation_pixels": 0,
+          "probability_layers_are_diagnostic_not_thresholded": true,
+          "snow_probability_diagnostic": {
+            "median": null,
+            "p05": null,
+            "p95": null
+          }
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "resolved from Sentinel-2 SCL classes 8, 9, and 10 in either scene",
+          "cloud_shadow": "resolved from Sentinel-2 SCL class 3 in either scene",
+          "forest": "unresolved_conservative_invalid: SCL vegetation is diagnostic only and does not identify snow-covered forest",
+          "layover_shadow": "not applicable to optical imagery",
+          "missing_data": "invalid source/read-mask pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "resolved from Sentinel-2 SCL class 6 in either scene"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 32478,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-330446/sentinel_2_l2a-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "4124adb03800b7875394abf78740242c7ea2e2c7d545bab0dc53d72aa5212300"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "validation_contract_eligible": false
+    },
+    {
+      "candidate_id": "regobs-331395",
+      "human_review_complete": false,
+      "normalized_candidate_sha256": "d47dac1c0aad3318aab012e948158c9a35f2101cfa37c6e9b0cd010b4edda829",
+      "prediction_or_model_overlay_accessed": false,
+      "regobs_target_geometry_accessed": false,
+      "sentinel_1_grd": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "raw_dn_change_by_polarization": {
+            "vh": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            },
+            "vv": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            }
+          },
+          "raw_dn_change_interpretation": "Diagnostic only: GCP-warped GRD digital numbers without completed radiometric terrain correction, calibration/noise processing, or local incidence correction."
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "not applicable to SAR imagery",
+          "cloud_shadow": "not applicable to SAR imagery",
+          "forest": "unresolved_conservative_invalid pending independent land-cover lineage",
+          "layover_shadow": "unresolved_conservative_invalid pending DEM-bound local incidence, layover, shadow, and radiometric terrain correction",
+          "missing_data": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "unresolved_conservative_invalid pending independent water mask"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 35142,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-331395/sentinel_1_grd-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "76431cf0bebe76770f674790112a33c61712bcee1543a082b8822aaf644bd46a"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "sentinel_2_l2a": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "cloud_probability_diagnostic": {
+            "median": 100.0,
+            "p05": 100.0,
+            "p95": 100.0
+          },
+          "post_scl_snow_pixels": 0,
+          "post_scl_vegetation_pixels": 0,
+          "pre_scl_snow_pixels": 0,
+          "pre_scl_vegetation_pixels": 0,
+          "probability_layers_are_diagnostic_not_thresholded": true,
+          "snow_probability_diagnostic": {
+            "median": 6.0,
+            "p05": 1.0,
+            "p95": 11.0
+          }
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "resolved from Sentinel-2 SCL classes 8, 9, and 10 in either scene",
+          "cloud_shadow": "resolved from Sentinel-2 SCL class 3 in either scene",
+          "forest": "unresolved_conservative_invalid: SCL vegetation is diagnostic only and does not identify snow-covered forest",
+          "layover_shadow": "not applicable to optical imagery",
+          "missing_data": "invalid source/read-mask pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "resolved from Sentinel-2 SCL class 6 in either scene"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 33092,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-331395/sentinel_2_l2a-masks.tif",
+          "counts": {
+            "cloud": 516,
+            "cloud_shadow": 0,
+            "forest": 516,
+            "layover_shadow": 0,
+            "missing_data": 1439484,
+            "prior_deposit": 516,
+            "scene_edge": 1439484,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "0a1fbbc20ea5f438ea8ad0f615d70bded117f5b45ba17de5be6d8ef185254113",
+          "sha256": "7def038dd97ea0210bec9dd18965792557257a10a4dead6b9ca2e6c7b28698a8"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 516,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "validation_contract_eligible": false
+    },
+    {
+      "candidate_id": "regobs-334839",
+      "human_review_complete": false,
+      "normalized_candidate_sha256": "06618a8f8bb53a4d1aedc15f11839905fe820599b7c23d06b5c09e80bfa7a153",
+      "prediction_or_model_overlay_accessed": false,
+      "regobs_target_geometry_accessed": false,
+      "sentinel_1_grd": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "raw_dn_change_by_polarization": {
+            "vh": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            },
+            "vv": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            }
+          },
+          "raw_dn_change_interpretation": "Diagnostic only: GCP-warped GRD digital numbers without completed radiometric terrain correction, calibration/noise processing, or local incidence correction."
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "not applicable to SAR imagery",
+          "cloud_shadow": "not applicable to SAR imagery",
+          "forest": "unresolved_conservative_invalid pending independent land-cover lineage",
+          "layover_shadow": "unresolved_conservative_invalid pending DEM-bound local incidence, layover, shadow, and radiometric terrain correction",
+          "missing_data": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "unresolved_conservative_invalid pending independent water mask"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 35142,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-334839/sentinel_1_grd-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "db89ec2f464021cb0ac5839e00afcdab6c9feb493d89a73264fe7830bab86a90"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "sentinel_2_l2a": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "cloud_probability_diagnostic": {
+            "median": null,
+            "p05": null,
+            "p95": null
+          },
+          "post_scl_snow_pixels": 0,
+          "post_scl_vegetation_pixels": 0,
+          "pre_scl_snow_pixels": 0,
+          "pre_scl_vegetation_pixels": 0,
+          "probability_layers_are_diagnostic_not_thresholded": true,
+          "snow_probability_diagnostic": {
+            "median": null,
+            "p05": null,
+            "p95": null
+          }
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "resolved from Sentinel-2 SCL classes 8, 9, and 10 in either scene",
+          "cloud_shadow": "resolved from Sentinel-2 SCL class 3 in either scene",
+          "forest": "unresolved_conservative_invalid: SCL vegetation is diagnostic only and does not identify snow-covered forest",
+          "layover_shadow": "not applicable to optical imagery",
+          "missing_data": "invalid source/read-mask pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "resolved from Sentinel-2 SCL class 6 in either scene"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 32478,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-334839/sentinel_2_l2a-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "aaf4788d65eb62080415e646232e50938995ed77a8c3dbb4d2ebc76e31351316"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "validation_contract_eligible": false
+    },
+    {
+      "candidate_id": "regobs-335278",
+      "human_review_complete": false,
+      "normalized_candidate_sha256": "e7ea5f12f4caf763d2bbac743edc620fc9d8b2f1c8f4555c54b625aab65b7b16",
+      "prediction_or_model_overlay_accessed": false,
+      "regobs_target_geometry_accessed": false,
+      "sentinel_1_grd": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "raw_dn_change_by_polarization": {
+            "vh": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            },
+            "vv": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            }
+          },
+          "raw_dn_change_interpretation": "Diagnostic only: GCP-warped GRD digital numbers without completed radiometric terrain correction, calibration/noise processing, or local incidence correction."
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "not applicable to SAR imagery",
+          "cloud_shadow": "not applicable to SAR imagery",
+          "forest": "unresolved_conservative_invalid pending independent land-cover lineage",
+          "layover_shadow": "unresolved_conservative_invalid pending DEM-bound local incidence, layover, shadow, and radiometric terrain correction",
+          "missing_data": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "unresolved_conservative_invalid pending independent water mask"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 35142,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-335278/sentinel_1_grd-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "2b26181b7e960453bb2698895819d39629dd53adef255299fac559fcc8ded334"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "sentinel_2_l2a": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "cloud_probability_diagnostic": {
+            "median": null,
+            "p05": null,
+            "p95": null
+          },
+          "post_scl_snow_pixels": 0,
+          "post_scl_vegetation_pixels": 0,
+          "pre_scl_snow_pixels": 0,
+          "pre_scl_vegetation_pixels": 0,
+          "probability_layers_are_diagnostic_not_thresholded": true,
+          "snow_probability_diagnostic": {
+            "median": null,
+            "p05": null,
+            "p95": null
+          }
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "resolved from Sentinel-2 SCL classes 8, 9, and 10 in either scene",
+          "cloud_shadow": "resolved from Sentinel-2 SCL class 3 in either scene",
+          "forest": "unresolved_conservative_invalid: SCL vegetation is diagnostic only and does not identify snow-covered forest",
+          "layover_shadow": "not applicable to optical imagery",
+          "missing_data": "invalid source/read-mask pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "resolved from Sentinel-2 SCL class 6 in either scene"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 32478,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-335278/sentinel_2_l2a-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "66657a44155337a05171bffd919e7e39caa1a634dcaeb18d71dacb64bd56d69f"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "validation_contract_eligible": false
+    },
+    {
+      "candidate_id": "regobs-338556",
+      "human_review_complete": false,
+      "normalized_candidate_sha256": "c0448c02b11abd4c14133789398ab499544dd118a262ac132b1fdb63e1eb7feb",
+      "prediction_or_model_overlay_accessed": false,
+      "regobs_target_geometry_accessed": false,
+      "sentinel_1_grd": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "raw_dn_change_by_polarization": {
+            "vh": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            },
+            "vv": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            }
+          },
+          "raw_dn_change_interpretation": "Diagnostic only: GCP-warped GRD digital numbers without completed radiometric terrain correction, calibration/noise processing, or local incidence correction."
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "not applicable to SAR imagery",
+          "cloud_shadow": "not applicable to SAR imagery",
+          "forest": "unresolved_conservative_invalid pending independent land-cover lineage",
+          "layover_shadow": "unresolved_conservative_invalid pending DEM-bound local incidence, layover, shadow, and radiometric terrain correction",
+          "missing_data": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "unresolved_conservative_invalid pending independent water mask"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 35142,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-338556/sentinel_1_grd-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "8b89acd6c8cf97d7827e27f74a222bced22eaedb1d53d1e1138374fc0d28863b"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "sentinel_2_l2a": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "cloud_probability_diagnostic": {
+            "median": 100.0,
+            "p05": 100.0,
+            "p95": 100.0
+          },
+          "post_scl_snow_pixels": 0,
+          "post_scl_vegetation_pixels": 0,
+          "pre_scl_snow_pixels": 0,
+          "pre_scl_vegetation_pixels": 0,
+          "probability_layers_are_diagnostic_not_thresholded": true,
+          "snow_probability_diagnostic": {
+            "median": 7.0,
+            "p05": 1.0,
+            "p95": 11.0
+          }
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "resolved from Sentinel-2 SCL classes 8, 9, and 10 in either scene",
+          "cloud_shadow": "resolved from Sentinel-2 SCL class 3 in either scene",
+          "forest": "unresolved_conservative_invalid: SCL vegetation is diagnostic only and does not identify snow-covered forest",
+          "layover_shadow": "not applicable to optical imagery",
+          "missing_data": "invalid source/read-mask pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "resolved from Sentinel-2 SCL class 6 in either scene"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 35950,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-338556/sentinel_2_l2a-masks.tif",
+          "counts": {
+            "cloud": 5048,
+            "cloud_shadow": 0,
+            "forest": 5048,
+            "layover_shadow": 0,
+            "missing_data": 1434952,
+            "prior_deposit": 5048,
+            "scene_edge": 1434952,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "bd2f77155b3dc5cd78b670d4866a375d3225295717e9c5b42cde9389985fb797",
+          "sha256": "7ce37b9d7f65a844ab1300d34fae877186ce7e6dc7e81a3469bc7d3b13d9276e"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 5048,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "validation_contract_eligible": false
+    },
+    {
+      "candidate_id": "regobs-339023",
+      "human_review_complete": false,
+      "normalized_candidate_sha256": "abf418e4dac48a363f4f2b43ecf96a3eb19ebf249ca05aa446362465d0aabb50",
+      "prediction_or_model_overlay_accessed": false,
+      "regobs_target_geometry_accessed": false,
+      "sentinel_1_grd": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "raw_dn_change_by_polarization": {
+            "vh": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            },
+            "vv": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            }
+          },
+          "raw_dn_change_interpretation": "Diagnostic only: GCP-warped GRD digital numbers without completed radiometric terrain correction, calibration/noise processing, or local incidence correction."
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "not applicable to SAR imagery",
+          "cloud_shadow": "not applicable to SAR imagery",
+          "forest": "unresolved_conservative_invalid pending independent land-cover lineage",
+          "layover_shadow": "unresolved_conservative_invalid pending DEM-bound local incidence, layover, shadow, and radiometric terrain correction",
+          "missing_data": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "unresolved_conservative_invalid pending independent water mask"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 35142,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-339023/sentinel_1_grd-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "41553b84fe726204f8d95a426f5fab460a405c2ffe186ecd68a85670475ad58b"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "sentinel_2_l2a": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "cloud_probability_diagnostic": {
+            "median": null,
+            "p05": null,
+            "p95": null
+          },
+          "post_scl_snow_pixels": 0,
+          "post_scl_vegetation_pixels": 0,
+          "pre_scl_snow_pixels": 0,
+          "pre_scl_vegetation_pixels": 0,
+          "probability_layers_are_diagnostic_not_thresholded": true,
+          "snow_probability_diagnostic": {
+            "median": null,
+            "p05": null,
+            "p95": null
+          }
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "resolved from Sentinel-2 SCL classes 8, 9, and 10 in either scene",
+          "cloud_shadow": "resolved from Sentinel-2 SCL class 3 in either scene",
+          "forest": "unresolved_conservative_invalid: SCL vegetation is diagnostic only and does not identify snow-covered forest",
+          "layover_shadow": "not applicable to optical imagery",
+          "missing_data": "invalid source/read-mask pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "resolved from Sentinel-2 SCL class 6 in either scene"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 32478,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-339023/sentinel_2_l2a-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "de1734b1325d6e9641068e256098eea313931e68cfe0bd619f9bd89fc404dbde"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "validation_contract_eligible": false
+    },
+    {
+      "candidate_id": "regobs-340048",
+      "human_review_complete": false,
+      "normalized_candidate_sha256": "137b46f5a673f27ac349c4239ba58e87b864ca2ec3e16e924e29d5c75776165a",
+      "prediction_or_model_overlay_accessed": false,
+      "regobs_target_geometry_accessed": false,
+      "sentinel_1_grd": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "raw_dn_change_by_polarization": {
+            "vh": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            },
+            "vv": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            }
+          },
+          "raw_dn_change_interpretation": "Diagnostic only: GCP-warped GRD digital numbers without completed radiometric terrain correction, calibration/noise processing, or local incidence correction."
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "not applicable to SAR imagery",
+          "cloud_shadow": "not applicable to SAR imagery",
+          "forest": "unresolved_conservative_invalid pending independent land-cover lineage",
+          "layover_shadow": "unresolved_conservative_invalid pending DEM-bound local incidence, layover, shadow, and radiometric terrain correction",
+          "missing_data": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "unresolved_conservative_invalid pending independent water mask"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 35142,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-340048/sentinel_1_grd-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "482638c9554be9b31141dd0c5fd07cf8c330700c75fd029475537027e3535a20"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "sentinel_2_l2a": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "cloud_probability_diagnostic": {
+            "median": null,
+            "p05": null,
+            "p95": null
+          },
+          "post_scl_snow_pixels": 0,
+          "post_scl_vegetation_pixels": 0,
+          "pre_scl_snow_pixels": 0,
+          "pre_scl_vegetation_pixels": 0,
+          "probability_layers_are_diagnostic_not_thresholded": true,
+          "snow_probability_diagnostic": {
+            "median": null,
+            "p05": null,
+            "p95": null
+          }
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "resolved from Sentinel-2 SCL classes 8, 9, and 10 in either scene",
+          "cloud_shadow": "resolved from Sentinel-2 SCL class 3 in either scene",
+          "forest": "unresolved_conservative_invalid: SCL vegetation is diagnostic only and does not identify snow-covered forest",
+          "layover_shadow": "not applicable to optical imagery",
+          "missing_data": "invalid source/read-mask pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "resolved from Sentinel-2 SCL class 6 in either scene"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 32478,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-340048/sentinel_2_l2a-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "6b080ec5edd640821d30fbf92aa4b3816cc3469f7c41bff4bba1fe352d739517"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "validation_contract_eligible": false
+    },
+    {
+      "candidate_id": "regobs-341799",
+      "human_review_complete": false,
+      "normalized_candidate_sha256": "6d58cc85c56fccf749d0813dae158a8e137720b69ba6ab8d932c345a31bd5d52",
+      "prediction_or_model_overlay_accessed": false,
+      "regobs_target_geometry_accessed": false,
+      "sentinel_1_grd": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "raw_dn_change_by_polarization": {
+            "vh": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            },
+            "vv": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            }
+          },
+          "raw_dn_change_interpretation": "Diagnostic only: GCP-warped GRD digital numbers without completed radiometric terrain correction, calibration/noise processing, or local incidence correction."
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "not applicable to SAR imagery",
+          "cloud_shadow": "not applicable to SAR imagery",
+          "forest": "unresolved_conservative_invalid pending independent land-cover lineage",
+          "layover_shadow": "unresolved_conservative_invalid pending DEM-bound local incidence, layover, shadow, and radiometric terrain correction",
+          "missing_data": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "unresolved_conservative_invalid pending independent water mask"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 35142,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-341799/sentinel_1_grd-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "75c2f65a17c9533145beda292a01852f9a5b214251c9bef96e6eb3731cad6e06"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "sentinel_2_l2a": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "cloud_probability_diagnostic": {
+            "median": null,
+            "p05": null,
+            "p95": null
+          },
+          "post_scl_snow_pixels": 0,
+          "post_scl_vegetation_pixels": 0,
+          "pre_scl_snow_pixels": 0,
+          "pre_scl_vegetation_pixels": 0,
+          "probability_layers_are_diagnostic_not_thresholded": true,
+          "snow_probability_diagnostic": {
+            "median": null,
+            "p05": null,
+            "p95": null
+          }
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "resolved from Sentinel-2 SCL classes 8, 9, and 10 in either scene",
+          "cloud_shadow": "resolved from Sentinel-2 SCL class 3 in either scene",
+          "forest": "unresolved_conservative_invalid: SCL vegetation is diagnostic only and does not identify snow-covered forest",
+          "layover_shadow": "not applicable to optical imagery",
+          "missing_data": "invalid source/read-mask pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "resolved from Sentinel-2 SCL class 6 in either scene"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 32478,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-341799/sentinel_2_l2a-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "b66eafd90c8fe9376411f0712f6f009c9189c73fc3e6c3905fcab4f706350946"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "validation_contract_eligible": false
+    },
+    {
+      "candidate_id": "regobs-354318",
+      "human_review_complete": false,
+      "normalized_candidate_sha256": "39d06292b81ce1c641dc5dc5edadfae2dbcc623e2f5632af5b033053cbd08127",
+      "prediction_or_model_overlay_accessed": false,
+      "regobs_target_geometry_accessed": false,
+      "sentinel_1_grd": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "raw_dn_change_by_polarization": {
+            "vh": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            },
+            "vv": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            }
+          },
+          "raw_dn_change_interpretation": "Diagnostic only: GCP-warped GRD digital numbers without completed radiometric terrain correction, calibration/noise processing, or local incidence correction."
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "not applicable to SAR imagery",
+          "cloud_shadow": "not applicable to SAR imagery",
+          "forest": "unresolved_conservative_invalid pending independent land-cover lineage",
+          "layover_shadow": "unresolved_conservative_invalid pending DEM-bound local incidence, layover, shadow, and radiometric terrain correction",
+          "missing_data": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "unresolved_conservative_invalid pending independent water mask"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 35142,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-354318/sentinel_1_grd-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "36168b71cbb30047537989458b839c1059a9b0e105953b195de69fc36a9a286b"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "sentinel_2_l2a": {
+        "automatic_pixel_qa_passed": false,
+        "human_review_complete": false,
+        "mask_stack": null,
+        "status": "not_reached_no_acquired_pair"
+      },
+      "validation_contract_eligible": false
+    },
+    {
+      "candidate_id": "regobs-358192",
+      "human_review_complete": false,
+      "normalized_candidate_sha256": "fe7eed55740a6bb9c49414e1859a01bc6cce4aba97e3bfb609609886ad38aafa",
+      "prediction_or_model_overlay_accessed": false,
+      "regobs_target_geometry_accessed": false,
+      "sentinel_1_grd": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "raw_dn_change_by_polarization": {
+            "vh": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            },
+            "vv": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            }
+          },
+          "raw_dn_change_interpretation": "Diagnostic only: GCP-warped GRD digital numbers without completed radiometric terrain correction, calibration/noise processing, or local incidence correction."
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "not applicable to SAR imagery",
+          "cloud_shadow": "not applicable to SAR imagery",
+          "forest": "unresolved_conservative_invalid pending independent land-cover lineage",
+          "layover_shadow": "unresolved_conservative_invalid pending DEM-bound local incidence, layover, shadow, and radiometric terrain correction",
+          "missing_data": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "unresolved_conservative_invalid pending independent water mask"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 35142,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-358192/sentinel_1_grd-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "c50313f2cf3667ef417826ed173a6aee1bdc77c77761a228de442be35994cbb4"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "sentinel_2_l2a": {
+        "automatic_pixel_qa_passed": false,
+        "human_review_complete": false,
+        "mask_stack": null,
+        "status": "not_reached_no_acquired_pair"
+      },
+      "validation_contract_eligible": false
+    },
+    {
+      "candidate_id": "regobs-369343",
+      "human_review_complete": false,
+      "normalized_candidate_sha256": "7e3a9360f2c6924dac38c5ba220eee77fb11f1a7568001005898e2e91755d697",
+      "prediction_or_model_overlay_accessed": false,
+      "regobs_target_geometry_accessed": false,
+      "sentinel_1_grd": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "raw_dn_change_by_polarization": {
+            "vh": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            },
+            "vv": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            }
+          },
+          "raw_dn_change_interpretation": "Diagnostic only: GCP-warped GRD digital numbers without completed radiometric terrain correction, calibration/noise processing, or local incidence correction."
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "not applicable to SAR imagery",
+          "cloud_shadow": "not applicable to SAR imagery",
+          "forest": "unresolved_conservative_invalid pending independent land-cover lineage",
+          "layover_shadow": "unresolved_conservative_invalid pending DEM-bound local incidence, layover, shadow, and radiometric terrain correction",
+          "missing_data": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "unresolved_conservative_invalid pending independent water mask"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 35142,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-369343/sentinel_1_grd-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "bb1522ab787c4644585b69e49aa5edc3ca7a1fc927c5f025438aa765aff31d6d"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "sentinel_2_l2a": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "cloud_probability_diagnostic": {
+            "median": null,
+            "p05": null,
+            "p95": null
+          },
+          "post_scl_snow_pixels": 0,
+          "post_scl_vegetation_pixels": 0,
+          "pre_scl_snow_pixels": 0,
+          "pre_scl_vegetation_pixels": 0,
+          "probability_layers_are_diagnostic_not_thresholded": true,
+          "snow_probability_diagnostic": {
+            "median": null,
+            "p05": null,
+            "p95": null
+          }
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "resolved from Sentinel-2 SCL classes 8, 9, and 10 in either scene",
+          "cloud_shadow": "resolved from Sentinel-2 SCL class 3 in either scene",
+          "forest": "unresolved_conservative_invalid: SCL vegetation is diagnostic only and does not identify snow-covered forest",
+          "layover_shadow": "not applicable to optical imagery",
+          "missing_data": "invalid source/read-mask pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "resolved from Sentinel-2 SCL class 6 in either scene"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 32478,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-369343/sentinel_2_l2a-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "ce8be29a39a0d29ce8ad9c1117bea459d3890de93da86d7adf98f3364bbb1e69"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "validation_contract_eligible": false
+    },
+    {
+      "candidate_id": "regobs-376510",
+      "human_review_complete": false,
+      "normalized_candidate_sha256": "0a3f39a5a50e653eed1ab2b7a8909689140c95f2b78766cc6fc04e3ada4ef070",
+      "prediction_or_model_overlay_accessed": false,
+      "regobs_target_geometry_accessed": false,
+      "sentinel_1_grd": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "raw_dn_change_by_polarization": {
+            "vh": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            },
+            "vv": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            }
+          },
+          "raw_dn_change_interpretation": "Diagnostic only: GCP-warped GRD digital numbers without completed radiometric terrain correction, calibration/noise processing, or local incidence correction."
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "not applicable to SAR imagery",
+          "cloud_shadow": "not applicable to SAR imagery",
+          "forest": "unresolved_conservative_invalid pending independent land-cover lineage",
+          "layover_shadow": "unresolved_conservative_invalid pending DEM-bound local incidence, layover, shadow, and radiometric terrain correction",
+          "missing_data": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "unresolved_conservative_invalid pending independent water mask"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 35142,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-376510/sentinel_1_grd-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "1a38a760e529c447f6d344c8ce45976cbdddf5dc64518737e3a2fe6f6ce1dfc2"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "sentinel_2_l2a": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "cloud_probability_diagnostic": {
+            "median": null,
+            "p05": null,
+            "p95": null
+          },
+          "post_scl_snow_pixels": 0,
+          "post_scl_vegetation_pixels": 0,
+          "pre_scl_snow_pixels": 0,
+          "pre_scl_vegetation_pixels": 0,
+          "probability_layers_are_diagnostic_not_thresholded": true,
+          "snow_probability_diagnostic": {
+            "median": null,
+            "p05": null,
+            "p95": null
+          }
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "resolved from Sentinel-2 SCL classes 8, 9, and 10 in either scene",
+          "cloud_shadow": "resolved from Sentinel-2 SCL class 3 in either scene",
+          "forest": "unresolved_conservative_invalid: SCL vegetation is diagnostic only and does not identify snow-covered forest",
+          "layover_shadow": "not applicable to optical imagery",
+          "missing_data": "invalid source/read-mask pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "resolved from Sentinel-2 SCL class 6 in either scene"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 32478,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-376510/sentinel_2_l2a-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "f5041db79ffdb4659bceaaf888ed415cdce5439e181f7694be3a8550b65cd06d"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "validation_contract_eligible": false
+    },
+    {
+      "candidate_id": "regobs-382585",
+      "human_review_complete": false,
+      "normalized_candidate_sha256": "e78291781a77e66524825214fa07047a35c426b7b7c7f6c709c0516150070bee",
+      "prediction_or_model_overlay_accessed": false,
+      "regobs_target_geometry_accessed": false,
+      "sentinel_1_grd": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "raw_dn_change_by_polarization": {
+            "vh": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            },
+            "vv": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            }
+          },
+          "raw_dn_change_interpretation": "Diagnostic only: GCP-warped GRD digital numbers without completed radiometric terrain correction, calibration/noise processing, or local incidence correction."
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "not applicable to SAR imagery",
+          "cloud_shadow": "not applicable to SAR imagery",
+          "forest": "unresolved_conservative_invalid pending independent land-cover lineage",
+          "layover_shadow": "unresolved_conservative_invalid pending DEM-bound local incidence, layover, shadow, and radiometric terrain correction",
+          "missing_data": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "unresolved_conservative_invalid pending independent water mask"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 35142,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-382585/sentinel_1_grd-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "1845ea8dd29a90d12228861adc4c60c549640d24d8d40e321951b204f1c54b2d"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "sentinel_2_l2a": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "cloud_probability_diagnostic": {
+            "median": null,
+            "p05": null,
+            "p95": null
+          },
+          "post_scl_snow_pixels": 0,
+          "post_scl_vegetation_pixels": 0,
+          "pre_scl_snow_pixels": 0,
+          "pre_scl_vegetation_pixels": 0,
+          "probability_layers_are_diagnostic_not_thresholded": true,
+          "snow_probability_diagnostic": {
+            "median": null,
+            "p05": null,
+            "p95": null
+          }
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "resolved from Sentinel-2 SCL classes 8, 9, and 10 in either scene",
+          "cloud_shadow": "resolved from Sentinel-2 SCL class 3 in either scene",
+          "forest": "unresolved_conservative_invalid: SCL vegetation is diagnostic only and does not identify snow-covered forest",
+          "layover_shadow": "not applicable to optical imagery",
+          "missing_data": "invalid source/read-mask pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "resolved from Sentinel-2 SCL class 6 in either scene"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 32478,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-382585/sentinel_2_l2a-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "ac8242f4dd03ebd5fa79e97c8bfc57e682a18cd759b6b152692f6acbcdbc843e"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "validation_contract_eligible": false
+    },
+    {
+      "candidate_id": "regobs-389737",
+      "human_review_complete": false,
+      "normalized_candidate_sha256": "5463fd5cfa6d3bb149481e30f00a594548eff8d8c7e1dfbd500eb337c413b3df",
+      "prediction_or_model_overlay_accessed": false,
+      "regobs_target_geometry_accessed": false,
+      "sentinel_1_grd": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "raw_dn_change_by_polarization": {
+            "vh": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            },
+            "vv": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            }
+          },
+          "raw_dn_change_interpretation": "Diagnostic only: GCP-warped GRD digital numbers without completed radiometric terrain correction, calibration/noise processing, or local incidence correction."
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "not applicable to SAR imagery",
+          "cloud_shadow": "not applicable to SAR imagery",
+          "forest": "unresolved_conservative_invalid pending independent land-cover lineage",
+          "layover_shadow": "unresolved_conservative_invalid pending DEM-bound local incidence, layover, shadow, and radiometric terrain correction",
+          "missing_data": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "unresolved_conservative_invalid pending independent water mask"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 35142,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-389737/sentinel_1_grd-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "9937cd87e18acf2a6b201acfa2784417b5c270dd9f0ad82177e3185fae8ecbca"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "sentinel_2_l2a": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "cloud_probability_diagnostic": {
+            "median": null,
+            "p05": null,
+            "p95": null
+          },
+          "post_scl_snow_pixels": 0,
+          "post_scl_vegetation_pixels": 0,
+          "pre_scl_snow_pixels": 0,
+          "pre_scl_vegetation_pixels": 0,
+          "probability_layers_are_diagnostic_not_thresholded": true,
+          "snow_probability_diagnostic": {
+            "median": null,
+            "p05": null,
+            "p95": null
+          }
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "resolved from Sentinel-2 SCL classes 8, 9, and 10 in either scene",
+          "cloud_shadow": "resolved from Sentinel-2 SCL class 3 in either scene",
+          "forest": "unresolved_conservative_invalid: SCL vegetation is diagnostic only and does not identify snow-covered forest",
+          "layover_shadow": "not applicable to optical imagery",
+          "missing_data": "invalid source/read-mask pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "resolved from Sentinel-2 SCL class 6 in either scene"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 32478,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-389737/sentinel_2_l2a-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "45398467555a535bc45eca4944f313a022c532da7545f7579bcad39b903f6878"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "validation_contract_eligible": false
+    },
+    {
+      "candidate_id": "regobs-420503",
+      "human_review_complete": false,
+      "normalized_candidate_sha256": "476278caa721328e7c78377c5244e30fad527eb414b7e1ac5bd55069e4484b40",
+      "prediction_or_model_overlay_accessed": false,
+      "regobs_target_geometry_accessed": false,
+      "sentinel_1_grd": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "raw_dn_change_by_polarization": {
+            "vh": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            },
+            "vv": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            }
+          },
+          "raw_dn_change_interpretation": "Diagnostic only: GCP-warped GRD digital numbers without completed radiometric terrain correction, calibration/noise processing, or local incidence correction."
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "not applicable to SAR imagery",
+          "cloud_shadow": "not applicable to SAR imagery",
+          "forest": "unresolved_conservative_invalid pending independent land-cover lineage",
+          "layover_shadow": "unresolved_conservative_invalid pending DEM-bound local incidence, layover, shadow, and radiometric terrain correction",
+          "missing_data": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "unresolved_conservative_invalid pending independent water mask"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 35142,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-420503/sentinel_1_grd-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "e08821fe1e265b3ea85d1d910be1ffd7468e296cbb587f0189ca98c96d20f842"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "sentinel_2_l2a": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "cloud_probability_diagnostic": {
+            "median": 100.0,
+            "p05": 100.0,
+            "p95": 100.0
+          },
+          "post_scl_snow_pixels": 0,
+          "post_scl_vegetation_pixels": 0,
+          "pre_scl_snow_pixels": 0,
+          "pre_scl_vegetation_pixels": 0,
+          "probability_layers_are_diagnostic_not_thresholded": true,
+          "snow_probability_diagnostic": {
+            "median": 8.0,
+            "p05": 1.0,
+            "p95": 12.0
+          }
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "resolved from Sentinel-2 SCL classes 8, 9, and 10 in either scene",
+          "cloud_shadow": "resolved from Sentinel-2 SCL class 3 in either scene",
+          "forest": "unresolved_conservative_invalid: SCL vegetation is diagnostic only and does not identify snow-covered forest",
+          "layover_shadow": "not applicable to optical imagery",
+          "missing_data": "invalid source/read-mask pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "resolved from Sentinel-2 SCL class 6 in either scene"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 34922,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-420503/sentinel_2_l2a-masks.tif",
+          "counts": {
+            "cloud": 2715,
+            "cloud_shadow": 0,
+            "forest": 2715,
+            "layover_shadow": 0,
+            "missing_data": 1437285,
+            "prior_deposit": 2715,
+            "scene_edge": 1437285,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "c4d125b7bcaa722617b0b9c119cd327f3ef0c3052c93eaecb83cabb75c891151",
+          "sha256": "74a3df88332c0d2dca9deb92a5c616d8648b79d10bca28b2ae4866c686b05484"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 2715,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "validation_contract_eligible": false
+    },
+    {
+      "candidate_id": "regobs-422102",
+      "human_review_complete": false,
+      "normalized_candidate_sha256": "d418ef28d246550cc5e413eabf7048b5db42f0783c0773c70ad8e79e234e5681",
+      "prediction_or_model_overlay_accessed": false,
+      "regobs_target_geometry_accessed": false,
+      "sentinel_1_grd": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "raw_dn_change_by_polarization": {
+            "vh": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            },
+            "vv": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            }
+          },
+          "raw_dn_change_interpretation": "Diagnostic only: GCP-warped GRD digital numbers without completed radiometric terrain correction, calibration/noise processing, or local incidence correction."
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "not applicable to SAR imagery",
+          "cloud_shadow": "not applicable to SAR imagery",
+          "forest": "unresolved_conservative_invalid pending independent land-cover lineage",
+          "layover_shadow": "unresolved_conservative_invalid pending DEM-bound local incidence, layover, shadow, and radiometric terrain correction",
+          "missing_data": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "unresolved_conservative_invalid pending independent water mask"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 35142,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-422102/sentinel_1_grd-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "aa96f5ce386f3ac719a618fc01e52bf57edc36442afb9bddb548a0a90fa55b3a"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "sentinel_2_l2a": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "cloud_probability_diagnostic": {
+            "median": 100.0,
+            "p05": 100.0,
+            "p95": 100.0
+          },
+          "post_scl_snow_pixels": 0,
+          "post_scl_vegetation_pixels": 0,
+          "pre_scl_snow_pixels": 0,
+          "pre_scl_vegetation_pixels": 0,
+          "probability_layers_are_diagnostic_not_thresholded": true,
+          "snow_probability_diagnostic": {
+            "median": 6.0,
+            "p05": 1.0,
+            "p95": 11.0
+          }
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "resolved from Sentinel-2 SCL classes 8, 9, and 10 in either scene",
+          "cloud_shadow": "resolved from Sentinel-2 SCL class 3 in either scene",
+          "forest": "unresolved_conservative_invalid: SCL vegetation is diagnostic only and does not identify snow-covered forest",
+          "layover_shadow": "not applicable to optical imagery",
+          "missing_data": "invalid source/read-mask pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "resolved from Sentinel-2 SCL class 6 in either scene"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 32704,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-422102/sentinel_2_l2a-masks.tif",
+          "counts": {
+            "cloud": 96,
+            "cloud_shadow": 0,
+            "forest": 96,
+            "layover_shadow": 0,
+            "missing_data": 1439904,
+            "prior_deposit": 96,
+            "scene_edge": 1439904,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "431896ae4d33cebb1d2dfa4ccd4614109256a12c3b3d051241e6621bf4fba8bc",
+          "sha256": "0cee2ad30206d9c33ccfbb5b83a1a54847eebe038f9c2075faca554691381955"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 96,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "validation_contract_eligible": false
+    },
+    {
+      "candidate_id": "regobs-427508",
+      "human_review_complete": false,
+      "normalized_candidate_sha256": "3026b7cab02dd992fd21d4d1944ec3a8ae8cb3443f1aae64ac1f196d949f34fc",
+      "prediction_or_model_overlay_accessed": false,
+      "regobs_target_geometry_accessed": false,
+      "sentinel_1_grd": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "raw_dn_change_by_polarization": {
+            "vh": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            },
+            "vv": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            }
+          },
+          "raw_dn_change_interpretation": "Diagnostic only: GCP-warped GRD digital numbers without completed radiometric terrain correction, calibration/noise processing, or local incidence correction."
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "not applicable to SAR imagery",
+          "cloud_shadow": "not applicable to SAR imagery",
+          "forest": "unresolved_conservative_invalid pending independent land-cover lineage",
+          "layover_shadow": "unresolved_conservative_invalid pending DEM-bound local incidence, layover, shadow, and radiometric terrain correction",
+          "missing_data": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "unresolved_conservative_invalid pending independent water mask"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 35142,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-427508/sentinel_1_grd-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "35cf3bf75c1a09e054f345dbd26c168aa74979d4770c68a456bf535c02b7ea12"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "sentinel_2_l2a": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "cloud_probability_diagnostic": {
+            "median": 100.0,
+            "p05": 100.0,
+            "p95": 100.0
+          },
+          "post_scl_snow_pixels": 0,
+          "post_scl_vegetation_pixels": 0,
+          "pre_scl_snow_pixels": 0,
+          "pre_scl_vegetation_pixels": 0,
+          "probability_layers_are_diagnostic_not_thresholded": true,
+          "snow_probability_diagnostic": {
+            "median": 6.0,
+            "p05": 1.0,
+            "p95": 11.0
+          }
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "resolved from Sentinel-2 SCL classes 8, 9, and 10 in either scene",
+          "cloud_shadow": "resolved from Sentinel-2 SCL class 3 in either scene",
+          "forest": "unresolved_conservative_invalid: SCL vegetation is diagnostic only and does not identify snow-covered forest",
+          "layover_shadow": "not applicable to optical imagery",
+          "missing_data": "invalid source/read-mask pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "resolved from Sentinel-2 SCL class 6 in either scene"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 32758,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-427508/sentinel_2_l2a-masks.tif",
+          "counts": {
+            "cloud": 142,
+            "cloud_shadow": 0,
+            "forest": 142,
+            "layover_shadow": 0,
+            "missing_data": 1439858,
+            "prior_deposit": 142,
+            "scene_edge": 1439858,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "11f01394325027b39249d3e6b5ddf1a81a920af990383a67c318a2f496d87754",
+          "sha256": "c2018df567598c47783cec364c012b85ea47dae756ef84973b96f4599c575d05"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 142,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "validation_contract_eligible": false
+    },
+    {
+      "candidate_id": "regobs-442413",
+      "human_review_complete": false,
+      "normalized_candidate_sha256": "507f9de38128e40f18deac040ff005fcc1d5335b4ad2c7cde5f9b4bf3d255e24",
+      "prediction_or_model_overlay_accessed": false,
+      "regobs_target_geometry_accessed": false,
+      "sentinel_1_grd": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "raw_dn_change_by_polarization": {
+            "vh": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            },
+            "vv": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            }
+          },
+          "raw_dn_change_interpretation": "Diagnostic only: GCP-warped GRD digital numbers without completed radiometric terrain correction, calibration/noise processing, or local incidence correction."
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "not applicable to SAR imagery",
+          "cloud_shadow": "not applicable to SAR imagery",
+          "forest": "unresolved_conservative_invalid pending independent land-cover lineage",
+          "layover_shadow": "unresolved_conservative_invalid pending DEM-bound local incidence, layover, shadow, and radiometric terrain correction",
+          "missing_data": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "unresolved_conservative_invalid pending independent water mask"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 35142,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-442413/sentinel_1_grd-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "43089e6d79b9ca2cb64bfa6ca057b8a0e7de22a73616c77f692b9e20bf1de502"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "sentinel_2_l2a": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "cloud_probability_diagnostic": {
+            "median": null,
+            "p05": null,
+            "p95": null
+          },
+          "post_scl_snow_pixels": 0,
+          "post_scl_vegetation_pixels": 0,
+          "pre_scl_snow_pixels": 0,
+          "pre_scl_vegetation_pixels": 0,
+          "probability_layers_are_diagnostic_not_thresholded": true,
+          "snow_probability_diagnostic": {
+            "median": null,
+            "p05": null,
+            "p95": null
+          }
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "resolved from Sentinel-2 SCL classes 8, 9, and 10 in either scene",
+          "cloud_shadow": "resolved from Sentinel-2 SCL class 3 in either scene",
+          "forest": "unresolved_conservative_invalid: SCL vegetation is diagnostic only and does not identify snow-covered forest",
+          "layover_shadow": "not applicable to optical imagery",
+          "missing_data": "invalid source/read-mask pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "resolved from Sentinel-2 SCL class 6 in either scene"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 32478,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-442413/sentinel_2_l2a-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "4aeef71c6750e6732aa62d75fa26abbe40e09cf7496e1dd1d187e329eb39b2ec"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "validation_contract_eligible": false
+    },
+    {
+      "candidate_id": "regobs-442574",
+      "human_review_complete": false,
+      "normalized_candidate_sha256": "7ce818c2d18e57fafed90a5a2c8b6ead04744fcd527c526c609d41b8c7c71a16",
+      "prediction_or_model_overlay_accessed": false,
+      "regobs_target_geometry_accessed": false,
+      "sentinel_1_grd": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "raw_dn_change_by_polarization": {
+            "vh": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            },
+            "vv": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            }
+          },
+          "raw_dn_change_interpretation": "Diagnostic only: GCP-warped GRD digital numbers without completed radiometric terrain correction, calibration/noise processing, or local incidence correction."
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "not applicable to SAR imagery",
+          "cloud_shadow": "not applicable to SAR imagery",
+          "forest": "unresolved_conservative_invalid pending independent land-cover lineage",
+          "layover_shadow": "unresolved_conservative_invalid pending DEM-bound local incidence, layover, shadow, and radiometric terrain correction",
+          "missing_data": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "unresolved_conservative_invalid pending independent water mask"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 35142,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-442574/sentinel_1_grd-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "0070f6ca40acbde6479a6ac54bbf7e265ce3cbecd5d1d44ad49653f300b76a4b"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "sentinel_2_l2a": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "cloud_probability_diagnostic": {
+            "median": null,
+            "p05": null,
+            "p95": null
+          },
+          "post_scl_snow_pixels": 0,
+          "post_scl_vegetation_pixels": 0,
+          "pre_scl_snow_pixels": 0,
+          "pre_scl_vegetation_pixels": 0,
+          "probability_layers_are_diagnostic_not_thresholded": true,
+          "snow_probability_diagnostic": {
+            "median": null,
+            "p05": null,
+            "p95": null
+          }
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "resolved from Sentinel-2 SCL classes 8, 9, and 10 in either scene",
+          "cloud_shadow": "resolved from Sentinel-2 SCL class 3 in either scene",
+          "forest": "unresolved_conservative_invalid: SCL vegetation is diagnostic only and does not identify snow-covered forest",
+          "layover_shadow": "not applicable to optical imagery",
+          "missing_data": "invalid source/read-mask pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "resolved from Sentinel-2 SCL class 6 in either scene"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 32478,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-442574/sentinel_2_l2a-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "2a38fe2bdccf6d20cf011102df976aac88313096e659d47c6a4c7f3ee5ed0fad"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "validation_contract_eligible": false
+    },
+    {
+      "candidate_id": "regobs-448389",
+      "human_review_complete": false,
+      "normalized_candidate_sha256": "f473ab7a87d8e6703c53d172460875dc70f2a52689c961707f8ffc2e723dc925",
+      "prediction_or_model_overlay_accessed": false,
+      "regobs_target_geometry_accessed": false,
+      "sentinel_1_grd": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "raw_dn_change_by_polarization": {
+            "hh": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            },
+            "hv": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            }
+          },
+          "raw_dn_change_interpretation": "Diagnostic only: GCP-warped GRD digital numbers without completed radiometric terrain correction, calibration/noise processing, or local incidence correction."
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "not applicable to SAR imagery",
+          "cloud_shadow": "not applicable to SAR imagery",
+          "forest": "unresolved_conservative_invalid pending independent land-cover lineage",
+          "layover_shadow": "unresolved_conservative_invalid pending DEM-bound local incidence, layover, shadow, and radiometric terrain correction",
+          "missing_data": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "unresolved_conservative_invalid pending independent water mask"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 35142,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-448389/sentinel_1_grd-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "c2ee31275e240fbf48509c40e3bac876af6d4dc48ecda84e7b9c0c5ce1ee2629"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "sentinel_2_l2a": {
+        "automatic_pixel_qa_passed": false,
+        "human_review_complete": false,
+        "mask_stack": null,
+        "status": "not_reached_no_acquired_pair"
+      },
+      "validation_contract_eligible": false
+    },
+    {
+      "candidate_id": "regobs-449426",
+      "human_review_complete": false,
+      "normalized_candidate_sha256": "6da2896a46f75e12826082fa3b77d8ac7cace909eab134cb0693d0b2ade2197a",
+      "prediction_or_model_overlay_accessed": false,
+      "regobs_target_geometry_accessed": false,
+      "sentinel_1_grd": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "raw_dn_change_by_polarization": {
+            "vh": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            },
+            "vv": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            }
+          },
+          "raw_dn_change_interpretation": "Diagnostic only: GCP-warped GRD digital numbers without completed radiometric terrain correction, calibration/noise processing, or local incidence correction."
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "not applicable to SAR imagery",
+          "cloud_shadow": "not applicable to SAR imagery",
+          "forest": "unresolved_conservative_invalid pending independent land-cover lineage",
+          "layover_shadow": "unresolved_conservative_invalid pending DEM-bound local incidence, layover, shadow, and radiometric terrain correction",
+          "missing_data": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "unresolved_conservative_invalid pending independent water mask"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 35142,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-449426/sentinel_1_grd-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "bf99a982f43c5228b2e76d9d6217a62636c9f1de6d0ed3aabe5ab98a6cc3c322"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "sentinel_2_l2a": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "cloud_probability_diagnostic": {
+            "median": null,
+            "p05": null,
+            "p95": null
+          },
+          "post_scl_snow_pixels": 0,
+          "post_scl_vegetation_pixels": 0,
+          "pre_scl_snow_pixels": 0,
+          "pre_scl_vegetation_pixels": 0,
+          "probability_layers_are_diagnostic_not_thresholded": true,
+          "snow_probability_diagnostic": {
+            "median": null,
+            "p05": null,
+            "p95": null
+          }
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "resolved from Sentinel-2 SCL classes 8, 9, and 10 in either scene",
+          "cloud_shadow": "resolved from Sentinel-2 SCL class 3 in either scene",
+          "forest": "unresolved_conservative_invalid: SCL vegetation is diagnostic only and does not identify snow-covered forest",
+          "layover_shadow": "not applicable to optical imagery",
+          "missing_data": "invalid source/read-mask pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "resolved from Sentinel-2 SCL class 6 in either scene"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 32478,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-449426/sentinel_2_l2a-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "2597e13bb5a310604d77ae2c94996de2f3755c10e3d6c7d38905abef8fc00b01"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "validation_contract_eligible": false
+    },
+    {
+      "candidate_id": "regobs-449728",
+      "human_review_complete": false,
+      "normalized_candidate_sha256": "0dd12d09ce38e3ef18b38264c29fb0480e299ccba40a2ceea1e31ec9deeb6d91",
+      "prediction_or_model_overlay_accessed": false,
+      "regobs_target_geometry_accessed": false,
+      "sentinel_1_grd": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "raw_dn_change_by_polarization": {
+            "vh": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            },
+            "vv": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            }
+          },
+          "raw_dn_change_interpretation": "Diagnostic only: GCP-warped GRD digital numbers without completed radiometric terrain correction, calibration/noise processing, or local incidence correction."
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "not applicable to SAR imagery",
+          "cloud_shadow": "not applicable to SAR imagery",
+          "forest": "unresolved_conservative_invalid pending independent land-cover lineage",
+          "layover_shadow": "unresolved_conservative_invalid pending DEM-bound local incidence, layover, shadow, and radiometric terrain correction",
+          "missing_data": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "unresolved_conservative_invalid pending independent water mask"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 35142,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-449728/sentinel_1_grd-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "66b387734709cb8fc1d0dd1dbd18a62122cec5174476e74b9d7ad9822695af57"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "sentinel_2_l2a": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "cloud_probability_diagnostic": {
+            "median": null,
+            "p05": null,
+            "p95": null
+          },
+          "post_scl_snow_pixels": 0,
+          "post_scl_vegetation_pixels": 0,
+          "pre_scl_snow_pixels": 0,
+          "pre_scl_vegetation_pixels": 0,
+          "probability_layers_are_diagnostic_not_thresholded": true,
+          "snow_probability_diagnostic": {
+            "median": null,
+            "p05": null,
+            "p95": null
+          }
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "resolved from Sentinel-2 SCL classes 8, 9, and 10 in either scene",
+          "cloud_shadow": "resolved from Sentinel-2 SCL class 3 in either scene",
+          "forest": "unresolved_conservative_invalid: SCL vegetation is diagnostic only and does not identify snow-covered forest",
+          "layover_shadow": "not applicable to optical imagery",
+          "missing_data": "invalid source/read-mask pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "resolved from Sentinel-2 SCL class 6 in either scene"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 32478,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-449728/sentinel_2_l2a-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "536369bdb2c27e2d16e9af09df8d48e294941e2f9d6bbea2bb61fd10e1e17903"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "validation_contract_eligible": false
+    },
+    {
+      "candidate_id": "regobs-453367",
+      "human_review_complete": false,
+      "normalized_candidate_sha256": "81dbd3b7f93a1607a5e19e188851cf9bafe74821d5b10b58cce225b6d8dc4a69",
+      "prediction_or_model_overlay_accessed": false,
+      "regobs_target_geometry_accessed": false,
+      "sentinel_1_grd": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "raw_dn_change_by_polarization": {
+            "vh": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            },
+            "vv": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            }
+          },
+          "raw_dn_change_interpretation": "Diagnostic only: GCP-warped GRD digital numbers without completed radiometric terrain correction, calibration/noise processing, or local incidence correction."
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "not applicable to SAR imagery",
+          "cloud_shadow": "not applicable to SAR imagery",
+          "forest": "unresolved_conservative_invalid pending independent land-cover lineage",
+          "layover_shadow": "unresolved_conservative_invalid pending DEM-bound local incidence, layover, shadow, and radiometric terrain correction",
+          "missing_data": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "unresolved_conservative_invalid pending independent water mask"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 35142,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-453367/sentinel_1_grd-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "4d2763b38f385cb667c444eef7fbc37ae716438b42deb441b737a573d410ac79"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "sentinel_2_l2a": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "cloud_probability_diagnostic": {
+            "median": null,
+            "p05": null,
+            "p95": null
+          },
+          "post_scl_snow_pixels": 0,
+          "post_scl_vegetation_pixels": 0,
+          "pre_scl_snow_pixels": 0,
+          "pre_scl_vegetation_pixels": 0,
+          "probability_layers_are_diagnostic_not_thresholded": true,
+          "snow_probability_diagnostic": {
+            "median": null,
+            "p05": null,
+            "p95": null
+          }
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "resolved from Sentinel-2 SCL classes 8, 9, and 10 in either scene",
+          "cloud_shadow": "resolved from Sentinel-2 SCL class 3 in either scene",
+          "forest": "unresolved_conservative_invalid: SCL vegetation is diagnostic only and does not identify snow-covered forest",
+          "layover_shadow": "not applicable to optical imagery",
+          "missing_data": "invalid source/read-mask pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "resolved from Sentinel-2 SCL class 6 in either scene"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 32478,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-453367/sentinel_2_l2a-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "5feca9c81599bf19f21ce49639f33b8c828f04e1bcdbd2fece49ac2c6fe7d1bc"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "validation_contract_eligible": false
+    },
+    {
+      "candidate_id": "regobs-455982",
+      "human_review_complete": false,
+      "normalized_candidate_sha256": "de471315e07837e21a38285ac82e7d431663a2ec3a84692ae7e301766f212780",
+      "prediction_or_model_overlay_accessed": false,
+      "regobs_target_geometry_accessed": false,
+      "sentinel_1_grd": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "raw_dn_change_by_polarization": {
+            "vh": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            },
+            "vv": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            }
+          },
+          "raw_dn_change_interpretation": "Diagnostic only: GCP-warped GRD digital numbers without completed radiometric terrain correction, calibration/noise processing, or local incidence correction."
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "not applicable to SAR imagery",
+          "cloud_shadow": "not applicable to SAR imagery",
+          "forest": "unresolved_conservative_invalid pending independent land-cover lineage",
+          "layover_shadow": "unresolved_conservative_invalid pending DEM-bound local incidence, layover, shadow, and radiometric terrain correction",
+          "missing_data": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "unresolved_conservative_invalid pending independent water mask"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 35142,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-455982/sentinel_1_grd-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "64642203b990d3630ab664087388b4b62745c3ef966bbcf059ace3377e03af0e"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "sentinel_2_l2a": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "cloud_probability_diagnostic": {
+            "median": 30.0,
+            "p05": 11.0,
+            "p95": 100.0
+          },
+          "post_scl_snow_pixels": 0,
+          "post_scl_vegetation_pixels": 0,
+          "pre_scl_snow_pixels": 0,
+          "pre_scl_vegetation_pixels": 0,
+          "probability_layers_are_diagnostic_not_thresholded": true,
+          "snow_probability_diagnostic": {
+            "median": 2.5,
+            "p05": 1.0,
+            "p95": 3.0
+          }
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "resolved from Sentinel-2 SCL classes 8, 9, and 10 in either scene",
+          "cloud_shadow": "resolved from Sentinel-2 SCL class 3 in either scene",
+          "forest": "unresolved_conservative_invalid: SCL vegetation is diagnostic only and does not identify snow-covered forest",
+          "layover_shadow": "not applicable to optical imagery",
+          "missing_data": "invalid source/read-mask pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "resolved from Sentinel-2 SCL class 6 in either scene"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 32520,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-455982/sentinel_2_l2a-masks.tif",
+          "counts": {
+            "cloud": 8,
+            "cloud_shadow": 0,
+            "forest": 8,
+            "layover_shadow": 0,
+            "missing_data": 1439992,
+            "prior_deposit": 8,
+            "scene_edge": 1439992,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "380666a4018c4249e6ab5c285c8aeaa67dee2cfddccb79d40989080b2f7eccc1",
+          "sha256": "6f2a19923713d9b6bfce4d18ae3811c9591a9b5c738bc1ecf97b6808f218f6e4"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 8,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "validation_contract_eligible": false
+    },
+    {
+      "candidate_id": "regobs-457182",
+      "human_review_complete": false,
+      "normalized_candidate_sha256": "0928092c566900cf549abe1c77abee7200239250c9279713ad8bde2be06566b2",
+      "prediction_or_model_overlay_accessed": false,
+      "regobs_target_geometry_accessed": false,
+      "sentinel_1_grd": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "raw_dn_change_by_polarization": {
+            "vh": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            },
+            "vv": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            }
+          },
+          "raw_dn_change_interpretation": "Diagnostic only: GCP-warped GRD digital numbers without completed radiometric terrain correction, calibration/noise processing, or local incidence correction."
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "not applicable to SAR imagery",
+          "cloud_shadow": "not applicable to SAR imagery",
+          "forest": "unresolved_conservative_invalid pending independent land-cover lineage",
+          "layover_shadow": "unresolved_conservative_invalid pending DEM-bound local incidence, layover, shadow, and radiometric terrain correction",
+          "missing_data": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "unresolved_conservative_invalid pending independent water mask"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 35142,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-457182/sentinel_1_grd-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "58cbd918fa423d9795acc78eb27cec51da4cf4c758c24535626af1bc51e4b363"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "sentinel_2_l2a": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "cloud_probability_diagnostic": {
+            "median": null,
+            "p05": null,
+            "p95": null
+          },
+          "post_scl_snow_pixels": 0,
+          "post_scl_vegetation_pixels": 0,
+          "pre_scl_snow_pixels": 0,
+          "pre_scl_vegetation_pixels": 0,
+          "probability_layers_are_diagnostic_not_thresholded": true,
+          "snow_probability_diagnostic": {
+            "median": null,
+            "p05": null,
+            "p95": null
+          }
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "resolved from Sentinel-2 SCL classes 8, 9, and 10 in either scene",
+          "cloud_shadow": "resolved from Sentinel-2 SCL class 3 in either scene",
+          "forest": "unresolved_conservative_invalid: SCL vegetation is diagnostic only and does not identify snow-covered forest",
+          "layover_shadow": "not applicable to optical imagery",
+          "missing_data": "invalid source/read-mask pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "resolved from Sentinel-2 SCL class 6 in either scene"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 32478,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-457182/sentinel_2_l2a-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "38b87af0263589d1dc1c7b0bce83a8e06f6de03c9a109720cbfeeb29674fd8cc"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "validation_contract_eligible": false
+    },
+    {
+      "candidate_id": "regobs-458220",
+      "human_review_complete": false,
+      "normalized_candidate_sha256": "b7886ad86fe77ca0497e0274580125a13939d2fbf2b52169cb6e111edcd5c7cb",
+      "prediction_or_model_overlay_accessed": false,
+      "regobs_target_geometry_accessed": false,
+      "sentinel_1_grd": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "raw_dn_change_by_polarization": {
+            "vh": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            },
+            "vv": {
+              "median": null,
+              "p05": null,
+              "p95": null
+            }
+          },
+          "raw_dn_change_interpretation": "Diagnostic only: GCP-warped GRD digital numbers without completed radiometric terrain correction, calibration/noise processing, or local incidence correction."
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "not applicable to SAR imagery",
+          "cloud_shadow": "not applicable to SAR imagery",
+          "forest": "unresolved_conservative_invalid pending independent land-cover lineage",
+          "layover_shadow": "unresolved_conservative_invalid pending DEM-bound local incidence, layover, shadow, and radiometric terrain correction",
+          "missing_data": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask or zero-DN pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "unresolved_conservative_invalid pending independent water mask"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 35142,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-458220/sentinel_1_grd-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "5c38cf761a36af7cb360deb0b321a2dc3b525d26dde3fd826511ac7e7fac3cd8"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "sentinel_2_l2a": {
+        "automatic_pixel_qa_passed": false,
+        "diagnostics": {
+          "cloud_probability_diagnostic": {
+            "median": null,
+            "p05": null,
+            "p95": null
+          },
+          "post_scl_snow_pixels": 0,
+          "post_scl_vegetation_pixels": 0,
+          "pre_scl_snow_pixels": 0,
+          "pre_scl_vegetation_pixels": 0,
+          "probability_layers_are_diagnostic_not_thresholded": true,
+          "snow_probability_diagnostic": {
+            "median": null,
+            "p05": null,
+            "p95": null
+          }
+        },
+        "human_review_complete": false,
+        "mask_semantics": {
+          "cloud": "resolved from Sentinel-2 SCL classes 8, 9, and 10 in either scene",
+          "cloud_shadow": "resolved from Sentinel-2 SCL class 3 in either scene",
+          "forest": "unresolved_conservative_invalid: SCL vegetation is diagnostic only and does not identify snow-covered forest",
+          "layover_shadow": "not applicable to optical imagery",
+          "missing_data": "invalid source/read-mask pixels in any required asset",
+          "prior_deposit": "unresolved_conservative_invalid pending blind human comparison of pre imagery",
+          "scene_edge": "invalid source/read-mask pixels in any required asset",
+          "usable": "valid only where no resolved or unresolved-conservative mask applies",
+          "water": "resolved from Sentinel-2 SCL class 6 in either scene"
+        },
+        "mask_stack": {
+          "bands": [
+            "cloud",
+            "cloud_shadow",
+            "layover_shadow",
+            "forest",
+            "water",
+            "scene_edge",
+            "prior_deposit",
+            "missing_data",
+            "usable"
+          ],
+          "bytes": 32478,
+          "cache_path": ".validation-cache/public-event-pixel-qa-v1/regobs-458220/sentinel_2_l2a-masks.tif",
+          "counts": {
+            "cloud": 0,
+            "cloud_shadow": 0,
+            "forest": 0,
+            "layover_shadow": 0,
+            "missing_data": 1440000,
+            "prior_deposit": 0,
+            "scene_edge": 1440000,
+            "usable": 0,
+            "water": 0
+          },
+          "mask_payload_sha256": "23b3dadd39d5b9ed68e41f2d86fd913223a73738c42a552d60d150fb6d81b60d",
+          "sha256": "b9ce1ae681f8d410d12c19d9136ce2cd3a8f09a1ce6353ca43a15caefe1f9866"
+        },
+        "quantitative_observation_eligible": false,
+        "source_valid_pixels": 0,
+        "status": "failed_automatic_pixel_qa_unresolved_required_masks",
+        "total_pixels": 1440000
+      },
+      "validation_contract_eligible": false
+    }
+  ],
+  "claim_boundary": "Automated pixel masks are QA evidence only. They are not avalanche annotations or reviewed ground truth. Unresolved required masks invalidate pixels rather than turning missing knowledge into zero.",
+  "counts": {
+    "candidates": 26,
+    "holdouts_assigned": 0,
+    "human_review_complete": 0,
+    "predictions_generated": 0,
+    "quantitative_observation_eligible": 0,
+    "sentinel_1_automatic_pass": 0,
+    "sentinel_1_pairs_masked": 26,
+    "sentinel_2_automatic_pass": 0,
+    "sentinel_2_pairs_masked": 23
+  },
+  "frozen_at_utc": "2026-08-13T00:00:00Z",
+  "holdout_partition_assigned": false,
+  "holdout_targets_accessed": false,
+  "mask_band_order": [
+    "cloud",
+    "cloud_shadow",
+    "layover_shadow",
+    "forest",
+    "water",
+    "scene_edge",
+    "prior_deposit",
+    "missing_data",
+    "usable"
+  ],
+  "model_code_imported": false,
+  "normalized_artifact_sha256": "889d93a154bb82c21b9087c3e89320871659714b0f83f55ca14ebb168e79d91f",
+  "predictions_generated": false,
+  "prototype_disclaimer": "Experimental research prototype only. It does not replace Avalanche Canada guidance or field assessment. Model scores are relative indices, not probabilities.",
+  "qa_id": "public-event-pixel-qa-v1",
+  "regobs_attachments_accessed": false,
+  "regobs_start_stop_target_coordinates_accessed": false,
+  "schema": "avycore-public-event-pixel-qa-v1",
+  "source_acquisition_sha256": "58e01b432e582cd5cec3f65982b674bbbbd8d8ee410c2823df9647d19b8611b9",
+  "stage": "reproducible_conservative_pixel_qa_before_target_access"
+}

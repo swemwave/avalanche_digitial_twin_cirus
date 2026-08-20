@@ -13,7 +13,7 @@ from app.processing.harmonization.grids import AnalysisGrid, terrain_grid
 from app.processing.harmonization.raster_io import Semantics, read_aligned
 from app.processing.mountain_pack import MountainPackError, load_mountain_pack
 from app.processing.terrain import derivatives as dv
-from app.processing.terrain.mosaic import SOURCE_CODES, SOURCE_LABELS, build_dem, build_dsm
+from app.processing.terrain.mosaic import build_dem, build_dsm
 from app.processing.terrain.provenance import (
     FOREST_SOURCE_CODES,
     FOREST_SOURCE_LABELS,
@@ -54,13 +54,25 @@ def _forest_mask(
     landcover_path = source_paths(settings)["landcover"]
     if landcover_path.exists():
         landcover = read_aligned(landcover_path, grid, Semantics.CATEGORICAL)
+        has_landcover = True
     else:
         landcover = np.ma.masked_all(grid.shape, dtype="float32")
-        warnings.append("ESA WorldCover is missing; forest cover falls back to LiDAR canopy only.")
+        has_landcover = False
+        warnings.append(
+            "The declared optional land-cover raster is missing; cells remain unknown "
+            "unless covered by an available canopy surface."
+        )
 
     dsm = build_dsm(settings, grid)
     if dsm is None:
-        warnings.append("No LiDAR DSM available; forest cover uses ESA WorldCover alone.")
+        warnings.append(
+            "No canopy surface is declared; cells remain unknown unless covered by the "
+            "land-cover classification."
+        )
+        if not has_landcover:
+            warnings.append(
+                "No forest-cover source is available; the forest layer remains fully masked."
+            )
         known = np.zeros(grid.shape, dtype=bool)
         canopy_forest = np.zeros(grid.shape, dtype=bool)
         dsm_sources: list[Path] = []
@@ -122,9 +134,10 @@ def compute(settings: Settings, config: ModelConfig) -> tuple[TerrainProducts, d
         terrain_source=terrain_source,
         forest_source=forest_source,
     )
+    dem_description = dem_model.describe()
     return products, {
-        "terrain_model": dem_model.describe(),
-        "terrain_source_codes": {str(code): SOURCE_LABELS[code] for code in sorted(SOURCE_LABELS)},
+        "terrain_model": dem_description,
+        "terrain_source_codes": dem_description["source_codes"],
         "forest_model": {
             "source_codes": {
                 str(code): FOREST_SOURCE_LABELS[code] for code in sorted(FOREST_SOURCE_LABELS)

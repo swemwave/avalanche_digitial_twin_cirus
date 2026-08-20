@@ -1,0 +1,36 @@
+{
+  "schema": "avycore-release-to-runout-rule-v1",
+  "rule_id": "public-dry-dense-slab-end-to-end-v1",
+  "frozen_at_utc": "2026-08-14T00:00:00Z",
+  "component": "end_to_end",
+  "avalanche_regime": "dry_dense_slab",
+  "observed_release_geometry_allowed_on_prediction_path": false,
+  "input_release_geometry": {
+    "source": "frozen deterministic release-candidate binary mask on the event evaluation grid",
+    "connectedness": 8,
+    "minimum_component_area_m2": null,
+    "minimum_component_area_status": "must_be_frozen_from_development_evidence_before_execution",
+    "unsupported_or_missing_cells": "excluded_and_reported_never_zero_filled",
+    "boundary_conversion": "union complete grid-cell polygons without smoothing or target-informed editing"
+  },
+  "release_state": {
+    "thickness": "event-specific validation-contract-v3 eligible evidence frozen without runout-target access",
+    "density": "event-specific validation-contract-v3 eligible evidence frozen without runout-target access",
+    "sampling": "one predeclared seeded joint draw per ensemble member; no runout-target conditioning",
+    "missing_thickness_or_density": "hard failure; do not generate a runout"
+  },
+  "lineage": {
+    "required_inputs": [
+      "release_candidate_artifact_sha256",
+      "evaluation_grid_sha256",
+      "terrain_surface_sha256",
+      "release_thickness_evidence_sha256",
+      "release_density_evidence_sha256",
+      "engine_configuration_sha256",
+      "effective_seed"
+    ],
+    "all_fields_required_before_execution": true
+  },
+  "claim_boundary": "This freezes conversion semantics only. It supplies no missing release observation, thickness, density, terrain, forcing, calibration, or validation evidence and authorizes no downstream run while the strict evidence gate fails.",
+  "prototype_disclaimer": "Experimental research prototype only. It does not replace Avalanche Canada guidance or field assessment. Scores are relative indices, not probabilities."
+}

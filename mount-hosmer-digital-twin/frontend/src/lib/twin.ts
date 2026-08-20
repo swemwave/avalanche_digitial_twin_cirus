@@ -1,7 +1,10 @@
 /** Thin application adapter over the SDK generated from FastAPI's OpenAPI contract. */
 
 import {
+  getPredictionComparison as getPredictionComparisonGenerated,
+  getPredictionProduct as getPredictionProductGenerated,
   getTwinMeta as getTwinMetaGenerated,
+  listPredictionProducts as listPredictionProductsGenerated,
   postAssess as postAssessGenerated,
   postChat as postChatGenerated,
   postExplain as postExplainGenerated,
@@ -18,7 +21,18 @@ import type {
   ExposureMeta,
   InputSource,
   InputUncertainty,
+  PredictionEngineOutput,
+  PredictionEnsembleMember,
+  PredictionEnsembleSummary,
+  PredictionProductDetail,
+  PredictionProductList,
+  PredictionProductSummary,
+  PredictionStageRecord,
+  PredictionUnsupportedSweep,
   ReleaseZoneOutput,
+  RunoutComparisonDetail,
+  RunoutComparisonMetric,
+  UnsupportedOutputRecord,
   Scenario,
   ScenarioAdvisory,
   ScenarioInput,
@@ -49,12 +63,23 @@ export type {
   ExposureMeta,
   InputSource,
   InputUncertainty,
+  PredictionEngineOutput,
+  PredictionEnsembleMember,
+  PredictionEnsembleSummary,
+  PredictionProductDetail,
+  PredictionProductList,
+  PredictionProductSummary,
+  PredictionStageRecord,
+  PredictionUnsupportedSweep,
+  RunoutComparisonDetail,
+  RunoutComparisonMetric,
   Scenario,
   ScenarioAdvisory,
   ScenarioInput,
   ScenarioReport,
   SpatialScope,
   TwinMeta,
+  UnsupportedOutputRecord,
   ZoneHazardComponents,
 };
 
@@ -113,6 +138,32 @@ export const postChat = (
     postChatGenerated({
       baseUrl: ASSISTANT_BASE_URL,
       body: { message: text, assessment, history },
+      cache: "no-store",
+    }),
+  );
+
+/** Immutable offline prediction products. These run no engine; they read files the
+ *  offline pipeline already wrote. A product that carries no result still lists the
+ *  stages that produced nothing and why, so "unavailable" is never rendered as zero. */
+export const listPredictionProducts = () =>
+  unwrap<PredictionProductList>(
+    listPredictionProductsGenerated({ baseUrl: API_BASE_URL, cache: "no-store" }),
+  );
+
+export const getPredictionProduct = (productId: string) =>
+  unwrap<PredictionProductDetail>(
+    getPredictionProductGenerated({
+      baseUrl: API_BASE_URL,
+      path: { product_id: productId },
+      cache: "no-store",
+    }),
+  );
+
+export const getPredictionComparison = (productId: string, comparisonId: string) =>
+  unwrap<RunoutComparisonDetail>(
+    getPredictionComparisonGenerated({
+      baseUrl: API_BASE_URL,
+      path: { product_id: productId, comparison_id: comparisonId },
       cache: "no-store",
     }),
   );

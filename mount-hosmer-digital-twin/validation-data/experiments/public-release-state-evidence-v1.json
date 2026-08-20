@@ -1,0 +1,600 @@
+{
+  "claim_boundary": "A frozen transferred density prior is not an event density measurement and does not make any candidate eligible without defensible release-thickness evidence.",
+  "counts": {
+    "candidates": 26,
+    "measurement_uncertainties_supplied": 0,
+    "normal_to_slope_thickness_semantics_verified": 0,
+    "release_thickness_evidence_eligible": 0,
+    "reported_crown_heights": 26
+  },
+  "crown_height_semantics": [
+    {
+      "candidate_id": "regobs-330446",
+      "conversion_to_release_thickness_permitted": false,
+      "exclusion_reason": "The public field describes crown-edge height, but does not establish a normal-to-slope measurement direction, method, or uncertainty.",
+      "measurement_direction_supplied": false,
+      "measurement_method_supplied": false,
+      "measurement_uncertainty_supplied": false,
+      "provider_field": "AvalancheObs.FractureHeight",
+      "provider_semantics_source": {
+        "english_interpretation": "Fracture height: how high was the crown edge?",
+        "norwegian_label": "Bruddhøyde: hvor høy var løsnekanten?",
+        "publisher": "Norwegian Water Resources and Energy Directorate (NVE), Varsom",
+        "url": "https://www.varsom.no/snoskred/snoskredskolen/del-informasjon/ulykke-nestenulykke/"
+      },
+      "provider_value_cm": 50,
+      "provider_value_m_unit_conversion_only": 0.5,
+      "semantics_verified_as_crown_edge_height": true,
+      "semantics_verified_as_normal_to_slope_slab_thickness": false,
+      "source_record_sha256": "d859673ec2007432d23acf40a30e83c91656bd311cda645093b3af733d081b61",
+      "validation_contract_v3_release_thickness_evidence_eligible": false
+    },
+    {
+      "candidate_id": "regobs-331395",
+      "conversion_to_release_thickness_permitted": false,
+      "exclusion_reason": "The public field describes crown-edge height, but does not establish a normal-to-slope measurement direction, method, or uncertainty.",
+      "measurement_direction_supplied": false,
+      "measurement_method_supplied": false,
+      "measurement_uncertainty_supplied": false,
+      "provider_field": "AvalancheObs.FractureHeight",
+      "provider_semantics_source": {
+        "english_interpretation": "Fracture height: how high was the crown edge?",
+        "norwegian_label": "Bruddhøyde: hvor høy var løsnekanten?",
+        "publisher": "Norwegian Water Resources and Energy Directorate (NVE), Varsom",
+        "url": "https://www.varsom.no/snoskred/snoskredskolen/del-informasjon/ulykke-nestenulykke/"
+      },
+      "provider_value_cm": 100,
+      "provider_value_m_unit_conversion_only": 1.0,
+      "semantics_verified_as_crown_edge_height": true,
+      "semantics_verified_as_normal_to_slope_slab_thickness": false,
+      "source_record_sha256": "ad2cc54cbec49f229f49513e3e699e23b1cae26e89a4d836403ff4a7faa5c36a",
+      "validation_contract_v3_release_thickness_evidence_eligible": false
+    },
+    {
+      "candidate_id": "regobs-334839",
+      "conversion_to_release_thickness_permitted": false,
+      "exclusion_reason": "The public field describes crown-edge height, but does not establish a normal-to-slope measurement direction, method, or uncertainty.",
+      "measurement_direction_supplied": false,
+      "measurement_method_supplied": false,
+      "measurement_uncertainty_supplied": false,
+      "provider_field": "AvalancheObs.FractureHeight",
+      "provider_semantics_source": {
+        "english_interpretation": "Fracture height: how high was the crown edge?",
+        "norwegian_label": "Bruddhøyde: hvor høy var løsnekanten?",
+        "publisher": "Norwegian Water Resources and Energy Directorate (NVE), Varsom",
+        "url": "https://www.varsom.no/snoskred/snoskredskolen/del-informasjon/ulykke-nestenulykke/"
+      },
+      "provider_value_cm": 50,
+      "provider_value_m_unit_conversion_only": 0.5,
+      "semantics_verified_as_crown_edge_height": true,
+      "semantics_verified_as_normal_to_slope_slab_thickness": false,
+      "source_record_sha256": "21a05059ef9bb701e260941d1757fc57718c1eff0d64e5508cc1684950a287b7",
+      "validation_contract_v3_release_thickness_evidence_eligible": false
+    },
+    {
+      "candidate_id": "regobs-335278",
+      "conversion_to_release_thickness_permitted": false,
+      "exclusion_reason": "The public field describes crown-edge height, but does not establish a normal-to-slope measurement direction, method, or uncertainty.",
+      "measurement_direction_supplied": false,
+      "measurement_method_supplied": false,
+      "measurement_uncertainty_supplied": false,
+      "provider_field": "AvalancheObs.FractureHeight",
+      "provider_semantics_source": {
+        "english_interpretation": "Fracture height: how high was the crown edge?",
+        "norwegian_label": "Bruddhøyde: hvor høy var løsnekanten?",
+        "publisher": "Norwegian Water Resources and Energy Directorate (NVE), Varsom",
+        "url": "https://www.varsom.no/snoskred/snoskredskolen/del-informasjon/ulykke-nestenulykke/"
+      },
+      "provider_value_cm": 100,
+      "provider_value_m_unit_conversion_only": 1.0,
+      "semantics_verified_as_crown_edge_height": true,
+      "semantics_verified_as_normal_to_slope_slab_thickness": false,
+      "source_record_sha256": "38708b66f6d949a9eab3194cb3d005beaf555fed85ae9c0512dc0f0b653629f9",
+      "validation_contract_v3_release_thickness_evidence_eligible": false
+    },
+    {
+      "candidate_id": "regobs-338556",
+      "conversion_to_release_thickness_permitted": false,
+      "exclusion_reason": "The public field describes crown-edge height, but does not establish a normal-to-slope measurement direction, method, or uncertainty.",
+      "measurement_direction_supplied": false,
+      "measurement_method_supplied": false,
+      "measurement_uncertainty_supplied": false,
+      "provider_field": "AvalancheObs.FractureHeight",
+      "provider_semantics_source": {
+        "english_interpretation": "Fracture height: how high was the crown edge?",
+        "norwegian_label": "Bruddhøyde: hvor høy var løsnekanten?",
+        "publisher": "Norwegian Water Resources and Energy Directorate (NVE), Varsom",
+        "url": "https://www.varsom.no/snoskred/snoskredskolen/del-informasjon/ulykke-nestenulykke/"
+      },
+      "provider_value_cm": 50,
+      "provider_value_m_unit_conversion_only": 0.5,
+      "semantics_verified_as_crown_edge_height": true,
+      "semantics_verified_as_normal_to_slope_slab_thickness": false,
+      "source_record_sha256": "37991c6714af20414ad73465c21f5a058b29dae6a8e2330a7289312d15c6fb40",
+      "validation_contract_v3_release_thickness_evidence_eligible": false
+    },
+    {
+      "candidate_id": "regobs-339023",
+      "conversion_to_release_thickness_permitted": false,
+      "exclusion_reason": "The public field describes crown-edge height, but does not establish a normal-to-slope measurement direction, method, or uncertainty.",
+      "measurement_direction_supplied": false,
+      "measurement_method_supplied": false,
+      "measurement_uncertainty_supplied": false,
+      "provider_field": "AvalancheObs.FractureHeight",
+      "provider_semantics_source": {
+        "english_interpretation": "Fracture height: how high was the crown edge?",
+        "norwegian_label": "Bruddhøyde: hvor høy var løsnekanten?",
+        "publisher": "Norwegian Water Resources and Energy Directorate (NVE), Varsom",
+        "url": "https://www.varsom.no/snoskred/snoskredskolen/del-informasjon/ulykke-nestenulykke/"
+      },
+      "provider_value_cm": 40,
+      "provider_value_m_unit_conversion_only": 0.4,
+      "semantics_verified_as_crown_edge_height": true,
+      "semantics_verified_as_normal_to_slope_slab_thickness": false,
+      "source_record_sha256": "a2398c36db46708d1472fd7246a94556c17fb2da30546e79fc8631d2c820ea8e",
+      "validation_contract_v3_release_thickness_evidence_eligible": false
+    },
+    {
+      "candidate_id": "regobs-340048",
+      "conversion_to_release_thickness_permitted": false,
+      "exclusion_reason": "The public field describes crown-edge height, but does not establish a normal-to-slope measurement direction, method, or uncertainty.",
+      "measurement_direction_supplied": false,
+      "measurement_method_supplied": false,
+      "measurement_uncertainty_supplied": false,
+      "provider_field": "AvalancheObs.FractureHeight",
+      "provider_semantics_source": {
+        "english_interpretation": "Fracture height: how high was the crown edge?",
+        "norwegian_label": "Bruddhøyde: hvor høy var løsnekanten?",
+        "publisher": "Norwegian Water Resources and Energy Directorate (NVE), Varsom",
+        "url": "https://www.varsom.no/snoskred/snoskredskolen/del-informasjon/ulykke-nestenulykke/"
+      },
+      "provider_value_cm": 80,
+      "provider_value_m_unit_conversion_only": 0.8,
+      "semantics_verified_as_crown_edge_height": true,
+      "semantics_verified_as_normal_to_slope_slab_thickness": false,
+      "source_record_sha256": "c723d44d9241077e0d10ae5f4fbe56b38cfe5d7e85a79aea2b61449ebb0a19aa",
+      "validation_contract_v3_release_thickness_evidence_eligible": false
+    },
+    {
+      "candidate_id": "regobs-341799",
+      "conversion_to_release_thickness_permitted": false,
+      "exclusion_reason": "The public field describes crown-edge height, but does not establish a normal-to-slope measurement direction, method, or uncertainty.",
+      "measurement_direction_supplied": false,
+      "measurement_method_supplied": false,
+      "measurement_uncertainty_supplied": false,
+      "provider_field": "AvalancheObs.FractureHeight",
+      "provider_semantics_source": {
+        "english_interpretation": "Fracture height: how high was the crown edge?",
+        "norwegian_label": "Bruddhøyde: hvor høy var løsnekanten?",
+        "publisher": "Norwegian Water Resources and Energy Directorate (NVE), Varsom",
+        "url": "https://www.varsom.no/snoskred/snoskredskolen/del-informasjon/ulykke-nestenulykke/"
+      },
+      "provider_value_cm": 50,
+      "provider_value_m_unit_conversion_only": 0.5,
+      "semantics_verified_as_crown_edge_height": true,
+      "semantics_verified_as_normal_to_slope_slab_thickness": false,
+      "source_record_sha256": "a0c15fc4d87840127d490079f8d23ea0953f9cf2053377754a97c6573c7172dd",
+      "validation_contract_v3_release_thickness_evidence_eligible": false
+    },
+    {
+      "candidate_id": "regobs-354318",
+      "conversion_to_release_thickness_permitted": false,
+      "exclusion_reason": "The public field describes crown-edge height, but does not establish a normal-to-slope measurement direction, method, or uncertainty.",
+      "measurement_direction_supplied": false,
+      "measurement_method_supplied": false,
+      "measurement_uncertainty_supplied": false,
+      "provider_field": "AvalancheObs.FractureHeight",
+      "provider_semantics_source": {
+        "english_interpretation": "Fracture height: how high was the crown edge?",
+        "norwegian_label": "Bruddhøyde: hvor høy var løsnekanten?",
+        "publisher": "Norwegian Water Resources and Energy Directorate (NVE), Varsom",
+        "url": "https://www.varsom.no/snoskred/snoskredskolen/del-informasjon/ulykke-nestenulykke/"
+      },
+      "provider_value_cm": 20,
+      "provider_value_m_unit_conversion_only": 0.2,
+      "semantics_verified_as_crown_edge_height": true,
+      "semantics_verified_as_normal_to_slope_slab_thickness": false,
+      "source_record_sha256": "6b7c8604a9004af9ce781d504fee0a509ad4629df8712092c7eb61f7a1aa8b29",
+      "validation_contract_v3_release_thickness_evidence_eligible": false
+    },
+    {
+      "candidate_id": "regobs-358192",
+      "conversion_to_release_thickness_permitted": false,
+      "exclusion_reason": "The public field describes crown-edge height, but does not establish a normal-to-slope measurement direction, method, or uncertainty.",
+      "measurement_direction_supplied": false,
+      "measurement_method_supplied": false,
+      "measurement_uncertainty_supplied": false,
+      "provider_field": "AvalancheObs.FractureHeight",
+      "provider_semantics_source": {
+        "english_interpretation": "Fracture height: how high was the crown edge?",
+        "norwegian_label": "Bruddhøyde: hvor høy var løsnekanten?",
+        "publisher": "Norwegian Water Resources and Energy Directorate (NVE), Varsom",
+        "url": "https://www.varsom.no/snoskred/snoskredskolen/del-informasjon/ulykke-nestenulykke/"
+      },
+      "provider_value_cm": 25,
+      "provider_value_m_unit_conversion_only": 0.25,
+      "semantics_verified_as_crown_edge_height": true,
+      "semantics_verified_as_normal_to_slope_slab_thickness": false,
+      "source_record_sha256": "2b4161f631fd1c01de34945c8763fdd34d55f1073088da806e5865d70a5f9c8b",
+      "validation_contract_v3_release_thickness_evidence_eligible": false
+    },
+    {
+      "candidate_id": "regobs-369343",
+      "conversion_to_release_thickness_permitted": false,
+      "exclusion_reason": "The public field describes crown-edge height, but does not establish a normal-to-slope measurement direction, method, or uncertainty.",
+      "measurement_direction_supplied": false,
+      "measurement_method_supplied": false,
+      "measurement_uncertainty_supplied": false,
+      "provider_field": "AvalancheObs.FractureHeight",
+      "provider_semantics_source": {
+        "english_interpretation": "Fracture height: how high was the crown edge?",
+        "norwegian_label": "Bruddhøyde: hvor høy var løsnekanten?",
+        "publisher": "Norwegian Water Resources and Energy Directorate (NVE), Varsom",
+        "url": "https://www.varsom.no/snoskred/snoskredskolen/del-informasjon/ulykke-nestenulykke/"
+      },
+      "provider_value_cm": 30,
+      "provider_value_m_unit_conversion_only": 0.3,
+      "semantics_verified_as_crown_edge_height": true,
+      "semantics_verified_as_normal_to_slope_slab_thickness": false,
+      "source_record_sha256": "b64cef5131d62abf9969c826ad998111c902e87964c8e9fdc951ccfa715ed3b5",
+      "validation_contract_v3_release_thickness_evidence_eligible": false
+    },
+    {
+      "candidate_id": "regobs-376510",
+      "conversion_to_release_thickness_permitted": false,
+      "exclusion_reason": "The public field describes crown-edge height, but does not establish a normal-to-slope measurement direction, method, or uncertainty.",
+      "measurement_direction_supplied": false,
+      "measurement_method_supplied": false,
+      "measurement_uncertainty_supplied": false,
+      "provider_field": "AvalancheObs.FractureHeight",
+      "provider_semantics_source": {
+        "english_interpretation": "Fracture height: how high was the crown edge?",
+        "norwegian_label": "Bruddhøyde: hvor høy var løsnekanten?",
+        "publisher": "Norwegian Water Resources and Energy Directorate (NVE), Varsom",
+        "url": "https://www.varsom.no/snoskred/snoskredskolen/del-informasjon/ulykke-nestenulykke/"
+      },
+      "provider_value_cm": 50,
+      "provider_value_m_unit_conversion_only": 0.5,
+      "semantics_verified_as_crown_edge_height": true,
+      "semantics_verified_as_normal_to_slope_slab_thickness": false,
+      "source_record_sha256": "c9c68469681dcca5f5f56fa5df2e589277ec52738635fb3246f897357e9600fb",
+      "validation_contract_v3_release_thickness_evidence_eligible": false
+    },
+    {
+      "candidate_id": "regobs-382585",
+      "conversion_to_release_thickness_permitted": false,
+      "exclusion_reason": "The public field describes crown-edge height, but does not establish a normal-to-slope measurement direction, method, or uncertainty.",
+      "measurement_direction_supplied": false,
+      "measurement_method_supplied": false,
+      "measurement_uncertainty_supplied": false,
+      "provider_field": "AvalancheObs.FractureHeight",
+      "provider_semantics_source": {
+        "english_interpretation": "Fracture height: how high was the crown edge?",
+        "norwegian_label": "Bruddhøyde: hvor høy var løsnekanten?",
+        "publisher": "Norwegian Water Resources and Energy Directorate (NVE), Varsom",
+        "url": "https://www.varsom.no/snoskred/snoskredskolen/del-informasjon/ulykke-nestenulykke/"
+      },
+      "provider_value_cm": 100,
+      "provider_value_m_unit_conversion_only": 1.0,
+      "semantics_verified_as_crown_edge_height": true,
+      "semantics_verified_as_normal_to_slope_slab_thickness": false,
+      "source_record_sha256": "f8f08a9c8b0b702ffdb846105907bead6b51dd8aa27b69eb185567b927866e55",
+      "validation_contract_v3_release_thickness_evidence_eligible": false
+    },
+    {
+      "candidate_id": "regobs-389737",
+      "conversion_to_release_thickness_permitted": false,
+      "exclusion_reason": "The public field describes crown-edge height, but does not establish a normal-to-slope measurement direction, method, or uncertainty.",
+      "measurement_direction_supplied": false,
+      "measurement_method_supplied": false,
+      "measurement_uncertainty_supplied": false,
+      "provider_field": "AvalancheObs.FractureHeight",
+      "provider_semantics_source": {
+        "english_interpretation": "Fracture height: how high was the crown edge?",
+        "norwegian_label": "Bruddhøyde: hvor høy var løsnekanten?",
+        "publisher": "Norwegian Water Resources and Energy Directorate (NVE), Varsom",
+        "url": "https://www.varsom.no/snoskred/snoskredskolen/del-informasjon/ulykke-nestenulykke/"
+      },
+      "provider_value_cm": 60,
+      "provider_value_m_unit_conversion_only": 0.6,
+      "semantics_verified_as_crown_edge_height": true,
+      "semantics_verified_as_normal_to_slope_slab_thickness": false,
+      "source_record_sha256": "1542082efc37d3df34bed401e8e6bd06d5933b64068c050879c6ca54f6b919fc",
+      "validation_contract_v3_release_thickness_evidence_eligible": false
+    },
+    {
+      "candidate_id": "regobs-420503",
+      "conversion_to_release_thickness_permitted": false,
+      "exclusion_reason": "The public field describes crown-edge height, but does not establish a normal-to-slope measurement direction, method, or uncertainty.",
+      "measurement_direction_supplied": false,
+      "measurement_method_supplied": false,
+      "measurement_uncertainty_supplied": false,
+      "provider_field": "AvalancheObs.FractureHeight",
+      "provider_semantics_source": {
+        "english_interpretation": "Fracture height: how high was the crown edge?",
+        "norwegian_label": "Bruddhøyde: hvor høy var løsnekanten?",
+        "publisher": "Norwegian Water Resources and Energy Directorate (NVE), Varsom",
+        "url": "https://www.varsom.no/snoskred/snoskredskolen/del-informasjon/ulykke-nestenulykke/"
+      },
+      "provider_value_cm": 100,
+      "provider_value_m_unit_conversion_only": 1.0,
+      "semantics_verified_as_crown_edge_height": true,
+      "semantics_verified_as_normal_to_slope_slab_thickness": false,
+      "source_record_sha256": "46f811768cb5bd555c0ce80fc461c88f140c135c9dcbbb892db4173ea217464e",
+      "validation_contract_v3_release_thickness_evidence_eligible": false
+    },
+    {
+      "candidate_id": "regobs-422102",
+      "conversion_to_release_thickness_permitted": false,
+      "exclusion_reason": "The public field describes crown-edge height, but does not establish a normal-to-slope measurement direction, method, or uncertainty.",
+      "measurement_direction_supplied": false,
+      "measurement_method_supplied": false,
+      "measurement_uncertainty_supplied": false,
+      "provider_field": "AvalancheObs.FractureHeight",
+      "provider_semantics_source": {
+        "english_interpretation": "Fracture height: how high was the crown edge?",
+        "norwegian_label": "Bruddhøyde: hvor høy var løsnekanten?",
+        "publisher": "Norwegian Water Resources and Energy Directorate (NVE), Varsom",
+        "url": "https://www.varsom.no/snoskred/snoskredskolen/del-informasjon/ulykke-nestenulykke/"
+      },
+      "provider_value_cm": 150,
+      "provider_value_m_unit_conversion_only": 1.5,
+      "semantics_verified_as_crown_edge_height": true,
+      "semantics_verified_as_normal_to_slope_slab_thickness": false,
+      "source_record_sha256": "d8459c41d694f77c2d34550e9576775d746b12aea1c0d06db936c146be71a12c",
+      "validation_contract_v3_release_thickness_evidence_eligible": false
+    },
+    {
+      "candidate_id": "regobs-427508",
+      "conversion_to_release_thickness_permitted": false,
+      "exclusion_reason": "The public field describes crown-edge height, but does not establish a normal-to-slope measurement direction, method, or uncertainty.",
+      "measurement_direction_supplied": false,
+      "measurement_method_supplied": false,
+      "measurement_uncertainty_supplied": false,
+      "provider_field": "AvalancheObs.FractureHeight",
+      "provider_semantics_source": {
+        "english_interpretation": "Fracture height: how high was the crown edge?",
+        "norwegian_label": "Bruddhøyde: hvor høy var løsnekanten?",
+        "publisher": "Norwegian Water Resources and Energy Directorate (NVE), Varsom",
+        "url": "https://www.varsom.no/snoskred/snoskredskolen/del-informasjon/ulykke-nestenulykke/"
+      },
+      "provider_value_cm": 15,
+      "provider_value_m_unit_conversion_only": 0.15,
+      "semantics_verified_as_crown_edge_height": true,
+      "semantics_verified_as_normal_to_slope_slab_thickness": false,
+      "source_record_sha256": "94c817cabcfa9ca833782874048e8edc14c5a7283ccf16791781dba5f3d4f4b5",
+      "validation_contract_v3_release_thickness_evidence_eligible": false
+    },
+    {
+      "candidate_id": "regobs-442413",
+      "conversion_to_release_thickness_permitted": false,
+      "exclusion_reason": "The public field describes crown-edge height, but does not establish a normal-to-slope measurement direction, method, or uncertainty.",
+      "measurement_direction_supplied": false,
+      "measurement_method_supplied": false,
+      "measurement_uncertainty_supplied": false,
+      "provider_field": "AvalancheObs.FractureHeight",
+      "provider_semantics_source": {
+        "english_interpretation": "Fracture height: how high was the crown edge?",
+        "norwegian_label": "Bruddhøyde: hvor høy var løsnekanten?",
+        "publisher": "Norwegian Water Resources and Energy Directorate (NVE), Varsom",
+        "url": "https://www.varsom.no/snoskred/snoskredskolen/del-informasjon/ulykke-nestenulykke/"
+      },
+      "provider_value_cm": 80,
+      "provider_value_m_unit_conversion_only": 0.8,
+      "semantics_verified_as_crown_edge_height": true,
+      "semantics_verified_as_normal_to_slope_slab_thickness": false,
+      "source_record_sha256": "6643dec6d60d8cc70a34a450bf36969fd00c61284fc222d32084e50e25357766",
+      "validation_contract_v3_release_thickness_evidence_eligible": false
+    },
+    {
+      "candidate_id": "regobs-442574",
+      "conversion_to_release_thickness_permitted": false,
+      "exclusion_reason": "The public field describes crown-edge height, but does not establish a normal-to-slope measurement direction, method, or uncertainty.",
+      "measurement_direction_supplied": false,
+      "measurement_method_supplied": false,
+      "measurement_uncertainty_supplied": false,
+      "provider_field": "AvalancheObs.FractureHeight",
+      "provider_semantics_source": {
+        "english_interpretation": "Fracture height: how high was the crown edge?",
+        "norwegian_label": "Bruddhøyde: hvor høy var løsnekanten?",
+        "publisher": "Norwegian Water Resources and Energy Directorate (NVE), Varsom",
+        "url": "https://www.varsom.no/snoskred/snoskredskolen/del-informasjon/ulykke-nestenulykke/"
+      },
+      "provider_value_cm": 60,
+      "provider_value_m_unit_conversion_only": 0.6,
+      "semantics_verified_as_crown_edge_height": true,
+      "semantics_verified_as_normal_to_slope_slab_thickness": false,
+      "source_record_sha256": "cc52cc01d02ef3dde37757779ebd2406d42bac60272c765ce73f762b927d7569",
+      "validation_contract_v3_release_thickness_evidence_eligible": false
+    },
+    {
+      "candidate_id": "regobs-448389",
+      "conversion_to_release_thickness_permitted": false,
+      "exclusion_reason": "The public field describes crown-edge height, but does not establish a normal-to-slope measurement direction, method, or uncertainty.",
+      "measurement_direction_supplied": false,
+      "measurement_method_supplied": false,
+      "measurement_uncertainty_supplied": false,
+      "provider_field": "AvalancheObs.FractureHeight",
+      "provider_semantics_source": {
+        "english_interpretation": "Fracture height: how high was the crown edge?",
+        "norwegian_label": "Bruddhøyde: hvor høy var løsnekanten?",
+        "publisher": "Norwegian Water Resources and Energy Directorate (NVE), Varsom",
+        "url": "https://www.varsom.no/snoskred/snoskredskolen/del-informasjon/ulykke-nestenulykke/"
+      },
+      "provider_value_cm": 30,
+      "provider_value_m_unit_conversion_only": 0.3,
+      "semantics_verified_as_crown_edge_height": true,
+      "semantics_verified_as_normal_to_slope_slab_thickness": false,
+      "source_record_sha256": "386ce107644b228d09cfc3206035cd4e3b7f66a6470968a89030f4dd1e2cec34",
+      "validation_contract_v3_release_thickness_evidence_eligible": false
+    },
+    {
+      "candidate_id": "regobs-449426",
+      "conversion_to_release_thickness_permitted": false,
+      "exclusion_reason": "The public field describes crown-edge height, but does not establish a normal-to-slope measurement direction, method, or uncertainty.",
+      "measurement_direction_supplied": false,
+      "measurement_method_supplied": false,
+      "measurement_uncertainty_supplied": false,
+      "provider_field": "AvalancheObs.FractureHeight",
+      "provider_semantics_source": {
+        "english_interpretation": "Fracture height: how high was the crown edge?",
+        "norwegian_label": "Bruddhøyde: hvor høy var løsnekanten?",
+        "publisher": "Norwegian Water Resources and Energy Directorate (NVE), Varsom",
+        "url": "https://www.varsom.no/snoskred/snoskredskolen/del-informasjon/ulykke-nestenulykke/"
+      },
+      "provider_value_cm": 10,
+      "provider_value_m_unit_conversion_only": 0.1,
+      "semantics_verified_as_crown_edge_height": true,
+      "semantics_verified_as_normal_to_slope_slab_thickness": false,
+      "source_record_sha256": "fbd0655fd7d7e75c230f22c860149ccfe672c9c822d9276a118c4cc2f567ed97",
+      "validation_contract_v3_release_thickness_evidence_eligible": false
+    },
+    {
+      "candidate_id": "regobs-449728",
+      "conversion_to_release_thickness_permitted": false,
+      "exclusion_reason": "The public field describes crown-edge height, but does not establish a normal-to-slope measurement direction, method, or uncertainty.",
+      "measurement_direction_supplied": false,
+      "measurement_method_supplied": false,
+      "measurement_uncertainty_supplied": false,
+      "provider_field": "AvalancheObs.FractureHeight",
+      "provider_semantics_source": {
+        "english_interpretation": "Fracture height: how high was the crown edge?",
+        "norwegian_label": "Bruddhøyde: hvor høy var løsnekanten?",
+        "publisher": "Norwegian Water Resources and Energy Directorate (NVE), Varsom",
+        "url": "https://www.varsom.no/snoskred/snoskredskolen/del-informasjon/ulykke-nestenulykke/"
+      },
+      "provider_value_cm": 150,
+      "provider_value_m_unit_conversion_only": 1.5,
+      "semantics_verified_as_crown_edge_height": true,
+      "semantics_verified_as_normal_to_slope_slab_thickness": false,
+      "source_record_sha256": "65434c69a87a8fb00de5c92776ac2f51ff51df82de335eb8a9f27f6c28621db3",
+      "validation_contract_v3_release_thickness_evidence_eligible": false
+    },
+    {
+      "candidate_id": "regobs-453367",
+      "conversion_to_release_thickness_permitted": false,
+      "exclusion_reason": "The public field describes crown-edge height, but does not establish a normal-to-slope measurement direction, method, or uncertainty.",
+      "measurement_direction_supplied": false,
+      "measurement_method_supplied": false,
+      "measurement_uncertainty_supplied": false,
+      "provider_field": "AvalancheObs.FractureHeight",
+      "provider_semantics_source": {
+        "english_interpretation": "Fracture height: how high was the crown edge?",
+        "norwegian_label": "Bruddhøyde: hvor høy var løsnekanten?",
+        "publisher": "Norwegian Water Resources and Energy Directorate (NVE), Varsom",
+        "url": "https://www.varsom.no/snoskred/snoskredskolen/del-informasjon/ulykke-nestenulykke/"
+      },
+      "provider_value_cm": 100,
+      "provider_value_m_unit_conversion_only": 1.0,
+      "semantics_verified_as_crown_edge_height": true,
+      "semantics_verified_as_normal_to_slope_slab_thickness": false,
+      "source_record_sha256": "1f2bb528d81dc646b452845e25a56766f090c89eba08491a263c953b27a66fbf",
+      "validation_contract_v3_release_thickness_evidence_eligible": false
+    },
+    {
+      "candidate_id": "regobs-455982",
+      "conversion_to_release_thickness_permitted": false,
+      "exclusion_reason": "The public field describes crown-edge height, but does not establish a normal-to-slope measurement direction, method, or uncertainty.",
+      "measurement_direction_supplied": false,
+      "measurement_method_supplied": false,
+      "measurement_uncertainty_supplied": false,
+      "provider_field": "AvalancheObs.FractureHeight",
+      "provider_semantics_source": {
+        "english_interpretation": "Fracture height: how high was the crown edge?",
+        "norwegian_label": "Bruddhøyde: hvor høy var løsnekanten?",
+        "publisher": "Norwegian Water Resources and Energy Directorate (NVE), Varsom",
+        "url": "https://www.varsom.no/snoskred/snoskredskolen/del-informasjon/ulykke-nestenulykke/"
+      },
+      "provider_value_cm": 70,
+      "provider_value_m_unit_conversion_only": 0.7,
+      "semantics_verified_as_crown_edge_height": true,
+      "semantics_verified_as_normal_to_slope_slab_thickness": false,
+      "source_record_sha256": "38bd48219ff421c4d239705a55d2dee6cadd451f29c6717494fcfcc5a39cd3fe",
+      "validation_contract_v3_release_thickness_evidence_eligible": false
+    },
+    {
+      "candidate_id": "regobs-457182",
+      "conversion_to_release_thickness_permitted": false,
+      "exclusion_reason": "The public field describes crown-edge height, but does not establish a normal-to-slope measurement direction, method, or uncertainty.",
+      "measurement_direction_supplied": false,
+      "measurement_method_supplied": false,
+      "measurement_uncertainty_supplied": false,
+      "provider_field": "AvalancheObs.FractureHeight",
+      "provider_semantics_source": {
+        "english_interpretation": "Fracture height: how high was the crown edge?",
+        "norwegian_label": "Bruddhøyde: hvor høy var løsnekanten?",
+        "publisher": "Norwegian Water Resources and Energy Directorate (NVE), Varsom",
+        "url": "https://www.varsom.no/snoskred/snoskredskolen/del-informasjon/ulykke-nestenulykke/"
+      },
+      "provider_value_cm": 120,
+      "provider_value_m_unit_conversion_only": 1.2,
+      "semantics_verified_as_crown_edge_height": true,
+      "semantics_verified_as_normal_to_slope_slab_thickness": false,
+      "source_record_sha256": "deb9e2eeb29a38c2e850cc05bf860ff8e854c79d25e089884c563347dac0da86",
+      "validation_contract_v3_release_thickness_evidence_eligible": false
+    },
+    {
+      "candidate_id": "regobs-458220",
+      "conversion_to_release_thickness_permitted": false,
+      "exclusion_reason": "The public field describes crown-edge height, but does not establish a normal-to-slope measurement direction, method, or uncertainty.",
+      "measurement_direction_supplied": false,
+      "measurement_method_supplied": false,
+      "measurement_uncertainty_supplied": false,
+      "provider_field": "AvalancheObs.FractureHeight",
+      "provider_semantics_source": {
+        "english_interpretation": "Fracture height: how high was the crown edge?",
+        "norwegian_label": "Bruddhøyde: hvor høy var løsnekanten?",
+        "publisher": "Norwegian Water Resources and Energy Directorate (NVE), Varsom",
+        "url": "https://www.varsom.no/snoskred/snoskredskolen/del-informasjon/ulykke-nestenulykke/"
+      },
+      "provider_value_cm": 30,
+      "provider_value_m_unit_conversion_only": 0.3,
+      "semantics_verified_as_crown_edge_height": true,
+      "semantics_verified_as_normal_to_slope_slab_thickness": false,
+      "source_record_sha256": "d9c320bdf29ca9e5837f784cd1853b048958f5f84936fef79016bb97cd81e1bf",
+      "validation_contract_v3_release_thickness_evidence_eligible": false
+    }
+  ],
+  "frozen_at_utc": "2026-08-13T00:00:00Z",
+  "model_code_imported": false,
+  "normalized_artifact_sha256": "dbf02e9586f6227f55ad012daf9b96c01937c4886f5fd72d30e0c4ad69cbd2cb",
+  "predictions_generated": false,
+  "prototype_disclaimer": "Experimental research prototype only. It does not replace Avalanche Canada guidance or field assessment. Scores are relative indices, not probabilities.",
+  "release_density_evidence": {
+    "applicability": "dry slab release snow only",
+    "distribution_choice": "Equal density over the paper's 200-250 kg m-3 band is a transparent project choice; the paper does not report this as an empirical uniform distribution.",
+    "distribution_family": "continuous_uniform",
+    "event_specific_measurement": false,
+    "frozen_for_any_later_development_or_holdout_use": true,
+    "lower": 200.0,
+    "representation": "distribution",
+    "role": "transferred_literature_prior_not_event_measurement",
+    "selected_from_runout_performance": false,
+    "source": {
+      "authors": "C. Stethem and R. Perla",
+      "doi": "10.3189/S0022143000010613",
+      "journal": "Journal of Glaciology 26(94), 85-91 (1980)",
+      "measurement_method": "Cylindrical samples cut at the crown across the entire slab layer and weighed in situ.",
+      "reported_slab_density_mean_kg_m3": 220.0,
+      "source_population": "30 dry slab avalanche fracture-zone investigations at Whistler Mountain",
+      "source_supported_density_band_kg_m3": [
+        200.0,
+        250.0
+      ],
+      "title": "Snow-Slab Studies at Whistler Mountain, British Columbia, Canada",
+      "url": "https://www.cambridge.org/core/journals/journal-of-glaciology/article/snowslab-studies-at-whistler-mountain-british-columbia-canada/8D0B62C03C0C8873DC2F9FDCE9D11F50"
+    },
+    "transfer_limitations": [
+      "Whistler measurements are not event-specific measurements for Norway or Svalbard.",
+      "The source sample is biased toward older, deeper dry slabs.",
+      "No quantitative geographic or event-regime transfer error is available.",
+      "The prior cannot compensate for missing release-thickness evidence."
+    ],
+    "unit": "kg m-3",
+    "upper": 250.0
+  },
+  "runout_results_accessed": false,
+  "schema": "avycore-public-release-state-evidence-v1",
+  "source_regobs_evidence_manifest_sha256": "87ea8956f8d5340de7d9eb3dd82f3d674022f2c487e0462e5b0d964b24086fe5",
+  "stage": "release_state_evidence_freeze_before_any_runout_evaluation"
+}

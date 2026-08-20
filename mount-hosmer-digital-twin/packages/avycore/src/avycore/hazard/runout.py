@@ -7,11 +7,12 @@ robust empirical result in avalanche runout -- it is the model a practitioner
 sketches on a map -- and it needs nothing but a DEM.
 
 **Advanced mode** runs an ensemble of particles under Voellmy friction (a Coulomb
-term plus a velocity-squared turbulent term), with terrain-dependent friction,
-directional spreading, and a per-particle empirical alpha-angle stopping line.
-A seeded random generator makes a run exactly reproducible. It produces
-velocities, an intensity field, and a sensitivity envelope from the spread of
-the ensemble; it is a hybrid rather than an independent pure-Voellmy model.
+term plus a velocity-squared turbulent term), with terrain-dependent friction
+and directional spreading.  Its default ``hybrid`` mode also applies a
+per-particle empirical alpha-angle stopping line.  The ``dynamics_only`` ablation
+disables that line so the Voellmy dynamics can be verified and evaluated without
+silently attributing alpha-controlled extent to the dynamics.  A seeded random
+generator makes both particle modes reproducible.
 
 Neither is calibrated. The alpha values and friction coefficients are published
 regional defaults. The uncertainty envelope is wide on purpose.
@@ -22,7 +23,7 @@ from __future__ import annotations
 import heapq
 import math
 from dataclasses import dataclass, field
-from typing import Any, Protocol
+from typing import Any, Literal, Protocol
 
 import numpy as np
 from scipy import ndimage
@@ -39,6 +40,40 @@ NEIGHBOURS = [(-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -
 NEIGHBOUR_UNIT_DIST = tuple(float(np.hypot(dr, dc)) for dr, dc in NEIGHBOURS)
 
 RELEASE_SIZES = ("small", "medium", "large", "very_large")
+
+RunoutEngineMode = Literal["alpha_only", "dynamics_only", "hybrid"]
+ALPHA_ONLY: RunoutEngineMode = "alpha_only"
+DYNAMICS_ONLY: RunoutEngineMode = "dynamics_only"
+HYBRID: RunoutEngineMode = "hybrid"
+RUNOUT_ENGINE_MODES: tuple[RunoutEngineMode, ...] = (
+    ALPHA_ONLY,
+    DYNAMICS_ONLY,
+    HYBRID,
+)
+
+
+def _directional_horizontal_projection_scale(
+    dz_drow: np.ndarray,
+    dz_dcol: np.ndarray,
+    row_velocity: np.ndarray,
+    col_velocity: np.ndarray,
+) -> np.ndarray:
+    """Convert slope-tangential speed to horizontal grid-coordinate speed.
+
+    Particle velocity magnitude is measured along the terrain surface, while
+    row/column positions are horizontal map coordinates.  The conversion must
+    use the terrain grade *along the current direction of travel*.  Using the
+    full fall-line grade would incorrectly shorten contour-parallel motion after
+    lateral spreading or momentum rotates a particle away from the fall line.
+    """
+
+    speed = np.hypot(row_velocity, col_velocity)
+    denominator = np.maximum(speed, 1.0e-12)
+    unit_row = row_velocity / denominator
+    unit_col = col_velocity / denominator
+    directional_grade = dz_drow * unit_row + dz_dcol * unit_col
+    scale = 1.0 / np.sqrt(1.0 + directional_grade**2)
+    return np.where(speed > 1.0e-12, scale, 1.0)
 
 
 @dataclass
@@ -68,6 +103,7 @@ class RunoutEngine(Protocol):
     """The seam where a validated external engine can replace this one."""
 
     name: str
+    engine_mode: RunoutEngineMode
 
     def simulate(
         self,
@@ -236,6 +272,7 @@ class FastRunoutEngine:
     """
 
     name = "fast_routing_alpha"
+    engine_mode: RunoutEngineMode = ALPHA_ONLY
 
     def simulate(
         self,
@@ -293,11 +330,16 @@ class FastRunoutEngine:
         if zone_cell_count == 0:
             return RunoutResult(
                 zone_id=zone.zone_id,
-                mode=self.name,
+                mode=self.engine_mode,
                 reached=reached,
                 intensity=flux,
                 velocity=np.zeros((rows, cols), dtype="float32"),
                 uncertainty=envelope,
+                metadata={
+                    "engine": self.name,
+                    "engine_mode": self.engine_mode,
+                    "particles_left_the_aoi": 0,
+                },
                 warnings=["The release zone contained no cells."],
             )
 
@@ -306,12 +348,15 @@ class FastRunoutEngine:
         if release_cells.size == 0:
             return RunoutResult(
                 zone_id=zone.zone_id,
-                mode=self.name,
+                mode=self.engine_mode,
                 reached=reached,
                 intensity=flux,
                 velocity=np.zeros((rows, cols), dtype="float32"),
                 uncertainty=envelope,
                 metadata={
+                    "engine": self.name,
+                    "engine_mode": self.engine_mode,
+                    "particles_left_the_aoi": 0,
                     "required_terrain_layers": ["elevation"],
                     "valid_grid_fraction": round(float(valid.mean()), 6),
                 },
@@ -443,6 +488,8 @@ class FastRunoutEngine:
 
         metadata = {
             "engine": self.name,
+            "engine_mode": self.engine_mode,
+            "particles_left_the_aoi": 0,
             "release_size": release_size,
             "alpha_angle_deg": alpha,
             "alpha_source": "user_override" if alpha_override_deg is not None else "configured_regional_default",
@@ -481,7 +528,7 @@ class FastRunoutEngine:
 
         return RunoutResult(
             zone_id=zone.zone_id,
-            mode=self.name,
+            mode=self.engine_mode,
             reached=reached,
             intensity=intensity.astype("float32", copy=False),
             velocity=np.zeros((rows, cols), dtype="float32"),
@@ -532,6 +579,13 @@ class ParticleRunoutEngine:
 
     name = "particle_ensemble_voellmy"
 
+    def __init__(self, engine_mode: Literal["dynamics_only", "hybrid"] = HYBRID) -> None:
+        if engine_mode not in {DYNAMICS_ONLY, HYBRID}:
+            raise ValueError(
+                "ParticleRunoutEngine engine_mode must be 'dynamics_only' or 'hybrid'."
+            )
+        self.engine_mode: RunoutEngineMode = engine_mode
+
     def simulate(
         self,
         *,
@@ -551,6 +605,11 @@ class ParticleRunoutEngine:
         cell = grid.resolution_m
         z = np.asarray(elevation.filled(np.nan), dtype="float64")
         elevation_valid = ~np.ma.getmaskarray(elevation) & np.isfinite(z)
+
+        if release_size not in RELEASE_SIZES:
+            raise KeyError(
+                f"Unknown release size {release_size!r}. Configured sizes: {list(RELEASE_SIZES)}"
+            )
 
         count = int(config.require("runout.advanced_mode.particles_per_zone"))
         max_steps = int(config.require("runout.advanced_mode.max_steps"))
@@ -583,11 +642,16 @@ class ParticleRunoutEngine:
             zeros = np.zeros((rows, cols), dtype="float32")
             return RunoutResult(
                 zone_id=zone.zone_id,
-                mode=self.name,
+                mode=self.engine_mode,
                 reached=np.zeros((rows, cols), dtype=bool),
                 intensity=zeros,
                 velocity=zeros,
                 uncertainty=np.zeros((rows, cols), dtype=bool),
+                metadata={
+                    "engine": self.name,
+                    "engine_mode": self.engine_mode,
+                    "particles_left_the_aoi": 0,
+                },
                 warnings=["The release zone contained no cells."],
             )
         release_cells = np.argwhere(zone.pixels & valid)
@@ -596,12 +660,15 @@ class ParticleRunoutEngine:
             zeros = np.zeros((rows, cols), dtype="float32")
             return RunoutResult(
                 zone_id=zone.zone_id,
-                mode=self.name,
+                mode=self.engine_mode,
                 reached=np.zeros((rows, cols), dtype=bool),
                 intensity=zeros,
                 velocity=zeros,
                 uncertainty=np.zeros((rows, cols), dtype=bool),
                 metadata={
+                    "engine": self.name,
+                    "engine_mode": self.engine_mode,
+                    "particles_left_the_aoi": 0,
                     "required_terrain_layers": [
                         "elevation",
                         "forest_mask",
@@ -659,9 +726,17 @@ class ParticleRunoutEngine:
         # Particles run to the pessimistic edge of the range (alpha minus the
         # uncertainty), so the ensemble spans the full "could run further" envelope
         # rather than being trimmed to the central estimate.
-        alpha_stop = _alpha_for(
-            config, release_size, override_deg=alpha_override_deg, flow_regime=flow_regime
-        ) - float(config.require("runout.alpha_uncertainty_deg"))
+        alpha_stop = (
+            _alpha_for(
+                config,
+                release_size,
+                override_deg=alpha_override_deg,
+                flow_regime=flow_regime,
+            )
+            - float(config.require("runout.alpha_uncertainty_deg"))
+            if self.engine_mode == HYBRID
+            else None
+        )
         # Do not test the line until a particle has actually gone somewhere, or the
         # ratio is 0/0 at launch.
         minimum_travel_m = 2.0 * cell
@@ -804,7 +879,11 @@ class ParticleRunoutEngine:
             # on the spot -- possibly just short of the steep step it was about to
             # drop off.
             has_left_zone = ~zone.pixels[r, c]
-            beyond_energy_line = has_left_zone & has_travelled & (reach_angle < alpha_stop)
+            beyond_energy_line = (
+                has_left_zone & has_travelled & (reach_angle < alpha_stop)
+                if alpha_stop is not None
+                else np.zeros(active.size, dtype=bool)
+            )
 
             # Record how far each particle has run, and at what angle of reach.
             moved = active[has_travelled]
@@ -824,8 +903,20 @@ class ParticleRunoutEngine:
             alive[stopped_now] = False
 
             # Move along the velocity vector, not the fall line.
-            positions[active, 0] += new_row_v * dt / cell
-            positions[active, 1] += new_col_v * dt / cell
+            # ``new_*_v`` is speed tangent to the terrain surface. Grid positions
+            # are horizontal row/column coordinates, so project displacement by
+            # the grade along the particle's actual direction of travel. This is
+            # cos(theta) on the fall line and one along a contour; applying the
+            # full fall-line slope to a laterally moving particle would shorten
+            # its horizontal travel incorrectly.
+            horizontal_scale = _directional_horizontal_projection_scale(
+                gy,
+                gx,
+                new_row_v,
+                new_col_v,
+            )
+            positions[active, 0] += new_row_v * horizontal_scale * dt / cell
+            positions[active, 1] += new_col_v * horizontal_scale * dt / cell
             velocity[active, 0] = new_row_v
             velocity[active, 1] = new_col_v
 
@@ -876,8 +967,15 @@ class ParticleRunoutEngine:
         # bound. The achieved angle is measured and reported so discretization or
         # time-step overshoot beyond that bound remains visible. It must not be
         # described as an independent pure-Voellmy model.
-        alpha_expected = _alpha_for(
-            config, release_size, override_deg=alpha_override_deg, flow_regime=flow_regime
+        alpha_expected = (
+            _alpha_for(
+                config,
+                release_size,
+                override_deg=alpha_override_deg,
+                flow_regime=flow_regime,
+            )
+            if self.engine_mode == HYBRID
+            else None
         )
         alpha_envelope = alpha_stop
         engine_warnings: list[str] = []
@@ -896,7 +994,11 @@ class ParticleRunoutEngine:
             if np.isfinite(particle_reach[tip]):
                 alpha_achieved = float(particle_reach[tip])
 
-        if alpha_achieved is not None and alpha_achieved < alpha_envelope - 1.0:
+        if (
+            alpha_achieved is not None
+            and alpha_envelope is not None
+            and alpha_achieved < alpha_envelope - 1.0
+        ):
             engine_warnings.append(
                 f"A particle ran to an angle of reach of {alpha_achieved:.1f} degrees, past the "
                 f"{alpha_envelope:.0f} degree energy line for a '{release_size}' release. The "
@@ -945,6 +1047,7 @@ class ParticleRunoutEngine:
 
         metadata = {
             "engine": self.name,
+            "engine_mode": self.engine_mode,
             "release_size": release_size,
             "particles": count,
             "particle_cell_visits": particle_cell_visits,
@@ -958,13 +1061,30 @@ class ParticleRunoutEngine:
             "friction_model": (
                 "Voellmy (Coulomb mu + turbulent xi), terrain dependent, bounded by a per-particle "
                 "energy line at the alpha envelope"
+                if self.engine_mode == HYBRID
+                else "Voellmy (Coulomb mu + turbulent xi), terrain dependent; no alpha energy line"
+            ),
+            "position_integration": (
+                "Slope-tangential particle velocity is projected by the terrain grade along "
+                "its current travel direction before advancing horizontal grid coordinates."
+            ),
+            "numerical_behavior_note": (
+                "Horizontal displacement no longer uses either the full slope-tangential "
+                "distance or an off-axis fall-line projection; fall-line motion uses "
+                "cos(local slope), while contour-parallel motion is not shortened."
             ),
             "required_terrain_layers": ["elevation", "forest_mask", "plan_curvature"],
             "valid_grid_fraction": round(float(valid.mean()), 6),
             "release_cells_excluded_for_missing_inputs": invalid_release_cells,
             "alpha_angle_achieved_deg": round(alpha_achieved, 1) if alpha_achieved is not None else None,
             "alpha_angle_expected_deg": alpha_expected,
-            "alpha_source": "user_override" if alpha_override_deg is not None else "configured_regional_default",
+            "alpha_source": (
+                "user_override"
+                if alpha_override_deg is not None and self.engine_mode == HYBRID
+                else "configured_regional_default"
+                if self.engine_mode == HYBRID
+                else "not_used_dynamics_only"
+            ),
             "flow_regime": flow_regime or "dry_slab",
             "flow_regime_friction_scales": {
                 "mu_scale": regime["mu_scale"], "xi_scale": regime["xi_scale"],
@@ -974,10 +1094,13 @@ class ParticleRunoutEngine:
             "alpha_measured_from": (
                 "each particle's own release point, not the crown of the zone -- a zone with real "
                 "extent puts its own toe far from its crown, and measuring from the crown would "
-                "report a particle that had barely moved as a shallow-angle runout"
+                "report a particle that had barely moved as a shallow-angle runout; in "
+                "dynamics_only mode this is a diagnostic measurement and not a stopping rule"
             ),
             "alpha_envelope_exceeded": bool(
-                alpha_achieved is not None and alpha_achieved < alpha_envelope - 1.0
+                alpha_achieved is not None
+                and alpha_envelope is not None
+                and alpha_achieved < alpha_envelope - 1.0
             ),
             "particles_stopped_on_energy_line": spent_on_energy_line,
             "particles_left_the_aoi": left_the_aoi,
@@ -990,6 +1113,10 @@ class ParticleRunoutEngine:
                 "cannot lose energy by spreading, thinning and depositing the way a real avalanche "
                 "does. Without that bound the runout has no natural end and a particle that finds a "
                 "steep drainage rides it to the floor of the AOI."
+                if self.engine_mode == HYBRID
+                else "Dynamics-only ablation: no empirical alpha energy line is applied. Extent is "
+                "therefore controlled only by the implemented Voellmy dynamics, terrain barriers, "
+                "the AOI, and the configured step cutoff."
             ),
             "start_elevation_m": round(start_z, 1),
             "runout_area_m2": round(float(core.sum()) * cell**2, 1),
@@ -1030,14 +1157,14 @@ class ParticleRunoutEngine:
         if left_the_aoi > count * 0.02:
             warnings.append(
                 f"{left_the_aoi} of {count} particles ran off the edge of the study area. The "
-                f"simulated avalanche leaves the 12 x 12 km AOI, so its full runout and everything it "
-                f"might reach beyond the boundary are NOT modelled. The exposed-asset count for this "
-                f"zone is a lower bound."
+                f"simulated avalanche leaves the configured AOI, so its full runout and everything "
+                f"it might reach beyond the boundary are NOT modelled. The exposed-asset count for "
+                f"this zone is a lower bound."
             )
 
         return RunoutResult(
             zone_id=zone.zone_id,
-            mode=self.name,
+            mode=self.engine_mode,
             reached=core,
             intensity=intensity.astype("float32", copy=False),
             velocity=max_velocity,
@@ -1058,7 +1185,13 @@ class ParticleRunoutEngine:
 
 ENGINES: dict[str, RunoutEngine] = {
     "fast": FastRunoutEngine(),
-    "advanced": ParticleRunoutEngine(),
+    "advanced": ParticleRunoutEngine(HYBRID),
+}
+
+ENGINE_MODES: dict[RunoutEngineMode, RunoutEngine] = {
+    ALPHA_ONLY: ENGINES["fast"],
+    DYNAMICS_ONLY: ParticleRunoutEngine(DYNAMICS_ONLY),
+    HYBRID: ENGINES["advanced"],
 }
 
 
@@ -1066,3 +1199,14 @@ def get_engine(mode: str) -> RunoutEngine:
     if mode not in ENGINES:
         raise KeyError(f"Unknown simulation mode {mode!r}. Available: {', '.join(sorted(ENGINES))}")
     return ENGINES[mode]
+
+
+def get_engine_by_mode(engine_mode: RunoutEngineMode) -> RunoutEngine:
+    """Return an engine by scientific component mode rather than UI alias."""
+
+    if engine_mode not in ENGINE_MODES:
+        raise KeyError(
+            f"Unknown runout engine mode {engine_mode!r}. "
+            f"Available: {', '.join(RUNOUT_ENGINE_MODES)}"
+        )
+    return ENGINE_MODES[engine_mode]

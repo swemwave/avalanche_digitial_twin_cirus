@@ -1,0 +1,850 @@
+{
+  "$defs": {
+    "BoundedMeasurement": {
+      "additionalProperties": false,
+      "properties": {
+        "confidence_level": {
+          "exclusiveMinimum": 0,
+          "maximum": 1,
+          "title": "Confidence Level",
+          "type": "number"
+        },
+        "estimate": {
+          "exclusiveMinimum": 0,
+          "title": "Estimate",
+          "type": "number"
+        },
+        "lower": {
+          "exclusiveMinimum": 0,
+          "title": "Lower",
+          "type": "number"
+        },
+        "method": {
+          "minLength": 1,
+          "title": "Method",
+          "type": "string"
+        },
+        "upper": {
+          "exclusiveMinimum": 0,
+          "title": "Upper",
+          "type": "number"
+        }
+      },
+      "required": [
+        "estimate",
+        "lower",
+        "upper",
+        "confidence_level",
+        "method"
+      ],
+      "title": "BoundedMeasurement",
+      "type": "object"
+    },
+    "CrsDatumLineage": {
+      "additionalProperties": false,
+      "properties": {
+        "axis_order": {
+          "const": "easting_northing",
+          "title": "Axis Order",
+          "type": "string"
+        },
+        "coordinate_epoch": {
+          "minLength": 1,
+          "title": "Coordinate Epoch",
+          "type": "string"
+        },
+        "delivery_crs": {
+          "minLength": 1,
+          "title": "Delivery Crs",
+          "type": "string"
+        },
+        "horizontal_datum": {
+          "minLength": 1,
+          "title": "Horizontal Datum",
+          "type": "string"
+        },
+        "horizontal_datum_realization": {
+          "minLength": 1,
+          "title": "Horizontal Datum Realization",
+          "type": "string"
+        },
+        "horizontal_units": {
+          "const": "metre",
+          "title": "Horizontal Units",
+          "type": "string"
+        },
+        "lineage_record": {
+          "$ref": "#/$defs/ImmutableAsset"
+        },
+        "original_crs": {
+          "minLength": 1,
+          "title": "Original Crs",
+          "type": "string"
+        },
+        "transformation_to_delivery_crs": {
+          "minLength": 1,
+          "title": "Transformation To Delivery Crs",
+          "type": "string"
+        },
+        "vertical_coordinate_type": {
+          "enum": [
+            "orthometric_height",
+            "ellipsoidal_height"
+          ],
+          "title": "Vertical Coordinate Type",
+          "type": "string"
+        },
+        "vertical_datum": {
+          "minLength": 1,
+          "title": "Vertical Datum",
+          "type": "string"
+        },
+        "vertical_datum_realization": {
+          "minLength": 1,
+          "title": "Vertical Datum Realization",
+          "type": "string"
+        },
+        "vertical_units": {
+          "const": "metre",
+          "title": "Vertical Units",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lineage_record",
+        "original_crs",
+        "horizontal_datum",
+        "horizontal_datum_realization",
+        "vertical_datum",
+        "vertical_datum_realization",
+        "vertical_coordinate_type",
+        "horizontal_units",
+        "vertical_units",
+        "axis_order",
+        "coordinate_epoch",
+        "transformation_to_delivery_crs",
+        "delivery_crs"
+      ],
+      "title": "CrsDatumLineage",
+      "type": "object"
+    },
+    "EventSurfaceDem": {
+      "additionalProperties": false,
+      "properties": {
+        "acquisition_end_utc": {
+          "format": "date-time",
+          "title": "Acquisition End Utc",
+          "type": "string"
+        },
+        "acquisition_start_utc": {
+          "format": "date-time",
+          "title": "Acquisition Start Utc",
+          "type": "string"
+        },
+        "crs_lineage": {
+          "$ref": "#/$defs/CrsDatumLineage"
+        },
+        "dem": {
+          "$ref": "#/$defs/ImmutableAsset"
+        },
+        "horizontal_uncertainty": {
+          "$ref": "#/$defs/QuantifiedUncertainty"
+        },
+        "provenance": {
+          "$ref": "#/$defs/RequiredObservationProvenance"
+        },
+        "surface_type": {
+          "const": "pre_event_snow_surface",
+          "title": "Surface Type",
+          "type": "string"
+        },
+        "valid_at_event": {
+          "const": true,
+          "title": "Valid At Event",
+          "type": "boolean"
+        },
+        "validity_method": {
+          "minLength": 1,
+          "title": "Validity Method",
+          "type": "string"
+        },
+        "vertical_uncertainty": {
+          "$ref": "#/$defs/QuantifiedUncertainty"
+        }
+      },
+      "required": [
+        "dem",
+        "crs_lineage",
+        "provenance",
+        "acquisition_start_utc",
+        "acquisition_end_utc",
+        "surface_type",
+        "vertical_uncertainty",
+        "horizontal_uncertainty",
+        "valid_at_event",
+        "validity_method"
+      ],
+      "title": "EventSurfaceDem",
+      "type": "object"
+    },
+    "FieldValidationOwnerEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "avalanche_regime": {
+          "const": "dry_dense_slab",
+          "title": "Avalanche Regime",
+          "type": "string"
+        },
+        "event_end_utc": {
+          "format": "date-time",
+          "title": "Event End Utc",
+          "type": "string"
+        },
+        "event_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{1,127}$",
+          "title": "Event Id",
+          "type": "string"
+        },
+        "event_start_utc": {
+          "format": "date-time",
+          "title": "Event Start Utc",
+          "type": "string"
+        },
+        "event_surface_dem": {
+          "$ref": "#/$defs/EventSurfaceDem"
+        },
+        "event_time_confidence": {
+          "minLength": 1,
+          "title": "Event Time Confidence",
+          "type": "string"
+        },
+        "event_time_evidence": {
+          "$ref": "#/$defs/ImmutableAsset"
+        },
+        "event_time_provenance": {
+          "$ref": "#/$defs/RequiredObservationProvenance"
+        },
+        "grouping_evidence": {
+          "$ref": "#/$defs/ImmutableAsset"
+        },
+        "grouping_method": {
+          "minLength": 1,
+          "title": "Grouping Method",
+          "type": "string"
+        },
+        "mountain_id": {
+          "pattern": "^[a-z0-9][a-z0-9._-]{1,127}$",
+          "title": "Mountain Id",
+          "type": "string"
+        },
+        "path_id": {
+          "pattern": "^[a-z0-9][a-z0-9._-]{1,127}$",
+          "title": "Path Id",
+          "type": "string"
+        },
+        "regime_classification_method": {
+          "minLength": 1,
+          "title": "Regime Classification Method",
+          "type": "string"
+        },
+        "regime_evidence": {
+          "$ref": "#/$defs/ImmutableAsset"
+        },
+        "regime_provenance": {
+          "$ref": "#/$defs/RequiredObservationProvenance"
+        },
+        "release_density": {
+          "$ref": "#/$defs/ReleaseDensityEvidence"
+        },
+        "release_geometry": {
+          "$ref": "#/$defs/ObservedReleaseGeometry"
+        },
+        "release_thickness": {
+          "$ref": "#/$defs/ReleaseThicknessEvidence"
+        },
+        "storm_cycle_id": {
+          "pattern": "^[a-z0-9][a-z0-9._-]{1,127}$",
+          "title": "Storm Cycle Id",
+          "type": "string"
+        },
+        "survey_coverage": {
+          "$ref": "#/$defs/SurveyCoverageDetection"
+        },
+        "terminal_observation": {
+          "$ref": "#/$defs/TerminalDenseFlowObservation"
+        }
+      },
+      "required": [
+        "event_id",
+        "mountain_id",
+        "path_id",
+        "storm_cycle_id",
+        "grouping_evidence",
+        "grouping_method",
+        "avalanche_regime",
+        "regime_evidence",
+        "regime_provenance",
+        "regime_classification_method",
+        "event_start_utc",
+        "event_end_utc",
+        "event_time_confidence",
+        "event_time_evidence",
+        "event_time_provenance",
+        "release_geometry",
+        "release_thickness",
+        "release_density",
+        "event_surface_dem",
+        "terminal_observation",
+        "survey_coverage"
+      ],
+      "title": "FieldValidationOwnerEvent",
+      "type": "object"
+    },
+    "ImmutableAsset": {
+      "additionalProperties": false,
+      "description": "One original owner-delivered file with explicit reuse terms.",
+      "properties": {
+        "bytes": {
+          "exclusiveMinimum": 0,
+          "title": "Bytes",
+          "type": "integer"
+        },
+        "copyright_holder": {
+          "minLength": 1,
+          "title": "Copyright Holder",
+          "type": "string"
+        },
+        "licence": {
+          "minLength": 1,
+          "title": "Licence",
+          "type": "string"
+        },
+        "licence_record_relative_path": {
+          "minLength": 1,
+          "title": "Licence Record Relative Path",
+          "type": "string"
+        },
+        "licence_record_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Licence Record Sha256",
+          "type": "string"
+        },
+        "licence_uri": {
+          "minLength": 1,
+          "title": "Licence Uri",
+          "type": "string"
+        },
+        "media_type": {
+          "minLength": 1,
+          "title": "Media Type",
+          "type": "string"
+        },
+        "original_owner_delivered_bytes": {
+          "const": true,
+          "title": "Original Owner Delivered Bytes",
+          "type": "boolean"
+        },
+        "permitted_use": {
+          "minLength": 1,
+          "title": "Permitted Use",
+          "type": "string"
+        },
+        "redistribution_permitted": {
+          "title": "Redistribution Permitted",
+          "type": "boolean"
+        },
+        "relative_path": {
+          "minLength": 1,
+          "title": "Relative Path",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "source_uri": {
+          "minLength": 1,
+          "title": "Source Uri",
+          "type": "string"
+        }
+      },
+      "required": [
+        "relative_path",
+        "bytes",
+        "sha256",
+        "media_type",
+        "source_uri",
+        "copyright_holder",
+        "licence",
+        "licence_uri",
+        "permitted_use",
+        "redistribution_permitted",
+        "licence_record_relative_path",
+        "licence_record_sha256",
+        "original_owner_delivered_bytes"
+      ],
+      "title": "ImmutableAsset",
+      "type": "object"
+    },
+    "ObservedReleaseGeometry": {
+      "additionalProperties": false,
+      "properties": {
+        "crs_lineage": {
+          "$ref": "#/$defs/CrsDatumLineage"
+        },
+        "geometry": {
+          "$ref": "#/$defs/ImmutableAsset"
+        },
+        "independent_of_model_output": {
+          "const": true,
+          "title": "Independent Of Model Output",
+          "type": "boolean"
+        },
+        "independently_observed": {
+          "const": true,
+          "title": "Independently Observed",
+          "type": "boolean"
+        },
+        "observation_method": {
+          "minLength": 1,
+          "title": "Observation Method",
+          "type": "string"
+        },
+        "observation_time_utc": {
+          "format": "date-time",
+          "title": "Observation Time Utc",
+          "type": "string"
+        },
+        "positional_uncertainty": {
+          "$ref": "#/$defs/QuantifiedUncertainty"
+        },
+        "provenance": {
+          "$ref": "#/$defs/RequiredObservationProvenance"
+        }
+      },
+      "required": [
+        "geometry",
+        "crs_lineage",
+        "provenance",
+        "observation_time_utc",
+        "observation_method",
+        "positional_uncertainty",
+        "independently_observed",
+        "independent_of_model_output"
+      ],
+      "title": "ObservedReleaseGeometry",
+      "type": "object"
+    },
+    "QuantifiedUncertainty": {
+      "additionalProperties": false,
+      "properties": {
+        "confidence_level": {
+          "exclusiveMinimum": 0,
+          "maximum": 1,
+          "title": "Confidence Level",
+          "type": "number"
+        },
+        "magnitude": {
+          "minimum": 0,
+          "title": "Magnitude",
+          "type": "number"
+        },
+        "method": {
+          "minLength": 1,
+          "title": "Method",
+          "type": "string"
+        },
+        "units": {
+          "minLength": 1,
+          "title": "Units",
+          "type": "string"
+        }
+      },
+      "required": [
+        "magnitude",
+        "units",
+        "confidence_level",
+        "method"
+      ],
+      "title": "QuantifiedUncertainty",
+      "type": "object"
+    },
+    "ReleaseDensityEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "event_specific": {
+          "const": true,
+          "title": "Event Specific",
+          "type": "boolean"
+        },
+        "measurement_kg_m3": {
+          "$ref": "#/$defs/BoundedMeasurement"
+        },
+        "measurement_time_utc": {
+          "format": "date-time",
+          "title": "Measurement Time Utc",
+          "type": "string"
+        },
+        "provenance": {
+          "$ref": "#/$defs/RequiredObservationProvenance"
+        },
+        "source": {
+          "$ref": "#/$defs/ImmutableAsset"
+        }
+      },
+      "required": [
+        "measurement_kg_m3",
+        "source",
+        "provenance",
+        "measurement_time_utc",
+        "event_specific"
+      ],
+      "title": "ReleaseDensityEvidence",
+      "type": "object"
+    },
+    "ReleaseThicknessEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "event_specific": {
+          "const": true,
+          "title": "Event Specific",
+          "type": "boolean"
+        },
+        "measurement_m": {
+          "$ref": "#/$defs/BoundedMeasurement"
+        },
+        "measurement_time_utc": {
+          "format": "date-time",
+          "title": "Measurement Time Utc",
+          "type": "string"
+        },
+        "normal_to_slope": {
+          "const": true,
+          "title": "Normal To Slope",
+          "type": "boolean"
+        },
+        "provenance": {
+          "$ref": "#/$defs/RequiredObservationProvenance"
+        },
+        "source": {
+          "$ref": "#/$defs/ImmutableAsset"
+        }
+      },
+      "required": [
+        "measurement_m",
+        "source",
+        "provenance",
+        "measurement_time_utc",
+        "normal_to_slope",
+        "event_specific"
+      ],
+      "title": "ReleaseThicknessEvidence",
+      "type": "object"
+    },
+    "RequiredObservationProvenance": {
+      "additionalProperties": false,
+      "description": "Explicitly rules out filling a required observation from a model or prior.",
+      "properties": {
+        "evidence_origin": {
+          "const": "direct_owner_observation",
+          "title": "Evidence Origin",
+          "type": "string"
+        },
+        "independent_of_prediction": {
+          "const": true,
+          "title": "Independent Of Prediction",
+          "type": "boolean"
+        },
+        "inferred_value": {
+          "const": false,
+          "title": "Inferred Value",
+          "type": "boolean"
+        },
+        "measurement_preserving_processing": {
+          "minLength": 1,
+          "title": "Measurement Preserving Processing",
+          "type": "string"
+        },
+        "missing_value_supplied": {
+          "const": false,
+          "title": "Missing Value Supplied",
+          "type": "boolean"
+        },
+        "model_derived_value": {
+          "const": false,
+          "title": "Model Derived Value",
+          "type": "boolean"
+        },
+        "original_measurement_available": {
+          "const": true,
+          "title": "Original Measurement Available",
+          "type": "boolean"
+        },
+        "substituted_value": {
+          "const": false,
+          "title": "Substituted Value",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "evidence_origin",
+        "original_measurement_available",
+        "missing_value_supplied",
+        "inferred_value",
+        "substituted_value",
+        "model_derived_value",
+        "independent_of_prediction",
+        "measurement_preserving_processing"
+      ],
+      "title": "RequiredObservationProvenance",
+      "type": "object"
+    },
+    "SurveyCoverageDetection": {
+      "additionalProperties": false,
+      "properties": {
+        "complete_search_inside_coverage": {
+          "const": true,
+          "title": "Complete Search Inside Coverage",
+          "type": "boolean"
+        },
+        "completeness_method": {
+          "minLength": 1,
+          "title": "Completeness Method",
+          "type": "string"
+        },
+        "coverage_positional_uncertainty": {
+          "$ref": "#/$defs/QuantifiedUncertainty"
+        },
+        "crs_lineage": {
+          "$ref": "#/$defs/CrsDatumLineage"
+        },
+        "declared_target": {
+          "const": "terminal_dense_flow_deposit_or_endpoint",
+          "title": "Declared Target",
+          "type": "string"
+        },
+        "detection_confidence_level": {
+          "exclusiveMinimum": 0,
+          "maximum": 1,
+          "title": "Detection Confidence Level",
+          "type": "number"
+        },
+        "detection_limit": {
+          "minLength": 1,
+          "title": "Detection Limit",
+          "type": "string"
+        },
+        "detection_limit_units": {
+          "minLength": 1,
+          "title": "Detection Limit Units",
+          "type": "string"
+        },
+        "detection_mask": {
+          "$ref": "#/$defs/ImmutableAsset"
+        },
+        "mapping_time_utc": {
+          "format": "date-time",
+          "title": "Mapping Time Utc",
+          "type": "string"
+        },
+        "masked_or_occluded_cells": {
+          "const": "unknown",
+          "title": "Masked Or Occluded Cells",
+          "type": "string"
+        },
+        "non_detection_inside_coverage": {
+          "const": "observed_negative",
+          "title": "Non Detection Inside Coverage",
+          "type": "string"
+        },
+        "outside_coverage": {
+          "const": "unknown",
+          "title": "Outside Coverage",
+          "type": "string"
+        },
+        "provenance": {
+          "$ref": "#/$defs/RequiredObservationProvenance"
+        },
+        "survey_coverage_geometry": {
+          "$ref": "#/$defs/ImmutableAsset"
+        }
+      },
+      "required": [
+        "survey_coverage_geometry",
+        "detection_mask",
+        "crs_lineage",
+        "provenance",
+        "mapping_time_utc",
+        "coverage_positional_uncertainty",
+        "declared_target",
+        "complete_search_inside_coverage",
+        "non_detection_inside_coverage",
+        "outside_coverage",
+        "masked_or_occluded_cells",
+        "detection_limit",
+        "detection_limit_units",
+        "detection_confidence_level",
+        "completeness_method"
+      ],
+      "title": "SurveyCoverageDetection",
+      "type": "object"
+    },
+    "TerminalDenseFlowObservation": {
+      "additionalProperties": false,
+      "properties": {
+        "component": {
+          "const": "dense_flow",
+          "title": "Component",
+          "type": "string"
+        },
+        "component_attribution_method": {
+          "minLength": 1,
+          "title": "Component Attribution Method",
+          "type": "string"
+        },
+        "crs_lineage": {
+          "$ref": "#/$defs/CrsDatumLineage"
+        },
+        "geometry": {
+          "$ref": "#/$defs/ImmutableAsset"
+        },
+        "independent_of_model_output": {
+          "const": true,
+          "title": "Independent Of Model Output",
+          "type": "boolean"
+        },
+        "observation_method": {
+          "minLength": 1,
+          "title": "Observation Method",
+          "type": "string"
+        },
+        "observation_time_utc": {
+          "format": "date-time",
+          "title": "Observation Time Utc",
+          "type": "string"
+        },
+        "observation_type": {
+          "enum": [
+            "terminal_deposit_polygon",
+            "terminal_endpoint"
+          ],
+          "title": "Observation Type",
+          "type": "string"
+        },
+        "positional_uncertainty": {
+          "$ref": "#/$defs/QuantifiedUncertainty"
+        },
+        "provenance": {
+          "$ref": "#/$defs/RequiredObservationProvenance"
+        },
+        "terminal_feature_verified": {
+          "const": true,
+          "title": "Terminal Feature Verified",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "observation_type",
+        "geometry",
+        "crs_lineage",
+        "provenance",
+        "observation_time_utc",
+        "observation_method",
+        "component_attribution_method",
+        "positional_uncertainty",
+        "component",
+        "terminal_feature_verified",
+        "independent_of_model_output"
+      ],
+      "title": "TerminalDenseFlowObservation",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "delivery_id": {
+      "pattern": "^[a-z0-9][a-z0-9._-]{2,127}$",
+      "title": "Delivery Id",
+      "type": "string"
+    },
+    "delivery_licence": {
+      "minLength": 1,
+      "title": "Delivery Licence",
+      "type": "string"
+    },
+    "delivery_version": {
+      "minLength": 1,
+      "title": "Delivery Version",
+      "type": "string"
+    },
+    "events": {
+      "items": {
+        "$ref": "#/$defs/FieldValidationOwnerEvent"
+      },
+      "minItems": 1,
+      "title": "Events",
+      "type": "array"
+    },
+    "grouping_status": {
+      "const": "provider_proposed_requires_independent_review",
+      "title": "Grouping Status",
+      "type": "string"
+    },
+    "holdout_targets_accessed": {
+      "const": false,
+      "title": "Holdout Targets Accessed",
+      "type": "boolean"
+    },
+    "partition_status": {
+      "const": "unassigned_until_complete_cohort_review",
+      "title": "Partition Status",
+      "type": "string"
+    },
+    "permission_or_licence_record": {
+      "$ref": "#/$defs/ImmutableAsset"
+    },
+    "permitted_use": {
+      "minLength": 1,
+      "title": "Permitted Use",
+      "type": "string"
+    },
+    "predictions_generated": {
+      "const": false,
+      "title": "Predictions Generated",
+      "type": "boolean"
+    },
+    "provider": {
+      "minLength": 1,
+      "title": "Provider",
+      "type": "string"
+    },
+    "provider_contact": {
+      "minLength": 1,
+      "title": "Provider Contact",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "avycore-field-validation-owner-delivery-v1",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "delivery_id",
+    "provider",
+    "provider_contact",
+    "delivery_version",
+    "delivery_licence",
+    "permitted_use",
+    "permission_or_licence_record",
+    "grouping_status",
+    "partition_status",
+    "predictions_generated",
+    "holdout_targets_accessed",
+    "events"
+  ],
+  "title": "FieldValidationOwnerDelivery",
+  "type": "object"
+}

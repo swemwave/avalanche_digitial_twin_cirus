@@ -1,0 +1,4 @@
+# Offline-only AvaFrame com1DFA environment. Do not install this file into the
+# serving environment. AvaFrame 2.1 publishes Windows CPython 3.12 wheels and
+# pins a NumPy 1.x dependency closure; use a dedicated Python 3.12 environment.
+avaframe==2.1

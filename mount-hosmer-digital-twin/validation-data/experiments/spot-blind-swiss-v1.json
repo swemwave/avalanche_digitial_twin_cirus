@@ -1,0 +1,344 @@
+{
+  "schema": "avycore-spot-blind-swiss-hindcast-experiment-v1",
+  "experiment_id": "spot-blind-swiss-v1",
+  "frozen_before_holdout_predictions": true,
+  "freeze_date_utc": "2026-08-13",
+  "scientific_task": "Storm-window avalanche susceptibility and runout-footprint hindcasting; exact release times are unavailable.",
+  "source_data_general_inspection_disclosed": true,
+  "final_end_to_end_predictions_used_for_tuning": false,
+  "leakage_controls": {
+    "prediction_scoring_separation": "The predict command does not import GeoPandas or open any avalanche outline. The score command opens outlines only after an NPZ prediction bound to this specification exists.",
+    "outline_role": "Evaluation target only after prediction freeze",
+    "outline_uses_prohibited": [
+      "release seed",
+      "starting point",
+      "direction",
+      "threshold selection",
+      "AOI selection",
+      "stopping location",
+      "parameter tuning"
+    ],
+    "domain_selection": "Named, fixed 20.1 km square LV95 cores were selected from the official campaign overview maps before model predictions. Release scoring and extraction are supported only inside each core. Every simulation uses a 5.1 km target-independent terrain halo solely for routing core-originating runout.",
+    "mapped_outside_semantics": "Unknown, never avalanche absence",
+    "missing_input_semantics": "Masked. An event touching a missing required input is retained and forced uncaptured.",
+    "boundary_semantics": "A centroid-assigned outline crossing its fixed core is retained and forced uncaptured.",
+    "parameter_tuning_permitted": false
+  },
+  "partitions": {
+    "development": {
+      "campaign_year": 2018,
+      "campaign": "SPOT 6 avalanche outlines, 24 January 2018",
+      "outline_shapefile_source_id": "spot_2018_shp",
+      "role": "Pipeline development and non-tuning diagnostic",
+      "blocks": [
+        {
+          "block_id": "dev_western_bernese",
+          "mountain_group": "Western Bernese Alps fixed tile",
+          "partition": "development",
+          "campaign_year": 2018,
+          "core_grid": {
+            "crs": "EPSG:2056",
+            "bounds": [2600000.0, 1140000.0, 2620100.0, 1160100.0],
+            "resolution_m": 30.0,
+            "shape": [670, 670]
+          },
+          "simulation_grid": {
+            "crs": "EPSG:2056",
+            "bounds": [2594900.0, 1134900.0, 2625200.0, 1165200.0],
+            "resolution_m": 30.0,
+            "shape": [1010, 1010]
+          },
+          "core_window_rowcol": [170, 840, 170, 840],
+          "dem_source_ids": ["cop_dem_n46_e007"],
+          "meteorology_source_id": "era5_dev_western_bernese",
+          "storm_window": {
+            "start_utc": "2018-01-21T06:00",
+            "end_utc": "2018-01-24T06:00",
+            "hour_count": 72,
+            "api_bin_semantics": "72 preceding-hour snowfall/precipitation bins labelled (start, end]; instantaneous temperature and wind use the same labels"
+          },
+          "release_size": "medium",
+          "flow_regime": "dry_slab"
+        }
+      ]
+    },
+    "holdout": {
+      "campaign_year": 2019,
+      "campaign": "SPOT 6 avalanche outlines, 16 January 2019",
+      "outline_shapefile_source_id": "spot_2019_shp",
+      "role": "One-time temporally and spatially separated final holdout",
+      "blocks": [
+        {
+          "block_id": "holdout_gotthard",
+          "mountain_group": "Gotthard Alps fixed tile",
+          "partition": "holdout",
+          "campaign_year": 2019,
+          "core_grid": {
+            "crs": "EPSG:2056",
+            "bounds": [2680000.0, 1158000.0, 2700100.0, 1178100.0],
+            "resolution_m": 30.0,
+            "shape": [670, 670]
+          },
+          "simulation_grid": {
+            "crs": "EPSG:2056",
+            "bounds": [2674900.0, 1152900.0, 2705200.0, 1183200.0],
+            "resolution_m": 30.0,
+            "shape": [1010, 1010]
+          },
+          "core_window_rowcol": [170, 840, 170, 840],
+          "dem_source_ids": ["cop_dem_n46_e008"],
+          "meteorology_source_id": "era5_holdout_gotthard",
+          "storm_window": {
+            "start_utc": "2019-01-13T06:00",
+            "end_utc": "2019-01-16T06:00",
+            "hour_count": 72,
+            "api_bin_semantics": "72 preceding-hour snowfall/precipitation bins labelled (start, end]; instantaneous temperature and wind use the same labels"
+          },
+          "release_size": "medium",
+          "flow_regime": "dry_slab"
+        },
+        {
+          "block_id": "holdout_glarus",
+          "mountain_group": "Glarus Alps fixed tile",
+          "partition": "holdout",
+          "campaign_year": 2019,
+          "core_grid": {
+            "crs": "EPSG:2056",
+            "bounds": [2700000.0, 1190000.0, 2720100.0, 1210100.0],
+            "resolution_m": 30.0,
+            "shape": [670, 670]
+          },
+          "simulation_grid": {
+            "crs": "EPSG:2056",
+            "bounds": [2694900.0, 1184900.0, 2725200.0, 1215200.0],
+            "resolution_m": 30.0,
+            "shape": [1010, 1010]
+          },
+          "core_window_rowcol": [170, 840, 170, 840],
+          "dem_source_ids": ["cop_dem_n46_e008", "cop_dem_n46_e009", "cop_dem_n47_e008", "cop_dem_n47_e009"],
+          "meteorology_source_id": "era5_holdout_glarus",
+          "storm_window": {
+            "start_utc": "2019-01-13T06:00",
+            "end_utc": "2019-01-16T06:00",
+            "hour_count": 72,
+            "api_bin_semantics": "72 preceding-hour snowfall/precipitation bins labelled (start, end]; instantaneous temperature and wind use the same labels"
+          },
+          "release_size": "medium",
+          "flow_regime": "dry_slab"
+        },
+        {
+          "block_id": "holdout_albula",
+          "mountain_group": "Albula Alps fixed tile",
+          "partition": "holdout",
+          "campaign_year": 2019,
+          "core_grid": {
+            "crs": "EPSG:2056",
+            "bounds": [2760000.0, 1158000.0, 2780100.0, 1178100.0],
+            "resolution_m": 30.0,
+            "shape": [670, 670]
+          },
+          "simulation_grid": {
+            "crs": "EPSG:2056",
+            "bounds": [2754900.0, 1152900.0, 2785200.0, 1183200.0],
+            "resolution_m": 30.0,
+            "shape": [1010, 1010]
+          },
+          "core_window_rowcol": [170, 840, 170, 840],
+          "dem_source_ids": ["cop_dem_n46_e009"],
+          "meteorology_source_id": "era5_holdout_albula",
+          "storm_window": {
+            "start_utc": "2019-01-13T06:00",
+            "end_utc": "2019-01-16T06:00",
+            "hour_count": 72,
+            "api_bin_semantics": "72 preceding-hour snowfall/precipitation bins labelled (start, end]; instantaneous temperature and wind use the same labels"
+          },
+          "release_size": "medium",
+          "flow_regime": "dry_slab"
+        },
+        {
+          "block_id": "holdout_silvretta",
+          "mountain_group": "Silvretta and Lower Engadine fixed tile",
+          "partition": "holdout",
+          "campaign_year": 2019,
+          "core_grid": {
+            "crs": "EPSG:2056",
+            "bounds": [2800000.0, 1180000.0, 2820100.0, 1200100.0],
+            "resolution_m": 30.0,
+            "shape": [670, 670]
+          },
+          "simulation_grid": {
+            "crs": "EPSG:2056",
+            "bounds": [2794900.0, 1174900.0, 2825200.0, 1205200.0],
+            "resolution_m": 30.0,
+            "shape": [1010, 1010]
+          },
+          "core_window_rowcol": [170, 840, 170, 840],
+          "dem_source_ids": ["cop_dem_n46_e009", "cop_dem_n46_e010"],
+          "meteorology_source_id": "era5_holdout_silvretta",
+          "storm_window": {
+            "start_utc": "2019-01-13T06:00",
+            "end_utc": "2019-01-16T06:00",
+            "hour_count": 72,
+            "api_bin_semantics": "72 preceding-hour snowfall/precipitation bins labelled (start, end]; instantaneous temperature and wind use the same labels"
+          },
+          "release_size": "medium",
+          "flow_regime": "dry_slab"
+        }
+      ]
+    }
+  },
+  "fixed_model": {
+    "system": "Existing production-relevant deterministic release score plus predicted-zone runout",
+    "primary_engine": "particle_ensemble_voellmy",
+    "primary_engine_mode": "hybrid",
+    "hybrid_extent_limitation": "Voellmy particle dynamics supplies paths and velocity, but the empirical alpha energy line bounds per-particle extent.",
+    "hybrid_zone_cap": 6,
+    "alpha_only_zone_cap": 12,
+    "dynamics_only_zone_cap": 6,
+    "random_seed": 20260713,
+    "release_size": "medium for every block; target size attributes are never model inputs",
+    "flow_regime": "dry_slab for every block; mapped type attributes are never model inputs",
+    "parameter_tuning_permitted": false
+  },
+  "landcover": {
+    "source_id": "globcover_2009_tif",
+    "forest_fraction_mapping": {
+      "1.0": [40, 50, 60, 70, 90, 100, 160, 170],
+      "0.6": [110],
+      "0.3": [120],
+      "0.0": "all other documented nonzero classes"
+    },
+    "missing_class": 0,
+    "missing_semantics": "masked"
+  },
+  "meteorology": {
+    "dataset": "ERA5 hourly reanalysis via Open-Meteo Historical Weather API",
+    "model_selector": "era5",
+    "native_horizontal_resolution": "0.25 degrees, approximately 25 km",
+    "requested_variables": ["temperature_2m", "precipitation", "snowfall", "wind_speed_10m", "wind_direction_10m"],
+    "sample_design": "Nine fixed quarter/mid/three-quarter points per core, transformed from EPSG:2056 to WGS84 before target scoring",
+    "new_snow_aggregation": "Mean across nine pointwise sums of 72 hourly snowfall values in cm",
+    "temperature_use": "Retained as mean/min/max diagnostic. Not passed to Conditions because snowfall is already phase-classified and a second classifier would double-count temperature.",
+    "wind_speed_aggregation": "Arithmetic mean of all scalar hourly 10 m speeds across the nine points",
+    "wind_direction_aggregation": "Meteorological wind-from direction reconstructed from the mean eastward/northward vector",
+    "missing_semantics": "Any null required hour makes the block incomplete and stops prediction"
+  },
+  "metrics": {
+    "event_assignment": "Outline centroid covered by fixed core",
+    "target_rasterization": "all_touched=True on the frozen 30 m core grid",
+    "event_capture_minimum_overlap_fraction": 0.1,
+    "event_capture_rule": "At least 10% of mapped event cells intersect the frozen prediction, with complete geometry and model inputs",
+    "mapped_positive_footprint_coverage": true,
+    "flagged_eligible_terrain_fraction": true,
+    "eligible_terrain": "All fixed-core cells with complete elevation, slope, aspect, both curvature layers, and land cover",
+    "predicted_to_mapped_area_ratio": true,
+    "forbidden_metrics": ["precision", "specificity", "false-positive rate", "F1", "IoU", "probability calibration", "generic accuracy"],
+    "mountain_block_bootstrap": {
+      "confidence_level": 0.95,
+      "replicate_count": 10000,
+      "random_seed": 20260813,
+      "resampling_unit": "whole fixed mountain block"
+    }
+  },
+  "baselines": {
+    "slope_only": "Select the highest production piecewise slope-score cells at exactly the primary model's eligible-terrain cell budget; row-major stable tie break",
+    "random": "Uniform sample without replacement from eligible cells at exactly the primary model's cell budget",
+    "random_replicate_count": 256,
+    "random_seed_by_block": {
+      "dev_western_bernese": 20180124,
+      "holdout_gotthard": 20190116,
+      "holdout_glarus": 20190117,
+      "holdout_albula": 20190118,
+      "holdout_silvretta": 20190119
+    }
+  },
+  "acceptance_rule": {
+    "minimum_mapped_events_per_group": 5,
+    "minimum_qualifying_group_count": 4,
+    "minimum_event_capture_fraction": 0.7,
+    "maximum_flagged_eligible_terrain_fraction": 0.2,
+    "must_strictly_exceed_slope_only_event_capture": true,
+    "must_strictly_exceed_random_event_capture_97_5_percentile": true,
+    "must_have_complete_inputs": true,
+    "must_have_no_primary_domain_escape_or_boundary_contact": true,
+    "all_predeclared_holdout_groups_must_qualify_and_pass": true
+  },
+  "model_identity": {
+    "model_version": "stage3-1.2.0",
+    "parameter_manifest_sha256": "aaafd6f9fc6e8d598cb56c479bcc072374ee94ba17613c0ac2df0594f8059628",
+    "risk_source_path": "packages/avycore/src/avycore/hazard/risk.py",
+    "risk_source_sha256": "4aa94d5f2dda486d3804d680b34aea45e8bc70cfbf84ef54807ca323be93f8fc",
+    "runout_source_path": "packages/avycore/src/avycore/hazard/runout.py",
+    "runout_source_sha256": "fa2c5e1c912bf9a5865494501bdb4e5d1c6da05e04b1b9aaf303afbffed0ab27",
+    "runner_source_path": "scripts/validation/run_spot_blind_hindcast.py",
+    "runner_source_sha256": "b73e6c7f84f46cc0fc3b6127dce88412ca666fd02f7f165ebd8289e66a63b6de"
+  },
+  "data_source_contracts": {
+    "spot_outlines": {
+      "providers": "WSL Institute for Snow and Avalanche Research SLF / EnviDat",
+      "versions": "24 January 2018 and 16 January 2019 national SPOT 6 mapping packages",
+      "licence": "Open Data Commons Open Database License 1.0; database contents under the Database Contents License",
+      "crs": "EPSG:2056 (CH1903+ / LV95), metres",
+      "transformation": "Evaluation only; identity CRS, invalid geometries repaired with Shapely make_valid, centroid assignment, all-touched rasterization after predictions",
+      "absence_semantics": "Unknown outside mapped positives",
+      "coverage_limitation": "The archives do not contain a machine-readable acquisition-footprint polygon; the official PDF map keys show the documented footprint only graphically."
+    },
+    "copernicus_dem": {
+      "provider": "European Union Copernicus Programme",
+      "version": "Copernicus DEM GLO-30, 1 arc-second COG tiles, product acquired 2011-2015",
+      "licence": "Copernicus DEM licence/free licence terms",
+      "horizontal_crs": "EPSG:4326",
+      "vertical_datum_and_units": "EGM2008 orthometric heights, metres; digital surface model",
+      "transformation": "Rasterio/GDAL bilinear warp to EPSG:2056 at 30 m; Horn slope/aspect and Zevenbergen-Thorne curvature derived with the production bake algorithms",
+      "missing_semantics": "Non-finite warp destinations masked"
+    },
+    "globcover": {
+      "provider": "ESA and UCLouvain",
+      "version": "GlobCover 2009 v2.3, 300 m",
+      "licence": "Copyright ESA 2010 and UCLouvain; educational/scientific use policy",
+      "crs": "EPSG:4326 Plate Carree, 1/360 degree",
+      "units": "categorical land-cover class ID",
+      "transformation": "Nearest-neighbour warp to EPSG:2056 at 30 m, then frozen class-to-forest-fraction mapping",
+      "missing_semantics": "Class 0 masked"
+    },
+    "era5": {
+      "provider": "Copernicus Climate Change Service/ECMWF, delivered by Open-Meteo",
+      "version": "ERA5 hourly reanalysis selected explicitly with models=era5",
+      "licence": "Open-Meteo API data CC BY 4.0; upstream Copernicus/ECMWF ERA5 attribution applies",
+      "crs_and_resolution": "Regular WGS84 latitude-longitude, 0.25 degrees, hourly",
+      "units": "temperature degC; precipitation mm preceding-hour sum; snowfall cm preceding-hour sum using 7 cm per 10 mm water equivalent; 10 m wind km/h and degrees",
+      "transformation": "Frozen nine-point spatial aggregation and 72-hour temporal aggregation; meteorological wind-from convention preserved",
+      "missing_semantics": "Null required value stops the block"
+    }
+  },
+  "source_inputs": [
+    {"id":"spot_2018_archive","role":"evaluation_target","root":"spot_root","path":"aval_outlines2018.zip","bytes":157117977,"sha256":"087c036f1a3e4213c2332fad4497fd292c6af6f0df1629c5aaa887a45387c2f5","url":"https://www.envidat.ch/dataset/fa4adf13-d0e5-4479-9b46-cbb07233999f/resource/309d5260-f13e-4fd1-881e-8968c829941b/download/aval_outlines2018.zip","doi":"10.16904/envidat.77"},
+    {"id":"spot_2018_shp","role":"evaluation_target","root":"spot_root","path":"2018/outlines2018.shp","bytes":274592988,"sha256":"64322b7f740bc1496cb37494fbbe9926bfd0a6103ca3151a87ae71ae5ba9671e"},
+    {"id":"spot_2018_shx","role":"evaluation_target","root":"spot_root","path":"2018/outlines2018.shx","bytes":149996,"sha256":"d1c7a1e8297c0e21de4dfab3166a3ac99cd70b411fbeb75c83291c77924a7a29"},
+    {"id":"spot_2018_dbf","role":"evaluation_target","root":"spot_root","path":"2018/outlines2018.dbf","bytes":8301069,"sha256":"f5486852fa6d929bb3229a6a17c2027a7d13089bf00c6c30810a23480d88010b"},
+    {"id":"spot_2018_prj","role":"evaluation_target","root":"spot_root","path":"2018/outlines2018.prj","bytes":472,"sha256":"533b4abc8e751ef5831d87f2d8257e4cc3ec40da24e732b20d2721980afe3a4f"},
+    {"id":"spot_2018_cpg","role":"evaluation_target","root":"spot_root","path":"2018/outlines2018.cpg","bytes":5,"sha256":"3ad3031f5503a4404af825262ee8232cc04d4ea6683d42c5dd0a2f2a27ac9824"},
+    {"id":"spot_2018_key","role":"coverage_documentation","root":"spot_root","path":"2018/ExampleKey_AvalMapping.pdf","bytes":10536203,"sha256":"658e95f3c188876acd9f09347d673a987da19e573c6ddc2b45fca14292babae7"},
+    {"id":"spot_2019_archive","role":"evaluation_target","root":"spot_root","path":"aval_outlines16012019.shp.zip","bytes":56256600,"sha256":"af4099d949fb567c0bc07b3e46cbca40e6b8f7c4340a6fbe7311e2104e93251f","url":"https://www.envidat.ch/dataset/cb197291-bbfa-4d03-a24a-4f9336ecd9af/resource/33cb7780-261b-4228-8528-bf5d84f3955e/download/aval_outlines16012019.shp.zip","doi":"10.16904/envidat.235"},
+    {"id":"spot_2019_shp","role":"evaluation_target","root":"spot_root","path":"2019/aval_outlines16012019.shp","bytes":87058752,"sha256":"5ec808bf744440cb9f02fd13ca1e1101181db8d602d20f3ba877eb2751dd2dc5"},
+    {"id":"spot_2019_shx","role":"evaluation_target","root":"spot_root","path":"2019/aval_outlines16012019.shx","bytes":48428,"sha256":"6a3d84ba6123045e66764b5126018a78ad47b3ac40495f859693d735243a13cb"},
+    {"id":"spot_2019_dbf","role":"evaluation_target","root":"spot_root","path":"2019/aval_outlines16012019.dbf","bytes":2157055,"sha256":"933cba5ea3e60a06f2caeb629ec956ab70b5d3ce75162d826cc2630a1ebc1de4"},
+    {"id":"spot_2019_prj","role":"evaluation_target","root":"spot_root","path":"2019/aval_outlines16012019.prj","bytes":472,"sha256":"533b4abc8e751ef5831d87f2d8257e4cc3ec40da24e732b20d2721980afe3a4f"},
+    {"id":"spot_2019_cpg","role":"evaluation_target","root":"spot_root","path":"2019/aval_outlines16012019.cpg","bytes":5,"sha256":"3ad3031f5503a4404af825262ee8232cc04d4ea6683d42c5dd0a2f2a27ac9824"},
+    {"id":"spot_2019_key","role":"coverage_documentation","root":"spot_root","path":"2019/ExampleKey_AvalMapping_2019.pdf","bytes":1776767,"sha256":"abd4883251d571605d69a1cf1f1065836f0a6d1c5e62ade3fad5961993e8c09f"},
+    {"id":"globcover_archive","role":"landcover_archive","root":"source_root","path":"Globcover2009_V2.3_Global_.zip","bytes":380992056,"sha256":"3a5e46b589f6b650759308d4ccb2d62d906a8ffc6f44c6595545e18702a3f7c6","url":"https://due.esrin.esa.int/files/Globcover2009_V2.3_Global_.zip"},
+    {"id":"globcover_2009_tif","role":"landcover","root":"source_root","path":"globcover2009/GLOBCOVER_L4_200901_200912_V2.3.tif","bytes":392327352,"sha256":"db48c60d22d959a93dc4137abac9ed1946d45d2469a4e07eeed8947a68b6c06a"},
+    {"id":"globcover_readme","role":"landcover_documentation","root":"source_root","path":"globcover2009/GlobCover2009_ReadMe.pdf","bytes":19433,"sha256":"10cb197e806030f99201e2081f99944a93ae1d6fa29a8faa3208ada4124323d1"},
+    {"id":"cop_dem_n46_e007","role":"terrain","root":"source_root","path":"copernicus-dem-30m/Copernicus_DSM_COG_10_N46_00_E007_00_DEM.tif","bytes":41776750,"sha256":"426e3d1492d94e4f23d444843f852ff5be675da5c4c14e661b5642006864047d","url":"https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N46_00_E007_00_DEM/Copernicus_DSM_COG_10_N46_00_E007_00_DEM.tif"},
+    {"id":"cop_dem_n46_e008","role":"terrain","root":"source_root","path":"copernicus-dem-30m/Copernicus_DSM_COG_10_N46_00_E008_00_DEM.tif","bytes":42038015,"sha256":"47769664394ee1ff3b51f5c1b43a3441d7f7bce8d086d0ed2f3a892b895fae3e","url":"https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N46_00_E008_00_DEM/Copernicus_DSM_COG_10_N46_00_E008_00_DEM.tif"},
+    {"id":"cop_dem_n46_e009","role":"terrain","root":"source_root","path":"copernicus-dem-30m/Copernicus_DSM_COG_10_N46_00_E009_00_DEM.tif","bytes":42078066,"sha256":"6a7eccb6d198f01a1fdfcca0e1cef837ef294456fb7243ec4d0966e089b1e7fc","url":"https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N46_00_E009_00_DEM/Copernicus_DSM_COG_10_N46_00_E009_00_DEM.tif"},
+    {"id":"cop_dem_n46_e010","role":"terrain","root":"source_root","path":"copernicus-dem-30m/Copernicus_DSM_COG_10_N46_00_E010_00_DEM.tif","bytes":41806592,"sha256":"d24d707f394668ef429b28b22d1afc51f7ac5047293de177e46d9dc186c6b448","url":"https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N46_00_E010_00_DEM/Copernicus_DSM_COG_10_N46_00_E010_00_DEM.tif"},
+    {"id":"cop_dem_n47_e008","role":"terrain","root":"source_root","path":"copernicus-dem-30m/Copernicus_DSM_COG_10_N47_00_E008_00_DEM.tif","bytes":41746914,"sha256":"4e2917429d65e049a4f1ddee2093f7fc50f11d22d0fd7cee85f5c8334186d7fe","url":"https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N47_00_E008_00_DEM/Copernicus_DSM_COG_10_N47_00_E008_00_DEM.tif"},
+    {"id":"cop_dem_n47_e009","role":"terrain","root":"source_root","path":"copernicus-dem-30m/Copernicus_DSM_COG_10_N47_00_E009_00_DEM.tif","bytes":39943901,"sha256":"ca0b7567f5e12b8c814500bcf434855fb2a1084248bb80d3c80a91169887817c","url":"https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N47_00_E009_00_DEM/Copernicus_DSM_COG_10_N47_00_E009_00_DEM.tif"},
+    {"id":"era5_dev_western_bernese","role":"meteorology","root":"source_root","path":"era5-open-meteo/dev_western_bernese.json","bytes":39879,"sha256":"0f6d806663c4c0357c92bfbed60536bd21b7915c19b5dd3b1fad696c17d32092","url":"https://archive-api.open-meteo.com/v1/archive?models=era5&timezone=GMT&start_date=2018-01-21&end_date=2018-01-24&hourly=temperature_2m,precipitation,snowfall,wind_speed_10m,wind_direction_10m&wind_speed_unit=kmh&precipitation_unit=mm&cell_selection=land&latitude=46.456315,46.456259,46.456167,46.501293,46.501237,46.501145,46.546271,46.546215,46.546122&longitude=7.503722,7.568803,7.633883,7.503775,7.568910,7.634045,7.503829,7.569018,7.634206"},
+    {"id":"era5_holdout_gotthard","role":"meteorology","root":"source_root","path":"era5-open-meteo/holdout_gotthard.json","bytes":40383,"sha256":"d20ae9520efb096123286b8774a0eed1bd560306bbaa511030284dffe14c9483","url":"https://archive-api.open-meteo.com/v1/archive?models=era5&timezone=GMT&start_date=2019-01-13&end_date=2019-01-16&hourly=temperature_2m,precipitation,snowfall,wind_speed_10m,wind_direction_10m&wind_speed_unit=kmh&precipitation_unit=mm&cell_selection=land&latitude=46.612852,46.612197,46.611505,46.657825,46.657170,46.656477,46.702798,46.702142,46.701449&longitude=8.548256,8.613518,8.678778,8.549179,8.614496,8.679811,8.550105,8.615475,8.680845"},
+    {"id":"era5_holdout_glarus","role":"meteorology","root":"source_root","path":"era5-open-meteo/holdout_glarus.json","bytes":40259,"sha256":"4c9bfc889d7d79d61f31718edff69fdd342d14cc2795f687a3c5c88e53252e16","url":"https://archive-api.open-meteo.com/v1/archive?models=era5&timezone=GMT&start_date=2019-01-13&end_date=2019-01-16&hourly=temperature_2m,precipitation,snowfall,wind_speed_10m,wind_direction_10m&wind_speed_unit=kmh&precipitation_unit=mm&cell_selection=land&latitude=46.897818,46.897009,46.896163,46.942787,46.941978,46.941131,46.987756,46.986946,46.986098&longitude=8.816630,8.882234,8.947837,8.817783,8.883443,8.949100,8.818938,8.884653,8.950365"},
+    {"id":"era5_holdout_albula","role":"meteorology","root":"source_root","path":"era5-open-meteo/holdout_albula.json","bytes":40076,"sha256":"1ebd06ee85ff959a96269c53b14f1038fe366b6d90158fa07e16bfdb0b1b0d2b","url":"https://archive-api.open-meteo.com/v1/archive?models=era5&timezone=GMT&start_date=2019-01-13&end_date=2019-01-16&hourly=temperature_2m,precipitation,snowfall,wind_speed_10m,wind_direction_10m&wind_speed_unit=kmh&precipitation_unit=mm&cell_selection=land&latitude=46.597886,46.596633,46.595342,46.642847,46.641592,46.640301,46.687807,46.686552,46.685259&longitude=9.592205,9.657430,9.722653,9.593998,9.659277,9.724554,9.595793,9.661127,9.726458"},
+    {"id":"era5_holdout_silvretta","role":"meteorology","root":"source_root","path":"era5-open-meteo/holdout_silvretta.json","bytes":40579,"sha256":"55e914d5bd90e11ef7f17eac8ee2151fe52c8ab7474c370f65db7d155958ce13","url":"https://archive-api.open-meteo.com/v1/archive?models=era5&timezone=GMT&start_date=2019-01-13&end_date=2019-01-16&hourly=temperature_2m,precipitation,snowfall,wind_speed_10m,wind_direction_10m&wind_speed_unit=kmh&precipitation_unit=mm&cell_selection=land&latitude=46.784598,46.783040,46.781445,46.829549,46.827990,46.826393,46.874499,46.872939,46.871340&longitude=10.123741,10.189179,10.254612,10.125984,10.191476,10.256964,10.128231,10.193777,10.259320"}
+  ]
+}

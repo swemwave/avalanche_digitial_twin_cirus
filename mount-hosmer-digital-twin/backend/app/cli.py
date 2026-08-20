@@ -21,6 +21,15 @@ def bake_command(args: argparse.Namespace) -> int:
     from app.core.settings import get_settings
 
     settings = get_settings()
+    updates: dict[str, Path] = {}
+    if args.pack is not None:
+        updates["mountain_pack_path"] = args.pack.resolve()
+    if args.data_root is not None:
+        updates["data_root"] = args.data_root.resolve()
+    if args.runtime_root is not None:
+        updates["runtime_root"] = args.runtime_root.resolve()
+    if updates:
+        settings = settings.model_copy(update=updates)
     settings.validate(require_data_root=True)
     bake(settings, force=args.force)
     return 0
@@ -624,6 +633,13 @@ def build_parser() -> argparse.ArgumentParser:
 
     bake = subparsers.add_parser("bake", help="Bake the terrain artifacts (offline, one-time)")
     bake.add_argument("--force", action="store_true", help="Rebuild even if a bake already exists")
+    bake.add_argument("--pack", type=Path, help="Mountain Pack JSON to bake")
+    bake.add_argument("--data-root", type=Path, help="Read-only source root for the selected pack")
+    bake.add_argument(
+        "--runtime-root",
+        type=Path,
+        help="Generated runtime root; use a separate root per mountain",
+    )
     bake.set_defaults(func=bake_command)
 
     from app.baseline import DEFAULT_SEED

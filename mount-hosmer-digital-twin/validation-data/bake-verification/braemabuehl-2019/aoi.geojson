@@ -1,0 +1,32 @@
+{
+  "type": "FeatureCollection",
+  "name": "braemabuehl-dtm-extent",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:EPSG::2056"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "basis": "Exact published Braemabuehl_DTM_1m.tif raster bounds",
+        "purpose": "Portable non-BC bake verification AOI; not a surveyed avalanche domain"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [2783000.0, 1183000.0],
+            [2786000.0, 1183000.0],
+            [2786000.0, 1186000.0],
+            [2783000.0, 1186000.0],
+            [2783000.0, 1183000.0]
+          ]
+        ]
+      }
+    }
+  ]
+}
+

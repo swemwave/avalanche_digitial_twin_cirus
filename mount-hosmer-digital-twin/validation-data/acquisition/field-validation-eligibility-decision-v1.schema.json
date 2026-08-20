@@ -1,0 +1,239 @@
+{
+  "$defs": {
+    "AdjudicatedGrouping": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_basis": {
+          "minLength": 1,
+          "title": "Evidence Basis",
+          "type": "string"
+        },
+        "mountain_id": {
+          "pattern": "^[a-z0-9][a-z0-9._-]{1,127}$",
+          "title": "Mountain Id",
+          "type": "string"
+        },
+        "path_id": {
+          "pattern": "^[a-z0-9][a-z0-9._-]{1,127}$",
+          "title": "Path Id",
+          "type": "string"
+        },
+        "storm_cycle_id": {
+          "pattern": "^[a-z0-9][a-z0-9._-]{1,127}$",
+          "title": "Storm Cycle Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "mountain_id",
+        "path_id",
+        "storm_cycle_id",
+        "evidence_basis"
+      ],
+      "title": "AdjudicatedGrouping",
+      "type": "object"
+    },
+    "EligibilityCriteria": {
+      "additionalProperties": false,
+      "properties": {
+        "dry_dense_slab_regime_supported": {
+          "title": "Dry Dense Slab Regime Supported",
+          "type": "boolean"
+        },
+        "event_surface_dem_crs_datum_lineage_complete": {
+          "title": "Event Surface Dem Crs Datum Lineage Complete",
+          "type": "boolean"
+        },
+        "immutable_source_hashes_and_licences": {
+          "title": "Immutable Source Hashes And Licences",
+          "type": "boolean"
+        },
+        "no_missing_inferred_substituted_or_model_derived_required_values": {
+          "title": "No Missing Inferred Substituted Or Model Derived Required Values",
+          "type": "boolean"
+        },
+        "observation_uncertainties_complete": {
+          "title": "Observation Uncertainties Complete",
+          "type": "boolean"
+        },
+        "path_mountain_storm_grouping_supported": {
+          "title": "Path Mountain Storm Grouping Supported",
+          "type": "boolean"
+        },
+        "release_density_event_specific_with_uncertainty": {
+          "title": "Release Density Event Specific With Uncertainty",
+          "type": "boolean"
+        },
+        "release_geometry_independently_observed": {
+          "title": "Release Geometry Independently Observed",
+          "type": "boolean"
+        },
+        "release_thickness_event_specific_normal_to_slope": {
+          "title": "Release Thickness Event Specific Normal To Slope",
+          "type": "boolean"
+        },
+        "survey_coverage_detection_masks_complete": {
+          "title": "Survey Coverage Detection Masks Complete",
+          "type": "boolean"
+        },
+        "terminal_dense_flow_observation_component_attributed": {
+          "title": "Terminal Dense Flow Observation Component Attributed",
+          "type": "boolean"
+        },
+        "utc_event_time_supported": {
+          "title": "Utc Event Time Supported",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "immutable_source_hashes_and_licences",
+        "utc_event_time_supported",
+        "event_surface_dem_crs_datum_lineage_complete",
+        "release_geometry_independently_observed",
+        "release_thickness_event_specific_normal_to_slope",
+        "release_density_event_specific_with_uncertainty",
+        "terminal_dense_flow_observation_component_attributed",
+        "observation_uncertainties_complete",
+        "survey_coverage_detection_masks_complete",
+        "no_missing_inferred_substituted_or_model_derived_required_values",
+        "path_mountain_storm_grouping_supported",
+        "dry_dense_slab_regime_supported"
+      ],
+      "title": "EligibilityCriteria",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "ai_counted_as_independent_review": {
+      "const": false,
+      "title": "Ai Counted As Independent Review",
+      "type": "boolean"
+    },
+    "conflict_detected": {
+      "title": "Conflict Detected",
+      "type": "boolean"
+    },
+    "conflict_resolution_sha256": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Conflict Resolution Sha256"
+    },
+    "criteria": {
+      "$ref": "#/$defs/EligibilityCriteria"
+    },
+    "decision": {
+      "enum": [
+        "eligible",
+        "ineligible"
+      ],
+      "title": "Decision",
+      "type": "string"
+    },
+    "decision_record_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Decision Record Sha256",
+      "type": "string"
+    },
+    "delivery_manifest_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Delivery Manifest Sha256",
+      "type": "string"
+    },
+    "event_id": {
+      "title": "Event Id",
+      "type": "string"
+    },
+    "exclusion_reasons": {
+      "items": {
+        "enum": [
+          "source_identity_or_licence_incomplete",
+          "event_time_not_utc_or_not_independently_supported",
+          "event_surface_dem_lineage_or_uncertainty_incomplete",
+          "release_geometry_not_independently_observed",
+          "release_thickness_not_event_specific_normal_to_slope",
+          "release_density_not_event_specific_or_uncertain",
+          "terminal_dense_flow_observation_incomplete_or_unattributed",
+          "observation_uncertainty_incomplete",
+          "survey_coverage_or_detection_semantics_incomplete",
+          "required_value_missing_inferred_substituted_or_model_derived",
+          "path_mountain_or_storm_grouping_unsupported",
+          "avalanche_regime_not_dry_dense_slab",
+          "other_protocol_exclusion"
+        ],
+        "type": "string"
+      },
+      "title": "Exclusion Reasons",
+      "type": "array"
+    },
+    "grouping": {
+      "$ref": "#/$defs/AdjudicatedGrouping"
+    },
+    "independent_human_review_count": {
+      "minimum": 2,
+      "title": "Independent Human Review Count",
+      "type": "integer"
+    },
+    "predictions_imported_or_run": {
+      "const": false,
+      "title": "Predictions Imported Or Run",
+      "type": "boolean"
+    },
+    "protocol_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Protocol Sha256",
+      "type": "string"
+    },
+    "review_sha256": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Review Sha256",
+      "type": "array"
+    },
+    "reviewer_identity_sha256": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Reviewer Identity Sha256",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "avycore-field-eligibility-decision-v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_audit_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Source Audit Sha256",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "event_id",
+    "delivery_manifest_sha256",
+    "protocol_sha256",
+    "source_audit_sha256",
+    "independent_human_review_count",
+    "reviewer_identity_sha256",
+    "review_sha256",
+    "conflict_detected",
+    "conflict_resolution_sha256",
+    "grouping",
+    "criteria",
+    "decision",
+    "exclusion_reasons",
+    "ai_counted_as_independent_review",
+    "predictions_imported_or_run",
+    "decision_record_sha256"
+  ],
+  "title": "EligibilityDecisionRecord",
+  "type": "object"
+}

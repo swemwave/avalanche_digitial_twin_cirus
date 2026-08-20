@@ -47,6 +47,23 @@ def test_assess_service_serves_terrain_and_assess_but_no_assistant():
     assert not any(p.startswith("/api/assistant") for p in paths)
 
 
+def test_assess_service_serves_the_prediction_products():
+    """The deployed ALB sends every /api/* path here, so a route mounted only on the
+    single-process app is a 404 in production while passing every local test. The
+    read-only product routes must be on this service or the client sees an error
+    where it should see an empty, honest answer."""
+
+    paths = _paths("app.main_assess")
+    assert "/api/predictions" in paths
+    assert "/api/predictions/{product_id}" in paths
+    assert "/api/predictions/{product_id}/comparisons/{comparison_id}" in paths
+
+
+def test_assistant_service_does_not_serve_prediction_products():
+    paths = _paths("app.main_assistant")
+    assert not any(p.startswith("/api/predictions") for p in paths)
+
+
 def test_assistant_service_serves_only_the_assistant():
     paths = _paths("app.main_assistant")
     assert "/api/assistant/chat" in paths
@@ -134,6 +151,16 @@ def test_combined_serving_import_is_socket_blocked_and_offline_processing_free()
         "app.processing.snow",
         "app.processing.snow.official_example",
         "app.processing.snow.snowpack_output",
+        # The offline pipeline and every external runout adapter execute engines
+        # in isolated subprocesses. Serving reads the immutable products they
+        # wrote; importing them here would put AvaFrame's dependency closure --
+        # and the ability to launch it -- inside the request path.
+        "app.pipeline",
+        "app.processing.runout.avaframe",
+        "app.processing.runout.flowpy",
+        "app.processing.runout.flowpy_benchmark",
+        "app.processing.runout.synthetic",
+        "avaframe",
         "cdsapi",
         "eccodes",
         "cfgrib",

@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from app.core.settings import Settings
+from app.core.settings import ConfigurationError, Settings
 from app.processing.harmonization.grids import terrain_grid
 from app.processing.mountain_pack import (
     MountainPackError,
@@ -59,6 +59,21 @@ def _pack() -> dict:
     }
 
 
+def _portable_single_dem_pack() -> dict:
+    raw = _pack()
+    raw["id"] = "synthetic-colorado-dem"
+    raw["name"] = "Synthetic Colorado Mountain"
+    raw["center_wgs84"] = [-105.5, 39.7]
+    raw["grid"]["analysis_crs"] = "EPSG:32613"
+    raw["assets"].pop("elevation_lidar")
+    raw["assets"].pop("elevation_fallback")
+    raw["assets"]["elevation_primary"] = _asset(
+        "static/usgs-3dep-dem.tif", "single_raster"
+    )
+    raw["assets"]["elevation_primary"]["native_resolution_m"] = 10.0
+    return raw
+
+
 def _settings(tmp_path: Path, pack_path: Path) -> Settings:
     return Settings(
         project_root=tmp_path,
@@ -81,6 +96,50 @@ def test_pack_drives_a_non_hosmer_crs_extent_and_resolution(tmp_path: Path) -> N
     assert grid.crs_string == "EPSG:32610"
     assert grid.resolution_m == 10.0
     assert grid.shape == (200, 300)
+
+
+def test_pack_accepts_portable_single_raster_dem_without_bc_roles(tmp_path: Path) -> None:
+    pack_path = tmp_path / "colorado.pack.json"
+    pack_path.write_text(json.dumps(_portable_single_dem_pack()), encoding="utf-8")
+
+    pack, _ = load_mountain_pack(_settings(tmp_path, pack_path))
+
+    assert "elevation_lidar" not in pack.assets
+    assert "elevation_fallback" not in pack.assets
+    assert pack.assets["elevation_primary"].adapter == "single_raster"
+    assert pack.grid.analysis_crs == "EPSG:32613"
+
+
+def test_pack_rejects_ambiguous_primary_elevation_roles(tmp_path: Path) -> None:
+    raw = _portable_single_dem_pack()
+    raw["assets"]["elevation_lidar"] = _asset(
+        "static/lidar/dem", "geobc_lidar_year_tiles"
+    )
+    pack_path = tmp_path / "ambiguous.pack.json"
+    pack_path.write_text(json.dumps(raw), encoding="utf-8")
+
+    with pytest.raises(MountainPackError, match="exactly one primary elevation role"):
+        load_mountain_pack(_settings(tmp_path, pack_path))
+
+
+def test_runtime_root_inside_read_only_sources_is_rejected_before_creation(
+    tmp_path: Path,
+) -> None:
+    data_root = tmp_path / "read-only-sources"
+    data_root.mkdir()
+    runtime_root = data_root / "generated-runtime"
+    settings = Settings(
+        project_root=tmp_path,
+        backend_root=tmp_path / "backend",
+        runtime_root=runtime_root,
+        data_root=data_root,
+        mountain_pack_path=tmp_path / "unused.pack.json",
+    )
+
+    with pytest.raises(ConfigurationError, match="must not live inside"):
+        settings.validate(require_data_root=False)
+
+    assert not runtime_root.exists()
 
 
 def test_pack_rejects_asset_path_escape(tmp_path: Path) -> None:
