@@ -251,12 +251,12 @@ Resources:
       FromPort: 8080
       ToPort: 8080
       SourceSecurityGroupId: !Ref TaskSecurityGroup
-      Description: assess -> bakeworker over Service Connect (both are members of this SG).
+      Description: assess to bakeworker over Service Connect (both are members of this SG).
 
   EfsSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: >
+      GroupDescription: >-
         EFS mount targets for the shared /runtime/mountains volume. Inbound NFS from
         Fargate tasks (assess, bakeworker) only.
       VpcId: !Ref Vpc

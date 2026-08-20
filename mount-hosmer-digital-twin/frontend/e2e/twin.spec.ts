@@ -36,8 +36,11 @@ test("3D terrain renders and an assessment runs", async ({ page }) => {
 
   // The mesh: a MapLibre canvas, built from baked terrain tiles.
   await expect(page.locator("canvas.maplibregl-canvas")).toHaveCount(1, { timeout: 20_000 });
-  await page.waitForTimeout(8000); // let tiles stream in
-  expect(tileStatuses.length).toBeGreaterThan(0);
+  // Polls rather than a fixed sleep: freshly-deployed containers (a cold ECS task
+  // that just passed its health check) can take well over 8s for the first tile to
+  // stream in, while a warm deployment answers in a couple of seconds -- a fixed
+  // wait was either too slow for the common case or too short for a fresh rollout.
+  await expect.poll(() => tileStatuses.length, { timeout: 30_000 }).toBeGreaterThan(0);
   expect(tileStatuses.some((s) => s === 200)).toBe(true);
   // The only non-200 the tile endpoint may return is a legitimate 404 (no tile there).
   expect(tileStatuses.every((s) => s === 200 || s === 404)).toBe(true);
