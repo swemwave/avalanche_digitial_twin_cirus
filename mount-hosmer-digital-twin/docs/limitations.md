@@ -116,6 +116,36 @@ operational tool.
 - **It is a release estimate, not an occurrence prediction.** A "release zone" is terrain the model
   considers capable of releasing under the given sliders. It is **not** a statement that an avalanche will
   occur there, and a below-threshold day is **not** a statement that the mountain is safe (see I3 below).
+- **The wind-loading term is not limited by snow availability, and can load a slope with no snow.**
+  `risk.py` computes `wind_load_term = transport * lee_factor * (0.7 + 0.3 * convergence)`, where
+  `transport` depends only on wind speed. Nothing multiplies it by the new-snow term or by any snowpack
+  depth, so `loading = clip(0.60 * snow_term + 0.75 * wind_load_term, 0, 1)` can reach 0.75 with
+  `snow_term = 0`. At 0 cm of new snow and >= 40 km/h wind an ideal lee cell scores **62.0 against a
+  55.0 threshold** and releases. On the live deployment, `new_snow_cm: 0, wind_speed_kmh: 60` returns
+  index 47.4, **40 release zones and a 1.02 km2 runout**, while the "Rain on snow" preset (30 cm,
+  30 km/h, +4 degC) returns index 38.4 and **zero** zones. The shipped "Wind-loading sensitivity" preset
+  (8 cm, 60 km/h) scores 47.8 against 47.4 for the same wind with no snow at all: its 8 cm contributes
+  almost nothing and the result is effectively all wind.
+- **Why that is not silently corrected.** Wind loading standing in for redistribution of a pre-existing
+  snowpack is physically reasonable, but this model has **no snowpack state at serving time** (the Snow
+  State stage is always `unavailable`), so it cannot verify that transportable snow exists. The term is
+  therefore capable of transporting snow the scenario never supplied. Adding an availability limiter is a
+  release-physics change: it would move `config_sha256` and invalidate the frozen digests every hindcast,
+  ablation and negative result in `validation-report.md` is bound to. It is recorded here as a known
+  defect of the current parameterisation rather than patched ahead of a re-freeze. Read a wind-only
+  result as *terrain capability under assumed available snow*, never as a loading estimate.
+- **Zone count saturates and carries no gradation.** `MAX_ZONES = 40`, and in every above-threshold
+  scenario measured against the live deployment the count was **exactly 40**; every below-threshold
+  scenario returned 0. The count is effectively binary and must not be read as a magnitude. The
+  threshold edge is sharp for the same reason: 30 cm of new snow with 20 km/h wind returns **zero**
+  zones and `runout: no_release_zone`.
+- **The served release engine is the frozen v1 module, including its three diagnosed defects.**
+  `backend/app/assess.py` calls `avycore.hazard.risk.compute_release`. The repaired
+  `avycore.snowpack.release_v2` is imported only by tests and the validation scripts and **is not wired
+  into serving** — deliberately, so that repairing it moved no frozen digest. The saturation defect is
+  therefore observable in the shipped product, and both configuration searches that used the repaired
+  module failed their pre-declared success rule, so there is no evidence that promoting it would improve
+  anything. See `release-engine-repair-plan.md`.
 
 ## The composite hazard index
 
@@ -530,13 +560,31 @@ operational tool.
   from the `fast` measurement. It remains capped at 6 zones (`MAX_ADVANCED_ZONES`) versus 12 for fast mode.
 - Assessments are **deterministic**: identical conditions produce an identical hazard score across
   machines and architectures (verified locally and on x86 cloud hardware).
-- **That claim is broader than the evidence, and the frozen M0 baseline does not currently hold across
+- **That claim is broader than the evidence, and the frozen M0 byte digests do not hold across
   machines.** `test_baseline_comparison.py` asserts that `m0-baseline.json`'s SHA-256 hashes over raw
   float arrays reproduce exactly. They do on the machine the baseline was frozen on, and they do **not**
-  on GitHub Actions — on either Ubuntu or Windows runners, and **with numpy and scipy pinned to the exact
-  versions used to freeze it** (2.2.6 / 1.16.3), which rules out package drift as the cause. The
-  remaining candidates are the BLAS/LAPACK build and the CPU instruction set the wheels dispatch to;
-  neither has been isolated yet.
+  on GitHub Actions, **with numpy and scipy pinned to the exact versions used to freeze it**
+  (2.2.6 / 1.16.3), which rules out package drift as the cause. The remaining candidates are the
+  BLAS/LAPACK build and the CPU instruction set the wheels dispatch to; neither has been isolated yet.
+- **Correction (19 August 2026): the runner scope narrowed, and the divergence is smaller than
+  previously recorded.** The bullet above previously stated the digests failed on *either* Ubuntu or
+  Windows runners. That is no longer what CI shows. In run
+  [32194058435](https://github.com/swemwave/avalanche_digitial_twin_cirus/actions/runs/32194058435)
+  `backend (windows-latest)` passed the full suite and only `backend (ubuntu-latest)` failed. The
+  earlier statement is left above rather than deleted, and corrected here.
+  Crucially, the failure diff shows **only `output_sha256` diverging**: `input_sha256`,
+  `input_coverage`, and every physical `summary` value (`release_min`/`max`/`mean`,
+  `release_valid_cells`, `reached_cells`, `runout_area_m2`, `uncertainty_area_m2`,
+  `maximum_velocity_ms`, `particles_left_the_aoi`) are byte-identical between the two platforms. The
+  modelled quantities reproduce cross-platform; the raw-float digest over them does not.
+- **The digest assertion is now scoped to the platform that froze it, and nothing was re-frozen on a
+  runner.** `baseline.FROZEN_DIGEST_PLATFORM` records that platform (`win32`). On it, the manifest is
+  asserted whole and `test_frozen_output_digests_are_asserted_on_the_platform_that_froze_them` fails if
+  any digest check is silently skipped there. On every other platform `output_sha256` is excluded from
+  the comparison and the report carries `frozen_output_digest_compared: false`, while `input_sha256`,
+  `input_coverage`, and `summary` stay asserted exactly — a tampered summary is still detected off the
+  freeze platform. This scopes an over-broad claim to the evidence; it does not establish
+  cross-platform bit-reproducibility, which remains **unachieved** and is not claimed anywhere.
 - **Frozen digests are taken over LF bytes, and that is now enforced rather than
   assumed.** This repository is authored on Windows with `core.autocrlf=true`, so
   an unpinned text file is checked out as CRLF while git stores it as LF. Nine

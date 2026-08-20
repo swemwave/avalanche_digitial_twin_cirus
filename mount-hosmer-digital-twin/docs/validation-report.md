@@ -1244,6 +1244,413 @@ added, no email or external message was sent, no Mount Hosmer operational
 prediction or real bake was read or run, and no parameter changed after the
 holdout result was viewed.
 
+## Release-engine repair and configuration search (failed its success rule)
+
+**Status:** failed the predeclared success rule. The three defects documented in
+[`release-engine-repair-plan.md`](release-engine-repair-plan.md) were repaired
+and 128 release configurations were evaluated on development blocks. None beat
+the same-area slope-only baseline on all five development blocks by the required
+5 percentage points. The search therefore stopped on its predeclared PLATEAU
+condition and **no reserved block was spent**: all four remain sealed.
+
+The committed artifacts are the
+[search result](../validation-data/results/release-config-search-v1.json) and its
+[full sweep log](../validation-data/results/release-config-search-v1-sweep-log.jsonl),
+which records every configuration evaluated, including the losers.
+
+### What was repaired, and where
+
+The repair lives in `avycore/snowpack/release_v2.py`, a new module. It is not an
+edit to `risk.py`, `state.py`, `regimes.py` or `zones.py`, because
+`spot-blind-swiss-v1` and `regime-hindcast-v1` bind those files by SHA-256:
+editing them would make two already-published negative results unreplayable, and
+rewriting the frozen digests to match is out of bounds. Every frozen source,
+spec and digest in this repository is therefore unchanged, and both earlier
+experiments still replay.
+
+| Defect | Frozen v1 behaviour | Repair |
+|---|---|---|
+| Wind statistic | `mean(72 hours x 9 points)`, so every block's wind was below `WIND_TRANSPORT_MIN_KMH` and the largest weight in the model contributed exactly zero | the search path never scalarizes wind at all: `integrate_state` consumes the hourly `(sample, hour)` field per cell and accumulates the CERRA drift-potential index with a configurable kernel. `storm_window_wind_statistic` additionally offers a high quantile, a transporting-hours mean and a drift-weighted mean for any caller that must reduce a storm to one number; no configuration below used it |
+| Unreachable threshold | `RELEASE_THRESHOLD = 55` needed a terrain capability of 1.143 (Albula) and 1.049 (Silvretta) with transport zero, and capability is bounded by 1 | the threshold became a searched parameter: eight values from 25 to 60, drawn from a declared ladder and a seeded grid. `derive_threshold` implements the plan's operating-point derivation and `required_capability` makes the bound checkable, but both are exercised by tests only and neither produced a number in the artifact below |
+| Undeclared minimum zone area | a fixed 3x3 opening enforced 8100 m² at 30 m while the manifest advertised 2500 m² | `effective_minimum_zone_area_m2` computes and publishes the real floor; the repaired default drops the opening so the declared area is the operative one (2700 m² at 30 m) |
+
+Each defect is pinned by a test in `tests/test_release_engine_repair.py` built
+from committed artifacts, so none of them can silently return. The repaired
+module reproduces all five committed `regime-hindcast-v1` development release
+masks **cell-for-cell** at its `V1_FROZEN` configuration, which is what makes
+every difference below attributable to a configuration change rather than to a
+reimplementation.
+
+### Search design, declared before any score was seen
+
+Every candidate was screened on one predeclared development block (Western
+Bernese); the top decile was promoted to all five. The same-area slope-only
+baseline was **pinned** to the `regime-hindcast-v1` published slope response
+rather than read from the candidate, because a search allowed to move its own
+baseline measures nothing. Physical guardrails were vetoes, not tie-breakers: a
+benign day had to stay quiet, missing data could never become a flagged cell,
+and flagged terrain could not exceed the frozen 20% budget. Stop conditions were
+SUCCESS, FUTILITY, BUDGET and PLATEAU, whichever fired first.
+
+128 configurations were evaluated, 0 were rejected by a guardrail, and 13 were
+promoted to the full five-block evaluation. PLATEAU fired: the running best
+screening margin last improved at configuration 78 and the following 50
+configurations did not beat it.
+
+### Result
+
+| Configuration | W. Bernese | Albula | Glarus | Gotthard | Silvretta | Worst block |
+|---|---:|---:|---:|---:|---:|---:|
+| Frozen v1 engine | −13.12 | −14.84 | −24.94 | −9.96 | −21.89 | −24.94 |
+| Repaired morphology only | −9.57 | −17.58 | −24.94 | −10.37 | −21.89 | −24.94 |
+| Best searched configuration | **+1.77** | **+2.20** | −9.24 | **+9.54** | −4.14 | −9.24 |
+
+Margins are percentage points of release-only event capture against the
+same-area slope-only baseline. The best configuration beat the baseline on three
+of five blocks and lost on two. The rule required at least +5 points on all
+five, so it failed. The rule was not weakened after the score was seen, and the
+reserved block was not spent.
+
+### Why the slope baseline is hard to beat
+
+The best configuration and its same-area slope baseline select almost disjoint
+terrain — spatial agreement is 5.2% to 10.1% — at a similar mean slope: the
+baseline sits at 40.1–40.4° on every block and the model at 39.4–41.0° on
+four of the five. Glarus is the exception at 43.8°, and it is also the
+worst-margin block. On the metric the model does better:
+
+| Block | Model coverage of mapped positives | Slope baseline coverage |
+|---|---:|---:|
+| W. Bernese | 12.00% | 4.47% |
+| Albula | 6.53% | 3.23% |
+| Glarus | 7.21% | 4.85% |
+| Gotthard | 4.18% | 1.83% |
+| Silvretta | 5.99% | 3.80% |
+
+At equal terrain budget the repaired model intersects 1.5 to 2.7 times more
+mapped-avalanche area than the slope baseline, on every block. It still loses on
+event capture, and the two facts are consistent: an event counts as captured
+when just 5% of its cells are flagged, so the metric rewards touching many
+outlines slightly rather than covering any one of them well. Spreading a fixed
+budget thinly across all steep ground is an efficient way to clip many outlines;
+concentrating it into coherent, physically-motivated start zones is not.
+
+That is a property of a positive-only capture metric evaluated against outlines
+that include track and deposit, not evidence that a slope threshold is a better
+release model. It also means this comparison cannot be won by tuning loading
+parameters, which is the substantive finding: across 128 configurations spanning
+three drift kernels, eight release thresholds, four loading bases, four snow and
+four wind weights, three slope responses and three morphologies, none produced a
+configuration that beats a slope ranking on all five blocks. The remaining gap is
+not parameterisation. It is that the model has no snowpack-stratigraphy or
+weak-layer information, which is the variable that separates steep terrain that
+released from steep terrain that did not — and no amount of loading-parameter
+search can supply it.
+
+That last claim was afterwards tested rather than left standing. It did not
+hold: see [the stratigraphy search](#stratigraphy-search-failed-its-success-rule-and-the-effect-ran-backwards)
+below, where supplying the predicted variable made the worst-block margin
+monotonically worse. The paragraph above is preserved as it was written, before
+that test existed.
+
+### Scope
+
+This is a development search. It adds **zero** events to the strict field
+holdout, strict N remains 0, `is_validated` remains `false`, and the trusted
+dataset identity registry remains empty. All five development blocks were
+already scored and viewed in the two frozen experiments, so every number here is
+a development number and is labelled as one. No reserved block was predicted,
+scored, or had its outlines opened; `row1col4`, `row2col4`, `row6col9` and
+`row5col10` all remain sealed. No frozen artifact, spec or digest was modified,
+and no email or external message was sent.
+
+## Repaired engine on the ERA5 forcing that produced the zero-release condition (does not transfer)
+
+**Status:** development rescoring of already-burned blocks. The configuration
+search above ran entirely on CERRA forcing. This section re-tests the repaired
+engine on the ERA5 forcing that produced the original zero-release-zone
+failure, and the honest headline is a **failure to transfer, not a repair**: the
+configuration selected on CERRA produces **no dry-slab release terrain on any of
+the five SPOT blocks**. The committed artifact is
+[`release-v2-spot-forcing-v1.json`](../validation-data/results/release-v2-spot-forcing-v1.json).
+
+Nothing here was searched. Four configurations were enumerated before any score
+was seen — the frozen v1 mask, the frozen v1 parameters on hourly forcing, the
+v2 morphology baseline, and the search winner used byte-for-byte as frozen — and
+no parameter was re-tuned for SPOT forcing.
+
+### Provenance: the rebuilt cache reproduces the frozen inputs
+
+`spot-blind-swiss-v1` shipped prediction artifacts but not the per-cell forcing,
+so the cache was rebuilt from the same frozen sources. It reproduces the frozen
+prediction artifacts' `eligible` mask and slope layer **cell-for-cell** on all
+five blocks, and reproduces the frozen scalar storm conditions exactly:
+
+| Block | Frozen new snow | Frozen scalar wind |
+|---|---:|---:|
+| W. Bernese (dev) | 60.92 cm | 3.57 km/h |
+| Albula | 29.28 cm | 5.21 km/h |
+| Glarus | 50.52 cm | 5.88 km/h |
+| Gotthard | 36.77 cm | 6.43 km/h |
+| Silvretta | 33.78 cm | 5.32 km/h |
+
+That is what makes every difference below attributable to the engine rather than
+to a rebuilt input.
+
+### Correction: defect 1's stated mechanism does not apply to these blocks
+
+The repair plan diagnosed the wind term as inert because a 72-hour by 9-point
+scalar mean dilutes a short windy burst into a calm average. On the SPOT blocks
+that mechanism is **not** what happened. There were no windy hours to dilute:
+
+| Block | Mean | p95 | Max single hour | Hours ≥ 15 km/h | Hours ≥ 27.7 km/h |
+|---|---:|---:|---:|---:|---:|
+| W. Bernese (dev) | 3.57 | 6.50 | 8.1 | 0 | 0 |
+| Albula | 5.21 | 9.40 | 10.4 | 0 | 0 |
+| Glarus | 5.88 | 10.06 | 11.9 | 0 | 0 |
+| Gotthard | 6.43 | 10.10 | 11.6 | 0 | 0 |
+| Silvretta | 5.32 | 9.60 | 12.3 | 0 | 0 |
+
+Not one hourly ERA5 value at any of the 45 sample points in any block reaches
+either transport threshold — v1's `WIND_TRANSPORT_MIN_KMH` of 15 km/h or v2's
+7.7 m/s (27.7 km/h). All four wind statistics the repaired module offers sit
+below both on every block, so the choice among them cannot matter, and the
+observed transport term is `0.0000` for every configuration on every block. The
+forcing repair is correct and it is **inert on this data**: it moves no number
+here.
+
+The plan's mechanism does apply on CERRA. Over the same mountains the cached
+CERRA forcing field carries a mean of 12.8–22.0 km/h, a maximum of 47.9–59.0
+km/h, and 32.8–68.2% of hours at or above 15 km/h (8.1–28.8% at or above 27.7
+km/h) — the windows are not the same length, 264 hours against 72, but the
+contrast is not a windowing artefact. That difference is the whole reason the
+CERRA search could trade snow-loading weight for wind weight, and the reason
+this forcing cannot follow it.
+
+This corrects a written diagnosis. It is recorded here rather than quietly
+amended in the plan.
+
+### The dry-slab zero-zone failure is not repaired on ERA5
+
+`spot-blind-swiss-v1` ran a single release score; `release_v2` is the four-regime
+engine. Only the dry-slab footprint is comparable to the frozen mask, and only
+the dry-slab pathway is touched by the three documented defects. Flagged cells
+in the eligible core:
+
+| Block | Frozen v1 | v1 params, hourly forcing | v2 morphology baseline | Search winner |
+|---|---:|---:|---:|---:|
+| W. Bernese (dev) | 5710 | 5526 | 6097 | **0** |
+| Albula | 0 | 0 | 0 | **0** |
+| Glarus | 4441 | 3049 | 3715 | **0** |
+| Gotthard | 0 | 0 | 198 | **0** |
+| Silvretta | 0 | 0 | 0 | **0** |
+
+The arithmetic says why. With transport at zero the terrain capability a cell
+must reach is fixed by new snow alone, and capability is a product of factors
+each bounded by 1, so any requirement above 1.0 is unreachable by any terrain:
+
+| Block | v1 params, hourly | v2 baseline | Search winner |
+|---|---:|---:|---:|
+| W. Bernese (dev) | 0.809 | 0.809 | **1.087** |
+| Albula | 1.116 | 1.116 | **1.361** |
+| Glarus | 0.822 | 0.822 | **1.087** |
+| Gotthard | 0.956 | 0.956 | **1.122** |
+| Silvretta | 1.029 | 1.029 | **1.236** |
+
+The searched configuration is unreachable on **all five** blocks. It traded
+`snow_loading_weight` 0.6 → 0.4 and `loading_base` 0.20 → 0.10 for wind weight,
+which is a good trade on forcing that supplies wind and a strictly losing one on
+forcing that supplies none. Zero-release blocks on the dry-slab pathway go 3 →
+3 under the v1 parameters, 3 → 2 once the morphology is also repaired, and 3 →
+**5** under the searched configuration.
+
+### Union capture improves, but not through the compared pathway
+
+Across all four regimes the picture inverts, and it should not be headlined. At
+SPOT's own frozen 10% capture rule the union beats the same-area pinned slope
+baseline on four of five blocks:
+
+| Block | Frozen v1 | v1 params, hourly | v2 baseline | Search winner |
+|---|---:|---:|---:|---:|
+| W. Bernese (dev) | +2.84 | +1.77 | +3.90 | +7.80 |
+| Albula | 0.00 | +4.95 | +6.04 | +6.04 |
+| Glarus | −0.46 | −5.54 | −4.39 | 0.00 |
+| Gotthard | 0.00 | +9.13 | +7.88 | +7.47 |
+| Silvretta | 0.00 | +6.51 | +8.28 | +8.28 |
+
+Every one of those flagged cells is `dry_loose` or `wet_snow` — regimes the
+frozen SPOT engine did not have at all. The union is not a repair of the failure
+this section set out to re-test; it is a different model answering a different
+question, and the dry-slab column above is the like-for-like comparison.
+
+The metric also swings. At the configuration search's 5% rule the same searched
+configuration scores −8.87 / −8.79 / −14.32 / −1.24 / 0.00 on the same blocks
+and the same flagged cells. Both rules were declared before scoring and both are
+in the artifact for every block and configuration. The 10% → 5% reversal is a
+property of the capture metric, not of the model: a lower overlap threshold
+rewards a baseline that spreads its budget thinly across all steep ground.
+
+### Scope
+
+Every SPOT block was predicted, scored and had its outlines opened in
+`spot-blind-swiss-v1`, so every number here is a development number. This adds
+**zero** events to the strict field holdout, strict N remains 0, `is_validated`
+remains `false`, and the trusted dataset identity registry remains empty. No
+frozen artifact, spec or digest was modified. No reserved block was predicted,
+scored, or had its outlines opened; `row1col4`, `row2col4`, `row6col9` and
+`row5col10` all remain sealed. No email or external message was sent.
+
+## Stratigraphy search (failed its success rule, and the effect ran backwards)
+
+**Status:** failed the predeclared success rule — the same +5 percentage-point
+rule as the first search, unchanged. The first search concluded in writing that
+its remaining gap was not parameterisation but the absence of snowpack
+stratigraphy. This search added exactly that variable and changed nothing else,
+so the conclusion would be tested rather than restated. **It did not hold in the
+direction it predicted.** Giving the reconstructed weak-interface index loading
+weight made the worst-block margin monotonically *worse* at every weight tried,
+and the best configuration in the whole search is the stratigraphy-free winner
+of the first one.
+
+No reserved block was spent; all four remain sealed. The committed artifacts are
+the [search result](../validation-data/results/release-stratigraphy-search-v1.json),
+its [sweep log](../validation-data/results/release-stratigraphy-search-v1-sweep-log.jsonl),
+and the [log of the superseded first execution](../validation-data/results/release-stratigraphy-search-v1-aborted-sweep-log.jsonl).
+
+### What was added
+
+`avycore/snowpack/stratigraphy.py` builds a bounded buried weak-interface index
+as a product of three factors, each able to zero the result independently:
+formation (the stronger of kinetic-growth faceting hours or cold/calm/dry
+surface hours — alternatives, not addends), persistence (decayed by antecedent
+positive degree-hours and rain), and burial (gated on storm new snow over a
+pre-storm pack). Every constant is a literature value and none is fitted. The
+bulk gradient is `(0 °C − T_air_lapsed) / depth` with the denominator clamped at
+0.20 m; both that and the lapsed-air-temperature surrogate deliberately
+understate the driver.
+
+It is a reconstruction from antecedent surface meteorology and modelled snow
+depth. It contains no snow profile, no stability test, no grain-type observation
+and no measurement of any buried layer, and it cannot be verified from the data
+that produces it.
+
+**Unknown is missing input, never zero.** Without a snow-depth series the
+gradient mechanism is unevaluable, and the index says so through a `known` mask.
+A configuration with non-zero weight removes such a cell from the dry-slab
+admissible set rather than scoring it as though the unmeasured interface were
+absent. This is why the term cannot be evaluated at all on the SPOT blocks: the
+frozen ERA5 request carries no snow-depth series, while CERRA does.
+
+`release_v2.py` gained flat `weak_*` fields whose weight defaults to **0.0**. At
+zero every field is inert, and this is verified rather than asserted:
+`release-config-search-v1.json` still replays byte-for-byte from its committed
+sweep log against the modified module, to SHA-256
+`ec7e65c8f26f1cfc0fcdfff100ecbe241cdddaf5f17a20cea1a590f4fd27d1b8`. That
+equivalence is the entire basis on which any difference below is attributed to
+stratigraphy. `manifest()` grows a `stratigraphy` section and retracts its
+"diagnostic only, zero numerical effect" line **only** at non-zero weight, where
+that line would be false.
+
+### Held identical, and what moved
+
+Identical to the first search, on purpose: the acceptance rule, the screening
+block, the promotion fraction, the pinned slope baseline, the configuration
+budget (200), the compute budget (4 h), the plateau limit (50), the terrain and
+benign-day vetoes, and the five already-burned development blocks.
+
+Changed: the space gained the stratigraphy dimensions; a **second** physical
+veto was added rather than substituted — a full weak interface carrying **no**
+load must still produce no release terrain, because a weak layer is not a hazard
+by itself; and the seed is new (20260819) because the sampler draws more values
+per configuration and the old stream cannot be continued.
+
+The critical temperature gradient (10 K/m) and the minimum depth in the gradient
+estimate were deliberately **not** searched. They are literature regime
+boundaries, and fitting a physical threshold to a capture score is how a search
+launders a tuned constant into a citation.
+
+### A harness defect, and the run it ended
+
+Both searches sort candidates by snow-state key so each hourly integration
+happens once. State-key order has nothing to do with promise, so a plateau
+counted across it can stop a run before its own declared anchors are scored. The
+first execution of this search did exactly that: it stopped at 66 configurations
+having evaluated two of eight declared points and none of the weak-weight
+ladder. Its log is committed and its digest is in the artifact, because a run
+that happened is a run that gets reported. It also failed the rule.
+
+The repair evaluates the declared anchors and the ladder first and counts the
+plateau over the sampled portion only. Nothing else moved — same seed, same
+budget, same plateau limit, same acceptance rule, same blocks. That the repaired
+harness scores configurations identically is checkable from the logs and from
+the table below: `anchor_v1_frozen`, `anchor_v2_baseline` and
+`anchor_search_v1_best` reproduce the first search's three published rows
+exactly, block for block.
+
+### Result
+
+58 configurations were evaluated, 0 were rejected by a guardrail, and 6 were
+promoted to the full five-block evaluation. PLATEAU fired: none of the 50
+sampled configurations improved on the best declared screening margin.
+
+| Configuration | Weak weight | W. Bernese | Albula | Glarus | Gotthard | Silvretta | Worst block |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Search v1 winner (anchor) | 0.0 | +1.77 | +2.20 | −9.24 | +9.54 | −4.14 | **−9.24** |
+| Ladder | 0.2 | 0.00 | 0.00 | −10.85 | +6.64 | −8.28 | −10.85 |
+| Ladder | 0.4 | −1.42 | −2.75 | −13.16 | +6.64 | −12.43 | −13.16 |
+| Ladder | 0.7 | −3.55 | −9.89 | −15.94 | +4.56 | −13.61 | −15.94 |
+| Best sampled configuration | 0.2 | −6.74 | −8.79 | −16.86 | −1.24 | −14.20 | −16.86 |
+| Ladder | 1.0 | −7.45 | −12.09 | −18.71 | +4.56 | −14.79 | −18.71 |
+| Ladder | 1.5 | −13.12 | −22.53 | −18.94 | +4.15 | −14.79 | −22.53 |
+| Frozen v1 engine (anchor) | 0.0 | −13.12 | −14.84 | −24.94 | −9.96 | −21.89 | −24.94 |
+| Repaired morphology only (anchor) | 0.0 | −9.57 | −17.58 | −24.94 | −10.37 | −21.89 | −24.94 |
+
+Margins are percentage points of release-only event capture against the
+same-area slope-only baseline. The rule required at least +5 on all five blocks;
+the best worst-block margin in the search is −9.24, achieved at weak weight
+**zero**. The rule was not weakened after the score was seen, the seed was not
+re-rolled, and the budget was not widened.
+
+The ladder is the informative slice: holding the first search's winner fixed and
+moving only the weak-interface weight, the worst-block margin falls
+monotonically −9.24 → −10.85 → −13.16 → −15.94 → −18.71 → −22.53 as the weight
+rises 0 → 1.5. The best configuration that uses stratigraphy is 1.62 points
+**worse** than the best that uses none.
+
+### What that does and does not mean
+
+The predicted variable was added and the score got worse, monotonically, at
+every weight. Three readings are consistent with that and this experiment cannot
+separate them:
+
+1. The reconstruction is not the variable. An index built from antecedent
+   surface meteorology and a modelled depth may carry too little of what an
+   observed weak layer is to help at 30 m resolution.
+2. The mechanism is real but the metric cannot see it. Weighting stratigraphy
+   concentrates the fixed terrain budget onto fewer, more specific slopes, and a
+   5%-overlap positive-only capture rule penalises exactly that — the same
+   effect already documented for the first search.
+3. Both.
+
+What the result does bound is the first search's written claim. "The remaining
+gap is the absence of stratigraphy" is now a tested statement rather than an
+inference, and in this formulation, on this forcing, against this metric, it is
+**not supported**: supplying a reconstructed stratigraphy term does not close the
+gap and does not narrow it. That bounds what this reconstruction can do. It does
+not bound what an observed weak layer could do, and no observed weak layer is
+available here.
+
+### Scope
+
+This is a development search. All five blocks were already burned in the two
+frozen experiments, so every number is a development number. It adds **zero**
+events to the strict field holdout, strict N remains 0, `is_validated` remains
+`false`, and the trusted dataset identity registry remains empty. Beating or
+losing to a slope baseline is not validation. No frozen source, artifact, spec
+or digest was modified, and `release-config-search-v1.json` still replays. No
+reserved block was predicted, scored, or had its outlines opened. No email or
+external message was sent.
+
 ## Lower-rigor real-event comparison
 
 **Component tested:** empirical alpha angle plus fast downslope routing.

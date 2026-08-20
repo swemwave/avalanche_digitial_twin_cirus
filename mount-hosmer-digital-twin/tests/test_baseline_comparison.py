@@ -11,9 +11,11 @@ from app import cli
 from app.baseline import (
     BASELINE_SCHEMA,
     CASE_NAMES,
+    FROZEN_DIGEST_PLATFORM,
     compare_engines,
     frozen_results,
     load_expectations,
+    output_digest_is_comparable,
     run_case,
 )
 
@@ -21,12 +23,49 @@ from app.baseline import (
 BASELINE_PATH = Path(__file__).parents[1] / "backend" / "config" / "m0-baseline.json"
 
 
+def _without_output_digests(manifest: dict) -> dict:
+    """Drop only ``output_sha256``; every other frozen field stays asserted."""
+    stripped = json.loads(json.dumps(manifest))
+    for engine in stripped.get("results", {}).values():
+        for case in engine.values():
+            case.pop("output_sha256", None)
+    return stripped
+
+
 def test_checked_in_m0_manifest_is_exactly_reproducible() -> None:
     expected = load_expectations(BASELINE_PATH)
+    measured = frozen_results(seed=expected["seed"])
 
-    assert expected == frozen_results(seed=expected["seed"])
+    if output_digest_is_comparable():
+        assert expected == measured
+    else:
+        # The frozen output digests hash raw float bytes, so they carry the BLAS
+        # build and dispatched instruction set of the freeze platform. Scope the
+        # digest check to that platform rather than re-freezing on a runner, and
+        # keep every platform-independent field asserted exactly.
+        assert _without_output_digests(expected) == _without_output_digests(measured)
+
     assert expected["schema"] == BASELINE_SCHEMA
     assert expected["purpose"] == "synthetic software verification; not field validation"
+
+
+def test_frozen_output_digests_are_asserted_on_the_platform_that_froze_them() -> None:
+    """The scope above must stay honest: on the freeze platform nothing is skipped."""
+    expected = load_expectations(BASELINE_PATH)
+    report = compare_engines("fast", "advanced", expectations_path=BASELINE_PATH)
+
+    assert report["frozen_output_digest_platform"] == FROZEN_DIGEST_PLATFORM
+    assert report["frozen_output_digest_compared"] is output_digest_is_comparable()
+    if output_digest_is_comparable():
+        for comparison in report["cases"]:
+            for role in ("baseline", "candidate"):
+                measurement = comparison[role]
+                assert measurement["output_digest_compared"] is True
+                assert (
+                    measurement["output_sha256"]
+                    == measurement["frozen_expectation"]["output_sha256"]
+                )
+    assert expected["seed"] == report["seed"]
 
 
 def test_comparison_runs_both_engines_on_identical_inputs_and_records_required_evidence() -> None:
