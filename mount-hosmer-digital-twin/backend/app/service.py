@@ -91,10 +91,31 @@ def create_app(
     description: str,
     routers: Sequence[APIRouter],
     health_extra: Callable[[], dict[str, Any]] | None = None,
+    on_startup: Callable[[], None] | None = None,
 ) -> FastAPI:
-    """Assemble a service: shared middleware and error handling, then its routers."""
+    """Assemble a service: shared middleware and error handling, then its routers.
+
+    ``on_startup`` runs once before the first request. Only the combined app uses
+    it, and a failure there must not stop the service from serving: it is
+    housekeeping, not a prerequisite.
+    """
     settings = get_settings()
-    app = FastAPI(title=title, version=settings.app_version, description=description)
+
+    lifespan = None
+    if on_startup is not None:
+        from contextlib import asynccontextmanager
+
+        @asynccontextmanager
+        async def lifespan(_: FastAPI):  # noqa: F811 - the name is the parameter
+            try:
+                on_startup()
+            except Exception:
+                logger.warning("Startup housekeeping failed; serving anyway.", exc_info=True)
+            yield
+
+    app = FastAPI(
+        title=title, version=settings.app_version, description=description, lifespan=lifespan
+    )
 
     # Cloud Run puts each service on its own origin, so the browser calling the
     # assistant service is cross-origin even though it is the same application.

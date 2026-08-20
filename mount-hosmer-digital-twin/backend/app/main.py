@@ -15,6 +15,19 @@ from app.api import stage3 as api_stage3
 from app.service import baked_stamp, create_app
 from app.core.settings import get_settings
 
+
+def _clear_abandoned_bakes() -> None:
+    """Drop staging directories left behind by a bake that was killed.
+
+    ``app.bake`` promotes only a validated result, so an interrupted bake leaves no
+    half-baked mountain -- but its ``.baked-build-*`` directory survives, and
+    nothing else ever removes it.
+    """
+    from app.mountains import sweep_orphaned_staging
+
+    sweep_orphaned_staging(get_settings())
+
+
 app = create_app(
     title="Mount Hosmer Avalanche Digital Twin API",
     description=(
@@ -24,6 +37,7 @@ app = create_app(
     ),
     routers=[api_stage3.router],
     health_extra=baked_stamp,
+    on_startup=_clear_abandoned_bakes,
 )
 
 # The one-screen Next app is a static export. Keep this mount last so every API

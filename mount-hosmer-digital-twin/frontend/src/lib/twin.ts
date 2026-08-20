@@ -1,9 +1,13 @@
 /** Thin application adapter over the SDK generated from FastAPI's OpenAPI contract. */
 
 import {
+  createMountain as createMountainGenerated,
+  deleteMountain as deleteMountainGenerated,
+  getMountain as getMountainGenerated,
   getPredictionComparison as getPredictionComparisonGenerated,
   getPredictionProduct as getPredictionProductGenerated,
   getTwinMeta as getTwinMetaGenerated,
+  listMountains as listMountainsGenerated,
   listPredictionProducts as listPredictionProductsGenerated,
   postAssess as postAssessGenerated,
   postChat as postChatGenerated,
@@ -21,6 +25,8 @@ import type {
   ExposureMeta,
   InputSource,
   InputUncertainty,
+  MountainList,
+  MountainSummary,
   PredictionEngineOutput,
   PredictionEnsembleMember,
   PredictionEnsembleSummary,
@@ -63,6 +69,8 @@ export type {
   ExposureMeta,
   InputSource,
   InputUncertainty,
+  MountainList,
+  MountainSummary,
   PredictionEngineOutput,
   PredictionEnsembleMember,
   PredictionEnsembleSummary,
@@ -114,11 +122,26 @@ async function unwrap<T>(request: GeneratedResponse<T>): Promise<T> {
   return result.data;
 }
 
-export const getTwinMeta = () =>
-  unwrap<TwinMeta>(getTwinMetaGenerated({ baseUrl: API_BASE_URL, cache: "no-store" }));
+/**
+ * Which mountain a call is about. `null` is the reviewed Mount Hosmer bake.
+ *
+ * Every call that touches terrain takes one, because an uploaded mountain and the
+ * demo mountain are different terrain: a request that forgot the id would answer
+ * from Mount Hosmer and look entirely plausible doing it.
+ */
+export type MountainId = string | null;
 
-export const postAssess = (body: AssessRequest) =>
-  unwrap<AssessResult>(postAssessGenerated({ baseUrl: API_BASE_URL, body, cache: "no-store" }));
+const scope = (mountain: MountainId) => (mountain ? { query: { mountain } } : {});
+
+export const getTwinMeta = (mountain: MountainId = null) =>
+  unwrap<TwinMeta>(
+    getTwinMetaGenerated({ baseUrl: API_BASE_URL, cache: "no-store", ...scope(mountain) }),
+  );
+
+export const postAssess = (body: AssessRequest, mountain: MountainId = null) =>
+  unwrap<AssessResult>(
+    postAssessGenerated({ baseUrl: API_BASE_URL, body, cache: "no-store", ...scope(mountain) }),
+  );
 
 export const postExplain = (assessment: AssessResult) =>
   unwrap<ExplainResult>(
@@ -168,8 +191,67 @@ export const getPredictionComparison = (productId: string, comparisonId: string)
     }),
   );
 
-export const tileUrlTemplate = () => `${API_BASE_URL}/api/twin/tiles/{z}/{x}/{y}.png`;
-export const imageryTileUrlTemplate = () => `${API_BASE_URL}/api/twin/imagery/{z}/{x}/{y}.png`;
+// MapLibre fetches these URLs itself, so the mountain has to travel in the query
+// string -- there is no request hook to put it anywhere else.
+const suffix = (mountain: MountainId) => (mountain ? `?mountain=${encodeURIComponent(mountain)}` : "");
+
+export const tileUrlTemplate = (mountain: MountainId = null) =>
+  `${API_BASE_URL}/api/twin/tiles/{z}/{x}/{y}.png${suffix(mountain)}`;
+export const imageryTileUrlTemplate = (mountain: MountainId = null) =>
+  `${API_BASE_URL}/api/twin/imagery/{z}/{x}/{y}.png${suffix(mountain)}`;
 
 /** Static baked exposure vectors. MapLibre fetches this URL directly. */
-export const exposureUrl = () => `${API_BASE_URL}/api/twin/exposure`;
+export const exposureUrl = (mountain: MountainId = null) =>
+  `${API_BASE_URL}/api/twin/exposure${suffix(mountain)}`;
+
+// --- Uploaded mountains -------------------------------------------------------
+
+export const listMountains = () =>
+  unwrap<MountainList>(listMountainsGenerated({ baseUrl: API_BASE_URL, cache: "no-store" }));
+
+export const getMountain = (mountainId: string) =>
+  unwrap<MountainSummary>(
+    getMountainGenerated({
+      baseUrl: API_BASE_URL,
+      path: { mountain_id: mountainId },
+      cache: "no-store",
+    }),
+  );
+
+export type NewMountain = {
+  name: string;
+  provider: string;
+  citation: string;
+  licence: string;
+  elevationsAreMetres: boolean;
+  dem: File;
+  landcover?: File | null;
+};
+
+export const createMountain = (upload: NewMountain) =>
+  unwrap<MountainSummary>(
+    createMountainGenerated({
+      baseUrl: API_BASE_URL,
+      body: {
+        dem: upload.dem,
+        landcover: upload.landcover ?? undefined,
+        name: upload.name,
+        provider: upload.provider,
+        citation: upload.citation,
+        licence: upload.licence,
+        elevations_are_metres: upload.elevationsAreMetres,
+      },
+      cache: "no-store",
+    }),
+  );
+
+export const deleteMountain = async (mountainId: string) => {
+  const result = await deleteMountainGenerated({
+    baseUrl: API_BASE_URL,
+    path: { mountain_id: mountainId },
+    cache: "no-store",
+  });
+  if (result.error !== undefined) {
+    throw new TwinApiError(message(result.error), result.response?.status ?? 0);
+  }
+};

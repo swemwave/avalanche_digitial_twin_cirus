@@ -16,6 +16,7 @@ from fastapi import APIRouter
 
 from app.api import assess as assess_routes
 from app.api import assistant as assistant_routes
+from app.api import mountains as mountain_routes
 from app.api import predictions as prediction_routes
 from app.api import terrain as terrain_routes
 
@@ -24,3 +25,8 @@ router.include_router(terrain_routes.router)
 router.include_router(assess_routes.router)
 router.include_router(prediction_routes.router)
 router.include_router(assistant_routes.router)
+# Uploading a mountain needs the offline geospatial stack, which only the combined
+# local app has. The routes are mounted regardless and report themselves
+# unavailable where that stack is absent -- a 503 that explains itself beats a
+# route that is simply missing.
+router.include_router(mountain_routes.router)

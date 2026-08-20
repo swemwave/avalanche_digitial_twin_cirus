@@ -125,11 +125,21 @@ class BakedTerrain:
         return str(self.meta.get("identity", {}).get("bake_sha256", ""))
 
 
-def baked_root(settings: Settings) -> Path:
-    return settings.runtime_root / "baked"
+def baked_root(settings: Settings, mountain_id: str | None = None) -> Path:
+    """Where one mountain's bake lives.
+
+    ``None`` is the reviewed Mount Hosmer bake at ``runtime/baked/``; a mountain id
+    selects an uploaded one under ``runtime/mountains/<id>/baked/``. Defaulting to
+    ``None`` is what keeps every existing caller, and both e2e specs, unchanged.
+    """
+    from app.mountains import runtime_root_for
+
+    return runtime_root_for(settings, mountain_id) / "baked"
 
 
-@lru_cache(maxsize=2)
+# Layers are memory-mapped, so an entry costs page cache rather than resident
+# memory. Four covers Hosmer plus the three uploads the registry allows.
+@lru_cache(maxsize=4)
 def _load(root_str: str, mtime: float, expected_processing_sha256: str | None) -> BakedTerrain:
     root = Path(root_str)
     try:
@@ -162,9 +172,9 @@ def _load(root_str: str, mtime: float, expected_processing_sha256: str | None) -
     return BakedTerrain(grid=grid, reproject=reproject, meta=meta, root=root, _cache={})
 
 
-def load_baked(settings: Settings) -> BakedTerrain:
+def load_baked(settings: Settings, mountain_id: str | None = None) -> BakedTerrain:
     """Load the baked terrain, cached against meta.json's mtime."""
-    root = baked_root(settings)
+    root = baked_root(settings, mountain_id)
     meta_path = root / "meta.json"
     if not meta_path.exists():
         raise BakeNotFoundError(
@@ -179,16 +189,18 @@ def load_baked(settings: Settings) -> BakedTerrain:
     return _load(str(root), meta_path.stat().st_mtime, expected_processing)
 
 
-def tile_path(settings: Settings, z: int, x: int, y: int) -> Path:
+def tile_path(settings: Settings, z: int, x: int, y: int, mountain_id: str | None = None) -> Path:
     """Filesystem path of a baked terrain-RGB tile. Static PNG; no rasterio to serve."""
-    return baked_root(settings) / "tiles" / str(z) / str(x) / f"{y}.png"
+    return baked_root(settings, mountain_id) / "tiles" / str(z) / str(x) / f"{y}.png"
 
 
-def imagery_tile_path(settings: Settings, z: int, x: int, y: int) -> Path:
+def imagery_tile_path(
+    settings: Settings, z: int, x: int, y: int, mountain_id: str | None = None
+) -> Path:
     """Filesystem path of a baked natural-colour tile. Static PNG; no source-data read."""
-    return baked_root(settings) / "imagery" / str(z) / str(x) / f"{y}.png"
+    return baked_root(settings, mountain_id) / "imagery" / str(z) / str(x) / f"{y}.png"
 
 
-def exposure_features_path(settings: Settings) -> Path:
+def exposure_features_path(settings: Settings, mountain_id: str | None = None) -> Path:
     """Filesystem path of the baked exposure vectors. Static GeoJSON; nothing computed."""
-    return baked_root(settings) / "exposure" / "features.geojson"
+    return baked_root(settings, mountain_id) / "exposure" / "features.geojson"

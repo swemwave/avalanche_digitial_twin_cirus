@@ -16,3 +16,7 @@ scipy>=1.14
 shapely>=2.1
 httpx>=0.28
 ollama>=0.6.2,<0.7
+# Multipart form parsing, for the uploaded-mountain endpoint only. Starlette
+# needs it to read a file part at all; the upload is still streamed to disk under
+# an explicit byte ceiling rather than buffered in memory.
+python-multipart>=0.0.20

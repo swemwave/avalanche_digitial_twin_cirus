@@ -2,11 +2,19 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { AssistantPanel } from "@/components/AssistantPanel";
+import { MountainPicker } from "@/components/MountainPicker";
 import { ConditionPanel } from "@/components/ConditionPanel";
 import { PredictionProductPanel } from "@/components/PredictionProductPanel";
 import { ResultCard } from "@/components/ResultCard";
 import { Stage3Map, type CameraPreset, type ContrastMode, type SurfaceView } from "@/components/Stage3Map";
-import { getTwinMeta, postAssess, type AssessRequest, type AssessResult, type TwinMeta } from "@/lib/twin";
+import {
+  getTwinMeta,
+  postAssess,
+  type AssessRequest,
+  type AssessResult,
+  type MountainId,
+  type TwinMeta,
+} from "@/lib/twin";
 
 const CAMERAS: [CameraPreset, string][] = [
   ["overview", "Overview"],
@@ -26,6 +34,7 @@ const CONTRASTS: [ContrastMode, string][] = [
 ];
 
 export function Stage3App() {
+  const [mountain, setMountain] = useState<MountainId>(null);
   const [meta, setMeta] = useState<TwinMeta | null>(null);
   const [result, setResult] = useState<AssessResult | null>(null);
   const [resultStale, setResultStale] = useState(false);
@@ -41,9 +50,28 @@ export function Stage3App() {
   const [drawnArea, setDrawnArea] = useState<GeoJSON.Polygon | null>(null);
 
   useEffect(() => {
-    getTwinMeta()
+    getTwinMeta(mountain)
       .then(setMeta)
       .catch((caught) => setError(caught instanceof Error ? caught.message : String(caught)));
+  }, [mountain]);
+
+  /**
+   * Switch mountains, discarding everything bound to the previous one.
+   *
+   * Every result, zone selection and drawn area belongs to one specific bake.
+   * Drawing Mount Hosmer's release zones over another mountain's terrain would
+   * be the worst bug this feature could produce, so the state is cleared here
+   * rather than left to each panel to notice.
+   */
+  const selectMountain = useCallback((next: MountainId) => {
+    setMountain(next);
+    setMeta(null);
+    setResult(null);
+    setResultStale(false);
+    setSelectedZone(null);
+    setDrawnArea(null);
+    setDrawingArea(false);
+    setError(null);
   }, []);
 
   const assess = useCallback(async (request: AssessRequest) => {
@@ -51,14 +79,14 @@ export function Stage3App() {
     setError(null);
     setSelectedZone(null);
     try {
-      setResult(await postAssess(request));
+      setResult(await postAssess(request, mountain));
       setResultStale(false);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : String(caught));
     } finally {
       setRunning(false);
     }
-  }, []);
+  }, [mountain]);
 
   const lidar = meta?.terrain.lidar_fraction != null ? `${(meta.terrain.lidar_fraction * 100).toFixed(2)}%` : "—";
   const visibleSurface: SurfaceView = meta && !meta.imagery ? "hillshade" : surface;
@@ -89,8 +117,9 @@ export function Stage3App() {
           Experimental research scenario · not operational · not a probability · never replaces Avalanche Canada guidance or field assessment
         </div>
         <div className="grid gap-4 xl:grid-cols-[420px_minmax(0,1fr)_400px]">
-          {/* Left: conditions */}
+          {/* Left: which mountain, then conditions */}
           <aside className="flex flex-col gap-4">
+            <MountainPicker mountain={mountain} onSelect={selectMountain} />
             <section className="rounded-lg border border-[var(--border)] bg-[var(--panel)] p-4">
               <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-[var(--accent)]">
                 Conditions
@@ -228,7 +257,9 @@ export function Stage3App() {
           {/* Centre: the mountain */}
           <div className="flex min-h-[560px] flex-col gap-2 xl:min-h-[760px]">
             <Stage3Map
+              key={mountain ?? "hosmer"}
               meta={meta}
+              mountain={mountain}
               result={result}
               exaggeration={exaggeration}
               camera={camera}
