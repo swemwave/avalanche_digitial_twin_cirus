@@ -40,6 +40,13 @@ work locally, you can ignore this document entirely.
 | **assess** | `app.main_assess` | `/api/assess`, `/api/twin/meta`, `/api/twin/tiles/…`, `/api/twin/imagery/…`, `/api/health` | 1 vCPU / 4 GB | ~550 MB (carries the bake) |
 | **assistant** | `app.main_assistant` | `/api/assistant/{chat,explain,health}`, `/api/health` | 0.25 vCPU / 512 MB | ~260 MB |
 | **frontend** | Next.js standalone | everything not `/api/*` | 0.25 vCPU / 512 MB | ~200 MB |
+| **bakeworker** | `app.main_bakeworker` | `/health`, `/probe`, `/bake/{id}` | 1 vCPU / 4 GB | `FROM bake` — geospatial stack only, no baked-terrain layer |
+
+**bakeworker is not like the other three.** Its routes carry **no `/api/` prefix**
+(`/health`, not `/api/health`), and unlike assess/assistant/frontend it is **never
+registered with the ALB at all** — no target group, no listener rule, no public
+route. The only caller is `assess`, over ECS Service Connect, entirely inside the
+VPC. See "On-demand mountain uploads" below and I-F.
 
 **Ollama is not deployed.** It runs on an operator's own machine and is reached
 through a Cloudflare Tunnel. That is what removes the GPU from the bill.
@@ -62,6 +69,55 @@ and there is **no CORS anywhere**. The frontend is built with *empty*
 relative paths (`/api/assess`). This also means the frontend image does not embed
 the load balancer hostname, and so does not need rebuilding when the stack is
 recreated.
+
+### On-demand mountain uploads (bakeworker)
+
+`assess` ships from the always-slim `runtime` Docker target and deliberately
+carries no geospatial stack — `import app.main` must not pull in rasterio, and
+`Dockerfile.backend`'s `runtime` target asserts exactly that at build time (I-B).
+Validating and baking a user-uploaded mountain needs rasterio and pyproj, so that
+work cannot run inside `assess` the way it does for the local launcher.
+`backend/app/mountain_jobs.py` resolves this by branching on
+`AVALANCHE_BAKE_WORKER_URL`: unset, `upload_available()` / `run_probe()` /
+`run_bake()` run a local subprocess exactly as before; set, they dispatch the
+identical work over HTTP to **bakeworker** — a 4th service built from the `bake`
+Docker target, the only image in the fleet with rasterio, pyproj, PIL and pyyaml.
+There is one implementation of "run the probe" and "run the bake"; the HTTP path
+is a thin network front door onto it, never a second copy.
+
+**Sizing.** bakeworker runs `app.bake`'s identical computation a real bake runs,
+so `infra.yaml`'s `BakeWorkerTaskDefinition` gives it the same measured 1 vCPU /
+4 GB as `assess` (I-C) — not `assistant`'s much smaller 0.25 vCPU / 512 MB, which
+is sized for a thin HTTP relay to Ollama, not a raster computation.
+
+**Shared storage.** `runtime/mountains/` (the upload registry, plus each
+mountain's `source/`, `pack.json`, and `baked/` — see `backend/app/mountains.py`)
+moved off `assess`'s ephemeral task disk onto an EFS filesystem
+(`MountainsFileSystem` in `infra.yaml`), mounted at the same `/runtime/mountains`
+path in both the `assess` and `bakeworker` task definitions. This also
+incidentally fixes a latent bug: if `AssessService`'s `DesiredCount` is ever
+raised above 1, each task today would have its own disconnected
+registry/uploads; EFS gives every task, of either service, the same view. Mount
+Hosmer's own reviewed bake is unaffected — it still ships baked into the assess
+image at `/runtime/baked` (I-D), which is deliberately *not* on EFS.
+
+**Turning it on for a demo.** bakeworker's task count is a separate stack
+parameter from the other three services' shared `DesiredCount`, because live
+mountain uploads are a rarely-used demo feature, not core traffic. `deploy.sh`'s
+`step_3_stack` reads it from the `BAKEWORKER_DESIRED` environment variable
+(default `0`) into the `BakeWorkerDesiredCount` parameter, the same pattern
+`DESIRED` already uses for the other three:
+
+```bash
+bash deploy/aws/deploy.sh 3                        # BakeWorkerDesiredCount=0 (default): parked
+BAKEWORKER_DESIRED=1 bash deploy/aws/deploy.sh 3   # brings up a live task; uploads become available
+BAKEWORKER_DESIRED=0 bash deploy/aws/deploy.sh 3   # park it again when the demo is over
+```
+
+`GET /api/mountains` answers either way: it health-checks bakeworker on every
+call (`upload_available()`, 5 s timeout) and reports `upload_available: false`
+with a human-readable reason while parked, rather than hiding the upload feature
+or hanging. See I-F for the reachability invariant this all rests on.
 
 ---
 
@@ -103,6 +159,16 @@ A source-based cloud build would produce an image that reports `baked: false`.
 Fargate is x86_64. On Apple Silicon this cross-compiles, which also means a local
 container runs under emulation — an assessment takes ~82 s locally versus ~9 s on
 Fargate. That is emulation overhead, not a regression.
+
+**I-F. bakeworker is the only service with the geospatial stack, and it is never
+internet-reachable.**
+rasterio, pyproj, PIL and pyyaml live in exactly one image (`Dockerfile.backend`'s
+`bake`/`bakeworker` target); `assess`, `assistant` and `frontend` do not carry
+them, and `assess` cannot fall back to running a bake itself if bakeworker is
+unreachable — `mountain_jobs.upload_available()` reports that as "not available"
+rather than attempting a local subprocess it has no interpreter for. bakeworker
+has no ALB target group and no listener rule (see §1); the only path to it is
+`assess`, over ECS Service Connect, entirely inside the VPC.
 
 ---
 
@@ -267,23 +333,27 @@ to confirm.
 ### After changing backend code
 
 ```bash
-bash deploy/aws/deploy.sh 2     # rebuild + push all three images
+bash deploy/aws/deploy.sh 2     # rebuild + push all four images
 bash deploy/aws/deploy.sh 3     # roll the services onto the new images
 ```
 
-Step 2 validates the bake, builds all three images under one unique release tag,
-runs their exact containers locally, and only then pushes them. It stores the
-validated tag under generated `runtime/deployment/`; mutable `latest` tags are not
-used for a rollout. Docker layer caching keeps unchanged work fast, and the assess
-image's baked-data layer is copied last.
+Step 2 validates the bake, builds all four images under one unique release tag
+(assess, assistant, frontend, and bakeworker — a local-container gate runs
+against all four, bakeworker's own `/health`), and only then pushes them. It
+stores the validated tag under generated `runtime/deployment/`; mutable `latest`
+tags are not used for a rollout. Docker layer caching keeps unchanged work fast,
+and the assess image's baked-data layer is copied last.
 
 Step 3 resolves every ECR tag to an immutable `repository@sha256:...` identity,
-updates the existing stack, waits for the real CloudFormation-generated ECS service
-names to stabilize, and runs the public HTTPS/API/imagery/assessment and Playwright
-browser gates. ECS keeps the previous task healthy during replacement and has its
-deployment circuit breaker configured to roll back startup failures. If a
-post-rollout functional or browser gate fails, the script restores all three prior
-image identities and waits for them to become stable before returning failure.
+updates the existing stack, waits for the real CloudFormation-generated ECS
+service names to stabilize (including bakeworker's, even while it is parked at
+`BakeWorkerDesiredCount=0` — "stable" there just means the service itself
+reconciled, not that a task is running), and runs the public
+HTTPS/API/imagery/assessment and Playwright browser gates. ECS keeps the
+previous task healthy during replacement and has its deployment circuit breaker
+configured to roll back startup failures. If a post-rollout functional or
+browser gate fails, the script restores all four prior image identities and
+waits for them to become stable before returning failure.
 
 ### After changing the frontend
 
@@ -410,6 +480,30 @@ Rough figures (ca-west-1, on-demand):
 | Parked (`deploy.sh stop`) — ALB only | ~$0.025/hour |
 | Torn down (`session.sh down`) | **~$0.10/month** (ECR images only) — **do not do this to the live poster deployment**, see §5 |
 
+**bakeworker adds ~$0 at the parked baseline above.** `BakeWorkerDesiredCount`
+defaults to `0`, so no bakeworker task exists — no vCPU, no memory, nothing
+billed by ECS/Fargate for it. (The `MountainsFileSystem` EFS volume it shares
+with `assess` is provisioned either way, but at this app's data volumes — a
+handful of small rasters, `MAX_UPLOADED_MOUNTAINS = 3` — that is cents/month on
+EFS Standard, the same "negligible" call `infra.yaml`'s own comment makes for
+not bothering with an Infrequent-Access lifecycle policy.)
+
+**Turning it on for a demo** (`BAKEWORKER_DESIRED=1`) adds one 1 vCPU / 4 GB
+Fargate task — the same size as `assess`, on the same on-demand basis the
+~$0.09/hour figure above is built from. ca-west-1 on-demand Fargate (Linux/x86)
+is $0.04456 per vCPU-hour and $0.004865 per GB-hour, so:
+
+```
+1 vCPU × $0.04456/vCPU-hr  = $0.04456/hr
+4 GB   × $0.004865/GB-hr   = $0.01946/hr
+                              --------
+                              $0.064/hr  (~$47/month if left running continuously)
+```
+
+In practice it should not run continuously — start it for the demo window and
+park it again (`BAKEWORKER_DESIRED=0 bash deploy/aws/deploy.sh 3`) the same way
+`deploy.sh stop`/`start` already parks the other three.
+
 Set a budget alarm. It is free and it is the real safety net:
 
 ```bash
@@ -457,9 +551,11 @@ data lags roughly 24 hours.
 | `deploy/ollama-tunnel.sh` | Ollama + Cloudflare Tunnel on the local machine; `up`/`status`/`down`/`set-url` |
 | `backend/app/assess_client.py` | How the assistant reaches assess (in-process or HTTP) |
 | `backend/app/service.py` | Shared FastAPI app factory |
-| `backend/app/main{,_assess,_assistant}.py` | The three entrypoints |
+| `backend/app/main{,_assess,_assistant,_bakeworker}.py` | The four entrypoints |
 | `backend/app/api/{terrain,assess,assistant,deps}.py` | Routes, one module per service |
+| `backend/app/mountain_jobs.py` | Local-subprocess vs. bakeworker-HTTP dispatch for the upload probe/bake (I-F) |
 | `tests/test_service_split.py` | Pins the split: route surfaces, import isolation, the assess client |
+| `tests/test_bakeworker_dispatch.py` | bakeworker's own routes, the HTTP-dispatch helpers against a real bakeworker process, and an upload→bake→assess integration smoke test |
 
 ---
 

@@ -15,6 +15,17 @@ failure is inspectable after the fact.
 One bake runs at a time. The lock is process-local, which is the right scope for
 the local launcher this feature ships in: a second concurrent request gets a 409
 rather than two bakes competing for the same cores.
+
+A deployment that ships the always-slim ``runtime`` image (see ``Dockerfile.backend``)
+has no rasterio anywhere in its own process, so it cannot take the local-subprocess
+path above at all. There, ``AVALANCHE_BAKE_WORKER_URL`` points at a separate
+``bakeworker`` service -- built from the ``bake`` target, the only image in the fleet
+with the geospatial stack -- and :func:`upload_available`, :func:`run_probe`, and
+:func:`run_bake` each dispatch over HTTP instead. The bakeworker never sets that
+variable on itself, so when its own copy of this module runs these same functions
+in-process to actually do the work, they take the unmodified local-subprocess branch.
+There is exactly one implementation of "run the probe" and "run the bake"; the HTTP
+functions below are a thin network front door onto it, never a second copy.
 """
 
 from __future__ import annotations
@@ -23,9 +34,12 @@ import json
 import subprocess
 import sys
 import threading
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable
+
+import httpx
 
 from app.core.settings import Settings
 from app.mountains import (
@@ -55,8 +69,27 @@ BAKE_STAGES: tuple[tuple[str, str], ...] = (
 PROBE_TIMEOUT_SECONDS = 300.0
 BAKE_TIMEOUT_SECONDS = 3600.0
 
+#: How often ``_run_bake_http`` polls the bakeworker's status endpoint. Mirrors
+#: ``POLL_MS`` in ``frontend/src/components/MountainPicker.tsx`` -- same cadence,
+#: the other side of the wire.
+_BAKE_HTTP_POLL_SECONDS = 2.0
+
 #: Serializes bakes within this process. See the module docstring.
 _bake_lock = threading.Lock()
+
+
+def _bake_worker_base_url() -> str | None:
+    """The bakeworker service's base URL, or ``None`` for local subprocess dispatch.
+
+    Read from the environment rather than :class:`Settings` for the same reason
+    :func:`bake_python` reads ``AVALANCHE_BAKE_PYTHON`` that way: ``Settings`` is
+    hashed into every frozen bake identity, and this value cannot change what a
+    bake computes.
+    """
+    import os
+
+    url = os.environ.get("AVALANCHE_BAKE_WORKER_URL", "").strip()
+    return url.rstrip("/") or None
 
 
 class BakeBusyError(RuntimeError):
@@ -110,6 +143,9 @@ def bake_python(settings: Settings) -> Path:
 
 def upload_available(settings: Settings) -> tuple[bool, str]:
     """Whether this deployment can accept uploads, and why not when it cannot."""
+    base_url = _bake_worker_base_url()
+    if base_url is not None:
+        return _upload_available_http(base_url)
     python = bake_python(settings)
     if not python.is_file():
         return False, f"No bake interpreter is configured or present at {python}."
@@ -126,6 +162,29 @@ def upload_available(settings: Settings) -> tuple[bool, str]:
             "which this deployment does not install. It is available in the local launcher."
         )
     return True, "The bake environment is available."
+
+
+def _upload_available_http(base_url: str) -> tuple[bool, str]:
+    """Ask the bakeworker service whether it is up and holds the geospatial stack.
+
+    Timeout is short and deliberate: this backs ``GET /api/mountains``, a
+    user-facing endpoint, and a parked or still-starting bakeworker must not hang
+    it. Any failure to reach or parse the health check reads the same way as
+    "not ready" -- the caller only needs a yes/no and a reason to show.
+    """
+    try:
+        response = httpx.get(f"{base_url}/health", timeout=5.0)
+        ready = response.status_code == 200 and bool(response.json().get("rasterio_importable"))
+    except httpx.HTTPError:
+        return False, (
+            "The bake worker service is not reachable. It may be parked to save "
+            "cost, or still starting."
+        )
+    except ValueError:
+        return False, "The bake worker service reports it is not ready."
+    if not ready:
+        return False, "The bake worker service reports it is not ready."
+    return True, "The bake worker service is available."
 
 
 def _probe_script() -> Path:
@@ -152,6 +211,18 @@ def run_probe(
     cannot resolve. The worker puts the backend root back on ``sys.path`` itself,
     from the explicit ``--backend-root`` this passes it.
     """
+    base_url = _bake_worker_base_url()
+    if base_url is not None:
+        return _run_probe_http(
+            base_url,
+            mountain_id=mountain_id,
+            name=name,
+            provider=provider,
+            citation=citation,
+            licence=licence,
+            vertical_units_affirmed=vertical_units_affirmed,
+            resolution_m=resolution_m,
+        )
     arguments = [
         "--source-root", str(source_root(settings, mountain_id)),
         "--mountain-id", mountain_id,
@@ -193,6 +264,62 @@ def run_probe(
     return ProbeOutcome(ok=bool(payload.get("ok")), payload=payload)
 
 
+def _run_probe_http(
+    base_url: str,
+    *,
+    mountain_id: str,
+    name: str,
+    provider: str,
+    citation: str,
+    licence: str,
+    vertical_units_affirmed: bool,
+    resolution_m: float | None,
+) -> ProbeOutcome:
+    """Delegate validation to the bakeworker service. Mirrors :func:`run_probe`'s
+    contract exactly, so :func:`build_mountain` cannot tell which branch ran."""
+    body = {
+        "mountain_id": mountain_id,
+        "name": name,
+        "provider": provider,
+        "citation": citation,
+        "licence": licence,
+        "vertical_units_affirmed": vertical_units_affirmed,
+        "resolution_m": resolution_m,
+    }
+    try:
+        response = httpx.post(f"{base_url}/probe", json=body, timeout=PROBE_TIMEOUT_SECONDS)
+    except httpx.TimeoutException as exc:
+        raise MountainJobError(
+            "probe_timeout", f"Validating the raster exceeded {PROBE_TIMEOUT_SECONDS:g} seconds."
+        ) from exc
+    except httpx.HTTPError as exc:
+        raise MountainJobError(
+            "probe_launch_failed", f"The bake worker could not be reached: {exc}"
+        ) from exc
+
+    if response.status_code != 200:
+        raise MountainJobError(*_worker_error(response, default_code="probe_failed"))
+
+    payload = response.json()
+    return ProbeOutcome(ok=bool(payload.get("ok")), payload=payload)
+
+
+def _worker_error(response: httpx.Response, *, default_code: str) -> tuple[str, str]:
+    """Parse a bakeworker error body of ``{"code", "message"}`` into (code, message).
+
+    Falls back to a generic message if the body is missing or unparseable, so a
+    proxy timeout or a bug on the other side still surfaces as a readable error
+    here rather than a raw JSON-decode traceback.
+    """
+    try:
+        detail = response.json()
+    except ValueError:
+        detail = {}
+    code = str(detail.get("code") or default_code)
+    message = str(detail.get("message") or f"The bake worker returned HTTP {response.status_code}.")
+    return code, message
+
+
 def run_bake(
     settings: Settings,
     *,
@@ -207,6 +334,9 @@ def run_bake(
     only a staging directory, which ``mountains.sweep_orphaned_staging`` clears at
     startup.
     """
+    base_url = _bake_worker_base_url()
+    if base_url is not None:
+        return _run_bake_http(base_url, mountain_id=mountain_id, on_stage=on_stage)
     if not _bake_lock.acquire(blocking=False):
         raise BakeBusyError("Another mountain is baking. Try again when it finishes.")
     try:
@@ -272,6 +402,70 @@ def run_bake(
         }
     finally:
         _bake_lock.release()
+
+
+def _run_bake_http(
+    base_url: str, *, mountain_id: str, on_stage: Callable[[str], None] | None
+) -> dict[str, Any]:
+    """Start the bake on the bakeworker service and poll it to completion.
+
+    The bakeworker starts the bake on a background thread and answers ``202``
+    immediately (or ``409`` if it is already busy -- see ``main_bakeworker.start_bake``'s
+    docstring for why that check is synchronous there), so this polls
+    ``GET /bake/{id}`` -- at the same cadence the frontend polls this process's own
+    status endpoint -- until a terminal state, calling ``on_stage`` on every stage
+    change so :func:`build_mountain` keeps updating the registry exactly as it
+    does for a local bake. The whole poll loop is bounded by
+    :data:`BAKE_TIMEOUT_SECONDS`, measured with ``time.monotonic()``.
+    """
+    try:
+        start_response = httpx.post(f"{base_url}/bake/{mountain_id}", timeout=10.0)
+    except httpx.HTTPError as exc:
+        raise MountainJobError(
+            "bake_launch_failed", f"The bake worker could not be reached: {exc}"
+        ) from exc
+
+    if start_response.status_code == 409:
+        raise BakeBusyError("Another mountain is baking. Try again when it finishes.")
+    if start_response.status_code != 202:
+        raise MountainJobError(*_worker_error(start_response, default_code="bake_launch_failed"))
+
+    deadline = time.monotonic() + BAKE_TIMEOUT_SECONDS
+    last_stage: str | None = None
+    while True:
+        try:
+            status_response = httpx.get(f"{base_url}/bake/{mountain_id}", timeout=10.0)
+        except httpx.HTTPError as exc:
+            raise MountainJobError(
+                "bake_launch_failed", f"The bake worker could not be reached: {exc}"
+            ) from exc
+        if status_response.status_code != 200:
+            raise MountainJobError(*_worker_error(status_response, default_code="bake_failed"))
+
+        payload = status_response.json()
+        stage = payload.get("stage")
+        if stage and stage != last_stage:
+            last_stage = stage
+            if on_stage is not None:
+                on_stage(stage)
+
+        status = payload.get("status")
+        if status == "ready":
+            return {
+                "stage": stage,
+                "bake_sha256": str(payload.get("bake_sha256") or ""),
+                "warnings": [str(item) for item in payload.get("warnings") or ()],
+            }
+        if status == "failed":
+            raise MountainJobError(
+                payload.get("code") or "bake_failed", payload.get("error") or "The bake failed."
+            )
+
+        if time.monotonic() > deadline:
+            raise MountainJobError(
+                "bake_timeout", f"The bake exceeded {BAKE_TIMEOUT_SECONDS:g} seconds."
+            )
+        time.sleep(_BAKE_HTTP_POLL_SECONDS)
 
 
 def _bake_environment(settings: Settings) -> dict[str, str]:

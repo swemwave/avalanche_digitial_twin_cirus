@@ -53,6 +53,25 @@ USER avalanche
 CMD ["python", "-m", "app.bake"]
 
 # ===========================================================================
+# bakeworker target -- the 4th microservice. FROM bake: the only image with
+# rasterio/pyproj/PIL/pyyaml. Reachable only inside the VPC (no ALB, no CORS) --
+# it is how the always-slim `assess` service delegates uploaded-mountain probe
+# and bake work over HTTP instead of a local subprocess it cannot run itself.
+# ===========================================================================
+FROM bake AS bakeworker
+
+# `bake` already ends as USER avalanche with app/ and backend/ copied in, so this
+# needs no COPY and no USER toggling -- it only proves the new entrypoint imports.
+RUN python -c "import app.main_bakeworker; print('bakeworker image ok')"
+
+EXPOSE 8080
+# No `/api` prefix here, unlike assess/assistant: this service is never reached
+# through the ALB, so its routes -- including this health check -- do not carry one.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
+    CMD python -c "import os,urllib.request,sys; sys.exit(0 if urllib.request.urlopen(f\"http://127.0.0.1:{os.environ.get('PORT','8080')}/health\", timeout=4).status == 200 else 1)"
+CMD ["sh", "-c", "exec uvicorn app.main_bakeworker:app --host 0.0.0.0 --port ${PORT:-8080}"]
+
+# ===========================================================================
 # runtime target -- serves the API from runtime\baked\. NO geospatial stack.
 # ===========================================================================
 FROM python:3.13-slim AS runtime
